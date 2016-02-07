@@ -10,30 +10,30 @@ Initialize socket, server address to lookup to, and connect to the server
 int Server::Init_TCP_Server_Socket(char* name, short port)
 {   
     int err;
-​
+
     /* Create a stream socket */
     if ((err = _AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) <0 )
     {
         fatal("Init_TCP_Server_Socket: socket() failed\n");
         return err;
     }
-​
+
     /* Fill in server address information */
     bzero((char *)&_ServerAddress, sizeof(struct sockaddr_in));
     _ServerAddress.sin_family = AF_INET;
     _ServerAddress.sin_port = htons(port);
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY); // Accept connections from any client
-​
+
     /* bind server address to accepting socket */
     if ((err = bind(_ListeningSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
         fatal("Init_TCP_Server_Socket: bind() failed\n");
         return err;
     }
-​
+
     /* Listen for connections */
     listen(_ListeningSocket, MAXCONNECTIONS);
-
+    
     return 0;
 }
 
@@ -47,6 +47,7 @@ int Server::TCP_Server_Accept()
 {
     struct sockaddr_in  ClientAddress;        
     int                 NewClientSocket;
+    int                 ClientLen = sizeof(ClientAddress);
 
     /* Accepts a connection from the client */
     if ((NewClientSocket = accept(_ListeningSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
