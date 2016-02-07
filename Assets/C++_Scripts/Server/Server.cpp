@@ -7,7 +7,7 @@ Initialize socket, server address to lookup to, and connect to the server
 
 @return: socket file descriptor 
 *****************************************************************************/
-int Client::Init_TCP_Server_Socket(char* name, short port)
+int Server::Init_TCP_Server_Socket(char* name, short port)
 {   
     int err;
 ​
@@ -45,7 +45,7 @@ Initialize socket, server address to lookup to, and connect to the server
 
 @return: socket file descriptor 
 *****************************************************************************/
-int TCP_Server_Accept()
+int Server::TCP_Server_Accept()
 {
     struct sockaddr_in  ClientAddress;        
     int                 NewClientSocket;
@@ -72,7 +72,7 @@ Recives packets from a specific socket, should be in a child proccess
 
 @return: packet of size PACKETLEN 
 *****************************************************************************/
-std::string TCP_Server_Recieve(int TargetSocket)
+std::string Server::TCP_Server_Recieve(int TargetSocket)
 {
     std::string         packet;                             /* packet to be returned               */                 
     int                 BytesRead;                          /* bytes read from one recv call       */
@@ -97,7 +97,7 @@ prints the list of addresses currently stored
 
 @return: void
 *****************************************************************************/
-void PrintAddresses()
+void Server::PrintAddresses()
 {
     printf("List of addresses\n");  
     for(auto x : _ClientAddresses)  
@@ -112,7 +112,7 @@ to the socket
 
 @return: void
 *****************************************************************************/
-int Client::Init_UDP_Server_Socket(char* name, short port)
+int Server::Init_UDP_Server_Socket(char* name, short port)
 {
     int err;
     /* Create a file descriptor for the socket */
@@ -145,7 +145,7 @@ Listen for incoming UDP traffics
 
 @return: a packet
 *****************************************************************************/
-std::string UDP_Server_Recv()
+std::string Server::UDP_Server_Recv()
 {
     int err;
     char * buf = (char *)malloc(BUFSIZE);

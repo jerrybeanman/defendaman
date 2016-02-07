@@ -63,7 +63,7 @@ namespace Networking
 
             @return: void
             *****************************************************************************/
-            void PrintAddresses()
+            void PrintAddresses();
 
 
             void fatal(char* error);
