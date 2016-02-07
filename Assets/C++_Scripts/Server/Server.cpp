@@ -33,7 +33,7 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
 
     /* Listen for connections */
     listen(_ListeningSocket, MAXCONNECTIONS);
-    
+
     return 0;
 }
 
@@ -47,7 +47,7 @@ int Server::TCP_Server_Accept()
 {
     struct sockaddr_in  ClientAddress;        
     int                 NewClientSocket;
-    int                 ClientLen = sizeof(ClientAddress);
+    unsigned int        ClientLen = sizeof(ClientAddress);
 
     /* Accepts a connection from the client */
     if ((NewClientSocket = accept(_ListeningSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
@@ -127,7 +127,7 @@ int Server::Init_UDP_Server_Socket(char* name, short port)
     _ServerAddress.sin_family = AF_INET;
     _ServerAddress.sin_port = htons(port);
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-​
+
     /* Bind server address to the socket */
     if((err = bind(_ListeningSocket, (sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) < 0)
     {
@@ -149,7 +149,7 @@ std::string Server::UDP_Server_Recv()
     int err;
     std::string packet;                     /* packet recieved  */
     struct sockaddr_in Client;              /* Incoming client's socket address information */
-    int ClientLen = sizeof(Client);
+    unsigned ClientLen = sizeof(Client);
     char * buf = (char *)malloc(BUFSIZE);
 
     if((err = recvfrom(_ListeningSocket, buf, BUFSIZE, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
