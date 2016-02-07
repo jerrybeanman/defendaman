@@ -38,7 +38,7 @@ public class NetworkingManager : MonoBehaviour
     void Start()
     {
 
-        Subscribe(
+        /*Subscribe(
             (JSONClass json) =>
             {
                 Debug.Log("Player " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
@@ -60,22 +60,21 @@ public class NetworkingManager : MonoBehaviour
             (JSONClass json) =>
             {
                 Debug.Log("Enviroment Data:" + json["data"]);
-            }, DataType.Enviroment);
+            }, DataType.Enviroment);*/
     }
+
+    //Dummy data for the sake of testing.
+    int _x = -12, _y = -4;
 
     // Update is called once per frame
     void Update()
     {
-        //Call 
+        //Fake receiving of data every frame 
         update_data("["
-                 + "{DataType : 1, ID : 1, x : 10, y : 0},"
-                 + "{DataType : 1, ID : 2, x : 15, y : 5},"
-                 + "{DataType : 1, ID : 3, x : 20, y : 10},"
-                 + "{DataType : 2, ID : 1, x : 0, y : 0},"
-                 + "{DataType : 2, ID : 2, x : 2, y : 2},"
-                 + "{DataType : 2, ID : 3, x : 4, y : 4},"
-                 + "{DataType : 3, ID : 0, data : \"enviroment data\"}"
+                 + "{DataType : 1, ID : 1, x : " + _x + ", y : " + _y + "}"
                  + "]");
+        _x += 2;
+        _y += 1;
     }
 
     //Code for subscribing to updates from client-server system.
@@ -199,7 +198,9 @@ public class NetworkingManager : MonoBehaviour
     //Code for communicating with client-server system.
     #region CommunicationWithClientSystem
 
+    private void send_data() {
 
+    }
 
     #endregion
 }
