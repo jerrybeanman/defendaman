@@ -25,14 +25,14 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY); // Accept connections from any client
 ​
     /* bind server address to accepting socket */
-    if ((err = bind(accepting, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
+    if ((err = bind(_ListeningSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
         fatal("Init_TCP_Server_Socket: bind() failed\n");
         return err;
     }
 ​
     /* Listen for connections */
-    listen(sd, MAXCONNECTIONS);
+    listen(_ListeningSocket, MAXCONNECTIONS);
 
     return 0;
 }
@@ -85,7 +85,7 @@ std::string Server::TCP_Server_Recieve(int TargetSocket)
         packet += buf;
 
         /* decrement remaining bytes to read */
-        bytes_to_read -= BytesRead;
+        BytesToRead -= BytesRead;
     }
     return packet;
 }
@@ -98,10 +98,10 @@ prints the list of addresses currently stored
 void Server::PrintAddresses()
 {
     std::cout << "List of addresses\n";  
-    for(auto x : _ClientAddresses)  
+    /*for(auto x : _ClientAddresses)  
     {
       std::cout << "scamaz\n";
-    }
+    }*/
 }
 
 /****************************************************************************
@@ -146,14 +146,12 @@ Listen for incoming UDP traffics
 std::string Server::UDP_Server_Recv()
 {
     int err;
+    std::string packet;                     /* packet recieved  */
+    struct sockaddr_in Client;              /* Incoming client's socket address information */
+    int ClientLen = sizeof(Client);
     char * buf = (char *)malloc(BUFSIZE);
 
-    /* Incoming client's socket address information */
-    struct sockaddr_in Client;
-
-    std::string packet; 
-
-    if((err = recvfrom(_ListeningSocket, buf, BUFSIZE, 0, (sockaddr *)&Client, sizeof(Client))) <= 0)
+    if((err = recvfrom(_ListeningSocket, buf, BUFSIZE, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
     {
         fatal("UDP_Server_Recv: recvfrom() failed\n");
         return NULL;
