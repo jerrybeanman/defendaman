@@ -14,7 +14,7 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
     /* Create a stream socket */
     if ((err = _AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) <0 )
     {
-        fatal(err);
+        fatal("Init_TCP_Server_Socket: socket() failed\n");
         return err;
     }
 ​
@@ -27,11 +27,9 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
     /* bind server address to accepting socket */
     if ((err = bind(accepting, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
-        fatal(err);
+        fatal("Init_TCP_Server_Socket: bind() failed\n");
         return err;
     }
-
-    return err;
 ​
     /* Listen for connections */
     listen(sd, MAXCONNECTIONS);
@@ -51,9 +49,9 @@ int Server::TCP_Server_Accept()
     int                 NewClientSocket;
 
     /* Accepts a connection from the client */
-    if ((NewClientSocket = accept(sd, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
+    if ((NewClientSocket = accept(_ListeningSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
     {
-        fatal(NewClientSocket);
+        fatal("TCP_Server_Accept: accept() failed\n");
         return NULL;
     }
 
@@ -99,10 +97,10 @@ prints the list of addresses currently stored
 *****************************************************************************/
 void Server::PrintAddresses()
 {
-    printf("List of addresses\n");  
+    std::cout << "List of addresses\n";  
     for(auto x : _ClientAddresses)  
     {
-      // print here
+      std::cout << "scamaz\n";
     }
 }
 
@@ -119,20 +117,20 @@ int Server::Init_UDP_Server_Socket(char* name, short port)
     
     if((err = _ListeningSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
     {
-        fatal(err);
+        fatal("Init_UDP_Server_Socket: socket() failed\n");
         return err;
     }
       
     /* Fill in server socket address structure */
     memset((char *)&_ServerAddress, 0, sizeof(_ServerAddress));
     _ServerAddress.sin_family = AF_INET;
-    _ServerAddress.sin_port = htons(PORT);
+    _ServerAddress.sin_port = htons(port);
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 ​
     /* Bind server address to the socket */
-    if((err = bind(_ListeningSocket, &_ServerAddress, sizeof(_ServerAddress))) < 0)
+    if((err = bind(_ListeningSocket, (sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) < 0)
     {
-        fatal(err);
+        fatal("Init_UDP_Server_Socket: bind() failed\n");
         return err;
     }
 
@@ -155,9 +153,9 @@ std::string Server::UDP_Server_Recv()
 
     std::string packet; 
 
-    if((err = recvfrom(_ListeningSocket, buf, BUFSIZE, 0, &Client, sizeof(Client))) <= 0)
+    if((err = recvfrom(_ListeningSocket, buf, BUFSIZE, 0, (sockaddr *)&Client, sizeof(Client))) <= 0)
     {
-        fatal(err);
+        fatal("UDP_Server_Recv: recvfrom() failed\n");
         return NULL;
     }
 
