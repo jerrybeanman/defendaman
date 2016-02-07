@@ -78,8 +78,9 @@ public class NetworkingManager : MonoBehaviour
                  + "]");
     }
 
-
+    //Code for subscribing to updates from client-server system.
     #region SubscriberSystem
+
     //Holds the subscriber data
     private static Dictionary<Pair, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair, List<Action<JSONClass>>>();
     /*
@@ -192,5 +193,13 @@ public class NetworkingManager : MonoBehaviour
             return object.ReferenceEquals(obj, null);
         }
     }
+
+    #endregion
+
+    //Code for communicating with client-server system.
+    #region CommunicationWithClientSystem
+
+
+
     #endregion
 }
