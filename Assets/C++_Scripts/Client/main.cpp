@@ -6,7 +6,7 @@ int main()
 {
     Client* c;
     //Connect to requested IP address and port
-    int socket = c->Init_TCP_Server_Socket("192.168.1.104", 7000);
+    int socket = c->Init_TCP_Client_Socket("192.168.1.104", 7000);
  
     if(socket != -1)
     {

@@ -12,7 +12,7 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
     int err;
 
     /* Create a stream socket */
-    if ((err = _AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) <0 )
+    if ((_AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) <0 )
     {
         fatal("Init_TCP_Server_Socket: socket() failed\n");
         return err;
