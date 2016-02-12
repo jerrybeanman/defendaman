@@ -89,6 +89,12 @@ namespace Networking
             /* List of client sockets currently connected */
             std::vector<int>                _ClientSockets;
 
+            /**
+             * Note: 
+             * This is placeholder code for two teams.
+             * TODO: a vector of teams.
+             * /
+
             /* Team ONE - Player connections and info. */
             std::vector<Player>             _TeamOne;
 
