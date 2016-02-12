@@ -13,6 +13,18 @@
 #define PACKETLEN       2000
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
+
+/* 
+   Structure of a PlayerNetworkEntity
+   ** Will move to a more appropriate location later
+   ** Unsure of info that will be required
+*/
+typedef struct Player {
+    sockaddr_in    connection;
+    std::string    username;
+    std::string    team;
+} Player;
+
 namespace Networking
 {
     class Server
@@ -76,6 +88,12 @@ namespace Networking
 
             /* List of client sockets currently connected */
             std::vector<int>                _ClientSockets;
+
+            /* Team ONE - Player connections and info. */
+            std::vector<Player>             _TeamOne;
+
+            /* Team TWO - Player connections and info. */
+            std::vector<Player>             _TeamTwo;
     };
 }
 #endif
