@@ -50,6 +50,7 @@ int Server::TCP_Server_Accept()
     struct sockaddr_in  ClientAddress;
     int                 NewClientSocket;
     unsigned int        ClientLen = sizeof(ClientAddress);
+    Player              p;
 
     /* Accepts a connection from the client */
     if ((NewClientSocket = accept(_AcceptingSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
@@ -61,6 +62,33 @@ int Server::TCP_Server_Accept()
     /* Adds the address and socket to the vector list */
     _ClientAddresses.push_back(ClientAddress);
     _ClientSockets.push_back(NewClientSocket);
+
+    /* Adds the player to a team */
+    if((_TeamOne.size()+_TeamTwo.size()) < MAXCONNECTIONS) 
+    {
+        p.connection = ClientAddress;
+        if(_TeamOne.size() <= _TeamTwo.size()) 
+        {
+            p.team = "Team One";
+            _TeamOne.push_back(p);
+        } 
+        else if(_TeamTwo.size() < _TeamOne.size()) 
+        {
+            p.team = "Team Two";
+            _TeamTwo.push_back(p);
+        } 
+        else 
+        {
+            std::cerr << "Unable to add player to team" << std::endl;
+            return -1;
+        }
+    } 
+    else 
+    {
+        std::cerr << "The lobby is full" << std::endl;
+        return -1;
+    }
+    std::cerr << "The player is added to " << std::endl;
 
     /***************************************************
     * Create a child process here to handle new client *
