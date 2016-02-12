@@ -8,7 +8,7 @@ int main()
     std::string teamRequest;
 
     //Connect to requested IP address and port
-    c->Init_TCP_Client_Socket("127.0.0.1", 7000);
+    c->Init_TCP_Client_Socket("127.0.0.1", 5150);
  
     while (getline(std::cin, teamRequest))
     {
