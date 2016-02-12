@@ -71,11 +71,13 @@ int Server::TCP_Server_Accept()
         {
             p.team = "Team One";
             _TeamOne.push_back(p);
+	    send (NewClientSocket, "a", 1, 0);
         } 
         else if(_TeamTwo.size() < _TeamOne.size()) 
         {
             p.team = "Team Two";
             _TeamTwo.push_back(p);
+	    send (NewClientSocket, "b", 1, 0);
         } 
         else 
         {
