@@ -51,6 +51,7 @@ int Server::TCP_Server_Accept()
     int                 NewClientSocket;
     unsigned int        ClientLen = sizeof(ClientAddress);
     Player              p;
+	pthread_t			ClientThread;
 
     /* Accepts a connection from the client */
     if ((NewClientSocket = accept(_AcceptingSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
@@ -71,13 +72,13 @@ int Server::TCP_Server_Accept()
         {
             p.team = "Team One";
             _TeamOne.push_back(p);
-	    send (NewClientSocket, "a", 1, 0);
+	    	send (NewClientSocket, "a", 1, 0);
         } 
         else if(_TeamTwo.size() < _TeamOne.size()) 
         {
             p.team = "Team Two";
             _TeamTwo.push_back(p);
-	    send (NewClientSocket, "b", 1, 0);
+	    	send (NewClientSocket, "b", 1, 0);
         } 
         else 
         {
@@ -91,11 +92,48 @@ int Server::TCP_Server_Accept()
         return -1;
     }
     std::cerr << "The player is added to " << std::endl;
+    
+	pid_t ClientProcess;
+	ClientProcess = fork();
+
+	if(ClientProcess == 0)
+	{
+		TCP_Server_Listen(NewClientSocket);
+	}    
 
     /***************************************************
     * Create a child process here to handle new client *
     ****************************************************/
     return 0;
+}
+
+/****************************************************************************
+Infinite Loop for listening on a connect client's socket. This is used by
+threads.
+
+@return: NULL
+*****************************************************************************/
+void Server::TCP_Server_Listen(int ClientSocket)
+{
+	int 			Socket = *(int*)ClientSocket; /* Client listening Socket. */ 			
+	std::string 	packet; 				/* packet received from the Client */	
+	
+
+	/*
+	TODO:
+	-Create a method where the thread is able to leave the infinite loop
+		and or kill the thread naturally.
+	*/
+	while(1)
+	{ 
+		packet = TCP_Server_Recieve(Socket);
+		if(packet.size() > 0)
+		{
+			std::cerr << "Got a packet." << std::endl;
+		}
+	}
+
+	return;
 }
 
 /****************************************************************************
