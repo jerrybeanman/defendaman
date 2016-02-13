@@ -9,6 +9,8 @@
 #include <netdb.h>
 #include <utility>
 #include <vector>
+#include <unistd.h>
+#include <pthread.h>
 
 #define PACKETLEN       2000
 #define BUFSIZE	        420	/* scamaz */
@@ -45,7 +47,15 @@ namespace Networking
             *****************************************************************************/
             int TCP_Server_Accept();
 
-            /****************************************************************************
+/****************************************************************************
+			Infinite Loop for listening on a connect client's socket. This is used by
+			threads.
+
+			@return: NULL
+*****************************************************************************/
+			void TCP_Server_Listen(int ClientSocket);
+
+/****************************************************************************
             Recives packets from a specific socket, should be in a child proccess
 
             @return: packet of size PACKETLEN
