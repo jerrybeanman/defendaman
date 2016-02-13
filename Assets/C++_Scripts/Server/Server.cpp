@@ -235,6 +235,18 @@ std::string Server::UDP_Server_Recv()
     return packet;
 }
 
+/****************************************************************************
+Sends a message to all the clients
+
+*****************************************************************************/
+void Server::pingAll(char* message)
+{
+    for(int i = 0 ; 0 < _ClientSockets.size(); i++){
+        send (_ClientSockets[i], message, sizeof(message), 0);
+    }
+}
+
+
 void Server::fatal(char* error)
 {
     std::cerr << error << std::endl;
