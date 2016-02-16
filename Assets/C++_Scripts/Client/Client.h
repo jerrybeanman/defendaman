@@ -8,13 +8,18 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <utility>
+#include <stdio.h>
+#include <errno.h>
+
+#define TeamRequest1 1
+#define TeamRequest2 2
 
 namespace Networking
 {
     class Client
     {
         public:
-             Client();
+             Client() {}; 
             ~Client();
 
             /****************************************************************************
@@ -30,7 +35,8 @@ namespace Networking
             @return: socket file descriptor and the server address for future use 
             *****************************************************************************/
             std::pair<int, struct sockaddr> Init_UDP_Client_Socket(char* name, short port);
-
+            
+            bool sendTeamRequest(std::string request);
 
             /****************************************************************************
             Initialize the socket address structure by recieving the port number and 
@@ -41,6 +47,9 @@ namespace Networking
             struct sockaddr Init_SockAddr(char* hostname, short hostPort);
 
             void fatal(char* error);
+
+        private:
+            int serverSocket;
     };
 }
 #endif 
