@@ -1,0 +1,17 @@
+<<<<<<< HEAD
+CC = g++ -Wall -pedantic -W
+=======
+CC = g++ -Wall -pedantic -W -pthread
+>>>>>>> 19078854329a58cb3c4086db032bc7f543dcb06f
+
+Server:	Server.o main.o
+	$(CC) Server.o main.o -o Server
+
+clean:
+	rm -f *.o core.* Server
+
+Server.o: Server.cpp Server.h
+	$(CC) -c Server.cpp
+
+main.o:	main.cpp
+	$(CC) -c main.cpp
