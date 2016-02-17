@@ -32,11 +32,9 @@ This method takes in three things:
 
 e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
 */
-public class NetworkingManager : MonoBehaviour
-{
+public class NetworkingManager : MonoBehaviour {
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         update_data(receive_data());
         send_data();
     }
@@ -161,6 +159,8 @@ public class NetworkingManager : MonoBehaviour
 
     ////Code for communicating with client-server system////
     #region CommunicationWithClientSystem
+    // Game object to send data of
+    public GameObject player;
 
     // Imported function from C++ library for receiving data
     [DllImport("NetworkingLibrary.so")]
@@ -170,32 +170,34 @@ public class NetworkingManager : MonoBehaviour
     [DllImport("NetworkingLibrary.so")]
     private static extern void sendData(string data);
 
+    //On Linux, send data to C++ file
     private void send_data() {
         if (Application.platform == RuntimePlatform.LinuxPlayer)
             sendData(create_sending_json());
     }
 
+    //Receive a packet from C++ networking client code
     private string receive_data() {
+        //On Linux, get a proper packet
         if (Application.platform == RuntimePlatform.LinuxPlayer)
             result = Marshal.PtrToStringAnsi(receiveData());
         else
-            result = "[]";
+            //On Windows, return whatever JSON data we want to generate/test for
+            result = create_test_json();
         return result;
     }
 
+    //Generate the JSON file to send to C++ networking client code
     private string create_sending_json() {
         string sending = "";
-        Action<string, KeyCode> addKey = (string name, KeyCode key) => {
-            sending += " \"" + name + "\" : " + ((Input.GetKey(key)) ? "1," : "0,");
+
+        Action<string, object> addItem = (string key, object value) => {
+            sending += " \"" + key + "\" : " + value.ToString() + ",";
         };
 
         sending = "{";
-        addKey("W", KeyCode.W);
-        addKey("A", KeyCode.A);
-        addKey("S", KeyCode.S);
-        addKey("D", KeyCode.D);
-        addKey("LC", KeyCode.Mouse0);
-        addKey("RC", KeyCode.Mouse1);
+        addItem("x", player.transform.position.x);
+        addItem("y", player.transform.position.y);
         sending = sending.Remove(1, 1);
         sending = sending.Remove(sending.Length - 1, 1);
         sending += "}";
@@ -209,13 +211,16 @@ public class NetworkingManager : MonoBehaviour
     #region DummyTestingCode
 
     //Dummy data for the sake of testing.
-    int _x = -15, _y = -10;
+    float _x = -15, _y = -10;
     string result = "receiving failed";
 
-    void OnGUI()
-    {
+    void OnGUI() {
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height), result);
         GUI.Label(new Rect(0, 20, Screen.width, Screen.height), create_sending_json());
+    }
+
+    string create_test_json() {
+        return "[]";
     }
 
     #endregion
