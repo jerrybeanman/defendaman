@@ -17,6 +17,8 @@
 #define MAXCONNECTIONS  8
 
 /* 
+=======
+/*
    Structure of a PlayerNetworkEntity
    ** Will move to a more appropriate location later
    ** Unsure of info that will be required
@@ -53,6 +55,7 @@ namespace Networking
 
 			@return: NULL
 *****************************************************************************/
+
 			void TCP_Server_Listen();
 
 /****************************************************************************
@@ -93,8 +96,10 @@ namespace Networking
 
             void fatal(char* error);
 
+            void UDP_Server_Send(const char* message);
+
         private:
-        	struct sockaddr_in 	_ServerAddress;
+        	struct sockaddr_in 		_ServerAddress;
         	int 				_UDPReceivingSocket;
         	int 				_TCPAcceptingSocket;
 		int				_TCPReceivingSocket;
@@ -106,7 +111,7 @@ namespace Networking
             std::vector<int>                _ClientSockets;
 
             /**
-             * Note: 
+             * Note:
              * This is placeholder code for two teams.
              * TODO: a vector of teams.
              * /

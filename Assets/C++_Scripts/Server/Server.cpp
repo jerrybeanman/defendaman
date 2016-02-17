@@ -94,14 +94,6 @@ int Server::TCP_Server_Accept()
     }
     std::cerr << "The player is added to " << std::endl;
     
-	pid_t ClientProcess;
-	ClientProcess = fork();
-
-	if(ClientProcess == 0)
-	{
-		TCP_Server_Listen();
-	}    
-
     /***************************************************
     * Create a child process here to handle new client * ****************************************************/
     return 0;
@@ -124,7 +116,6 @@ void Server::TCP_Server_Listen()
 	*/
 	while(1)
 	{ 
-		packet = TCP_Server_Receive();
 		if(packet.size() > 0)
 		{
 			std::cerr << "Got a packet." << std::endl;
@@ -245,7 +236,20 @@ void Server::pingAll(char* message)
     }
 }
 
+/* Echoes the message back to the client*/
+void Server::UDP_Server_Send(const char* message)
+{
+  struct sockaddr_in Client = _ClientAddresses.back(); //last client that sent to server
+  if (sendto(_UDPReceivingSocket, message, sizeof(message), 0, (sockaddr *)&Client, sizeof(Client)) == -1)
+  {
+    fatal("Send to UDP client failed\n");
+  } else {
+    std::cerr << "UDP packet sent successfully." << std::endl;
+  }
+}
+
 void Server::fatal(char* error)
 {
     std::cerr << error << std::endl;
 }
+
