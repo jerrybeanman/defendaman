@@ -12,15 +12,15 @@ int main()
 
   if(rc != 0)
   {
-    std::cerr << "shit fucked up yo." << std::endl;
+    std::cerr << "TCP Server initialization failed." << std::endl;
     return -1;
   }
 
-  std::cerr << "Hit" << std::endl;
+  std::cerr << "TCP Server initialized." << std::endl;
   while(1) {
     if (s.TCP_Server_Accept() == 0)
     {
-      std::cerr << "woohoo" << std::endl;
+      std::cerr << "Client accepted." << std::endl;
     }
   }
 
