@@ -2,7 +2,7 @@
 CC = g++ -Wall -pedantic -W
 =======
 CC = g++ -Wall -pedantic -W -pthread
->>>>>>> 19078854329a58cb3c4086db032bc7f543dcb06f
+>>>>>>> c0c3cf785e74f88478c248de02070e9c0150b66a
 
 Server:	Server.o main.o
 	$(CC) Server.o main.o -o Server
