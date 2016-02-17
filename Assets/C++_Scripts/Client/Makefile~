@@ -8,7 +8,7 @@ UDPClient:	game.o Client.o
 	$(CC) Client.o -g game.o -o Game
 
 TCPClient:	main.o Client.o
-	$(CC) Client.o -g main.o -o Lobby
+	$(CC) Client.o -g main.o -o
 
 clean:
 	rm -f *.o core.* Game

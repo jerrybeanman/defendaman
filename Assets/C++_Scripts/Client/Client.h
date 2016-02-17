@@ -19,8 +19,6 @@ namespace Networking
     class Client
     {
         public:
-             Client() {}; 
-            ~Client();
 
             /****************************************************************************
             Initialize socket, server address to lookup to, and connect to the server 
