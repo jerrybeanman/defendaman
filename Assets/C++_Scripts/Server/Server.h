@@ -9,10 +9,24 @@
 #include <netdb.h>
 #include <utility>
 #include <vector>
+#include <unistd.h>
+#include <pthread.h>
 
 #define PACKETLEN       2000
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
+
+/* 
+   Structure of a PlayerNetworkEntity
+   ** Will move to a more appropriate location later
+   ** Unsure of info that will be required
+*/
+typedef struct Player {
+    sockaddr_in    connection;
+    std::string    username;
+    std::string    team;
+} Player;
+
 namespace Networking
 {
     class Server
@@ -33,7 +47,15 @@ namespace Networking
             *****************************************************************************/
             int TCP_Server_Accept();
 
-            /****************************************************************************
+/****************************************************************************
+			Infinite Loop for listening on a connect client's socket. This is used by
+			threads.
+
+			@return: NULL
+*****************************************************************************/
+			void TCP_Server_Listen(int ClientSocket);
+
+/****************************************************************************
             Recives packets from a specific socket, should be in a child proccess
 
             @return: packet of size PACKETLEN
@@ -63,6 +85,11 @@ namespace Networking
             *****************************************************************************/
             void PrintAddresses();
 
+	    /****************************************************************************
+            Sends a message to all the clients
+
+            *****************************************************************************/
+            void pingAll(char* message);
 
             void fatal(char* error);
 
@@ -76,6 +103,18 @@ namespace Networking
 
             /* List of client sockets currently connected */
             std::vector<int>                _ClientSockets;
+
+            /**
+             * Note: 
+             * This is placeholder code for two teams.
+             * TODO: a vector of teams.
+             * /
+
+            /* Team ONE - Player connections and info. */
+            std::vector<Player>             _TeamOne;
+
+            /* Team TWO - Player connections and info. */
+            std::vector<Player>             _TeamTwo;
     };
 }
 #endif

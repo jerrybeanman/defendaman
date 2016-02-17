@@ -1,4 +1,4 @@
-CC = g++ -Wall -pedantic -W
+CC = g++ -Wall -pedantic -W -pthread
 
 Server:	Server.o main.o
 	$(CC) Server.o main.o -o Server
