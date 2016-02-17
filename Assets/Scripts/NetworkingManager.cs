@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
+using System.Runtime.InteropServices;
 
 /*Carson
 Being used to denote what type of data we are sending/receiving for a given JSON object.
@@ -15,7 +16,7 @@ Note: Does not start at value 0. Reason being, if JSON parser fails, it returns 
 for fail does not work 
 */
 public enum DataType {
-    Player = 1, Projectile = 2, Enviroment = 3
+    Player = 1, Projectile = 2, Environment = 3
 }
 
 /*Carson
@@ -31,57 +32,18 @@ This method takes in three things:
 
 e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
 */
-public class NetworkingManager : MonoBehaviour
-{
-
-    // Use this for initialization
-    void Start()
-    {
-
-        /*Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Player " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
-            }, DataType.Player, 1);
-
-        Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Player " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
-            }, DataType.Player, 3);
-
-        Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Projectile " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
-            }, DataType.Projectile, 2);
-
-        Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Enviroment Data:" + json["data"]);
-            }, DataType.Enviroment);*/
-    }
-
-    //Dummy data for the sake of testing.
-    int _x = -12, _y = -4;
-
+public class NetworkingManager : MonoBehaviour {
     // Update is called once per frame
-    void Update()
-    {
-        //Fake receiving of data every frame 
-        update_data("["
-                 + "{DataType : 1, ID : 1, x : " + _x + ", y : " + _y + "}"
-                 + "]");
-        _x += 2;
-        _y += 1;
+    void Update() {
+        update_data(receive_data());
+        send_data();
     }
 
-    //Code for subscribing to updates from client-server system.
+    ////Code for subscribing to updates from client-server system////
     #region SubscriberSystem
 
     //Holds the subscriber data
-    private static Dictionary<Pair, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair, List<Action<JSONClass>>>();
+    private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
     /*
     To subscribe for an objects updates from server, you would call the public Subscribe method.
     This method takes in three things:
@@ -92,7 +54,7 @@ public class NetworkingManager : MonoBehaviour
     e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
     */
     public static void Subscribe(Action<JSONClass> callback, DataType dataType, int id = 0) {
-        Pair pair = new Pair(dataType, id);
+        Pair<DataType, int> pair = new Pair<DataType, int>(dataType, id);
 
         if (!(_subscribedActions.ContainsKey(pair))) {
             _subscribedActions.Add(pair, new List<Action<JSONClass>>());
@@ -113,8 +75,8 @@ public class NetworkingManager : MonoBehaviour
             int dataType = obj["DataType"].AsInt;
             int id = obj["ID"].AsInt;
 
-            if (id != 0 || dataType == (int)DataType.Enviroment) {
-                Pair pair = new Pair((DataType)dataType, id);
+            if (id != 0 || dataType == (int)DataType.Environment) {
+                Pair<DataType, int> pair = new Pair<DataType, int>((DataType)dataType, id);
                 if (_subscribedActions.ContainsKey(pair)) {
                     foreach (Action<JSONClass> callback in _subscribedActions[pair]) {
                         callback(obj);
@@ -124,82 +86,92 @@ public class NetworkingManager : MonoBehaviour
         }
     }
 
-    /* Carson
-       Used as a grouping of DataType & type's ID to denote a specific object, used with the subscribing system.
-       e.g. a pair of first = DataType.Player, second = 1 represents "Player 1"
-    */
-    public class Pair {
-        //First 
-        public DataType first;
-        public int second;
+    #endregion
 
-        private static readonly IEqualityComparer Item1Comparer = EqualityComparer<DataType>.Default;
-        private static readonly IEqualityComparer Item2Comparer = EqualityComparer<int>.Default;
+    ////Code for communicating with client-server system////
+    #region CommunicationWithClientSystem
+    // Game object to send data of
+    public GameObject player;
 
-        public Pair(DataType first, int second)
-        {
-            this.first = first;
-            this.second = second;
+    // Imported function from C++ library for receiving data
+    [DllImport("NetworkingLibrary.so")]
+    private static extern IntPtr receiveData();
+
+    // Imported function from C++ library for sending data
+    [DllImport("NetworkingLibrary.so")]
+    private static extern void sendData(string data);
+
+    //On Linux, send data to C++ file
+    private void send_data() {
+        if (Application.platform == RuntimePlatform.LinuxPlayer)
+            sendData(create_sending_json());
+    }
+
+    //Receive a packet from C++ networking client code
+    private string receive_data() {
+        //On Linux, get a proper packet
+        if (Application.platform == RuntimePlatform.LinuxPlayer)
+            result = Marshal.PtrToStringAnsi(receiveData());
+        else
+            //On Windows, return whatever JSON data we want to generate/test for
+            result = create_test_json();
+        return result;
+    }
+
+    //Generate the JSON file to send to C++ networking client code
+    private string create_sending_json() {
+        //Open JSON array
+        string sending = "[";
+
+        //Add player data
+        var memberItems = new List<Pair<string, string>>();
+        memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
+        memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
+        send_next_packet(DataType.Player, 1, memberItems);
+
+        //Add data that external sources want to send
+        foreach (var item in jsonObjectsToSend)
+            sending += item;
+        jsonObjectsToSend.Clear();
+
+        //Close json array
+        sending = sending.Remove(sending.Length - 1, 1);
+        sending += "]";
+        return sending;
+    }
+
+    //Add data to be sent
+    private static List<string> jsonObjectsToSend = new List<string>();
+    public static void send_next_packet(DataType type, int id, List<Pair<string, string>> memersToSend) {
+        string sending = "";
+        sending = "{";
+
+        foreach(var pair in memersToSend) {
+            sending += " \"" + pair.first + "\" : " + pair.second + ",";
         }
 
-        public override string ToString()
-        {
-            return string.Format("<{0}, {1}>", first, second);
-        }
-
-        public static bool operator ==(Pair a, Pair b)
-        {
-            if (IsNull(a) && !IsNull(b))
-                return false;
-
-            if (!IsNull(a) && IsNull(b))
-                return false;
-
-            if (IsNull(a) && IsNull(b))
-                return true;
-
-            return
-                a.first.Equals(b.first) &&
-                a.second.Equals(b.second);
-        }
-
-        public static bool operator !=(Pair a, Pair b)
-        {
-            return !(a == b);
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 17;
-            int multiplier = 21;
-            hash = hash * multiplier + first.GetHashCode();
-            hash = hash * multiplier + second.GetHashCode();
-            return hash;
-        }
-
-        public override bool Equals(object obj)
-        {
-            var other = obj as Pair;
-            if (object.ReferenceEquals(other, null))
-                return false;
-            else
-                return Item1Comparer.Equals(first, other.first) &&
-                       Item2Comparer.Equals(second, other.second);
-        }
-
-        private static bool IsNull(object obj)
-        {
-            return object.ReferenceEquals(obj, null);
-        }
+        sending = sending.Remove(1, 1);
+        sending = sending.Remove(sending.Length - 1, 1);
+        sending += "},";
+        jsonObjectsToSend.Add(sending);
     }
 
     #endregion
 
-    //Code for communicating with client-server system.
-    #region CommunicationWithClientSystem
+    ////Code for Carson's testing purposes////
+    #region DummyTestingCode
 
-    private void send_data() {
+    //Dummy data for the sake of testing.
+    float _x = -15, _y = -10;
+    string result = "receiving failed";
 
+    void OnGUI() {
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), result);
+        GUI.Label(new Rect(0, 20, Screen.width, Screen.height), create_sending_json());
+    }
+
+    string create_test_json() {
+        return "[]";
     }
 
     #endregion

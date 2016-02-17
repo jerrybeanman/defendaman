@@ -1,59 +1,61 @@
-#include "Server.h" 
+#include "Server.h"
 
 using namespace Networking;
 
 /****************************************************************************
-Initialize socket, server address to lookup to, and connect to the server 
+Initialize socket, server address to lookup to, and connect to the server
 
-@return: socket file descriptor 
+@return: socket file descriptor
 *****************************************************************************/
 int Server::Init_TCP_Server_Socket(char* name, short port)
-{   
-    int err;
-
+{
+    int err = -1;
+    std::cerr << "Init_TCP_Server_Socket" << std::endl;
     /* Create a stream socket */
-    if ((_AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) <0 )
+    if ((_AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
     {
         fatal("Init_TCP_Server_Socket: socket() failed\n");
-        return err;
+        return _AcceptingSocket;
     }
-
+    std::cerr << "socket finished" << std::endl;
     /* Fill in server address information */
-    bzero((char *)&_ServerAddress, sizeof(struct sockaddr_in));
+    //bzero((char *)&_ServerAddress, sizeof(struct sockaddr_in));
+    memset(&_ServerAddress, 0, sizeof(struct sockaddr_in));
+
     _ServerAddress.sin_family = AF_INET;
     _ServerAddress.sin_port = htons(port);
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY); // Accept connections from any client
-
+    std::cerr << "binding" << std::endl;
     /* bind server address to accepting socket */
-    if ((err = bind(_ListeningSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
+    if ((err = bind(_AcceptingSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
         fatal("Init_TCP_Server_Socket: bind() failed\n");
         return err;
     }
-
+    std::cerr << "listening" << std::endl;
     /* Listen for connections */
-    listen(_ListeningSocket, MAXCONNECTIONS);
+    listen(_AcceptingSocket, MAXCONNECTIONS);
 
     return 0;
 }
 
 
 /****************************************************************************
-Initialize socket, server address to lookup to, and connect to the server 
+Initialize socket, server address to lookup to, and connect to the server
 
-@return: socket file descriptor 
+@return: socket file descriptor
 *****************************************************************************/
 int Server::TCP_Server_Accept()
 {
-    struct sockaddr_in  ClientAddress;        
+    struct sockaddr_in  ClientAddress;
     int                 NewClientSocket;
     unsigned int        ClientLen = sizeof(ClientAddress);
 
     /* Accepts a connection from the client */
-    if ((NewClientSocket = accept(_ListeningSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
+    if ((NewClientSocket = accept(_AcceptingSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
     {
         fatal("TCP_Server_Accept: accept() failed\n");
-        return NULL;
+        return -1;
     }
 
     /* Adds the address and socket to the vector list */
@@ -67,13 +69,13 @@ int Server::TCP_Server_Accept()
 }
 
 /****************************************************************************
-Recives packets from a specific socket, should be in a child proccess 
+Recives packets from a specific socket, should be in a child proccess
 
-@return: packet of size PACKETLEN 
+@return: packet of size PACKETLEN
 *****************************************************************************/
 std::string Server::TCP_Server_Recieve(int TargetSocket)
 {
-    std::string         packet;                             /* packet to be returned               */                 
+    std::string         packet;                             /* packet to be returned               */
     int                 BytesRead;                          /* bytes read from one recv call       */
     int                 BytesToRead;                        /* remaining bytes to read from socket */
     char *              buf = (char *)malloc(BUFSIZE);      /* buffer read from one recv call      */
@@ -92,14 +94,14 @@ std::string Server::TCP_Server_Recieve(int TargetSocket)
 }
 
 /****************************************************************************
-prints the list of addresses currently stored 
+prints the list of addresses currently stored
 
 @return: void
 *****************************************************************************/
 void Server::PrintAddresses()
 {
-    std::cout << "List of addresses\n";  
-    /*for(auto x : _ClientAddresses)  
+    std::cout << "List of addresses\n";
+    /*for(auto x : _ClientAddresses)
     {
       std::cout << "scamaz\n";
     }*/
@@ -115,13 +117,13 @@ int Server::Init_UDP_Server_Socket(char* name, short port)
 {
     int err;
     /* Create a file descriptor for the socket */
-    
+
     if((err = _ListeningSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
     {
         fatal("Init_UDP_Server_Socket: socket() failed\n");
         return err;
     }
-      
+
     /* Fill in server socket address structure */
     memset((char *)&_ServerAddress, 0, sizeof(_ServerAddress));
     _ServerAddress.sin_family = AF_INET;
@@ -167,5 +169,5 @@ std::string Server::UDP_Server_Recv()
 
 void Server::fatal(char* error)
 {
-    std::cout << error << std::endl;
+    std::cerr << error << std::endl;
 }

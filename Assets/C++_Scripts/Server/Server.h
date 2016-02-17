@@ -18,35 +18,33 @@ namespace Networking
     class Server
     {
         public:
-             Server();
-            ~Server();
 
             /****************************************************************************
-            Initialize socket, server address to lookup to, and connect to the server 
+            Initialize socket, server address to lookup to, and connect to the server
 
-            @return: socket file descriptor 
+            @return: socket file descriptor
             *****************************************************************************/
             int Init_TCP_Server_Socket(char* name, short port);
 
             /****************************************************************************
-            Initialize socket, server address to lookup to, and connect to the server 
+            Initialize socket, server address to lookup to, and connect to the server
 
-            @return: socket file descriptor 
+            @return: socket file descriptor
             *****************************************************************************/
             int TCP_Server_Accept();
 
             /****************************************************************************
-            Recives packets from a specific socket, should be in a child proccess 
+            Recives packets from a specific socket, should be in a child proccess
 
-            @return: packet of size PACKETLEN 
+            @return: packet of size PACKETLEN
             *****************************************************************************/
             std::string TCP_Server_Recieve(int TargetSocket);
 
 
             /****************************************************************************
-            Initialize socket, and server address to lookup to 
-            
-            @return: socket file descriptor and the server address for future use 
+            Initialize socket, and server address to lookup to
+
+            @return: socket file descriptor and the server address for future use
             *****************************************************************************/
             int Init_UDP_Server_Socket(char* name, short port);
 
@@ -59,7 +57,7 @@ namespace Networking
             std::string UDP_Server_Recv();
 
             /****************************************************************************
-            prints the list of addresses currently stored 
+            prints the list of addresses currently stored
 
             @return: void
             *****************************************************************************/
@@ -74,10 +72,10 @@ namespace Networking
         	int 				_AcceptingSocket;
 
             /* List of client addresses currently connected */
-            std::vector<struct sockaddr_in> _ClientAddresses; 
+            std::vector<struct sockaddr_in> _ClientAddresses;
 
             /* List of client sockets currently connected */
-            std::vector<int>                _ClientSockets; 
+            std::vector<int>                _ClientSockets;
     };
 }
 #endif

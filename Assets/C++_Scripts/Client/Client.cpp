@@ -12,11 +12,8 @@ int Client::Init_TCP_Client_Socket(char* name, short port)
     // local address that client socket is bound to
     struct sockaddr local;
 
-    // socket file descriptor to the new client socket
-    int clientSock;
-
     // create TCP socket
-    if((clientSock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    if((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         fatal("failed to create TCP socket");
         return -1;
@@ -24,13 +21,14 @@ int Client::Init_TCP_Client_Socket(char* name, short port)
 
     // Initialize socket address 
     local = Init_SockAddr(name, port);
-    
-    if(connect(clientSock, (struct sockaddr*) &local, sizeof(local)) == -1)
+ 
+    if(connect(serverSocket, (struct sockaddr*) &local, sizeof(local)) == -1)
     {
+        std::cout << errno << std::endl;
         fatal("failed to connect to remote host");
         return -1;
     }
-    return clientSock;
+    return 1;
 }
 
 /****************************************************************************
@@ -88,7 +86,16 @@ struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
     memcpy(&ret, &addr, sizeof(ret));
     return ret;
 }
+bool Client::sendTeamRequest(std::string request)
+{
+    if (send(serverSocket, request.c_str(), request.size() + 1, 0))
+    {
+         fatal("Team request fail");      
+         return false;
+    }
+    return true;
+}
 void Client::fatal(char* error)
 {
-    std::cout << error << std::endl;
+    perror(error);
 }

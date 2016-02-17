@@ -1,4 +1,4 @@
-CC = g++ -Wall -pedantic -W
+CC = g++ -Wall -pedantic -W -ggdb
 
 Client:	Client.o main.o
 	$(CC) Client.o main.o -o Client
