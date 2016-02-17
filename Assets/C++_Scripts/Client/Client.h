@@ -44,6 +44,16 @@ namespace Networking
             *****************************************************************************/
             struct sockaddr Init_SockAddr(char* hostname, short hostPort);
 
+            
+            int receiveUDP(int sd, struct sockaddr* server, char* rbuf); 
+            /****************************************************************************
+            Wrapper function for UDP sendTo function. Failing to send prints an error
+            message with the data intended to send. 
+
+            @return: the number of bytes sent, otherwise return -1 for error
+            *****************************************************************************/
+            int sendUDP(int socket, char *data, struct sockaddr server);
+
             void fatal(char* error);
 
         private:
