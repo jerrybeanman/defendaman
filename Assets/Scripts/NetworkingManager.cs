@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
+using System.Runtime.InteropServices;
 
 /*Carson
 Being used to denote what type of data we are sending/receiving for a given JSON object.
@@ -15,7 +16,7 @@ Note: Does not start at value 0. Reason being, if JSON parser fails, it returns 
 for fail does not work 
 */
 public enum DataType {
-    Player = 1, Projectile = 2, Enviroment = 3
+    Player = 1, Projectile = 2, Environment = 3
 }
 
 /*Carson
@@ -33,51 +34,14 @@ e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's 
 */
 public class NetworkingManager : MonoBehaviour
 {
-
-    // Use this for initialization
-    void Start()
-    {
-
-        /*Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Player " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
-            }, DataType.Player, 1);
-
-        Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Player " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
-            }, DataType.Player, 3);
-
-        Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Projectile " + json["ID"] + " x:" + json["x"].AsInt + " y:" + json["y"].AsInt);
-            }, DataType.Projectile, 2);
-
-        Subscribe(
-            (JSONClass json) =>
-            {
-                Debug.Log("Enviroment Data:" + json["data"]);
-            }, DataType.Enviroment);*/
-    }
-
-    //Dummy data for the sake of testing.
-    int _x = -12, _y = -4;
-
     // Update is called once per frame
     void Update()
     {
-        //Fake receiving of data every frame 
-        update_data("["
-                 + "{DataType : 1, ID : 1, x : " + _x + ", y : " + _y + "}"
-                 + "]");
-        _x += 2;
-        _y += 1;
+        update_data(receive_data());
+        send_data();
     }
 
-    //Code for subscribing to updates from client-server system.
+    ////Code for subscribing to updates from client-server system////
     #region SubscriberSystem
 
     //Holds the subscriber data
@@ -113,7 +77,7 @@ public class NetworkingManager : MonoBehaviour
             int dataType = obj["DataType"].AsInt;
             int id = obj["ID"].AsInt;
 
-            if (id != 0 || dataType == (int)DataType.Enviroment) {
+            if (id != 0 || dataType == (int)DataType.Environment) {
                 Pair pair = new Pair((DataType)dataType, id);
                 if (_subscribedActions.ContainsKey(pair)) {
                     foreach (Action<JSONClass> callback in _subscribedActions[pair]) {
@@ -195,11 +159,63 @@ public class NetworkingManager : MonoBehaviour
 
     #endregion
 
-    //Code for communicating with client-server system.
+    ////Code for communicating with client-server system////
     #region CommunicationWithClientSystem
 
-    private void send_data() {
+    // Imported function from C++ library for receiving data
+    [DllImport("NetworkingLibrary.so")]
+    private static extern IntPtr receiveData();
 
+    // Imported function from C++ library for sending data
+    [DllImport("NetworkingLibrary.so")]
+    private static extern void sendData(string data);
+
+    private void send_data() {
+        sendData(create_sending_json());
+    }
+
+    private string receive_data() {
+        try {
+            result = Marshal.PtrToStringAnsi(receiveData());
+        } catch (Exception e) {
+            result = e.ToString();
+        }
+        return result;
+    }
+
+    private string create_sending_json() {
+        string sending = "";
+        Action<string, KeyCode> addKey = (string name, KeyCode key) => {
+            sending += " \"" + name + "\" : " + ((Input.GetKey(key)) ? "1," : "0,");
+        };
+
+        sending = "{";
+        addKey("W", KeyCode.W);
+        addKey("A", KeyCode.A);
+        addKey("S", KeyCode.S);
+        addKey("D", KeyCode.D);
+        addKey("LC", KeyCode.Mouse0);
+        addKey("RC", KeyCode.Mouse1);
+        sending = sending.Remove(1, 1);
+        sending = sending.Remove(sending.Length - 1, 1);
+        sending += "}";
+
+        return sending;
+    }
+
+    #endregion
+
+    ////Code for Carson's testing purposes////
+    #region DummyTestingCode
+
+    //Dummy data for the sake of testing.
+    int _x = -15, _y = -10;
+    string result = "receiving failed";
+
+    void OnGUI()
+    {
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), result);
+        GUI.Label(new Rect(0, 20, Screen.width, Screen.height), create_sending_json());
     }
 
     #endregion
