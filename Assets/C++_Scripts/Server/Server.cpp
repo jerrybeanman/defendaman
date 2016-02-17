@@ -65,41 +65,41 @@ int Server::TCP_Server_Accept()
     _ClientSockets.push_back(NewClientSocket);
 
     /* Adds the player to a team */
-    if((_TeamOne.size()+_TeamTwo.size()) < MAXCONNECTIONS) 
+    if((_TeamOne.size()+_TeamTwo.size()) < MAXCONNECTIONS)
     {
         p.connection = ClientAddress;
-        if(_TeamOne.size() <= _TeamTwo.size()) 
+        if(_TeamOne.size() <= _TeamTwo.size())
         {
             p.team = "Team One";
             _TeamOne.push_back(p);
 	    	send (NewClientSocket, "a", 1, 0);
-        } 
-        else if(_TeamTwo.size() < _TeamOne.size()) 
+        }
+        else if(_TeamTwo.size() < _TeamOne.size())
         {
             p.team = "Team Two";
             _TeamTwo.push_back(p);
 	    	send (NewClientSocket, "b", 1, 0);
-        } 
-        else 
+        }
+        else
         {
             std::cerr << "Unable to add player to team" << std::endl;
             return -1;
         }
-    } 
-    else 
+    }
+    else
     {
         std::cerr << "The lobby is full" << std::endl;
         return -1;
     }
     std::cerr << "The player is added to " << std::endl;
-    
+
 	pid_t ClientProcess;
 	ClientProcess = fork();
 
 	if(ClientProcess == 0)
 	{
 		TCP_Server_Listen(NewClientSocket);
-	}    
+	}
 
     /***************************************************
     * Create a child process here to handle new client *
@@ -115,9 +115,9 @@ threads.
 *****************************************************************************/
 void Server::TCP_Server_Listen(int ClientSocket)
 {
-	int 			Socket = *(int*)ClientSocket; /* Client listening Socket. */ 			
-	std::string 	packet; 				/* packet received from the Client */	
-	
+	int 			Socket = *(int*)ClientSocket; /* Client listening Socket. */
+	std::string 	packet; 				/* packet received from the Client */
+
 
 	/*
 	TODO:
@@ -125,7 +125,7 @@ void Server::TCP_Server_Listen(int ClientSocket)
 		and or kill the thread naturally.
 	*/
 	while(1)
-	{ 
+	{
 		packet = TCP_Server_Recieve(Socket);
 		if(packet.size() > 0)
 		{
@@ -246,6 +246,17 @@ void Server::pingAll(char* message)
     }
 }
 
+/* Echoes the message back to the client*/
+void Server::UDP_Server_Send(const char* message)
+{
+  struct sockaddr_in Client = _ClientAddresses.back(); //last client that sent to server
+  if (sendto(_ListeningSocket, message, sizeof(message), 0, (sockaddr *)&Client, sizeof(Client)) == -1)
+  {
+    fatal("Send to UDP client failed\n");
+  } else {
+    std::cerr << "UDP packet sent successfully." << std::endl;
+  }
+}
 
 void Server::fatal(char* error)
 {
