@@ -8,7 +8,7 @@ int main()
 
   std::cerr << "Go!" << std::endl;
   Server s;
-  rc = s.Init_TCP_Server_Socket("bananas", 5150);
+  rc = s.Init_TCP_Server_Socket("", 5150);
 
   if(rc != 0)
   {

@@ -53,14 +53,14 @@ namespace Networking
 
 			@return: NULL
 *****************************************************************************/
-			void TCP_Server_Listen(int ClientSocket);
+			void TCP_Server_Listen();
 
 /****************************************************************************
             Recives packets from a specific socket, should be in a child proccess
 
             @return: packet of size PACKETLEN
             *****************************************************************************/
-            std::string TCP_Server_Recieve(int TargetSocket);
+            std::string TCP_Server_Receive();
 
 
             /****************************************************************************
@@ -95,8 +95,9 @@ namespace Networking
 
         private:
         	struct sockaddr_in 	_ServerAddress;
-        	int 				_ListeningSocket;
-        	int 				_AcceptingSocket;
+        	int 				_UDPReceivingSocket;
+        	int 				_TCPAcceptingSocket;
+		int				_TCPReceivingSocket;
 
             /* List of client addresses currently connected */
             std::vector<struct sockaddr_in> _ClientAddresses;
