@@ -7,24 +7,25 @@ int main()
   int rc;
   std::string incPacket;
 
-  /*std::cerr << "Go!" << std::endl;
+  std::cerr << "Go!" << std::endl;
   Server s;
-  rc = s.Init_TCP_Server_Socket("bananas", 5150);
+  rc = s.Init_TCP_Server_Socket("", 5150);
 
   if(rc != 0)
   {
-    std::cerr << "shit fucked up yo." << std::endl;
+    std::cerr << "TCP Server initialization failed." << std::endl;
     return -1;
   }
 
-  std::cerr << "Hit" << std::endl;
+  std::cerr << "TCP Server initialized." << std::endl;
   while(1) {
     if (s.TCP_Server_Accept() == 0)
     {
-      std::cerr << "woohoo" << std::endl;
+      std::cerr << "Client accepted." << std::endl;
     }
-  }*/
+  }
 
+/*
   Server udpServer;
   int udpSocket;
   udpSocket = udpServer.Init_UDP_Server_Socket("UDP server", 8000);
@@ -43,7 +44,7 @@ int main()
       udpServer.UDP_Server_Send(incPacket.c_str());
     }
   }
-
+*/
 
 
 

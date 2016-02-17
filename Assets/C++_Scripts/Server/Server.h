@@ -16,6 +16,8 @@
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
+/* 
+=======
 /*
    Structure of a PlayerNetworkEntity
    ** Will move to a more appropriate location later
@@ -53,14 +55,15 @@ namespace Networking
 
 			@return: NULL
 *****************************************************************************/
-			void TCP_Server_Listen(int ClientSocket);
+
+			void TCP_Server_Listen();
 
 /****************************************************************************
             Recives packets from a specific socket, should be in a child proccess
 
             @return: packet of size PACKETLEN
             *****************************************************************************/
-            std::string TCP_Server_Recieve(int TargetSocket);
+            std::string TCP_Server_Receive();
 
 
             /****************************************************************************
@@ -96,9 +99,10 @@ namespace Networking
             void UDP_Server_Send(const char* message);
 
         private:
-        	struct sockaddr_in 	_ServerAddress;
-        	int 				_ListeningSocket;
-        	int 				_AcceptingSocket;
+        	struct sockaddr_in 		_ServerAddress;
+        	int 				_UDPReceivingSocket;
+        	int 				_TCPAcceptingSocket;
+		int				_TCPReceivingSocket;
 
             /* List of client addresses currently connected */
             std::vector<struct sockaddr_in> _ClientAddresses;
