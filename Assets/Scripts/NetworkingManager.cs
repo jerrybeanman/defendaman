@@ -171,15 +171,15 @@ public class NetworkingManager : MonoBehaviour
     private static extern void sendData(string data);
 
     private void send_data() {
-        sendData(create_sending_json());
+        if (Application.platform == RuntimePlatform.LinuxPlayer)
+            sendData(create_sending_json());
     }
 
     private string receive_data() {
-        try {
+        if (Application.platform == RuntimePlatform.LinuxPlayer)
             result = Marshal.PtrToStringAnsi(receiveData());
-        } catch (Exception e) {
-            result = e.ToString();
-        }
+        else
+            result = "[]";
         return result;
     }
 
