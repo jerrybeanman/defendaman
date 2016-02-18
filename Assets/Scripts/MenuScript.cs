@@ -68,7 +68,7 @@ public class MenuScript : MonoBehaviour {
     }
 
     //---- connection menu ----
-    public void joinLobby()
+    public void connectToServer()
     {
         string name = getInputText("PlayerName");
         string ip = getInputText("ServerIP");
@@ -83,7 +83,7 @@ public class MenuScript : MonoBehaviour {
         }
         if (!(name.Length == 0) && !(ip.Length == 0))
         {
-            Debug.Log("Go To Lobby");
+            Debug.Log("connect to lobby()");
             //Application.LoadLevel("TestScene");
         }
     }
