@@ -14,7 +14,7 @@ EchoServer:
 	$(CC) -o EchoServer udp_echo_svr.c
 
 clean:
-	rm -f *.o core.* Game Lobby EchoServer
+	rm -f *.o core.* Game
 
 Client.o: Client.cpp Client.h
 	$(CC) -c -g Client.cpp

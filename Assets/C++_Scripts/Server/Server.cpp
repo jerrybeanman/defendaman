@@ -12,10 +12,10 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
     int err = -1;
     std::cerr << "Init_TCP_Server_Socket" << std::endl;
     /* Create a stream socket */
-    if ((_AcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
+    if ((_TCPAcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
     {
         fatal("Init_TCP_Server_Socket: socket() failed\n");
-        return _AcceptingSocket;
+        return _TCPAcceptingSocket;
     }
     std::cerr << "socket finished" << std::endl;
     /* Fill in server address information */
@@ -26,15 +26,17 @@ int Server::Init_TCP_Server_Socket(char* name, short port)
     _ServerAddress.sin_port = htons(port);
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY); // Accept connections from any client
     std::cerr << "binding" << std::endl;
+
     /* bind server address to accepting socket */
-    if ((err = bind(_AcceptingSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
+    if ((err = bind(_TCPAcceptingSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
         fatal("Init_TCP_Server_Socket: bind() failed\n");
         return err;
     }
     std::cerr << "listening" << std::endl;
+
     /* Listen for connections */
-    listen(_AcceptingSocket, MAXCONNECTIONS);
+    listen(_TCPAcceptingSocket, MAXCONNECTIONS);
 
     return 0;
 }
@@ -48,11 +50,12 @@ Initialize socket, server address to lookup to, and connect to the server
 int Server::TCP_Server_Accept()
 {
     struct sockaddr_in  ClientAddress;
-    int                 NewClientSocket;
     unsigned int        ClientLen = sizeof(ClientAddress);
+    Player              p;
+    pthread_t		ClientThread;
 
     /* Accepts a connection from the client */
-    if ((NewClientSocket = accept(_AcceptingSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
+    if ((_TCPReceivingSocket = accept(_TCPAcceptingSocket, (struct sockaddr *)&ClientAddress, &ClientLen)) == -1)
     {
         fatal("TCP_Server_Accept: accept() failed\n");
         return -1;
@@ -60,12 +63,66 @@ int Server::TCP_Server_Accept()
 
     /* Adds the address and socket to the vector list */
     _ClientAddresses.push_back(ClientAddress);
-    _ClientSockets.push_back(NewClientSocket);
+    _ClientSockets.push_back(_TCPReceivingSocket);
 
+    /* Adds the player to a team */
+    if((_TeamOne.size()+_TeamTwo.size()) < MAXCONNECTIONS) 
+    {
+        p.connection = ClientAddress;
+        if(_TeamOne.size() <= _TeamTwo.size()) 
+        {
+            p.team = "Team One";
+            _TeamOne.push_back(p);
+	    	send (_TCPReceivingSocket, "a", 1, 0);
+        } 
+        else if(_TeamTwo.size() < _TeamOne.size()) 
+        {
+            p.team = "Team Two";
+            _TeamTwo.push_back(p);
+	    	send (_TCPReceivingSocket, "b", 1, 0);
+        } 
+        else 
+        {
+            std::cerr << "Unable to add player to team" << std::endl;
+            return -1;
+        }
+    } 
+    else 
+    {
+        std::cerr << "The lobby is full" << std::endl;
+        return -1;
+    }
+    std::cerr << "The player is added to " << std::endl;
+    
     /***************************************************
-    * Create a child process here to handle new client *
-    ****************************************************/
+    * Create a child process here to handle new client * ****************************************************/
     return 0;
+}
+
+/****************************************************************************
+Infinite Loop for listening on a connect client's socket. This is used by
+threads.
+
+@return: NULL
+*****************************************************************************/
+void Server::TCP_Server_Listen()
+{
+	std::string 	packet; 				/* packet received from the Client */	
+
+	/*
+	TODO:
+	-Create a method where the thread is able to leave the infinite loop
+		and or kill the thread naturally.
+	*/
+	while(1)
+	{ 
+		if(packet.size() > 0)
+		{
+			std::cerr << "Got a packet." << std::endl;
+		}
+	}
+
+	return;
 }
 
 /****************************************************************************
@@ -73,7 +130,7 @@ Recives packets from a specific socket, should be in a child proccess
 
 @return: packet of size PACKETLEN
 *****************************************************************************/
-std::string Server::TCP_Server_Recieve(int TargetSocket)
+std::string Server::TCP_Server_Receive()
 {
     std::string         packet;                             /* packet to be returned               */
     int                 BytesRead;                          /* bytes read from one recv call       */
@@ -82,7 +139,7 @@ std::string Server::TCP_Server_Recieve(int TargetSocket)
 
     BytesToRead = PACKETLEN;
 
-    while ((BytesRead = recv (TargetSocket, buf, PACKETLEN, 0)) < PACKETLEN)
+    while ((BytesRead = recv (_TCPReceivingSocket, buf, PACKETLEN, 0)) < PACKETLEN)
     {
         /* store buffer read into packet */
         packet += buf;
@@ -90,6 +147,7 @@ std::string Server::TCP_Server_Recieve(int TargetSocket)
         /* decrement remaining bytes to read */
         BytesToRead -= BytesRead;
     }
+    free(buf);
     return packet;
 }
 
@@ -118,7 +176,7 @@ int Server::Init_UDP_Server_Socket(char* name, short port)
     int err;
     /* Create a file descriptor for the socket */
 
-    if((err = _ListeningSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+    if((err = _UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
     {
         fatal("Init_UDP_Server_Socket: socket() failed\n");
         return err;
@@ -131,7 +189,7 @@ int Server::Init_UDP_Server_Socket(char* name, short port)
     _ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 
     /* Bind server address to the socket */
-    if((err = bind(_ListeningSocket, (sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) < 0)
+    if((err = bind(_UDPReceivingSocket, (sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) < 0)
     {
         fatal("Init_UDP_Server_Socket: bind() failed\n");
         return err;
@@ -154,7 +212,7 @@ std::string Server::UDP_Server_Recv()
     unsigned ClientLen = sizeof(Client);
     char * buf = (char *)malloc(BUFSIZE);
 
-    if((err = recvfrom(_ListeningSocket, buf, BUFSIZE, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
+    if((err = recvfrom(_UDPReceivingSocket, buf, BUFSIZE, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
     {
         fatal("UDP_Server_Recv: recvfrom() failed\n");
         return NULL;
@@ -167,7 +225,31 @@ std::string Server::UDP_Server_Recv()
     return packet;
 }
 
+/****************************************************************************
+Sends a message to all the clients
+
+*****************************************************************************/
+void Server::pingAll(char* message)
+{
+    for(int i = 0 ; 0 < _ClientSockets.size(); i++){
+        send (_ClientSockets[i], message, sizeof(message), 0);
+    }
+}
+
+/* Echoes the message back to the client*/
+void Server::UDP_Server_Send(const char* message)
+{
+  struct sockaddr_in Client = _ClientAddresses.back(); //last client that sent to server
+  if (sendto(_UDPReceivingSocket, message, sizeof(message), 0, (sockaddr *)&Client, sizeof(Client)) == -1)
+  {
+    fatal("Send to UDP client failed\n");
+  } else {
+    std::cerr << "UDP packet sent successfully." << std::endl;
+  }
+}
+
 void Server::fatal(char* error)
 {
     std::cerr << error << std::endl;
 }
+

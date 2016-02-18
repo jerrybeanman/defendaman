@@ -86,6 +86,7 @@ struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
     memcpy(&ret, &addr, sizeof(ret));
     return ret;
 }
+
 bool Client::sendTeamRequest(std::string request)
 {
     if (send(serverSocket, request.c_str(), request.size() + 1, 0))
@@ -95,6 +96,45 @@ bool Client::sendTeamRequest(std::string request)
     }
     return true;
 }
+
+/****************************************************************************
+Wrapper function for receiving from server. Prints message on error.
+
+@return: Size of message received, -1 if failed.
+*****************************************************************************/
+int Client::receiveUDP(int sd, struct sockaddr* server, char* rbuf)
+{
+
+    int recSz;
+    socklen_t server_len = sizeof(server);
+
+    if((recSz = recvfrom (sd, rbuf, strlen(rbuf), 0, (struct sockaddr *)server, &server_len)) < 0)
+    {
+        std::cerr << "Failed in receiveUDP" << std::endl;
+        return -1;
+    }
+    return recSz;
+}
+
+/****************************************************************************
+Wrapper function for UDP sendTo function. Failing to send prints an error
+message with the data intended to send.
+
+@return: the number of bytes sent, otherwise return -1 for error
+*****************************************************************************/
+int Client::sendUDP(int socket, char *data, struct sockaddr server)
+{
+
+    int sent;
+    if ((sent = sendto(socket, data, strlen(data), 0, &server, sizeof(server))) == -1)
+    {
+        std::cerr << "Failed to send UDP: " << data << std::endl;
+        return -1;
+    }
+    return sent;
+}
+
+
 void Client::fatal(char* error)
 {
     perror(error);
