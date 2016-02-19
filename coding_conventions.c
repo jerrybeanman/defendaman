@@ -41,5 +41,5 @@ public SomeStruct RetriveServerPackets();	// easier to call from an IDE (Auto co
 private functions declared with lowercase seperated with "_"
 public functions declared Uppcaes for every word
 *****************************************************************/
-private void attemp_move();			// see if the player can move, check for blockables in its path
+private void _AttemptMove();			// see if the player can move, check for blockables in its path
 public void GetPlayerPosition();		// retrieves the 2D vector of where the player is currently at
