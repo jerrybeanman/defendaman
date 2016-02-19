@@ -17,18 +17,24 @@ namespace Networking
             int InitializeSocket(short port);
 
             /*
-	            Initialize socket, server address to lookup to, and connect to the server
+                 Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
+                Add connected player to the list of players
 
-	            @return: socket file descriptor
+                @return: socket file descriptor
             */
             int Accept(Player * player);
 
-
-            int CreateClientManager(int PlayerID);
             /*
-	            Recives packets from a specific socket, should be in a child proccess
+                Creates a child process to handle incoming messages from new player that has just connected to the lobby
 
-	            @return: packet of size PACKETLEN
+                @return: child PDI (0 for child process)
+            */
+            int CreateClientManager(int PlayerID);
+            
+           /*   
+                Recieves data from child process that is dedicated for each player's socket
+
+                @return: 1 on success, -1 on error, 0 on disconnect
             */
             int Receive(Player * player);
 
