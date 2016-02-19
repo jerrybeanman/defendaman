@@ -11,22 +11,25 @@
 #include <vector>
 #include <unistd.h>
 #include <pthread.h>
+#include <errno.h>
+#include <stdio.h>
 
-#define PACKETLEN       2000
+#define PACKETLEN       128
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
-/* 
-=======
+
 /*
    Structure of a PlayerNetworkEntity
    ** Will move to a more appropriate location later
    ** Unsure of info that will be required
 */
 typedef struct Player {
+    int            socket;
     sockaddr_in    connection;
-    std::string    username;
-    std::string    team;
+    int            id;
+    char           username[32];
+    char           team[32];
 } Player;
 
 namespace Networking
@@ -34,93 +37,53 @@ namespace Networking
     class Server
     {
         public:
+            Server(){}
+            ~Server(){}
+            /*
+                Initialize socket, server address to lookup to, and connect to the server
 
-            /****************************************************************************
-            Initialize socket, server address to lookup to, and connect to the server
+                @return: socket file descriptor
+            */
+            virtual int InitializeSocket(short port) = 0;
 
-            @return: socket file descriptor
-            *****************************************************************************/
-            int Init_TCP_Server_Socket(char* name, short port);
+            /*
+                Sends a message to all the clients
 
-            /****************************************************************************
-            Initialize socket, server address to lookup to, and connect to the server
+            */
+            virtual void Broadcast(char* message) = 0;
 
-            @return: socket file descriptor
-            *****************************************************************************/
-            int TCP_Server_Accept();
+            /*
+                Initialize socket, and server address to lookup to
 
-/****************************************************************************
-			Infinite Loop for listening on a connect client's socket. This is used by
-			threads.
-
-			@return: NULL
-*****************************************************************************/
-
-			void TCP_Server_Listen();
-
-/****************************************************************************
-            Recives packets from a specific socket, should be in a child proccess
-
-            @return: packet of size PACKETLEN
-            *****************************************************************************/
-            std::string TCP_Server_Receive();
+                @return: socket file descriptor and the server address for future use
+            */
+            int Init_UDP_Server_Socket(short port);
 
 
-            /****************************************************************************
-            Initialize socket, and server address to lookup to
+            /*
+                Listen for incoming UDP traffics
 
-            @return: socket file descriptor and the server address for future use
-            *****************************************************************************/
-            int Init_UDP_Server_Socket(char* name, short port);
-
-
-            /****************************************************************************
-            Listen for incoming UDP traffics
-
-            @return: a packet
-            *****************************************************************************/
+                @return: a packet
+            */
             std::string UDP_Server_Recv();
 
-            /****************************************************************************
-            prints the list of addresses currently stored
+            /*
+                prints the list of addresses currently stored
 
-            @return: void
-            *****************************************************************************/
+                @return: void
+            */
             void PrintAddresses();
 
-	    /****************************************************************************
-            Sends a message to all the clients
 
-            *****************************************************************************/
-            void pingAll(char* message);
-
-            void fatal(char* error);
+            void fatal(const char* error);
 
             void UDP_Server_Send(const char* message);
 
-        private:
-        	struct sockaddr_in 		_ServerAddress;
-        	int 				_UDPReceivingSocket;
-        	int 				_TCPAcceptingSocket;
-		int				_TCPReceivingSocket;
+        protected:
+        	struct sockaddr_in     _ServerAddress;
+        	int 				   _UDPReceivingSocket;
+            int                    _TCPAcceptingSocket;
 
-            /* List of client addresses currently connected */
-            std::vector<struct sockaddr_in> _ClientAddresses;
-
-            /* List of client sockets currently connected */
-            std::vector<int>                _ClientSockets;
-
-            /**
-             * Note:
-             * This is placeholder code for two teams.
-             * TODO: a vector of teams.
-             * /
-
-            /* Team ONE - Player connections and info. */
-            std::vector<Player>             _TeamOne;
-
-            /* Team TWO - Player connections and info. */
-            std::vector<Player>             _TeamTwo;
     };
 }
 #endif
