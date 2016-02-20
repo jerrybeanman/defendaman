@@ -3,6 +3,14 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System;
 
+/*-----------------------------------------------------------------------------
+-- InventorySlot.cs - Visual item slot for the inventory system
+--
+-- DATE:		17/02/2016
+-- REVISIONS:	(V1.0)
+-- DESIGNER:	Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang
+-----------------------------------------------------------------------------*/
 public class InventorySlot : MonoBehaviour, IDropHandler
 {
     public int slot_pos;

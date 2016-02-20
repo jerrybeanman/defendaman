@@ -2,6 +2,14 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/*-----------------------------------------------------------------------------
+-- Tooltip.cs - Script to make a tooltip when you mouse over an item
+--
+-- DATE:		17/02/2016
+-- REVISIONS:	(V1.0)
+-- DESIGNER:	Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang
+-----------------------------------------------------------------------------*/
 public class Tooltip : MonoBehaviour {
 
     private Item _item;

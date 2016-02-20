@@ -3,6 +3,14 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System;
 
+/*-----------------------------------------------------------------------------
+-- ItemData.cs - C# class to represent and hold a item
+--
+-- DATE:		17/02/2016
+-- REVISIONS:	(V1.0)
+-- DESIGNER:	Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang
+-----------------------------------------------------------------------------*/
 public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Item item;
