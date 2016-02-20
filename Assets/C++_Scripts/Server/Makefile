@@ -1,13 +1,24 @@
-CC = g++ -Wall -pedantic -W
 
-Server:	Server.o main.o
-	$(CC) Server.o main.o -o Server
+# Makefile 
+# Jerry Jia
 
+CC=g++
+NAME=Server		
+FLAGS=-Wall
+S_FILES= Server.cpp ServerTCP.cpp main.cpp
+OBJECT_FILES=$(S_FILES:.cpp=.o)
+META_FILES=$(S_FILES:.cpp=.cpp.meta)
+
+
+$(NAME): 	$(OBJECT_FILES)
+		$(CC) $(FLAGS) -o $(NAME) $(OBJECT_FILES) 
+
+debug:
+		$(CC) $(FLAGS) -g -o $(NAME) $(OBJECT_FILES) 
 clean:
-	rm -f *.o core.* Server
+		rm $(OBJECT_FILES) $(NAME) $(META_FILES) Makefile.meta
 
-Server.o: Server.cpp Server.h
-	$(CC) -c Server.cpp
-
-main.o:	main.cpp
-	$(CC) -c main.cpp
+remake:
+		make cleanclera
+		clear
+		make

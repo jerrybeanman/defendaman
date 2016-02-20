@@ -1,30 +1,33 @@
 #include "Server.h"
+#include "ServerTCP.h"
 
 using namespace Networking;
+
 
 int main()
 {
   int rc;
+  ServerTCP TestServer;
 
-  std::cerr << "Go!" << std::endl;
-  Server s;
-  rc = s.Init_TCP_Server_Socket("bananas", 5150);
-
-  if(rc != 0)
+  if((rc = TestServer.InitializeSocket(7000)) != 0)
   {
     std::cerr << "TCP Server initialization failed." << std::endl;
     return -1;
   }
 
   std::cerr << "TCP Server initialized." << std::endl;
-  while(1) {
-    if (s.TCP_Server_Accept() == 0)
-    {
-      std::cerr << "Client accepted." << std::endl;
-    }
+
+  while(1) 
+  {
+      int PlayerID;
+      struct Player player;
+      if ((PlayerID = TestServer.Accept(&player)) == -1)
+      {
+        std::cerr << "rip.\n" << std::endl;
+      }
+      if(TestServer.CreateClientManager(PlayerID) == 0)
+        break;
   }
-
-
 
 
   return 0;
