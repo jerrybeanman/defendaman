@@ -46,9 +46,9 @@ public class Inventory : MonoBehaviour
             slot_list[i].GetComponent<InventorySlot>().slot_pos = i;
             slot_list[i].transform.SetParent(_slot_panel.transform);
         }
-        //AddItem(0);
-        //AddItem(1);
-        //AddItem(1);
+        AddItem(0);
+        AddItem(1);
+        AddItem(1);
     }
 
 
