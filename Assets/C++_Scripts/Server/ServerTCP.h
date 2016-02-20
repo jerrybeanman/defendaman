@@ -1,5 +1,6 @@
 #ifndef SERVER_TCP
 #define SERVER_TCP
+#include <sstream>      // std::istringstream
 #include "Server.h"
 
 namespace Networking
@@ -30,7 +31,7 @@ namespace Networking
                 @return: child PDI (0 for child process)
             */
             int CreateClientManager(int PlayerID);
-            
+
            /*   
                 Recieves data from child process that is dedicated for each player's socket
 
@@ -42,7 +43,7 @@ namespace Networking
                 Sends a message to all the clients
 
             */
-            virtual void Broadcast(char* message);
+            void Broadcast(std::string message);
 
             void PrintPlayer(Player p);
         private:

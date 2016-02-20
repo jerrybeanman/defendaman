@@ -50,7 +50,7 @@ namespace Networking
                 Sends a message to all the clients
 
             */
-            virtual void Broadcast(char* message) = 0;
+            virtual void Broadcast(std::string message) = 0;
 
             /*
                 Initialize socket, and server address to lookup to
