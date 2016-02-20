@@ -4,7 +4,7 @@ using namespace Networking;
 
 int main()
 {
-    Client* c = new Client();
+    Client * c = new Client();
     std::string teamRequest;
 
     //Connect to requested IP address and port

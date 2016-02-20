@@ -11,12 +11,17 @@ int ServerTCP::InitializeSocket(short port)
 {
     int err = -1;
 
+	int optval = 1;	/* set SO_REUSEADDR on a socket to true (1) */
+
     /* Create a TCP streaming socket */
     if ((_TCPAcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
     {
         fatal("InitializeSocket: socket() failed\n");
         return _TCPAcceptingSocket;
     }
+    
+    /* Allows other sockets to bind() to this port, unless there is an active listening socket bound to the port already. */
+	setsockopt(_TCPAcceptingSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
     /* Fill in server address information */
     memset(&_ServerAddress, 0, sizeof(struct sockaddr_in));
@@ -27,7 +32,7 @@ int ServerTCP::InitializeSocket(short port)
     /* bind server address to accepting socket */
     if ((err = bind(_TCPAcceptingSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
-        std::cout << "InitializeSocket: bind() failed with errno\n" << errno << std::endl;
+        std::cout << "InitializeSocket: bind() failed with errno " << errno << std::endl;
         return err;
     }
 
@@ -70,6 +75,8 @@ int ServerTCP::Accept(Player * player)
 int ServerTCP::CreateClientManager(int PlayerID)
 {
 	int ChildPID;
+
+	/* Creates a child process to handle new client */
 	if((ChildPID = fork()) == 0)
 	{
 		this->ServerTCP::Receive(&_PlayerList[PlayerID]);
@@ -86,25 +93,38 @@ int ServerTCP::CreateClientManager(int PlayerID)
 int ServerTCP::Receive(Player * player)
 {
 	int BytesRead;
-    char *              buf = (char *)malloc(PACKETLEN);      /* buffer read from one recv call      */
+    char * buf;							/* buffer read from one recv call      					 */
 
+	std::ostringstream 	oss;			/* istringstream object 								 */
+	std::string 		EchoMsg;		/* message that will be echoed back to connected players */	
+
+	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 									 */
     while (1)
     {
     	BytesRead = recv (player->socket, buf, PACKETLEN, 0);
-    	if(BytesRead < 0)
+
+    	if(BytesRead < 0) /* recv() failed */
     	{
-    		std::cerr << "recv() failed with errno: \n" << errno << std::endl;
+    		std::cerr << "recv() failed with errno: " << errno << std::endl;
     		return 0;
     	}
-    	if(BytesRead == 0)
+    	if(BytesRead == 0) /* client disconnected */ 
     	{
-    		std::cerr << "Player " << player->id + 1 <<  " has left the lobby\n"<< std::endl;
+    		std::cerr << "Player " << player->id + 1 <<  " has left the lobby"<< std::endl;
     		return 0;
     	}
 
         /* Format of the packet: "username team" */
     	sscanf(buf, "%s %s", player->username, player->team);
        	PrintPlayer(*player);
+
+       	/* Construct echo packet */
+       	oss << player->id + 1 << " " << player->username <<  " " << player->team;
+      	EchoMsg = oss.str();
+
+      	/* Broadcast echo packet back to all players*/
+      	this->ServerTCP::Broadcast(EchoMsg);
+      	s.clear();
     }
     free(buf);
     return 1;
@@ -114,9 +134,17 @@ int ServerTCP::Receive(Player * player)
 	Sends a message to all the clients
 
 */
-void ServerTCP::Broadcast(char* message)
+void ServerTCP::Broadcast(std::string message)
 {
-	return;
+	for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
+	{
+		if(send(_PlayerList[i].socket, message.c_str(), message.size() + 1, 0) == -1)
+		{
+			std::cerr << "Broadcast() failed for player id: " << _PlayerList[i].id + 1 << std::endl;
+			std::cerr << "errno: " << errno << std::endl;
+			return;
+		}
+	}
 }
 
 void ServerTCP::PrintPlayer(Player p)
