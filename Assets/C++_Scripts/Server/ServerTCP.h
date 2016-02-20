@@ -10,7 +10,7 @@ namespace Networking
 		public:
 			ServerTCP(){}
 			~ServerTCP(){}
-			/*
+	    	/*
 	            Initialize socket, server address to lookup to, and connect to the server
 
 	            @return: socket file descriptor
@@ -48,7 +48,7 @@ namespace Networking
             void PrintPlayer(Player p);
         private:
 
-            /* Team ONE - Player connections and info. */
+            /* List of players currently connected to the server */
             std::vector<Player>             _PlayerList;
 	};
 }

@@ -46,7 +46,7 @@ int ServerTCP::InitializeSocket(short port)
 	Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
 	Add connected player to the list of players
 
-	@return: socket file descriptor
+	@return: id that is assigned to the player
 */
 int ServerTCP::Accept(Player * player)
 {
