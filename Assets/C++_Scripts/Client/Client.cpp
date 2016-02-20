@@ -2,11 +2,11 @@
 
 using namespace Networking;
 
-/****************************************************************************
-Initialize socket, server address to lookup to, and connect to the server 
+/*
+    Initialize socket, server address to lookup to, and connect to the server 
 
-@return: socket file descriptor 
-*****************************************************************************/
+    @return: socket file descriptor 
+*/
 int Client::Init_TCP_Client_Socket(char* name, short port)
 {
     // local address that client socket is bound to
@@ -31,11 +31,11 @@ int Client::Init_TCP_Client_Socket(char* name, short port)
     return 1;
 }
 
-/****************************************************************************
-Initialize socket, and server address to lookup to 
+/*
+    Initialize socket, and server address to lookup to 
 
-@return: socket file descriptor and the server address for future use 
-*****************************************************************************/
+    @return: socket file descriptor and the server address for future use 
+*/
 std::pair<int, struct sockaddr> Client::Init_UDP_Client_Socket(char* name, short port)
 {
     // local address that client socket is bound to
@@ -57,12 +57,12 @@ std::pair<int, struct sockaddr> Client::Init_UDP_Client_Socket(char* name, short
     return std::make_pair(clientSock, local);
 }
 
-/****************************************************************************
-Initialize the socket address structure by recieving the port number and 
-either the hostname or an IPV4 address
+/*
+    Initialize the socket address structure by recieving the port number and 
+    either the hostname or an IPV4 address
 
-@return: socket file descriptor and the server address for future use 
-*****************************************************************************/
+    @return: socket file descriptor and the server address for future use 
+*/
 struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
 {
     //address that client socket should connect to
@@ -89,19 +89,29 @@ struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
 
 bool Client::sendTeamRequest(std::string request)
 {
-    if (send(serverSocket, request.c_str(), request.size() + 1, 0))
+    int BytesRead;
+    char * buf;
+    buf = (char *)malloc(PACKETLEN);
+    if (send(serverSocket, request.c_str(), request.size() + 1, 0) == -1)
     {
          fatal("Team request fail");      
          return false;
     }
+    if((BytesRead = recv(serverSocket, buf, PACKETLEN, 0)) < 0)
+    {
+        std::cerr << "recv() failed with errno: " << errno << std::endl;
+        return false;
+    }
+    std::cout << "Recieved broadcast message from server " << std::endl;
+    std::cout << buf << std::endl;
     return true;
 }
 
-/****************************************************************************
-Wrapper function for receiving from server. Prints message on error.
+/*
+    Wrapper function for receiving from server. Prints message on error.
 
-@return: Size of message received, -1 if failed.
-*****************************************************************************/
+    @return: Size of message received, -1 if failed.
+*/
 int Client::receiveUDP(int sd, struct sockaddr* server, char* rbuf)
 {
 
@@ -116,12 +126,12 @@ int Client::receiveUDP(int sd, struct sockaddr* server, char* rbuf)
     return recSz;
 }
 
-/****************************************************************************
-Wrapper function for UDP sendTo function. Failing to send prints an error
-message with the data intended to send.
+/*
+    Wrapper function for UDP sendTo function. Failing to send prints an error
+    message with the data intended to send.
 
-@return: the number of bytes sent, otherwise return -1 for error
-*****************************************************************************/
+    @return: the number of bytes sent, otherwise return -1 for error
+*/
 int Client::sendUDP(int socket, char *data, struct sockaddr server)
 {
 
