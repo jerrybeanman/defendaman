@@ -6,14 +6,19 @@ public struct PlayerStuff
 {
 	public int Dexterity;
 	public float MaxHealth;
+
+	/* needs to cast as UnmanagedType for boolean if we wanna cast structs from C++ to C# */
 	[MarshalAs(UnmanagedType.U1)]	
 	public bool IsHit;
 }
 
 public class Test_Plugin : MonoBehaviour {
+
+	/* Imported function from C++ library to handle structs */
 	[DllImport("MySharedLibrary.so", CallingConvention = CallingConvention.Cdecl)]
 	private static extern PlayerStuff getPlayerStuff();
 
+	/* Imported function from C++ library */
 	[DllImport("MySharedLibrary.so")]
 	private static extern int gettwo();
 	
@@ -68,13 +73,13 @@ public class Test_Plugin : MonoBehaviour {
 		/* Testing for C++ wrapper function, creates a child process and returns 2 */
 		if (gettwo() == 2)
 		{
-			if (spriteRenderer.sprite == sprite1) // if the spriteRenderer sprite = sprite1 then change to sprite2
+			if (spriteRenderer.sprite == sprite1) /* if the spriteRenderer sprite = sprite1 then change to sprite2 */
 			{
 				spriteRenderer.sprite = sprite2;
 			}
 			else
 			{
-				spriteRenderer.sprite = sprite1; // otherwise change it back to sprite1
+				spriteRenderer.sprite = sprite1; /* otherwise change it back to sprite1 */
 			}
 		}
 	}
