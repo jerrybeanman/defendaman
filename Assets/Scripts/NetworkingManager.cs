@@ -33,6 +33,15 @@ This method takes in three things:
 e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
 */
 public class NetworkingManager : MonoBehaviour {
+    // Game object to send data of
+    public GameObject player;
+
+    //Holds the subscriber data
+    private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
+
+    //List of JSON strings to be sent on the next available packet
+    private static List<string> jsonObjectsToSend = new List<string>();
+
     // Update is called once per frame
     void Update() {
         update_data(receive_data());
@@ -41,9 +50,6 @@ public class NetworkingManager : MonoBehaviour {
 
     ////Code for subscribing to updates from client-server system////
     #region SubscriberSystem
-
-    //Holds the subscriber data
-    private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
     /*
     To subscribe for an objects updates from server, you would call the public Subscribe method.
     This method takes in three things:
@@ -90,8 +96,6 @@ public class NetworkingManager : MonoBehaviour {
 
     ////Code for communicating with client-server system////
     #region CommunicationWithClientSystem
-    // Game object to send data of
-    public GameObject player;
 
     // Imported function from C++ library for receiving data
     [DllImport("NetworkingLibrary.so")]
@@ -141,7 +145,6 @@ public class NetworkingManager : MonoBehaviour {
     }
 
     //Add data to be sent
-    private static List<string> jsonObjectsToSend = new List<string>();
     public static void send_next_packet(DataType type, int id, List<Pair<string, string>> memersToSend) {
         string sending = "";
         sending = "{";
@@ -160,7 +163,6 @@ public class NetworkingManager : MonoBehaviour {
 
     ////Code for Carson's testing purposes////
     #region DummyTestingCode
-
     //Dummy data for the sake of testing.
     float _x = -15, _y = -10;
     string result = "receiving failed";
