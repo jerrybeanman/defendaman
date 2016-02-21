@@ -16,6 +16,9 @@ public class MenuScript : MonoBehaviour {
 	                                                      short port);
 
 	[DllImport("ClientLibrary.so")]
+	private static extern void DisposeClient(IntPtr client);
+
+	[DllImport("ClientLibrary.so")]
 	private static extern int Call_Send(IntPtr client, 
 	                                    string message, 
 	                                    int size);
@@ -92,8 +95,10 @@ public class MenuScript : MonoBehaviour {
     public void SelectTeam(int team)
     {
         // add player text with appropriate colour to canvas
-        _AddPlayerToLobbyList(_player_name, team);
-		Call_Send(TCPClient, _player_name + "selected " + team + "!", 30);
+
+		// This call is causing an error
+        //_AddPlayerToLobbyList(_player_name, team);
+		Call_Send(TCPClient, _player_name + " selected " + team + "!", 30);
 
         team_select_panel.SetActive(false);
     }
@@ -226,6 +231,9 @@ public class MenuScript : MonoBehaviour {
 
     public void Back()
     {
+		//disconnect from server
+		DisposeClient(TCPClient);
+
         foreach (GameObject go in _lobby_list)
         {
             Destroy(go);
