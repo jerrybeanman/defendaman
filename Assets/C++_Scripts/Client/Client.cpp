@@ -90,7 +90,7 @@ struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
 bool Client::sendTeamRequest(std::string request)
 {
     int BytesRead;
-    char * buf;
+    char * buf
     buf = (char *)malloc(PACKETLEN);
     if (send(serverSocket, request.c_str(), request.size() + 1, 0) == -1)
     {
