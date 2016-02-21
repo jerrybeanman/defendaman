@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class GameCreation : MonoBehaviour {
+    public float speed = 0;
 
 	// Use this for initialization
 	void Start () {

@@ -6,10 +6,11 @@ using SimpleJSON;
 //Carson
 //Dummy class to emulate a player 1 object subscribing for data updates & handling receiving this data.
 public class NetworkingManager_test1 : MonoBehaviour {
+    public int playerID;
 
 	// Use this for initialization
 	void Start () {
-        NetworkingManager.Subscribe(update_position, DataType.Player, 1);
+        NetworkingManager.Subscribe(update_position, DataType.Player, playerID);
 	}
 
     void update_position(JSONClass player1) {
