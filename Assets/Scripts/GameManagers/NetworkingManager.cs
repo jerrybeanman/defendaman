@@ -16,7 +16,7 @@ Note: Does not start at value 0. Reason being, if JSON parser fails, it returns 
 for fail does not work 
 */
 public enum DataType {
-    Player = 1, Projectile = 2, Environment = 3
+    Player = 1, Projectile = 2, Environment = 3, StartGame = 4, ControlInformation = 5
 }
 
 /*Carson
@@ -34,7 +34,8 @@ e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's 
 */
 public class NetworkingManager : MonoBehaviour {
     // Game object to send data of
-    public GameObject player;
+    public Transform playerType;
+    private GameObject player;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
@@ -46,6 +47,7 @@ public class NetworkingManager : MonoBehaviour {
     void Update() {
         update_data(receive_data());
         send_data();
+        Subscribe(StartGame, DataType.StartGame);
     }
 
     ////Code for subscribing to updates from client-server system////
@@ -127,11 +129,13 @@ public class NetworkingManager : MonoBehaviour {
         //Open JSON array
         string sending = "[";
 
-        //Add player data
-        var memberItems = new List<Pair<string, string>>();
-        memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
-        memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-        send_next_packet(DataType.Player, 1, memberItems);
+        if (player != null) {
+            //Add player data
+            var memberItems = new List<Pair<string, string>>();
+            memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
+            memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
+            send_next_packet(DataType.Player, 1, memberItems);
+        }
 
         //Add data that external sources want to send
         foreach (var item in jsonObjectsToSend)
@@ -139,7 +143,8 @@ public class NetworkingManager : MonoBehaviour {
         jsonObjectsToSend.Clear();
 
         //Close json array
-        sending = sending.Remove(sending.Length - 1, 1);
+        if (sending.Length > 2)
+            sending = sending.Remove(sending.Length - 1, 1);
         sending += "]";
         return sending;
     }
@@ -157,6 +162,26 @@ public class NetworkingManager : MonoBehaviour {
         sending = sending.Remove(sending.Length - 1, 1);
         sending += "},";
         jsonObjectsToSend.Add(sending);
+    }
+
+    #endregion
+
+    ////Game creation code
+    #region StartOfGame
+
+    //{playerID : 2, players : [{ID : 1, x : 10, y : 10},{ID : 2, x : 20, y : 20}]}
+    void StartGame(JSONClass data) {
+        int myPlayer = data["playerID"].AsInt;
+        foreach(JSONClass playerData in data["playersData"].AsArray) {
+            var createdPlayer = Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, 0), Quaternion.identity);
+            if (myPlayer == playerData["ID"].AsInt) {
+                Debug.Log("Created our player");
+                //Created our player
+            } else {
+                Debug.Log("Created ally");
+                //Created another player
+            }
+        }
     }
 
     #endregion
