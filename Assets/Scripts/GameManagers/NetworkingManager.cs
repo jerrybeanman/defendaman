@@ -43,11 +43,15 @@ public class NetworkingManager : MonoBehaviour {
     //List of JSON strings to be sent on the next available packet
     private static List<string> jsonObjectsToSend = new List<string>();
 
+    void Start() {
+        Subscribe(StartGame, DataType.StartGame);
+        update_data("[{DataType : 4, ID : 0, playerID : 2, playersData : [{ID : 1, x : 0, y : 0},{ID : 2, x : 1, y : 1},{ID : 3, x : -1, y : -1}]}]");
+    }
+
     // Update is called once per frame
     void Update() {
         update_data(receive_data());
         send_data();
-        Subscribe(StartGame, DataType.StartGame);
     }
 
     ////Code for subscribing to updates from client-server system////
@@ -83,10 +87,11 @@ public class NetworkingManager : MonoBehaviour {
             int dataType = obj["DataType"].AsInt;
             int id = obj["ID"].AsInt;
 
-            if (id != 0 || dataType == (int)DataType.Environment) {
+            if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame)) {
                 Pair<DataType, int> pair = new Pair<DataType, int>((DataType)dataType, id);
                 if (_subscribedActions.ContainsKey(pair)) {
                     foreach (Action<JSONClass> callback in _subscribedActions[pair]) {
+                        Debug.Log("Packet received: " + node.ToString());
                         callback(obj);
                     }
                 }
@@ -169,16 +174,25 @@ public class NetworkingManager : MonoBehaviour {
     ////Game creation code
     #region StartOfGame
 
-    //{playerID : 2, players : [{ID : 1, x : 10, y : 10},{ID : 2, x : 20, y : 20}]}
+    //
     void StartGame(JSONClass data) {
         int myPlayer = data["playerID"].AsInt;
-        foreach(JSONClass playerData in data["playersData"].AsArray) {
-            var createdPlayer = Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, 0), Quaternion.identity);
+        Debug.Log("My player: " + myPlayer);
+        foreach (JSONClass playerData in data["playersData"].AsArray) {
+            Debug.Log("Player Data: " + playerData.ToString());
+
+
+            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, 0), Quaternion.identity)).gameObject;
+
             if (myPlayer == playerData["ID"].AsInt) {
                 Debug.Log("Created our player");
+                player = createdPlayer;
+                player.AddComponent<Movement>();
                 //Created our player
             } else {
                 Debug.Log("Created ally");
+                createdPlayer.AddComponent<NetworkingManager_test1>();
+                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData["ID"].AsInt;
                 //Created another player
             }
         }
@@ -198,7 +212,7 @@ public class NetworkingManager : MonoBehaviour {
     }
 
     string create_test_json() {
-        return "[]";
+        return "[{DataType : 1, ID : 1, x : 5, y : 5}]";
     }
 
     #endregion
