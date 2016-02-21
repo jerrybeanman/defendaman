@@ -8,7 +8,7 @@ Basic WASD absolute/static movement.
 
 public class Movement : MonoBehaviour {
     //Speed to move at
-    public float Speed = 0;
+    public float Speed = 5;
 
     //Horizontal movement. 1 is right, -1 is left, 0 is no movement.
     private float movex;
