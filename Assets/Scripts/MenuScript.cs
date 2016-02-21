@@ -2,8 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Runtime.InteropServices;
+using System;
 
 public class MenuScript : MonoBehaviour {
+
+	[DllImport("ClientLibrary.so")]
+	private static extern IntPtr CreateClient();
+
+	[DllImport("ClientLibrary.so")]
+	private static extern int Call_Init_TCP_Client_Socket(IntPtr client, 
+	                                                      string  ipAddress, 
+	                                                      short port);
+
+	[DllImport("ClientLibrary.so")]
+	private static extern int Call_Send(IntPtr client, 
+	                                    string message, 
+	                                    int size);
 
     public enum MenuStates
     {
@@ -28,6 +43,8 @@ public class MenuScript : MonoBehaviour {
     public GameObject team_select_panel;
     public GameObject class_select_panel;
 
+	private	IntPtr 	TCPClient;
+
     void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
@@ -41,6 +58,8 @@ public class MenuScript : MonoBehaviour {
 
         team_select_panel.SetActive(false);
         class_select_panel.SetActive(false);
+
+		TCPClient = CreateClient();
     }
 
     // === connection menu ===
@@ -55,6 +74,7 @@ public class MenuScript : MonoBehaviour {
             _player_name = name;
             _SwitchMenu(MenuStates.Lobby);
             // call function to send player info to server
+			Call_Init_TCP_Client_Socket(TCPClient, ip, 7000);
         }
     }
 
@@ -73,6 +93,7 @@ public class MenuScript : MonoBehaviour {
     {
         // add player text with appropriate colour to canvas
         _AddPlayerToLobbyList(_player_name, team);
+		Call_Send(TCPClient, _player_name + "selected " + team + "!", 30);
 
         team_select_panel.SetActive(false);
     }
@@ -86,6 +107,7 @@ public class MenuScript : MonoBehaviour {
     {
         // TODO: associate class value with player here
         class_select_panel.SetActive(false);
+		Call_Send(TCPClient, "selected class " + value + "!", 20);
     }
 
     private void _AddPlayerToLobbyList(string player_name, int team)
