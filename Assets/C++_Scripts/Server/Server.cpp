@@ -54,7 +54,7 @@ std::string Server::UDP_Server_Recv()
         fatal("UDP_Server_Recv: recvfrom() failed\n");
         return NULL;
     }
-	_ClientAddress.push_back(Client);
+	_ClientAddresses.push_back(Client);
     packet = buf;
     free(buf);
     return packet;
@@ -64,7 +64,7 @@ std::string Server::UDP_Server_Recv()
 void Server::UDP_Server_Send(const char* message)
 {
 	for (int i = 0; 0 <_ClientAddresses.size();i++){
-		if (sendto(_UDPReceivingSocket, message, sizeof(message), 0 , (sockaddr *)&_ClientAddress[i], sizeof(_ClientAddress[i])) == -1)
+		if (sendto(_UDPReceivingSocket, message, sizeof(message), 0 , (sockaddr *)&_ClientAddressses[i], sizeof(_ClientAddressses[i])) == -1)
 		{
 			fatal("Send to UDP Client failed \n");
 		}
