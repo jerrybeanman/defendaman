@@ -195,6 +195,7 @@ public class NetworkingManager : MonoBehaviour {
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
                 player.AddComponent<Movement>();
+                player.AddComponent<PlayerRotation>();
                 //Created our player
             } else {
                 Debug.Log("Created ally");
@@ -214,8 +215,8 @@ public class NetworkingManager : MonoBehaviour {
     string result = "receiving failed";
 
     void OnGUI() {
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), result);
-        GUI.Label(new Rect(0, 20, Screen.width, Screen.height), create_sending_json());
+        GUI.Label(new Rect(290, 0, Screen.width, Screen.height), result);
+        GUI.Label(new Rect(290, 20, Screen.width, Screen.height), create_sending_json());
     }
 
     string create_test_json() {
