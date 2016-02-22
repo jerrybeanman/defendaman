@@ -2,6 +2,18 @@
 
 using namespace Networking;
 
+
+/*
+    Constructor.
+*/
+Client::Client()
+{
+  // Initialize the circular buffer
+  CBInitialize(&CBPackets, MAXPACKETS, PACKETLEN);
+  // allocate space for the one packet of data
+  // that is being exposed to unity
+  currentData = (char *)malloc(PACKETLEN);
+}
 /*
     Initialize socket, server address to lookup to, and connect to the server
 
@@ -94,6 +106,8 @@ int Client::Recv(char * message, int size, int * bytesRead)
         std::cerr << "recv() failed with errno: " << errno << std::endl;
         return errno;
     }
+    // push message to queue
+    CBPushBack(&CBPackets, message);
     return 0;
 }
 
@@ -148,4 +162,15 @@ int Client::sendUDP(int socket, char *data, struct sockaddr server)
 void Client::fatal(const char* error)
 {
     perror(error);
+}
+
+char* Client::GetData()
+{
+  if (CBPackets.Count != 0) {
+    //memset(currentData, 0, PACKETLEN);
+    CBPop(&CBPackets, currentData);
+  } else {
+  //  strcpy(currentData, "jery");
+  }
+  return currentData;
 }
