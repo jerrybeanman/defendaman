@@ -1,0 +1,331 @@
+fileFormatVersion: 2
+guid: b95d2567f1e01ba4fb631566c57e0b87
+timeCreated: 1456009440
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: gunboi_defendaman_256_grid_template_0
+    21300002: gunboi_defendaman_256_grid_template_1
+    21300004: gunboi_defendaman_256_grid_template_2
+    21300006: gunboi_defendaman_256_grid_template_3
+    21300008: gunboi_defendaman_256_grid_template_4
+    21300010: gunboi_defendaman_256_grid_template_5
+    21300012: gunboi_defendaman_256_grid_template_6
+    21300014: gunboi_defendaman_256_grid_template_7
+    21300016: gunboi_defendaman_256_grid_template_8
+    21300018: gunboi_defendaman_256_grid_template_9
+    21300020: gunboi_defendaman_256_grid_template_10
+    21300022: gunboi_defendaman_256_grid_template_11
+    21300024: gunboi_defendaman_256_grid_template_12
+    21300026: gunboi_defendaman_256_grid_template_13
+    21300028: gunboi_defendaman_256_grid_template_14
+    21300030: gunboi_defendaman_256_grid_template_15
+    21300032: gunboi_defendaman_256_grid_template_16
+    21300034: gunboi_defendaman_256_grid_template_17
+    21300036: gunboi_defendaman_256_grid_template_18
+    21300038: gunboi_defendaman_256_grid_template_19
+    21300040: gunboi_defendaman_256_grid_template_20
+    21300042: gunboi_defendaman_256_grid_template_21
+    21300044: gunboi_defendaman_256_grid_template_22
+    21300046: gunboi_defendaman_256_grid_template_23
+    21300048: gunboi_defendaman_256_grid_template_24
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: gunboi_defendaman_256_grid_template_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1743
+        width: 256
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_1
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 1744
+        width: 256
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_2
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 1744
+        width: 256
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_3
+      rect:
+        serializedVersion: 2
+        x: 1308
+        y: 1744
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_4
+      rect:
+        serializedVersion: 2
+        x: 1744
+        y: 1743
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1309
+        width: 256
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_6
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 1309
+        width: 257
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_7
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 1308
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_8
+      rect:
+        serializedVersion: 2
+        x: 1308
+        y: 1308
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_9
+      rect:
+        serializedVersion: 2
+        x: 1745
+        y: 1308
+        width: 255
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 871
+        width: 254
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_11
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 872
+        width: 257
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_12
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 872
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_13
+      rect:
+        serializedVersion: 2
+        x: 1308
+        y: 873
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_14
+      rect:
+        serializedVersion: 2
+        x: 1744
+        y: 872
+        width: 256
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 436
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_16
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 436
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_17
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 436
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_18
+      rect:
+        serializedVersion: 2
+        x: 1308
+        y: 436
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_19
+      rect:
+        serializedVersion: 2
+        x: 1744
+        y: 436
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_21
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 0
+        width: 256
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_22
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 0
+        width: 256
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_23
+      rect:
+        serializedVersion: 2
+        x: 1308
+        y: 0
+        width: 256
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_defendaman_256_grid_template_24
+      rect:
+        serializedVersion: 2
+        x: 1745
+        y: 2
+        width: 255
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
