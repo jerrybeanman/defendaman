@@ -1,34 +1,34 @@
 fileFormatVersion: 2
-guid: b95d2567f1e01ba4fb631566c57e0b87
-timeCreated: 1456009440
+guid: 85563b0573056ee46a893c6bf541c964
+timeCreated: 1456106752
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: gunboi_defendaman_256_grid_template_0
-    21300002: gunboi_defendaman_256_grid_template_1
-    21300004: gunboi_defendaman_256_grid_template_2
-    21300006: gunboi_defendaman_256_grid_template_3
-    21300008: gunboi_defendaman_256_grid_template_4
-    21300010: gunboi_defendaman_256_grid_template_5
-    21300012: gunboi_defendaman_256_grid_template_6
-    21300014: gunboi_defendaman_256_grid_template_7
-    21300016: gunboi_defendaman_256_grid_template_8
-    21300018: gunboi_defendaman_256_grid_template_9
-    21300020: gunboi_defendaman_256_grid_template_10
-    21300022: gunboi_defendaman_256_grid_template_11
-    21300024: gunboi_defendaman_256_grid_template_12
-    21300026: gunboi_defendaman_256_grid_template_13
-    21300028: gunboi_defendaman_256_grid_template_14
-    21300030: gunboi_defendaman_256_grid_template_15
-    21300032: gunboi_defendaman_256_grid_template_16
-    21300034: gunboi_defendaman_256_grid_template_17
-    21300036: gunboi_defendaman_256_grid_template_18
-    21300038: gunboi_defendaman_256_grid_template_19
-    21300040: gunboi_defendaman_256_grid_template_20
-    21300042: gunboi_defendaman_256_grid_template_21
-    21300044: gunboi_defendaman_256_grid_template_22
-    21300046: gunboi_defendaman_256_grid_template_23
-    21300048: gunboi_defendaman_256_grid_template_24
+    21300000: ninjaboi_running_0
+    21300002: ninjaboi_running_1
+    21300004: ninjaboi_running_2
+    21300006: ninjaboi_running_3
+    21300008: ninjaboi_running_4
+    21300010: ninjaboi_running_5
+    21300012: ninjaboi_running_6
+    21300014: ninjaboi_running_7
+    21300016: ninjaboi_running_8
+    21300018: ninjaboi_running_9
+    21300020: ninjaboi_running_10
+    21300022: ninjaboi_running_11
+    21300024: ninjaboi_running_12
+    21300026: ninjaboi_running_13
+    21300028: ninjaboi_running_14
+    21300030: ninjaboi_running_15
+    21300032: ninjaboi_running_16
+    21300034: ninjaboi_running_17
+    21300036: ninjaboi_running_18
+    21300038: ninjaboi_running_19
+    21300040: ninjaboi_running_20
+    21300042: ninjaboi_running_21
+    21300044: ninjaboi_running_22
+    21300046: ninjaboi_running_23
+    21300048: ninjaboi_running_24
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -75,253 +75,253 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: gunboi_defendaman_256_grid_template_0
+    - name: ninjaboi_running_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1743
-        width: 256
-        height: 234
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_1
-      rect:
-        serializedVersion: 2
-        x: 436
+        x: 3
         y: 1744
-        width: 256
-        height: 227
+        width: 249
+        height: 255
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_2
-      rect:
-        serializedVersion: 2
-        x: 871
-        y: 1744
-        width: 256
-        height: 224
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_3
-      rect:
-        serializedVersion: 2
-        x: 1308
-        y: 1744
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_4
-      rect:
-        serializedVersion: 2
-        x: 1744
-        y: 1743
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_5
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 1309
-        width: 256
-        height: 224
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_6
-      rect:
-        serializedVersion: 2
-        x: 436
-        y: 1309
-        width: 257
-        height: 224
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_7
-      rect:
-        serializedVersion: 2
-        x: 872
-        y: 1308
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_8
-      rect:
-        serializedVersion: 2
-        x: 1308
-        y: 1308
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_9
-      rect:
-        serializedVersion: 2
-        x: 1745
-        y: 1308
-        width: 255
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_10
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 871
-        width: 254
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_11
-      rect:
-        serializedVersion: 2
-        x: 436
-        y: 872
-        width: 257
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_12
-      rect:
-        serializedVersion: 2
-        x: 873
-        y: 872
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_13
-      rect:
-        serializedVersion: 2
-        x: 1308
-        y: 873
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_14
-      rect:
-        serializedVersion: 2
-        x: 1744
-        y: 872
-        width: 256
-        height: 234
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_15
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 436
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_16
-      rect:
-        serializedVersion: 2
-        x: 436
-        y: 436
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_17
-      rect:
-        serializedVersion: 2
-        x: 872
-        y: 436
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_18
-      rect:
-        serializedVersion: 2
-        x: 1308
-        y: 436
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_19
-      rect:
-        serializedVersion: 2
-        x: 1744
-        y: 436
-        width: 256
-        height: 225
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_20
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 256
-        height: 224
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_21
+    - name: ninjaboi_running_1
       rect:
         serializedVersion: 2
         x: 438
-        y: 0
-        width: 256
-        height: 224
+        y: 1743
+        width: 249
+        height: 255
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_22
+    - name: ninjaboi_running_2
       rect:
         serializedVersion: 2
-        x: 872
-        y: 0
-        width: 256
-        height: 225
+        x: 875
+        y: 1745
+        width: 249
+        height: 255
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_23
+    - name: ninjaboi_running_3
       rect:
         serializedVersion: 2
-        x: 1308
-        y: 0
-        width: 256
-        height: 224
+        x: 1312
+        y: 1744
+        width: 248
+        height: 255
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: gunboi_defendaman_256_grid_template_24
+    - name: ninjaboi_running_4
       rect:
         serializedVersion: 2
-        x: 1745
-        y: 2
-        width: 255
-        height: 233
+        x: 1748
+        y: 1745
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_5
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 1309
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_6
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 1307
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_7
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 1309
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_8
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 1309
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_9
+      rect:
+        serializedVersion: 2
+        x: 1748
+        y: 1310
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_10
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 874
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_11
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 874
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_12
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 873
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_13
+      rect:
+        serializedVersion: 2
+        x: 1310
+        y: 873
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_14
+      rect:
+        serializedVersion: 2
+        x: 1746
+        y: 875
+        width: 249
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_15
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 437
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_16
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 437
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_17
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 437
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_18
+      rect:
+        serializedVersion: 2
+        x: 1312
+        y: 436
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_19
+      rect:
+        serializedVersion: 2
+        x: 1748
+        y: 436
+        width: 248
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_20
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 248
+        height: 254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_21
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 0
+        width: 249
+        height: 254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_22
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 0
+        width: 248
+        height: 254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_23
+      rect:
+        serializedVersion: 2
+        x: 1310
+        y: 0
+        width: 249
+        height: 254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_running_24
+      rect:
+        serializedVersion: 2
+        x: 1746
+        y: 0
+        width: 249
+        height: 255
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
