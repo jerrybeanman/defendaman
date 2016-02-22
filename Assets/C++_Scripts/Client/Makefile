@@ -7,8 +7,11 @@ all: TCPClient UDPClient EchoServer
 UDPClient:	game.o Client.o
 	$(CC) Client.o -g game.o -o Game
 
-TCPClient:	main.o Client.o
-	$(CC) Client.o -g main.o -o Lobby
+TCPClient:	main.o Client.o CircularBuffer.o
+	$(CC) Client.o -g main.o CircularBuffer.o -o Lobby
+
+CircularBuffer.o:	CircularBuffer.cpp CircularBuffer.h
+	$(CC) -c -g CircularBuffer.cpp
 
 EchoServer:
 	$(CC) -o EchoServer udp_echo_svr.c

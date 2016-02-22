@@ -10,16 +10,21 @@
 #include <utility>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
+#include "CircularBuffer.h"
 
 #define TeamRequest1 1
 #define TeamRequest2 2
-#define PACKETLEN    32
+//#define PACKETLEN    50
+//#define MAXPACKETS   10
 
 namespace Networking
 {
     class Client
     {
         public:
+
+          Client();
 
             /*
                 Initialize socket, server address to lookup to, and connect to the server
@@ -45,6 +50,7 @@ namespace Networking
 
 
             int receiveUDP(int sd, struct sockaddr* server, char* rbuf);
+
             /*
                 Wrapper function for UDP sendTo function. Failing to send prints an error
                 message with the data intended to send.
@@ -59,8 +65,15 @@ namespace Networking
 
             void fatal(const char* error);
 
+            char* GetData();
+            static const int MAXPACKETS = 10;
+            static const int PACKETLEN = 50;
+
+
         private:
+            CircularBuffer CBPackets; // buffer for data coming in from network
             int serverSocket;
+            char* currentData; // the single instance of data exposed to Unity for reading
     };
 }
 #endif

@@ -2,6 +2,7 @@
 
 using namespace Networking;
 
+
 extern "C" int GetTwo()
 {
 	return 2;
@@ -28,6 +29,25 @@ extern "C" int Call_Init_TCP_Client_Socket(Client * client, const char * name, s
 		client->Init_TCP_Client_Socket(name, port);
     return -1;
 }
+
+extern "C" void Start_Read_Process(Client * client)
+{
+		if(fork() == 0)
+		{
+				int bytesRead;
+				while(1)
+				{
+						char buf[client->PACKETLEN];
+						client->Recv(buf, client->PACKETLEN, &bytesRead);
+				}
+		}
+}
+
+extern "C" char * GetData(Client * client)
+{
+		return client->GetData();
+}
+
 
 extern "C" int Call_Send(Client * client, char * message, int size)
 {
