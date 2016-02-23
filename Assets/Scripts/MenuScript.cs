@@ -22,6 +22,14 @@ public class MenuScript : MonoBehaviour {
 	private static extern int Call_Send(IntPtr client, 
 	                                    string message, 
 	                                    int size);
+	[DllImport("ClientLibrary.so")]
+	private static extern IntPtr GetData(IntPtr client);
+
+	[DllImport("ClientLibrary.so")]
+	private static extern void Start_Read_Process(IntPtr client);
+
+	[DllImport("ClientLibrary.so")]
+	private static extern void ReleaseData(IntPtr client);
 
     public enum MenuStates
     {
@@ -48,6 +56,7 @@ public class MenuScript : MonoBehaviour {
 
 	private	IntPtr 	TCPClient;
 
+	private string RecievedData = "Waiting for Inputs...";
     void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
@@ -64,6 +73,23 @@ public class MenuScript : MonoBehaviour {
 
 		TCPClient = CreateClient();
     }
+	bool connected = false;
+	void Update()
+	{
+		string tmp = Marshal.PtrToStringAnsi(GetData(TCPClient));
+		if(!String.Equals(tmp,"[]"))
+		{
+			RecievedData = "equals?";
+			RecievedData = tmp;
+			ReleaseData(TCPClient);
+		}
+	}
+
+	void OnGUI()
+	{
+		GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+		GUI.Label(new Rect(10, 40, Screen.width, Screen.height), RecievedData);
+	}
 
     // === connection menu ===
     public void JoinLobby()
@@ -78,6 +104,8 @@ public class MenuScript : MonoBehaviour {
             _SwitchMenu(MenuStates.Lobby);
             // call function to send player info to server
 			Call_Init_TCP_Client_Socket(TCPClient, ip, 7000);
+
+			Start_Read_Process(TCPClient);
         }
     }
 
@@ -232,7 +260,7 @@ public class MenuScript : MonoBehaviour {
     public void Back()
     {
 		//disconnect from server
-		DisposeClient(TCPClient);
+		//DisposeClient(TCPClient);
 
         foreach (GameObject go in _lobby_list)
         {
