@@ -99,17 +99,28 @@ struct sockaddr Client::Init_SockAddr(const char* hostname, short hostport)
     return ret;
 }
 
-int Client::Recv(char * message, int size, int * bytesRead)
+void * Client::Recv()
 {
-    if((*bytesRead = recv(serverSocket, message, size, 0)) < 0)
+    int bytesRead;
+    while(1)
     {
-        std::cerr << "recv() failed with errno: " << errno << std::endl;
-        return errno;
+        printf("in Recv() \n");
+        printf("Address of serverSocket in Recv() %d", &serverSocket);
+        char message[PACKETLEN];
+        if((bytesRead = recv(serverSocket, message, PACKETLEN, 0)) < 0)
+        {
+            printf("recv() failed with errno: %d", errno);
+            return (void *)errno;
+        }
+        printf("Recv() before CBPushBack(): %s\n", message);
+        // push message to queue
+        CBPushBack(&CBPackets, message);
+        printf("Recv() got data: %s\n", message);
     }
-    // push message to queue
-    CBPushBack(&CBPackets, message);
-    return 0;
+    return NULL;
 }
+
+
 
 int Client::Send(char * message, int size)
 {
@@ -167,10 +178,13 @@ void Client::fatal(const char* error)
 char* Client::GetData()
 {
   if (CBPackets.Count != 0) {
-    //memset(currentData, 0, PACKETLEN);
+    memset(currentData, 0, PACKETLEN);
     CBPop(&CBPackets, currentData);
-  } else {
-  //  strcpy(currentData, "jery");
+    printf("GetData() Got data %s\n", currentData);
+  } else
+  {
+    printf("Address of serverSocket in GetData() %d\n", &serverSocket);
+    strcpy(currentData, "[]");
   }
   return currentData;
 }
