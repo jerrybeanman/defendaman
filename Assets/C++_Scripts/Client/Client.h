@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "CircularBuffer.h"
 
 #define TeamRequest1 1
@@ -23,6 +24,7 @@ namespace Networking
     class Client
     {
         public:
+          pthread_t ReadThread;
 
           Client();
 
@@ -59,7 +61,8 @@ namespace Networking
             */
             int sendUDP(int socket, char *data, struct sockaddr server);
 
-            int Recv(char * message, int size, int * bytesRead);
+            void * Recv();
+
 
             int Send(char * message, int size);
 
@@ -68,7 +71,6 @@ namespace Networking
             char* GetData();
             static const int MAXPACKETS = 10;
             static const int PACKETLEN = 50;
-
 
         private:
             CircularBuffer CBPackets; // buffer for data coming in from network
