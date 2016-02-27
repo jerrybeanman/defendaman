@@ -1,13 +1,13 @@
-#include "Client.h" 
+#include "Client.h"
 
 using namespace Networking;
 
 /*
-    Initialize socket, server address to lookup to, and connect to the server 
+    Initialize socket, server address to lookup to, and connect to the server
 
-    @return: socket file descriptor 
+    @return: socket file descriptor
 */
-int Client::Init_TCP_Client_Socket(char* name, short port)
+int Client::Init_TCP_Client_Socket(const char* name, short port)
 {
     // local address that client socket is bound to
     struct sockaddr local;
@@ -19,9 +19,9 @@ int Client::Init_TCP_Client_Socket(char* name, short port)
         return -1;
     }
 
-    // Initialize socket address 
+    // Initialize socket address
     local = Init_SockAddr(name, port);
- 
+
     if(connect(serverSocket, (struct sockaddr*) &local, sizeof(local)) == -1)
     {
         std::cout << errno << std::endl;
@@ -32,9 +32,9 @@ int Client::Init_TCP_Client_Socket(char* name, short port)
 }
 
 /*
-    Initialize socket, and server address to lookup to 
+    Initialize socket, and server address to lookup to
 
-    @return: socket file descriptor and the server address for future use 
+    @return: socket file descriptor and the server address for future use
 */
 std::pair<int, struct sockaddr> Client::Init_UDP_Client_Socket(char* name, short port)
 {
@@ -50,7 +50,7 @@ std::pair<int, struct sockaddr> Client::Init_UDP_Client_Socket(char* name, short
         fatal("failed to create TCP socket");
     }
 
-    // Initialize socket addresss 
+    // Initialize socket addresss
     local = Init_SockAddr(name, port);
 
     // return socket address as well for future use
@@ -58,16 +58,16 @@ std::pair<int, struct sockaddr> Client::Init_UDP_Client_Socket(char* name, short
 }
 
 /*
-    Initialize the socket address structure by recieving the port number and 
+    Initialize the socket address structure by recieving the port number and
     either the hostname or an IPV4 address
 
-    @return: socket file descriptor and the server address for future use 
+    @return: socket file descriptor and the server address for future use
 */
-struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
+struct sockaddr Client::Init_SockAddr(const char* hostname, short hostport)
 {
     //address that client socket should connect to
     struct sockaddr_in addr;
-    
+
     struct hostent* host;
 
     //set up port and protocol of address structure
@@ -79,7 +79,7 @@ struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
     {
         std::cout << "Error in gethostbyname" << std::endl;
     }
-    
+
     memcpy(&addr.sin_addr, host->h_addr, host->h_length);
 
     struct sockaddr ret;
@@ -87,24 +87,24 @@ struct sockaddr Client::Init_SockAddr(char* hostname, short hostport)
     return ret;
 }
 
-bool Client::sendTeamRequest(std::string request)
+int Client::Recv(char * message, int size, int * bytesRead)
 {
-    int BytesRead;
-    char * buf;
-    buf = (char *)malloc(PACKETLEN);
-    if (send(serverSocket, request.c_str(), request.size() + 1, 0) == -1)
-    {
-         fatal("Team request fail");      
-         return false;
-    }
-    if((BytesRead = recv(serverSocket, buf, PACKETLEN, 0)) < 0)
+    if((*bytesRead = recv(serverSocket, message, size, 0)) < 0)
     {
         std::cerr << "recv() failed with errno: " << errno << std::endl;
-        return false;
+        return errno;
     }
-    std::cout << "Recieved broadcast message from server " << std::endl;
-    std::cout << buf << std::endl;
-    return true;
+    return 0;
+}
+
+int Client::Send(char * message, int size)
+{
+    if (send(serverSocket, message, size, 0) == -1)
+    {
+      std::cerr << "send() failed with errno: " << errno << std::endl;
+      return errno;
+    }
+    return 0;
 }
 
 /*
@@ -145,7 +145,7 @@ int Client::sendUDP(int socket, char *data, struct sockaddr server)
 }
 
 
-void Client::fatal(char* error)
+void Client::fatal(const char* error)
 {
     perror(error);
 }
