@@ -8,9 +8,10 @@ namespace Networking
 	class ServerTCP : public Server
 	{
 		public:
+
 			ServerTCP(){}
 			~ServerTCP(){}
-	    	/*
+	    			/*
 	            Initialize socket, server address to lookup to, and connect to the server
 
 	            @return: socket file descriptor
@@ -30,26 +31,27 @@ namespace Networking
 
                 @return: child PDI (0 for child process)
             */
-            int CreateClientManager(int PlayerID);
+            static void * CreateClientManager(void * server);
 
-           /*   
+           /*
                 Recieves data from child process that is dedicated for each player's socket
 
                 @return: 1 on success, -1 on error, 0 on disconnect
             */
-            int Receive(Player * player);
+          	void * Receive();
 
-	        /*
+	        	/*
                 Sends a message to all the clients
 
             */
-            void Broadcast(std::string message);
+            void Broadcast(char * message);
 
             void PrintPlayer(Player p);
         private:
+						Player newPlayer;
+						/* List of players currently connected to the server */
+						std::vector<Player>             _PlayerList;
 
-            /* List of players currently connected to the server */
-            std::vector<Player>             _PlayerList;
 	};
 }
 
