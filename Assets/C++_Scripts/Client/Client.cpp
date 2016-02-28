@@ -104,18 +104,23 @@ void * Client::Recv()
     int bytesRead;
     while(1)
     {
-        printf("in Recv() \n");
-        printf("Address of serverSocket in Recv() %d", &serverSocket);
-        char message[PACKETLEN];
-        if((bytesRead = recv(serverSocket, message, PACKETLEN, 0)) < 0)
-        {
-            printf("recv() failed with errno: %d", errno);
+
+        int bytesToRead = PACKETLEN;
+        char *message = (char *) malloc(PACKETLEN);
+        while((bytesRead = recv(serverSocket, message, bytesToRead, 0)) < PACKETLEN)
+         {
+           printf("Recv\n");
+          if(bytesRead < 0)
+          {
+            printf("recv() failed with errno: %d\n", errno);
             return (void *)errno;
+          }
+          message += bytesRead;
+          bytesToRead -= bytesRead;
         }
-        printf("Recv() before CBPushBack(): %s\n", message);
         // push message to queue
         CBPushBack(&CBPackets, message);
-        printf("Recv() got data: %s\n", message);
+        free(message); 
     }
     return NULL;
 }
@@ -130,25 +135,6 @@ int Client::Send(char * message, int size)
       return errno;
     }
     return 0;
-}
-
-/*
-    Wrapper function for receiving from server. Prints message on error.
-
-    @return: Size of message received, -1 if failed.
-*/
-int Client::receiveUDP(int sd, struct sockaddr* server, char* rbuf)
-{
-
-    int recSz;
-    socklen_t server_len = sizeof(server);
-
-    if((recSz = recvfrom (sd, rbuf, strlen(rbuf), 0, (struct sockaddr *)server, &server_len)) < 0)
-    {
-        std::cerr << "Failed in receiveUDP" << std::endl;
-        return -1;
-    }
-    return recSz;
 }
 
 /*
@@ -177,13 +163,12 @@ void Client::fatal(const char* error)
 
 char* Client::GetData()
 {
-  if (CBPackets.Count != 0) {
+  if (CBPackets.Count != 0)
+  {
     memset(currentData, 0, PACKETLEN);
     CBPop(&CBPackets, currentData);
-    printf("GetData() Got data %s\n", currentData);
   } else
   {
-    printf("Address of serverSocket in GetData() %d\n", &serverSocket);
     strcpy(currentData, "[]");
   }
   return currentData;

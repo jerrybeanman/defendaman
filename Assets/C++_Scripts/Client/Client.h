@@ -16,7 +16,7 @@
 
 #define TeamRequest1 1
 #define TeamRequest2 2
-//#define PACKETLEN    50
+//#define PACKETLEN    128
 //#define MAXPACKETS   10
 
 namespace Networking
@@ -70,7 +70,7 @@ namespace Networking
 
             char* GetData();
             static const int MAXPACKETS = 10;
-            static const int PACKETLEN = 50;
+            static const int PACKETLEN = 128;
 
         private:
             CircularBuffer CBPackets; // buffer for data coming in from network

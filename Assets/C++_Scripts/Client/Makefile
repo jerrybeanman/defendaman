@@ -1,29 +1,14 @@
 CC = g++ -Wall -pedantic -W -ggdb
 
 make:
-all: TCPClient UDPClient EchoServer
+all:
+	library
 
 
-UDPClient:	game.o Client.o
-	$(CC) Client.o -g game.o -o Game
-
-TCPClient:	main.o Client.o CircularBuffer.o
-	$(CC) Client.o -g main.o CircularBuffer.o -o Lobby
-
-CircularBuffer.o:	CircularBuffer.cpp CircularBuffer.h
-	$(CC) -c -g CircularBuffer.cpp
-
-EchoServer:
-	$(CC) -o EchoServer udp_echo_svr.c
+library:
+	g++ client_library.cpp Client.cpp CircularBuffer.cpp  -O3 -fPIC -shared -o ClientLibrary.so
+	mv ClientLibrary.so ../../../
 
 clean:
-	rm -f *.o core.* Game Lobby EchoServer
-
-Client.o: Client.cpp Client.h
-	$(CC) -c -g Client.cpp
-
-game.o:	game.cpp
-	$(CC) -c -g game.cpp
-
-main.o: main.cpp
-	$(CC) -c -g main.cpp
+	rm ClientLibrary.so
+	rm ../../../ClientLibrary.so
