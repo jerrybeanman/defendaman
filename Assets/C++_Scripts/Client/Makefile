@@ -1,14 +1,14 @@
-CC = g++ -Wall -pedantic -W -ggdb
+CC = g++  -std=c++11 -Wall -pedantic -W -ggdb
 
 make:
-all: TCPClient UDPClient EchoServer
+all: LobbyClient GameClient EchoServer
 
 
-UDPClient:	game.o Client.o
-	$(CC) Client.o -g game.o -o Game
+GameClient:	main.o Client.o CircularBuffer.o GameClient.o
+	$(CC) main.o Client.o CircularBuffer.o GameClient.o -o GameClient
 
-TCPClient:	main.o Client.o CircularBuffer.o
-	$(CC) Client.o -g main.o CircularBuffer.o -o Lobby
+LobbyClient:	main.o Client.o CircularBuffer.o LobbyClient.o
+	$(CC) main.o Client.o CircularBuffer.o LobbyClient.o -o LobbyClient
 
 CircularBuffer.o:	CircularBuffer.cpp CircularBuffer.h
 	$(CC) -c -g CircularBuffer.cpp
@@ -17,10 +17,16 @@ EchoServer:
 	$(CC) -o EchoServer udp_echo_svr.c
 
 clean:
-	rm -f *.o core.* Game Lobby EchoServer
+	rm -f *.o core.* Game GameClient LobbyClient EchoServer
 
 Client.o: Client.cpp Client.h
 	$(CC) -c -g Client.cpp
+
+GameClient.o: GameClient.cpp GameClient.h
+	$(CC) -c -g GameClient.cpp
+
+LobbyClient.o: LobbyClient.cpp LobbyClient.h
+	$(CC) -c -g LobbyClient.cpp
 
 game.o:	game.cpp
 	$(CC) -c -g game.cpp
