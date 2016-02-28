@@ -24,7 +24,8 @@
    ** Will move to a more appropriate location later
    ** Unsure of info that will be required
 */
-typedef struct Player {
+typedef struct Player
+{
     int            socket;
     sockaddr_in    connection;
     int            id;
@@ -50,7 +51,7 @@ namespace Networking
                 Sends a message to all the clients
 
             */
-            virtual void Broadcast(std::string message) = 0;
+            virtual void Broadcast(char * message) = 0;
 
             /*
                 Initialize socket, and server address to lookup to
@@ -81,8 +82,8 @@ namespace Networking
 
         protected:
         	struct sockaddr_in     _ServerAddress;
-        	int 				   _UDPReceivingSocket;
-            int                    _TCPAcceptingSocket;
+        	int 				           _UDPReceivingSocket;
+          int                    _TCPAcceptingSocket;
 
     };
 }
