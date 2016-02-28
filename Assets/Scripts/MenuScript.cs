@@ -16,9 +16,6 @@ public class MenuScript : MonoBehaviour {
 	                                                      short port);
 
 	[DllImport("ClientLibrary.so")]
-	private static extern void DisposeClient(IntPtr client);
-
-	[DllImport("ClientLibrary.so")]
 	private static extern int Call_Send(IntPtr client, 
 	                                    string message, 
 	                                    int size);
@@ -27,10 +24,7 @@ public class MenuScript : MonoBehaviour {
 
 	[DllImport("ClientLibrary.so")]
 	private static extern void Start_Read_Process(IntPtr client);
-
-	[DllImport("ClientLibrary.so")]
-	private static extern void ReleaseData(IntPtr client);
-
+	
     public enum MenuStates
     {
         Previous, Settings, Connect, Lobby
@@ -77,11 +71,10 @@ public class MenuScript : MonoBehaviour {
 	void Update()
 	{
 		string tmp = Marshal.PtrToStringAnsi(GetData(TCPClient));
-		if(!String.Equals(tmp,"[]"))
+		if(!String.Equals(tmp,"[]") && tmp != "")
 		{
 			RecievedData = "equals?";
 			RecievedData = tmp;
-			ReleaseData(TCPClient);
 		}
 	}
 
@@ -260,7 +253,6 @@ public class MenuScript : MonoBehaviour {
     public void Back()
     {
 		//disconnect from server
-		//DisposeClient(TCPClient);
 
         foreach (GameObject go in _lobby_list)
         {
