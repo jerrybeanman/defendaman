@@ -6,7 +6,7 @@ using namespace Networking;
 int main()
 {
     //Change to either Lobby for TCP or Game for UDP
-    Client * c = new GameClient();
+    Client * c = new LobbyClient();
     std::string teamRequest;
     char buf[32];
     int bytesRead;

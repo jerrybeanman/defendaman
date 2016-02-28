@@ -42,33 +42,6 @@ int Client::Init_SockAddr(const char* hostname, short hostport)
     return 0;
 }
 
-void * Client::Recv()
-{
-    int bytesRead;
-    while(1)
-    {
-
-        int bytesToRead = PACKETLEN;
-        char *message = (char *) malloc(PACKETLEN);
-        while((bytesRead = recv(serverSocket, message, bytesToRead, 0)) < PACKETLEN)
-         {
-           printf("Recv\n");
-          if(bytesRead < 0)
-          {
-            printf("recv() failed with errno: %d\n", errno);
-            return (void *)errno;
-          }
-          message += bytesRead;
-          bytesToRead -= bytesRead;
-        }
-        // push message to queue
-        CBPushBack(&CBPackets, message);
-        free(message);
-    }
-    return NULL;
-}
-
-
 void Client::fatal(const char* error)
 {
     perror(error);
