@@ -16,8 +16,8 @@
 
 #define TeamRequest1 1
 #define TeamRequest2 2
-//#define PACKETLEN    128
-//#define MAXPACKETS   10
+#define PACKETLEN    50
+#define MAXPACKETS   10
 
 namespace Networking
 {
@@ -27,55 +27,25 @@ namespace Networking
           pthread_t ReadThread;
 
           Client();
+          virtual ~Client() {};
 
-            /*
-                Initialize socket, server address to lookup to, and connect to the server
+          virtual int Init_Client_Socket(const char* name, short port) = 0;
 
-                @return: socket file descriptor
-            */
-            int Init_TCP_Client_Socket(const char* name, short port);
+          virtual void * Recv() = 0;
 
-            /*
-                Initialize socket, and server address to lookup to
+          virtual int Send(char * message, int size) = 0;
 
-                @return: socket file descriptor and the server address for future use
-            */
-            std::pair<int, struct sockaddr> Init_UDP_Client_Socket(char* name, short port);
+          void fatal(const char* error);
 
-            /*
-                Initialize the socket address structure by recieving the port number and
-                either the hostname or an IPV4 address
+          int Init_SockAddr(const char* hostname, short hostport);
 
-                @return: socket file descriptor and the server address for future use
-            */
-            struct sockaddr Init_SockAddr(const char* hostname, short hostPort);
+          char* GetData();
 
-
-            int receiveUDP(int sd, struct sockaddr* server, char* rbuf);
-
-            /*
-                Wrapper function for UDP sendTo function. Failing to send prints an error
-                message with the data intended to send.
-
-                @return: the number of bytes sent, otherwise return -1 for error
-            */
-            int sendUDP(int socket, char *data, struct sockaddr server);
-
-            void * Recv();
-
-
-            int Send(char * message, int size);
-
-            void fatal(const char* error);
-
-            char* GetData();
-            static const int MAXPACKETS = 10;
-            static const int PACKETLEN = 128;
-
-        private:
-            CircularBuffer CBPackets; // buffer for data coming in from network
-            int serverSocket;
-            char* currentData; // the single instance of data exposed to Unity for reading
+        protected:
+            CircularBuffer  CBPackets; // buffer for data coming in from network
+            int             serverSocket;
+            struct          sockaddr_in serverAddr;
+            char*           currentData; // the single instance of data exposed to Unity for reading
     };
 }
 #endif

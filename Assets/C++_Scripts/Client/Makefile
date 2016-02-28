@@ -1,4 +1,4 @@
-CC = g++ -Wall -pedantic -W -ggdb
+CC = g++  -std=c++11 -Wall -pedantic -W -ggdb
 
 make:
 all:
