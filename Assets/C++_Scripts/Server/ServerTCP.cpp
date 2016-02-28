@@ -3,9 +3,14 @@
 using namespace Networking;
 
 /*
-	Initialize socket, server address to lookup to, and connect to the server
+    Initialize socket, server address to lookup to, and connect to the server
 
-	@return: socket file descriptor
+    Interface:  int InitializeSocket(short port)
+                [port] Port number 
+
+    programmer: Jerry Jia
+
+    @return: socket file descriptor
 */
 int ServerTCP::InitializeSocket(short port)
 {
@@ -16,12 +21,12 @@ int ServerTCP::InitializeSocket(short port)
     /* Create a TCP streaming socket */
     if ((_TCPAcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
     {
-        fatal("InitializeSocket: socket() failed\n");
-        return _TCPAcceptingSocket;
+        printf("InitializeSocket: socket() failed with errno\n", errno);
+        return -1;
     }
 
     /* Allows other sockets to bind() to this port, unless there is an active listening socket bound to the port already. */
-	setsockopt(_TCPAcceptingSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	  setsockopt(_TCPAcceptingSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
     /* Fill in server address information */
     memset(&_ServerAddress, 0, sizeof(struct sockaddr_in));
@@ -32,8 +37,8 @@ int ServerTCP::InitializeSocket(short port)
     /* bind server address to accepting socket */
     if ((err = bind(_TCPAcceptingSocket, (struct sockaddr *)&_ServerAddress, sizeof(_ServerAddress))) == -1)
     {
-        std::cout << "InitializeSocket: bind() failed with errno " << errno << std::endl;
-        return err;
+        printf("InitializeSocket: bind() failed with errno \n", errno);
+        return -1;
     }
 
     /* Listen for connections */
@@ -43,10 +48,15 @@ int ServerTCP::InitializeSocket(short port)
 }
 
 /*
-	Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
-	Add connected player to the list of players
+    Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
+    Add connected player to the list of players
 
-	@return: id that is assigned to the player
+    Interface:  int Accept(Player * player)
+                [player] Pointer to a Player structure
+
+    programmer: Jerry Jia      
+
+    @return: socket file descriptor
 */
 int ServerTCP::Accept(Player * player)
 {
@@ -60,56 +70,72 @@ int ServerTCP::Accept(Player * player)
         return -1;
     }
     printf("After accept\n");
-    /* Not the best way to do it since we're using vectors */
+
+    /* Not the best way to do it since we're using vectors, but it'll do for now */
     player->id = _PlayerList.size();
 
     _PlayerList.push_back(*player);
 
     sprintf(buf, "Player %d has joined the lobby\n", _PlayerList.size());
     printf(buf);
+
+    /* Sends this to all the clients */
     this->ServerTCP::Broadcast(buf);
+
     newPlayer = *player;
     return player->id;
 }
 
 
 /*
-	Creates a child process to handle incoming messages from new player that has just connected to the lobby
+    Creates a child process to handle incoming messages from new player that has just connected to the lobby
 
-	@return: child PDI (0 for child process)
+    Interface:  void * CreateClientManager(void * server)
+                [server] Pointer to a void, which has to be a Server object
+
+    Programmer: Jerry Jia       
+
+    return: child PDI (0 for child process)
 */
 void * ServerTCP::CreateClientManager(void * server)
 {
-    /* God forbid */
     return ((ServerTCP *)server)->Receive();
 }
 
 
 /*
-	Recieves data from child process that is dedicated for each player's socket
+    Recieves data from child process that is dedicated for each player's socket
 
-	@return: 1 on success, -1 on error, 0 on disconnect
+    Interface:  void * Receive()
+
+    Programmer: Jerry Jia      
+
+    @return: Thread execution code 
 */
 void * ServerTCP::Receive()
 {
     Player tmpPlayer = newPlayer;
   	int BytesRead;
-    char * buf;						          	/* buffer read from one recv call      	  */
+    char * buf;						          	/* buffer read from one recv call  */
 
-  	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
+  	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 					     */
     while (1)
     {
       	BytesRead = recv (tmpPlayer.socket, buf, PACKETLEN, 0);
 
-      	if(BytesRead < 0) /* recv() failed */
+      	if(BytesRead < 0)  /* recv() failed */
       	{
       		printf("recv() failed with errno: %d", errno);
-      		return 0;
+      		return -1;
       	}
       	if(BytesRead == 0) /* client disconnected */
       	{
-      		printf("Player %d has left the lobby \n", tmpPlayer.id + 1);
-      		return 0;
+          /* 
+            TODO:: Delete player off vector
+          */
+      		printf("Player %d has left the lobby \n", tmpPlayer.id);
+
+      		return -1;
       	}
 
         std::cout << buf << std::endl;
@@ -121,9 +147,15 @@ void * ServerTCP::Receive()
     return 0;
 }
 
-/*
-	Sends a message to all the clients
 
+/*
+    Sends a message to all the clients
+
+    Interface:  void Broadcast(char * message)
+
+    Programmer: Jerry Jia
+
+    @return: void
 */
 void ServerTCP::Broadcast(char * message)
 {
@@ -136,11 +168,4 @@ void ServerTCP::Broadcast(char * message)
 			return;
 		}
 	}
-}
-
-void ServerTCP::PrintPlayer(Player p)
-{
-	std::cout << "Recieved Player " << p.id + 1 << " update: " << std::endl;
-	std::cout << "	Username: " << p.username << std::endl;
-	std::cout << "	Team name:  " << p.team << std::endl;
 }

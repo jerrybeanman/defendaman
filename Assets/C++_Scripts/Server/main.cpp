@@ -20,13 +20,17 @@ int main()
 
   while(1)
   {
-      pthread_t      readThread;
+      /* assign it into the player object if we want to manipulate the thread */
+      pthread_t readThread;
+
       int playerID;
       struct Player player;
       if ((playerID = TestServer.Accept(&player)) == -1)
       {
         std::cerr << "rip.\n" << std::endl;
       }
+
+      /* Creates the thread to handle new clients */
       if(pthread_create(&readThread, NULL, &ServerTCP::CreateClientManager, (void *) &TestServer) < 0)
       {
         std::cerr << "thread creation failed" << std::endl;
