@@ -1,4 +1,5 @@
 #include "Client.h"
+#include "GameClient.h"
 
 using namespace Networking;
 
@@ -13,7 +14,7 @@ using namespace Networking;
 */
 extern "C" Client * TCP_CreateTCPClient()
 {
-	return new Client();
+	return new GameClient();
 }
 
 /* 
@@ -49,7 +50,7 @@ extern "C" void TCP_DisposeTCPClient(Client* client)
 extern "C" int TCP_ConnectToServer(Client * client, const char * name, short port)
 {
 	if(client != NULL)
-		return client->Init_TCP_Client_Socket(name, port);
+		return client->Init_Client_Socket(name, port);
     return -1;
 }
 
@@ -80,7 +81,7 @@ void * TCP_Recv(void * arg)
 */
 extern "C" int TCP_StartReadThread(Client * client)
 {
-	return pthread_create(&client->ReadThread, NULL, &TCPRecv, (void *)client);
+	return pthread_create(&client->ReadThread, NULL, &TCP_Recv, (void *)client);
 }
 
 
