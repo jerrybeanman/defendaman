@@ -31,7 +31,6 @@ public class BasicRanged : MonoBehaviour
         {
             return;
         }
-        //temp player, should be base class when all characters have classes
         if(other.gameObject.GetComponent<BaseClass>() != null)
         {
             BaseClass target = other.gameObject.GetComponent<BaseClass>();

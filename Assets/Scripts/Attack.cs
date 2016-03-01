@@ -17,8 +17,7 @@ public class Attack : MonoBehaviour {
 			attacking = true;
             //delay = basic_attack();
 
-            var dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
-            
+            Vector2 dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
             attack.AddForce(dir * 100);
             attack.GetComponent<BasicRanged>().teamID = gameObject.GetComponent<BaseClass>().team;
