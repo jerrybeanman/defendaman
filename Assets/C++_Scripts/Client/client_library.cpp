@@ -101,7 +101,7 @@ extern "C" char * TCP_GetData(Client * client)
 }
 
 /* 
-	Grabs data packets stored in the circular buffer in the Client object
+	Sends a message to the server socket
 	
 	Interface:	int TCP_Send(Client * client, char * message, int size)
 				[client] 	Pointer to the client object (In this case, the IntPtr value in C#)
