@@ -17,20 +17,35 @@ public class Attack : MonoBehaviour {
 			attacking = true;
             //delay = basic_attack();
 
-            Vector2 dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
+            //TODO: attack stats as parameters
+            int team = gameObject.GetComponent<BaseClass>().team;
+            float speed = 100;
+            float atkpower = gameObject.GetComponent<BaseClass>().ClassStat.AtkPower;
+            float delay = 0.5f;
+
+
+            var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
-            attack.AddForce(dir * 100);
-            attack.GetComponent<BasicRanged>().teamID = gameObject.GetComponent<BaseClass>().team;
-            attack.GetComponent<BasicRanged>().damage = gameObject.GetComponent<BaseClass>().ClassStat.AtkPower;
-            Invoke("enableAttack", 1);
-            //Invoke("enableAttack", delay);
+            attack.AddForce(dir * speed);
+            attack.GetComponent<BasicRanged>().teamID = team;
+            attack.GetComponent<BasicRanged>().damage = atkpower;
+            Invoke("enableAttack", delay);
         } else if (Input.GetKey(KeyCode.Mouse1) && !attacking) {
-			//right click attack
-			//attacking = true;
-			//delay = special_attack();
-			//WaitForSeconds(delay);
-			//attacking = false;
-		}
+            //right click attack
+            attacking = true;
+            //delay = special_attack();
+
+
+            //TODO: attack stats as parameters
+            int team = gameObject.GetComponent<BaseClass>().team;
+            float speed = 100;
+            float atkpower = gameObject.GetComponent<BaseClass>().ClassStat.AtkPower;
+            float delay = 0.5f;
+
+            Debug.Log("right clicked");
+
+            Invoke("enableAttack", delay);
+        }
        
     }
 	
