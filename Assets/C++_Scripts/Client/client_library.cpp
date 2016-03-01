@@ -93,7 +93,7 @@ extern "C" int TCP_StartReadThread(Client * client)
 
 	Programmer: Jerry Jia
 	
-	@return: "[]" if the circular buffer is empty, otherwise the packet pointed by rear
+	@return: "[]" if the circular buffer is empty, otherwise the packet pointed by rear in client->CircularBuf
 */
 extern "C" char * TCP_GetData(Client * client)
 {
@@ -110,7 +110,7 @@ extern "C" char * TCP_GetData(Client * client)
 
 	Programmer: Jerry Jia
 	
-	@return: Send a packet to the peer host
+	@return: -1 for failure, 0 on success
 */
 extern "C" int TCP_Send(Client * client, char * message, int size)
 {
