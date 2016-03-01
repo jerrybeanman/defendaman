@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BaseClass{
+public abstract class BaseClass : MonoBehaviour {
 
 	/* Name of the class. Ex: "Archer, warrior.." */
-	private string _className;
+	protected string _className;
 
-	/* Short description of the class.*/
-	private string _classDescription;
+    /* Short description of the class.*/
+    protected string _classDescription;
 
-	/* Base stats that all classes share*/
-	private PlayerBaseStat _classStat;
+    /* Base stats that all classes share*/
+    protected PlayerBaseStat _classStat = new PlayerBaseStat();
+
+    public int team { get; set; }
 	
 	
 	public string ClassName
@@ -25,10 +27,19 @@ public class BaseClass{
 		set { this._classDescription = value;}
 	}
 
-	private PlayerBaseStat ClassStat
+	public PlayerBaseStat ClassStat
 	{
-		get {return this._classStat; }
-		set
+		get
+        {
+            if (this._classStat == null)
+            {
+                Debug.Log("Classstat was not set");
+                this._classStat = new PlayerBaseStat();
+            }
+            return this._classStat;
+        }
+
+		protected set
 		{
 			this._classStat.CurrentHp = value.CurrentHp;
 			this._classStat.MaxHp = value.MaxHp;
@@ -37,7 +48,11 @@ public class BaseClass{
 		}
 	}
 
-
+    public float damaged(float damage)
+    {
+        this._classStat.CurrentHp -= damage;
+        return this._classStat.CurrentHp;
+    }
 
 
 	[System.Serializable]
