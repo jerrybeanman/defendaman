@@ -7,4 +7,17 @@ public class WizardClass : BaseClass
 	{
 
 	}
+
+    //attacks return time it takes to execute
+    public override float basicAttack()
+    {
+
+        return 0;
+    }
+
+    public override float[] specialAttack()
+    {
+
+        return new float[2] { 0.5f, 2 };
+    }
 }

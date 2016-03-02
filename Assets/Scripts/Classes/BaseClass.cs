@@ -48,11 +48,16 @@ public abstract class BaseClass : MonoBehaviour {
 		}
 	}
 
-    public float damaged(float damage)
+    public float doDamage(float damage)
     {
         //TODO: add defense to calculation
-        this._classStat.CurrentHp -= damage;
-        return this._classStat.CurrentHp;
+        ClassStat.CurrentHp -= damage;
+        if(ClassStat.CurrentHp > ClassStat.MaxHp)
+        {
+            ClassStat.CurrentHp = ClassStat.MaxHp;
+        }
+        Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
+        return ClassStat.CurrentHp;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -62,14 +67,15 @@ public abstract class BaseClass : MonoBehaviour {
         {
             return;
         }
-        if (damaged(attack.damage) <= 0.0f)
+        if (doDamage(attack.damage) <= 0.0f)
         {
             //death
             Destroy(gameObject);
         }
-        Debug.Log("I got hit");
     }
 
+    public abstract float basicAttack();
+    public abstract float[] specialAttack();
 
     [System.Serializable]
 	public class PlayerBaseStat
@@ -78,6 +84,6 @@ public abstract class BaseClass : MonoBehaviour {
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
-        //TODO: defensive stat
+        //TODO: defensive stats, etc.
 	}
 }

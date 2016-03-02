@@ -11,7 +11,6 @@ public class BasicRanged : Projectile
 
     void Start()
     {
-        maxDistance = 10;
         startPos = transform.position;
     }
 
