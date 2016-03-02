@@ -194,6 +194,7 @@ public class NetworkingManager : MonoBehaviour {
                 Debug.Log("Created our player");
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
+                GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
                 player.AddComponent<Movement>();
                 player.AddComponent<PlayerRotation>();
                 //Created our player
