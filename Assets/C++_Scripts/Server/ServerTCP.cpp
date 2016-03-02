@@ -67,7 +67,7 @@ int ServerTCP::Accept(Player * player)
 
     sprintf(buf, "Player %d has joined the lobby\n", _PlayerList.size());
     printf(buf);
-    this->ServerTCP::Broadcast(buf);
+    //this->ServerTCP::Broadcast(buf);
     newPlayer = *player;
     return player->id;
 }
@@ -95,6 +95,12 @@ void * ServerTCP::Receive()
     Player tmpPlayer = newPlayer;
   	int BytesRead;
     char * buf;						          	/* buffer read from one recv call      	  */
+    //JSON segments
+    char dataType[30];
+    int code;
+    char id[30];
+    int idValue;
+    int team;
 
   	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
     while (1)
@@ -113,6 +119,12 @@ void * ServerTCP::Receive()
       	}
 
         std::cout << buf << std::endl;
+        /*Parsed  based on json array*/
+        sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &team);
+        if(code == Networking && idValue == TeamChangeRequest) {
+          std::cout << "Team change: " << team << std::endl;
+          _PlayerList[tmpPlayer.id].team = team;
+      }
 
       	/* Broadcast echo packet back to all players */
       	this->ServerTCP::Broadcast(buf);

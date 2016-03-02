@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <algorithm>
 #include <netdb.h>
 #include <utility>
 #include <vector>
@@ -30,7 +31,8 @@ typedef struct Player
     sockaddr_in    connection;
     int            id;
     char           username[32];
-    char           team[32];
+    int            team;
+
 } Player;
 
 namespace Networking

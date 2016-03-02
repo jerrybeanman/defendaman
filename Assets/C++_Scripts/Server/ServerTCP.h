@@ -51,6 +51,9 @@ namespace Networking
 						Player newPlayer;
 						/* List of players currently connected to the server */
 						std::vector<Player>             _PlayerList;
+						//Enum for the networking team to determine the type of message requested.
+						enum teamCode {Networking = 6};
+						enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3};
 
 	};
 }
