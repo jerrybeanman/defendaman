@@ -1,16 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
 
-public class BaseClass{
+public abstract class BaseClass : MonoBehaviour {
 
 	/* Name of the class. Ex: "Archer, warrior.." */
-	private string _className;
+	protected string _className;
 
-	/* Short description of the class.*/
-	private string _classDescription;
+    /* Short description of the class.*/
+    protected string _classDescription;
 
-	/* Base stats that all classes share*/
-	private PlayerBaseStat _classStat;
+    /* Base stats that all classes share*/
+    protected PlayerBaseStat _classStat = new PlayerBaseStat();
+
+    public int team;
+    public int playerID;
+
+    void Start ()
+    {
+        NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
+    }
 	
 	
 	public string ClassName
@@ -25,10 +34,19 @@ public class BaseClass{
 		set { this._classDescription = value;}
 	}
 
-	private PlayerBaseStat ClassStat
+	public PlayerBaseStat ClassStat
 	{
-		get {return this._classStat; }
-		set
+		get
+        {
+            if (this._classStat == null)
+            {
+                Debug.Log("Classstat was not set");
+                this._classStat = new PlayerBaseStat();
+            }
+            return this._classStat;
+        }
+
+		protected set
 		{
 			this._classStat.CurrentHp = value.CurrentHp;
 			this._classStat.MaxHp = value.MaxHp;
@@ -37,15 +55,63 @@ public class BaseClass{
 		}
 	}
 
+    public float doDamage(float damage)
+    {
+        //TODO: add defense to calculation
+        ClassStat.CurrentHp -= damage;
+        if(ClassStat.CurrentHp > ClassStat.MaxHp)
+        {
+            ClassStat.CurrentHp = ClassStat.MaxHp;
+        }
+        Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
+        return ClassStat.CurrentHp;
+    }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        var attack = other.gameObject.GetComponent<Trigger>();
+        if (attack.teamID == team)
+        {
+            return;
+        }
+        if (doDamage(attack.damage) <= 0.0f)
+        {
+            //death
+            Destroy(gameObject);
+        }
+    }
 
+    void receiveAttackFromServer(JSONClass playerData)
+    {
+        Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
+        switch (playerData["Attack"].AsInt)
+        {
+            case 0:
+                basicAttack(directionOfAttack);
+                //Regular attack
+                break;
+            case 1:
+                specialAttack(directionOfAttack);
+                //Regular special attack
+                break;
+            case 2:
+                //Aman special attack
+                break;
+            default:
+                break;
+        }
+    }
 
-	[System.Serializable]
+    public abstract float basicAttack(Vector2 dir);
+    public abstract float[] specialAttack(Vector2 dir);
+
+    [System.Serializable]
 	public class PlayerBaseStat
 	{
 		public float CurrentHp;
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
+        //TODO: defensive stats, etc.
 	}
 }

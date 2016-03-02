@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraFollow : MonoBehaviour {
+// Why do we have 2 of these?
+/*public class CameraFollow : MonoBehaviour {
 
     private GameObject Player;
 
@@ -16,4 +17,4 @@ public class CameraFollow : MonoBehaviour {
 	void Update () {
         transform.position = new Vector3(Player.transform.position.x, 10, Player.transform.position.z);
     }
-}
+}*/
