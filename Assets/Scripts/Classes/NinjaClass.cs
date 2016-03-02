@@ -9,7 +9,7 @@ public class NinjaClass : BaseClass
         this._className = "Ninja";
         this._classDescription = "Test class Ninja";
         this._classStat.CurrentHp = 50;
-        this._classStat.MaxHp = 50;
+        this._classStat.MaxHp = 150;
 
         //placeholder numbers
         this._classStat.MoveSpeed = 5;
