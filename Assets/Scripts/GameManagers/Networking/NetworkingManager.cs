@@ -208,6 +208,8 @@ public class NetworkingManager : MonoBehaviour {
                 player.AddComponent<PlayerRotation>();
                 player.AddComponent<Attack>();
                 //player.GetComponent<Attack>().bullet = ;
+                Destroy(player.GetComponent<GunnerClass>());
+                player.AddComponent<NinjaClass>();
                 //Created our player
             } else {
                 Debug.Log("Created ally");
