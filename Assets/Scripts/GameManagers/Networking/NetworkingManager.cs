@@ -145,6 +145,7 @@ public class NetworkingManager : MonoBehaviour {
             var memberItems = new List<Pair<string, string>>();
             memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
             memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
+            memberItems.Add(new Pair<string, string>("rotation", player.GetComponent<PlayerRotation>().curRotation.ToString()));
             send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems);
         }
 
@@ -231,7 +232,8 @@ public class NetworkingManager : MonoBehaviour {
     }
 
     string create_test_json() {
-        return "[{DataType : 1, ID : 1, x : 5, y : 5}]";
+        var rot = player.GetComponent<PlayerRotation>().curRotation;
+        return "[{\"DataType\" : 1, \"ID\" : 1, \"x\" : 51.0, \"y\" : 51.0, \"rotationZ\" : " + rot.z + ", \"rotationW\" : " + rot.w + "}]";
     }
 
     #endregion

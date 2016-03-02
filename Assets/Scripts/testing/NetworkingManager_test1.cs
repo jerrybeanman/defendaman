@@ -4,7 +4,7 @@ using SimpleJSON;
 
 
 //Carson
-//Dummy class to emulate a player 1 object subscribing for data updates & handling receiving this data.
+//Enemy/Allies updating script
 public class NetworkingManager_test1 : MonoBehaviour {
     public int playerID;
 
@@ -13,8 +13,10 @@ public class NetworkingManager_test1 : MonoBehaviour {
         NetworkingManager.Subscribe(update_position, DataType.Player, playerID);
 	}
 
-    void update_position(JSONClass player1) {
-        Vector2 position = new Vector2(player1["x"].AsFloat, player1["y"].AsFloat);
+    void update_position(JSONClass player) {
+        Vector3 position = new Vector3(player["x"].AsFloat, player["y"].AsFloat, -10f);
         transform.position = position;
+        Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat) * Quaternion.Euler(0, 0, 90);
+        transform.rotation = rotation;
     }
 }
