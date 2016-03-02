@@ -2,12 +2,10 @@
 using System.Collections;
 using System;
 
-public class BasicRanged : Projectile
+public class BasicSword : Melee
 {
     private Vector2 startPos;
-    public int maxDistance;
-
-    //projectile speed
+    //public int maxDistance;
 
     void Start()
     {
@@ -16,9 +14,11 @@ public class BasicRanged : Projectile
 
     void Update()
     {
+        /*
         if (Vector2.Distance(startPos, transform.position) >= maxDistance)
         {
             Destroy(gameObject);
         }
+        */
     }
 }
