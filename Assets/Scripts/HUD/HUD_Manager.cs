@@ -5,7 +5,7 @@ using System;
 using System.Globalization;
 
 public class HUD_Manager : MonoBehaviour {
-	#region
+	#region Subclasses
 	[System.Serializable]
 	public class PlayerProfile 	{ public Image Health;		public Animator HealthAnimator; }
 	[System.Serializable]
