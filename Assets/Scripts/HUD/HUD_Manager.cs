@@ -47,12 +47,13 @@ public class HUD_Manager : MonoBehaviour {
 	// For rechargin skills whenever they are used
 	void Update()
 	{
+
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
 			mainSkill.ProgressBar.fillAmount  += Time.deltaTime / mainSkill.CoolDown;
 			mainSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
 		}
-
+			
 		if(subSkill.ProgressBar.fillAmount < 1)
 		{
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
