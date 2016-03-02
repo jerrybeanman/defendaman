@@ -16,7 +16,7 @@ Note: Does not start at value 0. Reason being, if JSON parser fails, it returns 
 for fail does not work 
 */
 public enum DataType {
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5
+    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6
 }
 
 /*Carson
