@@ -2,18 +2,15 @@
 using System.Collections;
 using System;
 
-public class BasicRanged : MonoBehaviour
+public class BasicRanged : Projectile
 {
     private Vector2 startPos;
     public int maxDistance;
-    public int teamID;
-    public float damage;
-    
+
     //projectile speed
 
     void Start()
     {
-        maxDistance = 10;
         startPos = transform.position;
     }
 
@@ -23,22 +20,5 @@ public class BasicRanged : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if(other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
-        {
-            return;
-        }
-        //temp player, should be base class when all characters have classes
-        if(other.gameObject.GetComponent<BaseClass>() != null)
-        {
-            BaseClass target = other.gameObject.GetComponent<BaseClass>();
-            if (target.damaged(damage) <= 0.0f) {
-                Destroy(other.gameObject);
-            }
-        }
-        Destroy(gameObject);
     }
 }
