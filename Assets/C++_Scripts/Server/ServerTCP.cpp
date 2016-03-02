@@ -6,7 +6,7 @@ using namespace Networking;
     Initialize socket, server address to lookup to, and connect to the server
 
     Interface:  int InitializeSocket(short port)
-                [port] Port number 
+                [port] Port number
 
     programmer: Jerry Jia
 
@@ -54,7 +54,7 @@ int ServerTCP::InitializeSocket(short port)
     Interface:  int Accept(Player * player)
                 [player] Pointer to a Player structure
 
-    programmer: Jerry Jia      
+    programmer: Jerry Jia
 
     @return: socket file descriptor
 */
@@ -93,7 +93,7 @@ int ServerTCP::Accept(Player * player)
     Interface:  void * CreateClientManager(void * server)
                 [server] Pointer to a void, which has to be a Server object
 
-    Programmer: Jerry Jia       
+    Programmer: Jerry Jia
 
     return: child PDI (0 for child process)
 */
@@ -108,9 +108,9 @@ void * ServerTCP::CreateClientManager(void * server)
 
     Interface:  void * Receive()
 
-    Programmer: Jerry Jia      
+    Programmer: Jerry Jia
 
-    @return: Thread execution code 
+    @return: Thread execution code
 */
 void * ServerTCP::Receive()
 {
@@ -126,18 +126,19 @@ void * ServerTCP::Receive()
       	if(BytesRead < 0)  /* recv() failed */
       	{
       		printf("recv() failed with errno: %d", errno);
-      		return -1;
+      		return 0;
       	}
       	if(BytesRead == 0) /* client disconnected */
       	{
-          /* 
+          /*
             TODO:: Delete player off vector
           */
       		printf("Player %d has left the lobby \n", tmpPlayer.id);
 
-      		return -1;
+      		return 0;
       	}
 
+        buf[2] = 0;
         std::cout << buf << std::endl;
 
       	/* Broadcast echo packet back to all players */

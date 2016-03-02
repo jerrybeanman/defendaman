@@ -37,7 +37,7 @@ void * LobbyClient::Recv()
       char *message = (char *) malloc(PACKETLEN);
       while((bytesRead = recv(serverSocket, message, bytesToRead, 0)) < PACKETLEN)
       {
-        printf("Recv\n");
+        //printf("Recv\n");
         if(bytesRead < 0)
         {
           printf("recv() failed with errno: %d\n", errno);
