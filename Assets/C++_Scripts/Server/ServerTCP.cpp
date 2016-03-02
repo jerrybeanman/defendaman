@@ -122,7 +122,7 @@ void * ServerTCP::Receive()
         /*Parsed  based on json array*/
         sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &team);
         if(code == Networking && idValue == TeamChangeRequest) {
-          std::cout << "Team change: " << team << std::endl;
+            std::cout << "Team change: " << team << std::endl;
           _PlayerList[tmpPlayer.id].team = team;
       }
 

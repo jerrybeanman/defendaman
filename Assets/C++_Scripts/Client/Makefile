@@ -1,4 +1,4 @@
-CC = g++ -Wall -pedantic -W -ggdb
+CC = g++  -std=c++11 -Wall -pedantic -W -ggdb
 
 make:
 all:
@@ -6,7 +6,7 @@ all:
 
 
 library:
-	g++ client_library.cpp Client.cpp CircularBuffer.cpp  -O3 -fPIC -shared -o ClientLibrary.so
+	$(CC) client_library.cpp Client.cpp CircularBuffer.cpp LobbyClient.cpp -O3 -fPIC -shared -o ClientLibrary.so
 	mv ClientLibrary.so ../../../
 
 clean:
