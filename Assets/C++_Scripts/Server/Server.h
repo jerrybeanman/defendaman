@@ -32,6 +32,7 @@ typedef struct Player
     int            id;
     char           username[32];
     int            team;
+    bool           isReady;
 
 } Player;
 

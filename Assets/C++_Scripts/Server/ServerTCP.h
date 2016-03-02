@@ -73,6 +73,9 @@ namespace Networking
 						/*Prints a player */
 						void PrintPlayer(Player p);
 
+						/* Check ready status on all connected players*/
+						bool AllPlayersReady();
+
         private:
 						Player newPlayer;
 						/* List of players currently connected to the server */
