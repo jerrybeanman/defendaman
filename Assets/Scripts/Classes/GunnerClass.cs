@@ -5,8 +5,8 @@ public class GunnerClass : BaseClass
 {
     int[] distance = new int[2]{ 10, 20};
     int[] speed = new int[2] { 100, 200 };
-    Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Bullet", typeof(Rigidbody2D));
-    Rigidbody2D bullet2 = (Rigidbody2D)Resources.Load("Bullet2", typeof(Rigidbody2D));
+    Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+    Rigidbody2D bullet2 = (Rigidbody2D)Resources.Load("Prefabs/Bullet2", typeof(Rigidbody2D));
 
     public GunnerClass()
 	{
@@ -19,7 +19,8 @@ public class GunnerClass : BaseClass
         this._classStat.MoveSpeed = 5;
         this._classStat.AtkPower = 20;
 
-
+        var controller = Resources.Load("Controllers/gunboi") as RuntimeAnimatorController;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
     }
 
     //attacks return time it takes to execute

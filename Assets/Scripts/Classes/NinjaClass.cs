@@ -14,6 +14,9 @@ public class NinjaClass : BaseClass
         //placeholder numbers
         this._classStat.MoveSpeed = 5;
         this._classStat.AtkPower = 20;
+
+        var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
     }
 
     //attacks return time it takes to execute
