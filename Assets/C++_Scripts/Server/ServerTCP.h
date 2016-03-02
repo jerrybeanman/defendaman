@@ -73,6 +73,8 @@ namespace Networking
 						/*Prints a player */
 						void PrintPlayer(Player p);
 
+						/*Parses incoming JSON and process request*/
+						void CheckServerRequest(int playerId, int code, int idValue, int requestValue);
 						/* Check ready status on all connected players*/
 						bool AllPlayersReady();
 
