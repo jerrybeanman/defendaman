@@ -196,7 +196,14 @@ public class NetworkingManager : MonoBehaviour {
             var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, -10), Quaternion.identity)).gameObject;
 
             //TODO: Get classby creation packet
-            createdPlayer.AddComponent<GunnerClass>();
+            if(myPlayer == playerData["ID"].AsInt)
+            {
+                createdPlayer.AddComponent<NinjaClass>();
+            } else
+            {
+                createdPlayer.AddComponent<GunnerClass>();
+            }
+            
 
             createdPlayer.GetComponent<BaseClass>().team = playerData["Team"].AsInt;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData["ID"].AsInt;
@@ -208,8 +215,6 @@ public class NetworkingManager : MonoBehaviour {
                 player.AddComponent<PlayerRotation>();
                 player.AddComponent<Attack>();
                 //player.GetComponent<Attack>().bullet = ;
-                Destroy(player.GetComponent<GunnerClass>());
-                player.AddComponent<NinjaClass>();
                 //Created our player
             } else {
                 Debug.Log("Created ally");
