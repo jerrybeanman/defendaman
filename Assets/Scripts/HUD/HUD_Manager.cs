@@ -149,7 +149,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void UseMainSkill(float CoolDown)
 	{
-		if(subSkill.ProgressBar.fillAmount >= 1)
+		if(mainSkill.ProgressBar.fillAmount >= 1)
 		{
 			mainSkill.ProgressBar.fillAmount = 0f;
 			mainSkill.CoolDown = CoolDown;
