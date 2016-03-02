@@ -23,10 +23,7 @@ public class ClientLibrary_Test : MonoBehaviour {
 	                                    int size);
 	
 	[DllImport("ClientLibrary.so")]
-	private static extern int Call_Recv(IntPtr client, 
-	                                    string messages,
-	                                    int size, 
-	                                    IntPtr recvbytes);
+	private static extern IntPtr GetData(IntPtr client);
 	
 	[DllImport("ClientLibrary.so")]
 	private static extern int GetTwo();
@@ -37,7 +34,24 @@ public class ClientLibrary_Test : MonoBehaviour {
 	public  short 	port = 7000;
 	public 	Sprite 	alive;
 	public 	Sprite	dead;
-	
+
+	private string RecievedData = "";
+
+
+
+	void Update()
+	{
+		RecievedData = Marshal.PtrToStringAnsi(GetData(TCPClient));
+	}
+
+
+	void OnGUI()
+	{
+		GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+		GUI.Label(new Rect(10, 40, Screen.width, Screen.height), RecievedData);
+		
+	}
+
 	private string CreateString(String s)
 	{
 		string newstring = "";
@@ -61,7 +75,8 @@ public class ClientLibrary_Test : MonoBehaviour {
 			GetComponent<SpriteRenderer>().sprite = dead;
 		}
 	}
-	
+
+
 	public void B_GetTwo()
 	{
 		if(GetTwo() == 2)
