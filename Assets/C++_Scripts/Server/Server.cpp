@@ -64,7 +64,7 @@ std::string Server::UDP_Server_Recv()
 void Server::UDP_Server_Send(const char* message)
 {
 	for (int i = 0; 0 <_ClientAddresses.size();i++){
-		if (sendto(_UDPReceivingSocket, message, sizeof(message), 0 , (sockaddr *)&_ClientAddressses[i], sizeof(_ClientAddressses[i])) == -1)
+		if (sendto(_UDPReceivingSocket, message, sizeof(message), 0 , (sockaddr *)&_ClientAddresses[i], sizeof(_ClientAddresses[i])) == -1)
 		{
 			fatal("Send to UDP Client failed \n");
 		}
