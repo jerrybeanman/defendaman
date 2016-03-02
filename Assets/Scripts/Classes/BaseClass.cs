@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
 
 public abstract class BaseClass : MonoBehaviour {
 
@@ -12,7 +13,13 @@ public abstract class BaseClass : MonoBehaviour {
     /* Base stats that all classes share*/
     protected PlayerBaseStat _classStat = new PlayerBaseStat();
 
-    public int team { get; set; }
+    public int team;
+    public int playerID;
+
+    void Start ()
+    {
+        NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
+    }
 	
 	
 	public string ClassName
@@ -48,19 +55,63 @@ public abstract class BaseClass : MonoBehaviour {
 		}
 	}
 
-    public float damaged(float damage)
+    public float doDamage(float damage)
     {
-        this._classStat.CurrentHp -= damage;
-        return this._classStat.CurrentHp;
+        //TODO: add defense to calculation
+        ClassStat.CurrentHp -= damage;
+        if(ClassStat.CurrentHp > ClassStat.MaxHp)
+        {
+            ClassStat.CurrentHp = ClassStat.MaxHp;
+        }
+        Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
+        return ClassStat.CurrentHp;
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        var attack = other.gameObject.GetComponent<Trigger>();
+        if (attack.teamID == team)
+        {
+            return;
+        }
+        if (doDamage(attack.damage) <= 0.0f)
+        {
+            //death
+            Destroy(gameObject);
+        }
+    }
 
-	[System.Serializable]
+    void receiveAttackFromServer(JSONClass playerData)
+    {
+        Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
+        switch (playerData["Attack"].AsInt)
+        {
+            case 0:
+                basicAttack(directionOfAttack);
+                //Regular attack
+                break;
+            case 1:
+                specialAttack(directionOfAttack);
+                //Regular special attack
+                break;
+            case 2:
+                //Aman special attack
+                break;
+            default:
+                break;
+        }
+    }
+
+    public abstract float basicAttack(Vector2 dir);
+    public abstract float[] specialAttack(Vector2 dir);
+
+    [System.Serializable]
 	public class PlayerBaseStat
 	{
 		public float CurrentHp;
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
+        //TODO: defensive stats, etc.
 	}
 }
