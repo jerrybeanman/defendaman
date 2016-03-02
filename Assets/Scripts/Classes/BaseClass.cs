@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
 
 public abstract class BaseClass : MonoBehaviour {
 
@@ -12,7 +13,13 @@ public abstract class BaseClass : MonoBehaviour {
     /* Base stats that all classes share*/
     protected PlayerBaseStat _classStat = new PlayerBaseStat();
 
-    public int team { get; set; }
+    public int team;
+    public int playerID;
+
+    void Start ()
+    {
+        NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
+    }
 	
 	
 	public string ClassName
@@ -74,8 +81,29 @@ public abstract class BaseClass : MonoBehaviour {
         }
     }
 
-    public abstract float basicAttack();
-    public abstract float[] specialAttack();
+    void receiveAttackFromServer(JSONClass playerData)
+    {
+        Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
+        switch (playerData["Attack"].AsInt)
+        {
+            case 0:
+                basicAttack(directionOfAttack);
+                //Regular attack
+                break;
+            case 1:
+                specialAttack(directionOfAttack);
+                //Regular special attack
+                break;
+            case 2:
+                //Aman special attack
+                break;
+            default:
+                break;
+        }
+    }
+
+    public abstract float basicAttack(Vector2 dir);
+    public abstract float[] specialAttack(Vector2 dir);
 
     [System.Serializable]
 	public class PlayerBaseStat

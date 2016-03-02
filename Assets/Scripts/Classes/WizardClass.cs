@@ -9,13 +9,13 @@ public class WizardClass : BaseClass
 	}
 
     //attacks return time it takes to execute
-    public override float basicAttack()
+    public override float basicAttack(Vector2 dir)
     {
 
         return 0;
     }
 
-    public override float[] specialAttack()
+    public override float[] specialAttack(Vector2 dir)
     {
 
         return new float[2] { 0.5f, 2 };
