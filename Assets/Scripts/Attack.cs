@@ -26,13 +26,13 @@ public class Attack : MonoBehaviour {
                 new Pair<string, string>("DirectionX", dir.x.ToString()),
                 new Pair<string, string>("DirectionY", dir.y.ToString())
             });
-        } else if (Input.GetKey(KeyCode.Mouse1) && attackReady && specialReady) {
+        } 
+
+        if (Input.GetKey(KeyCode.Mouse1) && specialReady) {
             //right click attack
-            attackReady = false;
             specialReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             float[] delay = player.specialAttack(dir);
-            Invoke("enableAttack", delay[0]);
             Invoke("enableSpecial", delay[1]);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {
                 new Pair<string, string>("Attack", "1"),

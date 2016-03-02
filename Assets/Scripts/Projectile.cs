@@ -14,6 +14,10 @@ public abstract class Projectile : Trigger
         {
             return;
         }
+        if (other.gameObject.GetComponent<Trigger>() != null && teamID == other.gameObject.GetComponent<Trigger>().teamID)
+        {
+            return;
+        }
         Destroy(gameObject);
     }
 }
