@@ -36,7 +36,7 @@ public class Test_Plugin : MonoBehaviour {
 	void Awake()
 	{
 		/* Initialize the PlayerStuff structure through C++ wrapper function */
-		_playerStuff = getPlayerStuff();
+		//_playerStuff = getPlayerStuff();
 	}
 
 	void Start()
