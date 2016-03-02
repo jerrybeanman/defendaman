@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 85563b0573056ee46a893c6bf541c964
-timeCreated: 1456106752
+timeCreated: 1456908056
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -78,250 +78,250 @@ TextureImporter:
     - name: ninjaboi_running_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 1744
-        width: 249
-        height: 255
+        x: 0
+        y: 1747
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_1
       rect:
         serializedVersion: 2
-        x: 438
-        y: 1743
-        width: 249
-        height: 255
+        x: 435
+        y: 1745
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_2
       rect:
         serializedVersion: 2
-        x: 875
-        y: 1745
-        width: 249
-        height: 255
+        x: 872
+        y: 1747
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_3
       rect:
         serializedVersion: 2
-        x: 1312
-        y: 1744
-        width: 248
-        height: 255
+        x: 1308
+        y: 1747
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_4
       rect:
         serializedVersion: 2
-        x: 1748
-        y: 1745
-        width: 248
-        height: 255
+        x: 1744
+        y: 1747
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_5
       rect:
         serializedVersion: 2
-        x: 3
-        y: 1309
-        width: 249
-        height: 255
+        x: 0
+        y: 1312
+        width: 255
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_6
       rect:
         serializedVersion: 2
-        x: 437
-        y: 1307
-        width: 249
-        height: 255
+        x: 434
+        y: 1310
+        width: 254
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_7
       rect:
         serializedVersion: 2
-        x: 876
-        y: 1309
-        width: 249
-        height: 255
+        x: 872
+        y: 1312
+        width: 255
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_8
       rect:
         serializedVersion: 2
-        x: 1311
-        y: 1309
-        width: 249
-        height: 255
+        x: 1308
+        y: 1312
+        width: 254
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_9
       rect:
         serializedVersion: 2
-        x: 1748
-        y: 1310
-        width: 248
-        height: 255
+        x: 1744
+        y: 1313
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_10
       rect:
         serializedVersion: 2
-        x: 2
-        y: 874
-        width: 249
-        height: 255
+        x: 0
+        y: 876
+        width: 254
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_11
       rect:
         serializedVersion: 2
-        x: 437
-        y: 874
-        width: 249
-        height: 255
+        x: 433
+        y: 876
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_12
       rect:
         serializedVersion: 2
-        x: 874
-        y: 873
-        width: 249
-        height: 255
+        x: 870
+        y: 875
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_13
       rect:
         serializedVersion: 2
-        x: 1310
-        y: 873
-        width: 249
-        height: 255
+        x: 1307
+        y: 875
+        width: 254
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_14
       rect:
         serializedVersion: 2
-        x: 1746
-        y: 875
-        width: 249
-        height: 255
+        x: 1743
+        y: 877
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_15
       rect:
         serializedVersion: 2
-        x: 4
-        y: 437
-        width: 248
-        height: 255
+        x: 0
+        y: 440
+        width: 255
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_16
       rect:
         serializedVersion: 2
-        x: 439
-        y: 437
-        width: 248
-        height: 255
+        x: 435
+        y: 440
+        width: 255
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_17
       rect:
         serializedVersion: 2
-        x: 876
-        y: 437
-        width: 248
-        height: 255
+        x: 872
+        y: 440
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_18
       rect:
         serializedVersion: 2
-        x: 1312
-        y: 436
-        width: 248
-        height: 255
+        x: 1308
+        y: 439
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_19
       rect:
         serializedVersion: 2
-        x: 1748
-        y: 436
-        width: 248
-        height: 255
+        x: 1744
+        y: 438
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_20
       rect:
         serializedVersion: 2
-        x: 3
-        y: 0
-        width: 248
-        height: 254
+        x: 0
+        y: 2
+        width: 254
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_21
       rect:
         serializedVersion: 2
-        x: 436
-        y: 0
-        width: 249
-        height: 254
+        x: 433
+        y: 2
+        width: 254
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_22
       rect:
         serializedVersion: 2
-        x: 875
-        y: 0
-        width: 248
-        height: 254
+        x: 871
+        y: 2
+        width: 255
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_23
       rect:
         serializedVersion: 2
-        x: 1310
-        y: 0
-        width: 249
-        height: 254
+        x: 1306
+        y: 2
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_24
       rect:
         serializedVersion: 2
-        x: 1746
-        y: 0
-        width: 249
-        height: 255
+        x: 1742
+        y: 2
+        width: 255
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
