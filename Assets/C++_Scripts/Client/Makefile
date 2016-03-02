@@ -6,7 +6,7 @@ all:
 
 
 library:
-	$(CC) client_library.cpp Client.cpp CircularBuffer.cpp  -O3 -fPIC -shared -o ClientLibrary.so
+	$(CC) client_library.cpp Client.cpp CircularBuffer.cpp LobbyClient.cpp -O3 -fPIC -shared -o ClientLibrary.so
 	mv ClientLibrary.so ../../../
 
 clean:
