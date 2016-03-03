@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
 using System.Runtime.InteropServices;
-using UnityEngine.UI;
 
 /*Carson
 Being used to denote what type of data we are sending/receiving for a given JSON object.
@@ -16,14 +15,8 @@ Enviroment does not have an ID associated with it, since it is one entity. The I
 Note: Does not start at value 0. Reason being, if JSON parser fails, it returns 0 for fail, so checking
 for fail does not work 
 */
-public enum DataType
-{
+public enum DataType {
     Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6
-}
-
-public enum Protocol
-{
-    TCP, UDP
 }
 
 /*Carson
@@ -39,56 +32,18 @@ This method takes in three things:
 
 e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
 */
-public class NetworkingManager : MonoBehaviour
-{
-
-    #region Variables for Game, Lobby, UDP/TCP & Subscriber system
-    #region GameVariables
+public class NetworkingManager : MonoBehaviour {
     // Game object to send data of
     public Transform playerType;
     public GameObject player;
     public int enemyKingID;
     public int allyKingID;
-    #endregion
 
-    #region UDP/TCP + Subscriber variables
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
 
-    //List of JSON strings to be sent on the next available TCP packet 
-    private static List<string> jsonTCPObjectsToSend = new List<string>();
-
-    //List of JSON strings to be sent on the next available UDP packet
-    private static List<string> jsonUDPObjectsToSend = new List<string>();
-    #endregion
-
-    #region LobbyVariables
-    // list to keep track of the player text items in the lobby
-    private List<GameObject> _lobby_list = new List<GameObject>();
-    private int _y_offset = 0;
-
-    // list to keep track of which menu to go back to
-    private List<GameObject> _menu_order = new List<GameObject>();
-    private string _player_name;
-
-    public Canvas menu_canvas;
-
-    public GameObject main_menu;
-    public GameObject settings_menu;
-    public GameObject connect_menu;
-    public GameObject lobby_menu;
-
-    public GameObject team_select_panel;
-    public GameObject class_select_panel;
-
-    private IntPtr TCPClient;
-
-    private string RecievedData = "Waiting for Inputs...";
-
-    bool connected = false;
-    #endregion
-
-    #endregion
+    //List of JSON strings to be sent on the next available packet
+    private static List<string> jsonObjectsToSend = new List<string>();
 
     void Start()
     {
@@ -98,8 +53,7 @@ public class NetworkingManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         update_data(receive_data());
         send_data();
     }
@@ -115,12 +69,10 @@ public class NetworkingManager : MonoBehaviour
 
     e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
     */
-    public static void Subscribe(Action<JSONClass> callback, DataType dataType, int id = 0)
-    {
+    public static void Subscribe(Action<JSONClass> callback, DataType dataType, int id = 0) {
         Pair<DataType, int> pair = new Pair<DataType, int>(dataType, id);
 
-        if (!(_subscribedActions.ContainsKey(pair)))
-        {
+        if (!(_subscribedActions.ContainsKey(pair))) {
             _subscribedActions.Add(pair, new List<Action<JSONClass>>());
         }
         List<Action<JSONClass>> val = null;
@@ -132,11 +84,9 @@ public class NetworkingManager : MonoBehaviour
         }
     }
 
-    private void update_data(string JSONGameState)
-    {
+    private void update_data(string JSONGameState) {
         var gameObjects = JSON.Parse(JSONGameState).AsArray;
-        foreach (var node in gameObjects.Children)
-        {
+        foreach (var node in gameObjects.Children) {
             var obj = node.AsObject;
             int dataType = obj["DataType"].AsInt;
             int id = obj["ID"].AsInt;
@@ -146,13 +96,10 @@ public class NetworkingManager : MonoBehaviour
                 gameObject.GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
             }
 
-            if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
-            {
+            if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame)) {
                 Pair<DataType, int> pair = new Pair<DataType, int>((DataType)dataType, id);
-                if (_subscribedActions.ContainsKey(pair))
-                {
-                    foreach (Action<JSONClass> callback in _subscribedActions[pair])
-                    {
+                if (_subscribedActions.ContainsKey(pair)) {
+                    foreach (Action<JSONClass> callback in _subscribedActions[pair]) {
                         callback(obj);
                     }
                 }
@@ -165,45 +112,22 @@ public class NetworkingManager : MonoBehaviour
     ////Code for communicating with client-server system////
     #region CommunicationWithClientSystem
 
-    #region UDP/TCP Code
-    [DllImport("ClientLibrary.so")]
-    private static extern IntPtr TCP_CreateClient();
-
-    [DllImport("ClientLibrary.so")]
-    private static extern int TCP_ConnectToServer(IntPtr client, string ipAddress, short port);
-
-    [DllImport("ClientLibrary.so")]
-    private static extern int TCP_Send(IntPtr client, string message, int size);
-
-    [DllImport("ClientLibrary.so")]
-    private static extern IntPtr TCP_GetData(IntPtr client);
-
-    [DllImport("ClientLibrary.so")]
-    private static extern int TCP_StartReadThread(IntPtr client);
-
     // Imported function from C++ library for receiving data
     [DllImport("NetworkingLibrary.so")]
     private static extern IntPtr receiveData();
 
     // Imported function from C++ library for sending data
     [DllImport("NetworkingLibrary.so")]
-    private static extern void sendDataUDP(string data);
+    private static extern void sendData(string data);
 
     //On Linux, send data to C++ file
-    private void send_data()
-    {
+    private void send_data() {
         if (Application.platform == RuntimePlatform.LinuxPlayer)
-        {
-            var tcp = create_sending_json(Protocol.TCP);
-            if (tcp != "[]")
-                TCP_Send(TCPClient, tcp, tcp.Length);
-            sendDataUDP(create_sending_json(Protocol.UDP));
-        }
+            sendData(create_sending_json());
     }
 
     //Receive a packet from C++ networking client code
-    private string receive_data()
-    {
+    private string receive_data() {
         //On Linux, get a proper packet
         if (Application.platform == RuntimePlatform.LinuxPlayer)
             result = Marshal.PtrToStringAnsi(receiveData());
@@ -214,34 +138,25 @@ public class NetworkingManager : MonoBehaviour
     }
 
     //Generate the JSON file to send to C++ networking client code
-    private string create_sending_json(Protocol protocol)
-    {
+    private string create_sending_json() {
         //Open JSON array
         string sending = "[";
 
-        if (protocol == Protocol.UDP)
-        {
-            if (player != null)
-            {
-                //Add player data
-                var memberItems = new List<Pair<string, string>>();
-                memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
-                memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-                memberItems.Add(new Pair<string, string>("rotation", player.GetComponent<PlayerRotation>().curRotation.ToString()));
-                send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems, protocol);
-            }
+        if (player != null) {
+            //Add player data
+            var memberItems = new List<Pair<string, string>>();
+            memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
+            memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
+            memberItems.Add(new Pair<string, string>("rotation", player.GetComponent<PlayerRotation>().curRotation.ToString()));
+            send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems);
         }
 
         //Add data that external sources want to send
-        foreach (var item in protocol == Protocol.TCP ? jsonTCPObjectsToSend : jsonUDPObjectsToSend)
-        {
+        foreach (var item in jsonObjectsToSend) {
             sending += item;
         }
-
-        if (protocol == Protocol.TCP)
-            jsonTCPObjectsToSend.Clear();
-        else
-            jsonUDPObjectsToSend.Clear();
+        
+        jsonObjectsToSend.Clear();
 
         //Close json array
         if (sending.Length > 2)
@@ -252,301 +167,54 @@ public class NetworkingManager : MonoBehaviour
     }
 
     //Add data to be sent
-    public static string send_next_packet(DataType type, int id, List<Pair<string, string>> memersToSend, Protocol protocol)
-    {
+    public static string send_next_packet(DataType type, int id, List<Pair<string, string>> memersToSend) {
         string sending = "";
         sending = "{";
         sending += " \"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
 
-        foreach (var pair in memersToSend)
-        {
+        foreach (var pair in memersToSend) {
             sending += " \"" + pair.first + "\" : " + pair.second + ",";
         }
 
         sending = sending.Remove(1, 1);
         sending = sending.Remove(sending.Length - 1, 1);
         sending += "},";
-        switch (protocol)
-        {
-            case Protocol.UDP:
-                jsonUDPObjectsToSend.Add(sending);
-                break;
-            case Protocol.TCP:
-                jsonTCPObjectsToSend.Add(sending);
-                break;
-        }
-
+        jsonObjectsToSend.Add(sending);
         return sending;
     }
-    #endregion
-
-    #region Lobby Code
-
-    public enum MenuStates
-    {
-        Previous, Settings, Connect, Lobby
-    };
-
-    void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-        if (menu_canvas != null)
-        {
-            menu_canvas = menu_canvas.GetComponent<Canvas>();
-
-            // set Main menu by default and disable other states & panels
-            settings_menu.SetActive(false);
-            connect_menu.SetActive(false);
-            lobby_menu.SetActive(false);
-            main_menu.SetActive(true);
-            _menu_order.Add(main_menu);
-
-            team_select_panel.SetActive(false);
-            class_select_panel.SetActive(false);
-
-            TCPClient = TCP_CreateClient();
-        }
-    }
-
-
-    // === connection menu ===
-    public void JoinLobby()
-    {
-        string name = _GetInputText("NameInput");
-        string ip = _GetInputText("IPInput");
-
-        // TODO: validate player name and IP addr
-        if (!(name.Length == 0) && !(ip.Length == 0))
-        {
-            _player_name = name;
-            _SwitchMenu(MenuStates.Lobby);
-
-            // Connect to the server
-            if (TCP_ConnectToServer(TCPClient, ip, 7000) < 0)
-            {
-                // Error check here
-                Debug.Log("Cant connect to server\n");
-            }
-
-            // Thread creation
-            if (TCP_StartReadThread(TCPClient) < 0)
-            {
-                // Error check here
-                Debug.Log("Error creating read thread\n");
-            }
-        }
-    }
-
-    // === game lobby menu ===
-    public void LoadLevel()
-    {
-        Application.LoadLevel("HUDScene");
-    }
-
-    public void ChooseTeam()
-    {
-        team_select_panel.SetActive(true);
-        _RemovePlayerFromLobbyList(0);
-    }
-    public void SelectTeam(int team)
-    {
-        // add player text with appropriate colour to canvas
-
-        // This call is causing an error
-        //_AddPlayerToLobbyList(_player_name, team);
-
-        // Send dummy packet
-        if (TCP_Send(TCPClient, _player_name + " selected " + team + "!", 30) < 0)
-        {
-            // handle error here 
-            Debug.Log("SelectTeam(): Packet sending failed\n");
-        }
-
-        team_select_panel.SetActive(false);
-    }
-
-    public void ChooseClass()
-    {
-        class_select_panel.SetActive(true);
-    }
-
-    public void SelectClass(int value)
-    {
-        // TODO: associate class value with player here
-        class_select_panel.SetActive(false);
-
-        // Send dummy packet
-        if (TCP_Send(TCPClient, _player_name + "selected class " + value + "!", 20) < 0)
-        {
-            // handle error here
-            Debug.Log("SelectClass(): Pakcet sending failed");
-        }
-    }
-
-    private void _AddPlayerToLobbyList(string player_name, int team)
-    {
-        _lobby_list.Add(_AddTextToCanvas(menu_canvas.transform, 290, (120 - (25 * _y_offset++)), 100, 35, player_name, 20, team));
-    }
-
-    // need to remove player names if switch teams and then redraw text
-    // adjust y_offset value when removing player
-    // need some kind of player_id to do this in case of identical name
-    private void _RemovePlayerFromLobbyList(int player_id)
-    {
-        // right now just get rid of last one...
-        Destroy(_lobby_list[_lobby_list.Count - 1]);
-        _lobby_list.RemoveAt(_lobby_list.Count - 1);
-        _y_offset--; // not necessarily when dealing with other connections...
-    }
-
-    // === private helper functions ===
-
-    // adds a text object to canvas
-    private GameObject _AddTextToCanvas(Transform parent, float x, float y, float w, float h, string message, int font_size, int color)
-    {
-        GameObject textObject = new GameObject("Text");
-        textObject.transform.SetParent(parent);
-
-        textObject.layer = 5; // UI layer
-
-        RectTransform trans = textObject.AddComponent<RectTransform>();
-        trans.sizeDelta.Set(w, h);
-        trans.anchoredPosition3D = new Vector3(0, 0, 0);
-        trans.anchoredPosition = new Vector2(x, y);
-        trans.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-        trans.localPosition.Set(0, 0, 0);
-
-        CanvasRenderer renderer = textObject.AddComponent<CanvasRenderer>();
-
-        Text text = textObject.AddComponent<Text>();
-        text.supportRichText = true;
-        text.text = message.ToUpper();
-        text.fontSize = font_size;
-        text.font = Resources.Load("Fonts/Neutra/Neutra2Text-Book", typeof(Font)) as Font;
-        text.alignment = TextAnchor.MiddleCenter;
-        text.horizontalOverflow = HorizontalWrapMode.Overflow;
-        text.color = ((color == 1) ? Color.red : Color.blue);
-
-        return textObject;
-    }
-
-    private string _GetInputText(string input)
-    {
-        return GameObject.Find(input).GetComponent<InputField>().text;
-    }
-
-    private void _SwitchMenu(MenuStates menu)
-    {
-        GameObject new_menu;
-        bool remove = false;
-
-        switch (menu)
-        {
-            case MenuStates.Previous:
-                new_menu = null; // to make compiler happy
-                remove = true;
-                break;
-            case MenuStates.Settings:
-                new_menu = settings_menu;
-                break;
-            case MenuStates.Connect:
-                new_menu = connect_menu;
-                break;
-            case MenuStates.Lobby:
-                new_menu = lobby_menu;
-                team_select_panel.SetActive(true);
-                break;
-            default:
-                new_menu = main_menu;
-                break;
-        }
-
-        _menu_order[_menu_order.Count - 1].SetActive(false);
-        if (remove)
-        {
-            _menu_order.RemoveAt(_menu_order.Count - 1);
-        }
-        else
-        {
-            _menu_order.Add(new_menu);
-        }
-
-        _menu_order[_menu_order.Count - 1].SetActive(true);
-    }
-
-    // === button functions ===
-
-    // --- main menu buttons ---
-    public void Connect()
-    {
-        _SwitchMenu(MenuStates.Connect);
-    }
-
-    public void Settings()
-    {
-        _SwitchMenu(MenuStates.Settings);
-    }
-
-    public void Exit()
-    {
-        Application.Quit();
-    }
-
-    // --- settings menu buttons ---
-    public void Controls()
-    {
-        Debug.Log("controls button pressed");
-    }
-
-    public void Back()
-    {
-        //disconnect from server
-
-        foreach (GameObject go in _lobby_list)
-        {
-            Destroy(go);
-            _y_offset--;
-        }
-        _SwitchMenu(MenuStates.Previous);
-    }
-    #endregion
 
     #endregion
 
     ////Game creation code
     #region StartOfGame
-
-    void StartGame(JSONClass data)
-    {
+        
+    void StartGame(JSONClass data) {
         int myPlayer = data["playerID"].AsInt;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
-        foreach (JSONClass playerData in data["playersData"].AsArray)
-        {
+        foreach (JSONClass playerData in data["playersData"].AsArray) {
             Debug.Log("Player Data: " + playerData.ToString());
-
+            
             var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, -10), Quaternion.identity)).gameObject;
 
             //TODO: Get classby creation packet
-            if (myPlayer == playerData["ID"].AsInt)
+            if(myPlayer == playerData["ID"].AsInt)
             {
                 createdPlayer.AddComponent<NinjaClass>();
-            }
-            else
+            } else
             {
                 createdPlayer.AddComponent<GunnerClass>();
             }
-
+            
 
             createdPlayer.GetComponent<BaseClass>().team = playerData["Team"].AsInt;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData["ID"].AsInt;
-
+            
             if (playerData["King"].AsInt == 1)
                 kings.Add(new Pair<int, int>(playerData["Team"].AsInt, playerData["ID"].AsInt));
 
-            if (myPlayer == playerData["ID"].AsInt)
-            {
+            if (myPlayer == playerData["ID"].AsInt) {
                 myTeam = playerData["Team"].AsInt;
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
@@ -556,16 +224,14 @@ public class NetworkingManager : MonoBehaviour
                 player.AddComponent<PlayerRotation>();
                 player.AddComponent<Attack>();
                 //Created our player
-            }
-            else {
+            } else {
                 createdPlayer.AddComponent<NetworkingManager_test1>();
                 createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData["ID"].AsInt;
                 //Created another player
             }
         }
 
-        foreach (var king in kings)
-        {
+        foreach(var king in kings){
             if (king.first == myTeam)
                 allyKingID = king.second;
             else
@@ -581,15 +247,12 @@ public class NetworkingManager : MonoBehaviour
     float _x = -15, _y = -10;
     string result = "receiving failed";
 
-    void OnGUI()
-    {
-        GUI.Label(new Rect(8, 0, Screen.width, Screen.height), "Last Received: " + result);
-        GUI.Label(new Rect(8, 20, Screen.width, Screen.height), "UDP Sending: " + create_sending_json(Protocol.UDP));
-        GUI.Label(new Rect(8, 40, Screen.width, Screen.height), "TCP Sending: " + create_sending_json(Protocol.TCP));
+    void OnGUI() {
+        GUI.Label(new Rect(8, 0, Screen.width, Screen.height), result);
+        GUI.Label(new Rect(8, 20, Screen.width, Screen.height), create_sending_json());
     }
 
-    string create_test_json()
-    {
+    string create_test_json() {
         var rot = player.GetComponent<PlayerRotation>().curRotation;
         return "[{\"DataType\" : 1, \"ID\" : 1, \"x\" : 51.0, \"y\" : 51.0, \"rotationZ\" : " + rot.z + ", \"rotationW\" : " + rot.w + "}]";
     }
