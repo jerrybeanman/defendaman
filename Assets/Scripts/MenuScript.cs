@@ -8,21 +8,23 @@ using System;
 public class MenuScript : MonoBehaviour {
 
 	[DllImport("ClientLibrary.so")]
-	private static extern IntPtr CreateClient();
+	private static extern IntPtr TCP_CreateClient();
 
 	[DllImport("ClientLibrary.so")]
-	private static extern int Call_Init_TCP_Client_Socket(IntPtr client, 
+	private static extern int TCP_ConnectToServer(IntPtr client, 
 	                                                      string  ipAddress, 
 	                                                      short port);
 
 	[DllImport("ClientLibrary.so")]
-	private static extern void DisposeClient(IntPtr client);
-
-	[DllImport("ClientLibrary.so")]
-	private static extern int Call_Send(IntPtr client, 
+	private static extern int TCP_Send(IntPtr client, 
 	                                    string message, 
 	                                    int size);
+	[DllImport("ClientLibrary.so")]
+	private static extern IntPtr TCP_GetData(IntPtr client);
 
+	[DllImport("ClientLibrary.so")]
+	private static extern int TCP_StartReadThread(IntPtr client);
+	
     public enum MenuStates
     {
         Previous, Settings, Connect, Lobby
@@ -48,6 +50,7 @@ public class MenuScript : MonoBehaviour {
 
 	private	IntPtr 	TCPClient;
 
+	private string RecievedData = "Waiting for Inputs...";
     void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
@@ -62,8 +65,24 @@ public class MenuScript : MonoBehaviour {
         team_select_panel.SetActive(false);
         class_select_panel.SetActive(false);
 
-		TCPClient = CreateClient();
+		TCPClient = TCP_CreateClient();
     }
+	bool connected = false;
+	void Update()
+	{
+		string tmp = Marshal.PtrToStringAnsi(TCP_GetData(TCPClient));
+		if(!String.Equals(tmp,"[]"))
+		{
+			RecievedData = "equals?";
+			RecievedData = tmp;
+		}
+	}
+
+	void OnGUI()
+	{
+		GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+		GUI.Label(new Rect(10, 40, Screen.width, Screen.height), RecievedData);
+	}
 
     // === connection menu ===
     public void JoinLobby()
@@ -76,8 +95,20 @@ public class MenuScript : MonoBehaviour {
         {
             _player_name = name;
             _SwitchMenu(MenuStates.Lobby);
-            // call function to send player info to server
-			Call_Init_TCP_Client_Socket(TCPClient, ip, 7000);
+
+            // Connect to the server
+			if(TCP_ConnectToServer(TCPClient, ip, 7000) < 0)
+			{
+				// Error check here
+				Debug.Log("Cant connect to server\n");
+			}
+
+			// Thread creation
+			if(TCP_StartReadThread(TCPClient) < 0)
+			{
+				// Error check here
+				Debug.Log("Error creating read thread\n");
+			}
         }
     }
 
@@ -98,7 +129,13 @@ public class MenuScript : MonoBehaviour {
 
 		// This call is causing an error
         //_AddPlayerToLobbyList(_player_name, team);
-		Call_Send(TCPClient, _player_name + " selected " + team + "!", 30);
+
+		// Send dummy packet
+		if(TCP_Send(TCPClient, _player_name + " selected " + team + "!", 30) < 0)
+		{
+			// handle error here 
+			Debug.Log("SelectTeam(): Packet sending failed\n");
+		}
 
         team_select_panel.SetActive(false);
     }
@@ -112,7 +149,13 @@ public class MenuScript : MonoBehaviour {
     {
         // TODO: associate class value with player here
         class_select_panel.SetActive(false);
-		Call_Send(TCPClient, "selected class " + value + "!", 20);
+
+		// Send dummy packet
+		if(TCP_Send(TCPClient, _player_name + "selected class " + value + "!", 20) < 0)
+		{
+			// handle error here
+			Debug.Log("SelectClass(): Pakcet sending failed");
+		}
     }
 
     private void _AddPlayerToLobbyList(string player_name, int team)
@@ -232,7 +275,6 @@ public class MenuScript : MonoBehaviour {
     public void Back()
     {
 		//disconnect from server
-		DisposeClient(TCPClient);
 
         foreach (GameObject go in _lobby_list)
         {
