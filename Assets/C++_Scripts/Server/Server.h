@@ -27,12 +27,12 @@
  */
 typedef struct Player
 {
-	int            socket;
-	sockaddr_in    connection;
-	int            id;
-	char           username[32];
-	int            team;
-
+    int            socket;
+    sockaddr_in    connection;
+    int            id;
+    char           username[32];
+    int            team;
+    bool           isReady;
 } Player;
 
 namespace Networking
