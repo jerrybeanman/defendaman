@@ -143,10 +143,10 @@ public abstract class BaseClass : MonoBehaviour {
         return cooldowns[0];
     }
 
-    public virtual float[] specialAttack(Vector2 dir)
+    public virtual float specialAttack(Vector2 dir)
     {
         HUD_Manager.instance.UseSubSkill(cooldowns[1]);
-        return cooldowns;
+        return cooldowns[1];
     }
 
     [System.Serializable]
