@@ -2,7 +2,6 @@
 #define SERVER_UDP
 #include <sstream>      // std::istringstream
 #include "Server.h"
-#include "ServerTCP.h"
 
 namespace Networking
 {

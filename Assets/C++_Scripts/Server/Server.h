@@ -42,11 +42,11 @@ namespace Networking
 		public:
 			Server(){}
 			~Server(){}
-			/*
-			   Initialize socket, server address to lookup to, and connect to the server
+    	/*
+		   Initialize socket, server address to lookup to, and connect to the server
 
-			   @return: socket file descriptor
-			 */
+		   @return: socket file descriptor
+		 */
 		virtual int InitializeSocket(short port) = 0;
 
 		/*
@@ -56,31 +56,13 @@ namespace Networking
 		virtual void Broadcast(char * message) = 0;
 
 		/*
-		   Initialize socket, and server address to lookup to
-
-		   @return: socket file descriptor and the server address for future use
-		 */
-		int Init_UDP_Server_Socket(short port);
-
-
-		/*
-		   Listen for incoming UDP traffics
-
-		   @return: a packet
-		 */
-		std::string UDP_Server_Recv();
-
-		/*
 		   prints the list of addresses currently stored
 
 		   @return: void
 		 */
 		void PrintAddresses();
 
-
 		void fatal(const char* error);
-
-		void UDP_Server_Send(const char* message);
 
 		protected:
 		struct sockaddr_in     _ServerAddress;
