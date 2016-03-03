@@ -32,8 +32,8 @@ public class Attack : MonoBehaviour {
             //right click attack
             specialReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
-            float[] delay = player.specialAttack(dir);
-            Invoke("enableSpecial", delay[1]);
+            float delay = player.specialAttack(dir);
+            Invoke("enableSpecial", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {
                 new Pair<string, string>("Attack", "1"),
                 new Pair<string, string>("DirectionX", dir.x.ToString()),

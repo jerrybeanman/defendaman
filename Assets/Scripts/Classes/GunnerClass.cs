@@ -40,7 +40,7 @@ public class GunnerClass : BaseClass
         return cooldowns[0];
     }
 
-    public override float[] specialAttack(Vector2 dir)
+    public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
         //parameters: dir, team, damage, range
@@ -53,6 +53,6 @@ public class GunnerClass : BaseClass
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
         attack.GetComponent<BasicRanged>().maxDistance = distance[1];
 
-        return cooldowns;
+        return cooldowns[1];
     }
 } 
