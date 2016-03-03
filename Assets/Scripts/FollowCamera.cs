@@ -12,7 +12,6 @@ public class FollowCamera : MonoBehaviour {
     private Vector3 velocity = Vector3.zero;
     public Transform target;
 
-
     // Update is called once per frame
     void FixedUpdate() {
         //Point in the world the mouse is at
