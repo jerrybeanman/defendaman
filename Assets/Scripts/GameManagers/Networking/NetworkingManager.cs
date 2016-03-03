@@ -191,7 +191,6 @@ public class NetworkingManager : MonoBehaviour {
     void StartGame(JSONClass data) {
         int myPlayer = data["playerID"].AsInt;
         int myTeam = 0;
-        Debug.Log("My player: " + myPlayer);
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         foreach (JSONClass playerData in data["playersData"].AsArray) {
@@ -200,7 +199,14 @@ public class NetworkingManager : MonoBehaviour {
             var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, -10), Quaternion.identity)).gameObject;
 
             //TODO: Get classby creation packet
-            createdPlayer.AddComponent<GunnerClass>();
+            if(myPlayer == playerData["ID"].AsInt)
+            {
+                createdPlayer.AddComponent<NinjaClass>();
+            } else
+            {
+                createdPlayer.AddComponent<GunnerClass>();
+            }
+            
 
             createdPlayer.GetComponent<BaseClass>().team = playerData["Team"].AsInt;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData["ID"].AsInt;
@@ -210,16 +216,15 @@ public class NetworkingManager : MonoBehaviour {
 
             if (myPlayer == playerData["ID"].AsInt) {
                 myTeam = playerData["Team"].AsInt;
-                Debug.Log("Created our player");
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
-                GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
+                if (GameObject.Find("Minimap Camera") != null)
+                    GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
                 player.AddComponent<Movement>();
                 player.AddComponent<PlayerRotation>();
                 player.AddComponent<Attack>();
                 //Created our player
             } else {
-                Debug.Log("Created ally");
                 createdPlayer.AddComponent<NetworkingManager_test1>();
                 createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData["ID"].AsInt;
                 //Created another player
@@ -227,7 +232,6 @@ public class NetworkingManager : MonoBehaviour {
         }
 
         foreach(var king in kings){
-            Debug.Log(king.ToString());
             if (king.first == myTeam)
                 allyKingID = king.second;
             else
