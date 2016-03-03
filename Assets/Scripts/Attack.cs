@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class Attack : MonoBehaviour {
 
@@ -15,7 +16,7 @@ public class Attack : MonoBehaviour {
     
     //Called every frame
     void Update() {
-		if(Input.GetKey(KeyCode.Mouse0) && attackReady) {
+        if (Input.GetKey(KeyCode.Mouse0) && attackReady) {
             //left click attack
             attackReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
