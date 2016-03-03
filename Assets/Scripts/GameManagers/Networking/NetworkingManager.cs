@@ -191,7 +191,6 @@ public class NetworkingManager : MonoBehaviour {
     void StartGame(JSONClass data) {
         int myPlayer = data["playerID"].AsInt;
         int myTeam = 0;
-        Debug.Log("My player: " + myPlayer);
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         foreach (JSONClass playerData in data["playersData"].AsArray) {
@@ -217,7 +216,6 @@ public class NetworkingManager : MonoBehaviour {
 
             if (myPlayer == playerData["ID"].AsInt) {
                 myTeam = playerData["Team"].AsInt;
-                Debug.Log("Created our player");
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
@@ -227,7 +225,6 @@ public class NetworkingManager : MonoBehaviour {
                 player.AddComponent<Attack>();
                 //Created our player
             } else {
-                Debug.Log("Created ally");
                 createdPlayer.AddComponent<NetworkingManager_test1>();
                 createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData["ID"].AsInt;
                 //Created another player
@@ -235,7 +232,6 @@ public class NetworkingManager : MonoBehaviour {
         }
 
         foreach(var king in kings){
-            Debug.Log(king.ToString());
             if (king.first == myTeam)
                 allyKingID = king.second;
             else
