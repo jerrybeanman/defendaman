@@ -12,9 +12,13 @@ public class NinjaClass : BaseClass
         this._classStat.MaxHp = 150;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 5;
-        this._classStat.AtkPower = 20;
-        cooldowns = new float[2] { 0.5f, 2f };
+        this._classStat.MoveSpeed = 25;
+        this._classStat.AtkPower = 15;
+
+        var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+
+        cooldowns = new float[2] { 0.5f, 2 };
     }
 
     //attacks return time it takes to execute
@@ -24,9 +28,9 @@ public class NinjaClass : BaseClass
         return 0;
     }
 
-    public override float[] specialAttack(Vector2 dir)
+    public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
-        return new float[2] { 0.5f, 2 };
+        return 2;
     }
 }
