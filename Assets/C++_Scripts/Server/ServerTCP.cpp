@@ -19,7 +19,7 @@ int ServerTCP::InitializeSocket(short port)
         fatal("InitializeSocket: socket() failed\n");
         return _TCPAcceptingSocket;
     }
-    
+
     /* Allows other sockets to bind() to this port, unless there is an active listening socket bound to the port already. */
 	setsockopt(_TCPAcceptingSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
@@ -50,95 +50,98 @@ int ServerTCP::InitializeSocket(short port)
 */
 int ServerTCP::Accept(Player * player)
 {
+    char buf[PACKETLEN];
     unsigned int        ClientLen = sizeof(player->connection);
-
+    printf("before accept\n");
     /* Accepts a connection from the client */
     if ((player->socket = accept(_TCPAcceptingSocket, (struct sockaddr *)&player->connection, &ClientLen)) == -1)
     {
         std::cerr << "Accept() failed with errno" << errno << std::endl;
         return -1;
     }
-
-    /* Not the best way to do it since we're using vectors */ 
+    printf("After accept\n");
+    /* Not the best way to do it since we're using vectors */
     player->id = _PlayerList.size();
 
     _PlayerList.push_back(*player);
-    std::cout << "\n-----Player " << _PlayerList.size() << " has joined the lobby-----\n" << std::endl;
+
+    sprintf(buf, "Player %d has joined the lobby\n", _PlayerList.size());
+    printf(buf);
+    //this->ServerTCP::Broadcast(buf);
+    newPlayer = *player;
     return player->id;
 }
+
 
 /*
 	Creates a child process to handle incoming messages from new player that has just connected to the lobby
 
 	@return: child PDI (0 for child process)
 */
-int ServerTCP::CreateClientManager(int PlayerID)
+void * ServerTCP::CreateClientManager(void * server)
 {
-	int ChildPID;
-
-	/* Creates a child process to handle new client */
-	if((ChildPID = fork()) == 0)
-	{
-		this->ServerTCP::Receive(&_PlayerList[PlayerID]);
-	}
-	return ChildPID;
+    /* God forbid */
+    return ((ServerTCP *)server)->Receive();
 }
 
 
-/*	
+/*
 	Recieves data from child process that is dedicated for each player's socket
 
 	@return: 1 on success, -1 on error, 0 on disconnect
 */
-int ServerTCP::Receive(Player * player)
+void * ServerTCP::Receive()
 {
-	int BytesRead;
-    char * buf;							/* buffer read from one recv call      					 */
+    Player tmpPlayer = newPlayer;
+  	int BytesRead;
+    char * buf;						          	/* buffer read from one recv call      	  */
+    //JSON segments
+    char dataType[30];
+    int code;
+    char id[30];
+    int idValue;
+    int team;
 
-	std::ostringstream 	oss;			/* istringstream object 								 */
-	std::string 		EchoMsg;		/* message that will be echoed back to connected players */	
-
-	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 									 */
+  	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
     while (1)
     {
-    	BytesRead = recv (player->socket, buf, PACKETLEN, 0);
+      	BytesRead = recv (tmpPlayer.socket, buf, PACKETLEN, 0);
 
-    	if(BytesRead < 0) /* recv() failed */
-    	{
-    		std::cerr << "recv() failed with errno: " << errno << std::endl;
-    		return 0;
-    	}
-    	if(BytesRead == 0) /* client disconnected */ 
-    	{
-    		std::cerr << "Player " << player->id + 1 <<  " has left the lobby"<< std::endl;
-    		return 0;
-    	}
+      	if(BytesRead < 0) /* recv() failed */
+      	{
+      		printf("recv() failed with errno: %d", errno);
+      		return 0;
+      	}
+      	if(BytesRead == 0) /* client disconnected */
+      	{
+      		printf("Player %d has left the lobby \n", tmpPlayer.id + 1);
+      		return 0;
+      	}
 
-        /* Format of the packet: "username team" */
-    	sscanf(buf, "%s %s", player->username, player->team);
-       	PrintPlayer(*player);
+        std::cout << buf << std::endl;
+        /*Parsed  based on json array*/
+        sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &team);
+        if(code == Networking && idValue == TeamChangeRequest) {
+            std::cout << "Team change: " << team << std::endl;
+          _PlayerList[tmpPlayer.id].team = team;
+      }
 
-       	/* Construct echo packet */
-       	oss << player->id + 1 << " " << player->username <<  " " << player->team;
-      	EchoMsg = oss.str();
-
-      	/* Broadcast echo packet back to all players*/
-      	this->ServerTCP::Broadcast(EchoMsg);
-      	s.clear();
+      	/* Broadcast echo packet back to all players */
+      	this->ServerTCP::Broadcast(buf);
     }
     free(buf);
-    return 1;
+    return 0;
 }
 
 /*
 	Sends a message to all the clients
 
 */
-void ServerTCP::Broadcast(std::string message)
+void ServerTCP::Broadcast(char * message)
 {
 	for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
 	{
-		if(send(_PlayerList[i].socket, message.c_str(), message.size() + 1, 0) == -1)
+		if(send(_PlayerList[i].socket, message, PACKETLEN, 0) == -1)
 		{
 			std::cerr << "Broadcast() failed for player id: " << _PlayerList[i].id + 1 << std::endl;
 			std::cerr << "errno: " << errno << std::endl;
