@@ -62,12 +62,13 @@ int ServerTCP::Accept(Player * player)
     printf("After accept\n");
     /* Not the best way to do it since we're using vectors */
     player->id = _PlayerList.size();
+    player->isReady = false;
 
     _PlayerList.push_back(*player);
 
     sprintf(buf, "Player %d has joined the lobby\n", _PlayerList.size());
     printf(buf);
-    //this->ServerTCP::Broadcast(buf);
+    this->ServerTCP::Broadcast(buf);
     newPlayer = *player;
     return player->id;
 }
@@ -100,7 +101,7 @@ void * ServerTCP::Receive()
     int code;
     char id[30];
     int idValue;
-    int team;
+    int requestValue;
 
   	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
     while (1)
@@ -114,17 +115,16 @@ void * ServerTCP::Receive()
       	}
       	if(BytesRead == 0) /* client disconnected */
       	{
-      		printf("Player %d has left the lobby \n", tmpPlayer.id + 1);
+      		sprintf(buf, "Player %d has left the lobby \n", tmpPlayer.id + 1);
+          printf(buf);
+          this->ServerTCP::Broadcast(buf);
       		return 0;
       	}
 
         std::cout << buf << std::endl;
         /*Parsed  based on json array*/
-        sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &team);
-        if(code == Networking && idValue == TeamChangeRequest) {
-            std::cout << "Team change: " << team << std::endl;
-          _PlayerList[tmpPlayer.id].team = team;
-      }
+        sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &requestValue);
+        this->ServerTCP::CheckServerRequest(tmpPlayer.id, code, idValue, requestValue);
 
       	/* Broadcast echo packet back to all players */
       	this->ServerTCP::Broadcast(buf);
@@ -155,4 +155,52 @@ void ServerTCP::PrintPlayer(Player p)
 	std::cout << "Recieved Player " << p.id + 1 << " update: " << std::endl;
 	std::cout << "	Username: " << p.username << std::endl;
 	std::cout << "	Team name:  " << p.team << std::endl;
+}
+
+/*Parses incoming JSON and process request*/
+void ServerTCP::CheckServerRequest(int playerId, int code, int idValue, int requestValue)
+{
+  char * buf;
+  buf = (char *)malloc(PACKETLEN); 	/* allocates memory */
+  if(code == Networking && idValue == TeamChangeRequest)
+  {
+    std::cout << "Team change: " << requestValue << std::endl;
+    _PlayerList[playerId].team = requestValue;
+  } else if (code == Networking && idValue == ReadyRequest)
+  {
+    std::cout << "Ready change: " << requestValue << std::endl;
+    if (requestValue == 0)
+    {
+      _PlayerList[playerId].isReady = false;
+    } else if (requestValue == 1)
+    {
+      _PlayerList[playerId].isReady =  true;
+    }
+    if (this->ServerTCP::AllPlayersReady())
+    {
+      printf("All players are ready\n");
+      sprintf(buf, "Game is starting!\n");
+      printf(buf);
+      this->ServerTCP::Broadcast(buf); // or use flag to ignore all recv messages
+    }
+  }
+  free(buf);
+}
+/* Check ready status on all connected players
+
+   @return true if all players are ready, false otherwise
+*/
+bool ServerTCP::AllPlayersReady()
+{
+  for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
+	{
+    if(!_PlayerList[i].isReady)
+		{
+      printf("Player %d is not ready\n", _PlayerList[i].id + 1);
+			return false;
+		} else {
+      printf("Player %d is ready\n", _PlayerList[i].id + 1);
+    }
+	}
+  return true;
 }
