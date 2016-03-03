@@ -54,22 +54,21 @@ std::string Server::UDP_Server_Recv()
         fatal("UDP_Server_Recv: recvfrom() failed\n");
         return NULL;
     }
-
+	_ClientAddresses.push_back(Client);
     packet = buf;
     free(buf);
     return packet;
 }
 
-/* Echoes the message back to the client*/
+/* Echoes the message back to all clients*/
 void Server::UDP_Server_Send(const char* message)
 {
-  struct sockaddr_in Client;
-  if (sendto(_UDPReceivingSocket, message, sizeof(message), 0, (sockaddr *)&Client, sizeof(Client)) == -1)
-  {
-    fatal("Send to UDP client failed\n");
-  } else {
-    std::cerr << "UDP packet sent successfully." << std::endl;
-  }
+	for (int i = 0; 0 <_ClientAddresses.size();i++){
+		if (sendto(_UDPReceivingSocket, message, sizeof(message), 0 , (sockaddr *)&_ClientAddresses[i], sizeof(_ClientAddresses[i])) == -1)
+		{
+			fatal("Send to UDP Client failed \n");
+		}
+	}
 }
 
 void Server::fatal(const char* error)

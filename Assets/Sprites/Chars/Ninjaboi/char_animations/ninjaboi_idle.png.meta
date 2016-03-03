@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Sprites/Chars/Ninjaboi/char_animations/ninjaboi_idle.png.meta
+guid: bdf8022279b5e944ab37a54fec838c4a
+timeCreated: 1456106599
+=======
 guid: 1aa92360a4858744db8c0a993075c696
 timeCreated: 1456100561
+>>>>>>> origin/network_test:Assets/Sprites/Chars/Ninjaboi/char_animations/ninjaboi_idle.png.meta
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
