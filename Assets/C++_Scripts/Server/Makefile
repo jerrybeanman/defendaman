@@ -6,7 +6,7 @@ CC=g++
 NAME=Server
 FLAGS=-Wall
 LIBRARIES = -pthread
-S_FILES= Server.cpp ServerTCP.cpp main.cpp
+S_FILES= Server.cpp ServerTCP.cpp ServerUDP.cpp main.cpp
 OBJECT_FILES=$(S_FILES:.cpp=.o)
 META_FILES=$(S_FILES:.cpp=.cpp.meta)
 
