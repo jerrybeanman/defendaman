@@ -4,12 +4,12 @@ using System.Collections;
 public class ViewSystem : MonoBehaviour {
 
 	Vector2[] shadowPoints;
-	public int casts = 45;
-	public int viewDistance = 10;
+	private int casts = 45;
+	private int viewDistance = 5;
 	public Mesh mesh;
 	public GameObject player;
 	private int degreeOfCasts;
-	private float playerX, playerY;
+	private float playerX, playerY, rot;
 	
 	// Use this for initialization
 	void Start() {
@@ -24,12 +24,12 @@ public class ViewSystem : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update() {
+	void FixedUpdate() {
 		Mesh mesh = GetComponent<MeshFilter>().mesh;
 		Vector3[] vertices = mesh.vertices;
 		Vector3[] normals = mesh.normals;
 		int t = 0;
-		player = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player;
+		//player = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player;
 		while (t < vertices.Length) {
 			vertices[t] += normals[t] * Mathf.Sin(Time.time);
 			t++;
@@ -41,7 +41,12 @@ public class ViewSystem : MonoBehaviour {
 	}
 	
 	float realAngle() {
-		return -player.transform.rotation.eulerAngles.z;
+		if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0
+		    || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)
+		    || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
+			rot = -player.transform.rotation.eulerAngles.z + 90;
+		}
+		return rot;
 	}
 	
 	void buildPointsAndMesh() {
@@ -52,7 +57,7 @@ public class ViewSystem : MonoBehaviour {
 		for (int i = 0; i < casts; i++) {
 			Vector2 checker = new Vector2(Mathf.Cos(Mathf.Deg2Rad * i * degreeOfCasts) + Mathf.Sin(Mathf.Deg2Rad * realAngle()) * .9f, 
 			                              Mathf.Sin(Mathf.Deg2Rad * i * degreeOfCasts) + Mathf.Cos(Mathf.Deg2Rad * -realAngle()) * .9f);
-			shadowPoints[i] = LineCastColl(transform.position, checker * viewDistance);
+			shadowPoints[i] = LineCastColl(transform.position, checker * 10);
 		}
 		buildMesh(shadowPoints);
 	}
