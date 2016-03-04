@@ -146,16 +146,28 @@ public class NetworkingManager : MonoBehaviour
     public static extern IntPtr TCP_CreateClient();
 
     [DllImport("ClientLibrary.so")]
-    public static extern int TCP_ConnectToServer(IntPtr client, string ipAddress, short port);
+    private static extern int TCP_ConnectToServer(IntPtr client, string ipAddress, short port);
+    public static int TCP_ConnectToServer(string ipAddress, short port) {
+        return TCP_ConnectToServer(TCPClient, ipAddress, port);
+    }
 
     [DllImport("ClientLibrary.so")]
-    public static extern int TCP_Send(IntPtr client, string message, int size);
+    private static extern int TCP_Send(IntPtr client, string message, int size);
+    public static int TCP_Send(string message, int size) {
+        return TCP_Send(TCPClient, message, size);
+    }
 
     [DllImport("ClientLibrary.so")]
-    public static extern IntPtr TCP_GetData(IntPtr client);
+    private static extern IntPtr TCP_GetData(IntPtr client);
+    public static IntPtr TCP_GetData() {
+        return TCP_GetData(TCPClient);
+    }
 
     [DllImport("ClientLibrary.so")]
-    public static extern int TCP_StartReadThread(IntPtr client);
+    private static extern int TCP_StartReadThread(IntPtr client);
+    public static int TCP_StartReadThread() {
+        return TCP_StartReadThread(TCPClient);
+    }
 
     // Imported function from C++ library for receiving data
     [DllImport("NetworkingLibrary.so")]
@@ -173,7 +185,7 @@ public class NetworkingManager : MonoBehaviour
         if (Application.platform == RuntimePlatform.LinuxPlayer)
         {
             if (tcp != "[]")
-                TCP_Send(TCPClient, tcp, tcp.Length);
+                TCP_Send(tcp, tcp.Length);
             sendDataUDP(udp);
         }
         if (tcp != "[]")

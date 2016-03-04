@@ -47,7 +47,7 @@ public class MenuScript : MonoBehaviour {
 	bool connected = false;
 	void Update()
 	{
-		string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData(NetworkingManager.TCPClient));
+		string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
 		if(!String.Equals(tmp,"[]"))
 		{
 			RecievedData = "equals?";
@@ -74,14 +74,14 @@ public class MenuScript : MonoBehaviour {
             _SwitchMenu(MenuStates.Lobby);
 
             // Connect to the server
-			if(NetworkingManager.TCP_ConnectToServer(NetworkingManager.TCPClient, ip, 7000) < 0)
+			if(NetworkingManager.TCP_ConnectToServer(ip, 7000) < 0)
 			{
 				// Error check here
 				Debug.Log("Cant connect to server\n");
 			}
 
 			// Thread creation
-			if(NetworkingManager.TCP_StartReadThread(NetworkingManager.TCPClient) < 0)
+			if(NetworkingManager.TCP_StartReadThread() < 0)
 			{
 				// Error check here
 				Debug.Log("Error creating read thread\n");
@@ -108,7 +108,7 @@ public class MenuScript : MonoBehaviour {
         //_AddPlayerToLobbyList(_player_name, team);
 
 		// Send dummy packet
-		if(NetworkingManager.TCP_Send(NetworkingManager.TCPClient, _player_name + " selected " + team + "!", 30) < 0)
+		if(NetworkingManager.TCP_Send(_player_name + " selected " + team + "!", 30) < 0)
 		{
 			// handle error here 
 			Debug.Log("SelectTeam(): Packet sending failed\n");
@@ -128,7 +128,7 @@ public class MenuScript : MonoBehaviour {
         class_select_panel.SetActive(false);
 
 		// Send dummy packet
-		if(NetworkingManager.TCP_Send(NetworkingManager.TCPClient, _player_name + "selected class " + value + "!", 20) < 0)
+		if(NetworkingManager.TCP_Send(_player_name + "selected class " + value + "!", 20) < 0)
 		{
 			// handle error here
 			Debug.Log("SelectClass(): Pakcet sending failed");
