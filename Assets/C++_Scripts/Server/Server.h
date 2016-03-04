@@ -55,20 +55,17 @@ namespace Networking
 		 */
 		virtual void Broadcast(char * message) = 0;
 
-		/*
-		   prints the list of addresses currently stored
-
-		   @return: void
-		 */
-		void PrintAddresses();
+    virtual void * Receive() = 0;
 
 		void fatal(const char* error);
 
 		protected:
 		struct sockaddr_in     _ServerAddress;
-		int 				   _UDPReceivingSocket;
+		int 				           _UDPReceivingSocket;
 		int                    _TCPAcceptingSocket;
-		std::vector<struct sockaddr_in> _ClientAddresses;
+
+    /* List of players currently connected to the server */
+    std::vector<Player>             _PlayerList;
 
 	};
 }

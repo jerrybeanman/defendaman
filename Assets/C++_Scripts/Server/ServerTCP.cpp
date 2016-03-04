@@ -66,7 +66,7 @@ int ServerTCP::Accept(Player * player)
 
     _PlayerList.push_back(*player);
 
-    sprintf(buf, "Player %d has joined the lobby\n", _PlayerList.size());
+    sprintf(buf, "Player %lu has joined the lobby\n", _PlayerList.size());
     printf(buf);
     this->ServerTCP::Broadcast(buf);
     newPlayer = *player;
@@ -203,4 +203,11 @@ bool ServerTCP::AllPlayersReady()
     }
 	}
   return true;
+}
+/*
+  Returns the registered player list from the game lobby
+*/
+std::vector<Player> ServerTCP::setPlayerList()
+{
+  return _PlayerList;
 }

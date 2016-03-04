@@ -32,7 +32,7 @@ int ServerUDP::InitializeSocket(short port)
     return 0;
 }
 
-int ServerUDP::Receive()
+void * ServerUDP::Receive()
 {
     int err;
     struct sockaddr_in Client;              /* Incoming client's socket address information */
@@ -50,7 +50,6 @@ int ServerUDP::Receive()
       //this->ServerUDP::Broadcast(buf);
     }
     free(buf);
-    return 1;
 }
 
 /*
@@ -66,4 +65,11 @@ void ServerUDP::Broadcast(char* message)
       return;
     }
   }
+}
+/*
+  Registers the passed in Player list as a class member to be used in broadcasting UDP packets.
+*/
+void ServerUDP::SetPlayerList(std::vector<Player> players)
+{
+  _PlayerList = players;
 }

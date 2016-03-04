@@ -15,7 +15,7 @@ namespace Networking
 
 	            @return: socket file descriptor
             */
-            int InitializeSocket(short port);
+            int InitializeSocket(short port) override;
 
             /*
                  Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
@@ -23,15 +23,13 @@ namespace Networking
 
                 @return: socket file descriptor
             */
-            int Receive();
+            void * Receive() override;
 	           /*
                 Sends a message to all the clients
             */
-            void Broadcast(char* message);
+            void Broadcast(char* message) override;
 
-        private:
-            /* List of players currently connected to the server */
-            std::vector<Player>             _PlayerList;
+						void SetPlayerList(std::vector<Player> players);
 	};
 }
 

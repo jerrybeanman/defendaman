@@ -9,6 +9,7 @@ int main()
 {
   int rc;
   ServerTCP TestServer;
+  ServerUDP UDPServer;
 
   if((rc = TestServer.InitializeSocket(7000)) != 0)
   {
