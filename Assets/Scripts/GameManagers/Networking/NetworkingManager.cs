@@ -35,7 +35,7 @@ e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's 
 public class NetworkingManager : MonoBehaviour {
     // Game object to send data of
     public Transform playerType;
-    private GameObject player;
+    public GameObject player;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
