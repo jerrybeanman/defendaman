@@ -26,7 +26,7 @@ public class Attack : MonoBehaviour {
                 new Pair<string, string>("Attack", "0"),
                 new Pair<string, string>("DirectionX", dir.x.ToString()),
                 new Pair<string, string>("DirectionY", dir.y.ToString())
-            });
+            }, Protocol.UDP);
         } 
 
         if (Input.GetKey(KeyCode.Mouse1) && specialReady) {
@@ -39,7 +39,7 @@ public class Attack : MonoBehaviour {
                 new Pair<string, string>("Attack", "1"),
                 new Pair<string, string>("DirectionX", dir.x.ToString()),
                 new Pair<string, string>("DirectionY", dir.y.ToString()),
-            });
+            }, Protocol.UDP);
         }
 
         // animation trigger test
