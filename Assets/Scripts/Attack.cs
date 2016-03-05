@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class Attack : MonoBehaviour {
 
@@ -15,7 +16,7 @@ public class Attack : MonoBehaviour {
     
     //Called every frame
     void Update() {
-		if(Input.GetKey(KeyCode.Mouse0) && attackReady) {
+        if (Input.GetKey(KeyCode.Mouse0) && attackReady) {
             //left click attack
             attackReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
@@ -25,21 +26,30 @@ public class Attack : MonoBehaviour {
                 new Pair<string, string>("Attack", "0"),
                 new Pair<string, string>("DirectionX", dir.x.ToString()),
                 new Pair<string, string>("DirectionY", dir.y.ToString())
-            });
-        } else if (Input.GetKey(KeyCode.Mouse1) && attackReady && specialReady) {
+            }, Protocol.UDP);
+        } 
+
+        if (Input.GetKey(KeyCode.Mouse1) && specialReady) {
             //right click attack
-            attackReady = false;
             specialReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
-            float[] delay = player.specialAttack(dir);
-            Invoke("enableAttack", delay[0]);
-            Invoke("enableSpecial", delay[1]);
+            float delay = player.specialAttack(dir);
+            Invoke("enableSpecial", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {
                 new Pair<string, string>("Attack", "1"),
                 new Pair<string, string>("DirectionX", dir.x.ToString()),
                 new Pair<string, string>("DirectionY", dir.y.ToString()),
-            });
+            }, Protocol.UDP);
         }
+
+        // animation trigger test
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)) {
+            gameObject.GetComponent<Animator>().SetBool("moving", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D)) {
+            gameObject.GetComponent<Animator>().SetBool("moving", false);
+        }
+
     }
 	
 
