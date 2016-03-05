@@ -58,5 +58,6 @@ char* Client::GetData()
   {
     strcpy(currentData, "[]");
   }
+  printf("%s\n", currentData);
   return currentData;
 }
