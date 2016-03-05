@@ -49,8 +49,8 @@ public class MapManager : MonoBehaviour {
 	public List<Sprite> _mapWalkable;
 
 	// Object Pooling
-	public GameObject[] pooledObjects;
-	public Camera camera;
+	private GameObject[] _pooledObjects;
+	public Camera mainCamera;
 	public Vector3 cameraPosition;
 	public float cameraDistance;
 	public float frustumHeight, frustumWidth;
@@ -62,24 +62,28 @@ public class MapManager : MonoBehaviour {
 	 * Use this for initialization.
 	 */
 	void Start() {
-		// Initial check to see which game objects are in camera view.
-
 	}
 
-
-    void instantiate_pool()
+    /**
+     * Find the camera distance used to calculate the camera view frustum.
+     * Create the list of pooled objects and deactivate them.
+     * Perform initial object pool check.
+     */
+    private void instantiate_pool()
     {
+        cameraDistance = -mainCamera.orthographicSize;
         // Find all objects with the tag "Tile" and add them to the arraylist.
-        pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
-        print("pooledObjects size: " + pooledObjects.Length);
+        _pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
+        print("pooledObjects size: " + _pooledObjects.Length);
 
         // Deactivate all game objects on start.
-        for (int i = 0; i < pooledObjects.Length; i++)
+        for (int i = 0; i < _pooledObjects.Length; i++)
         {
-            pooledObjects[i].SetActive(false);
+            _pooledObjects[i].SetActive(false);
         }
 
-        checkObjectPool();
+        // Initial check to see which game objects are in camera view.
+        check_object_pool();
     }
 
     /**
@@ -89,26 +93,26 @@ public class MapManager : MonoBehaviour {
 	 * Iterate through the list of pooled objects. If the object is in the camera, set it to 
 	 * active. Else, set it to unactive.
 	 */
-    public void checkObjectPool()
+    private void check_object_pool()
 	{
-		cameraPosition = camera.GetComponent<Transform>().position;
-		cameraDistance = Mathf.Abs(camera.GetComponent<Transform>().position.z - pooledObjects[0].GetComponent<Transform>().position.z);
+		cameraPosition = mainCamera.GetComponent<Transform>().position;
+        //cameraDistance = Mathf.Abs(camera.GetComponent<Transform>().position.z - pooledObjects[0].GetComponent<Transform>().position.z);
         print("camdistance " + cameraDistance);
-		frustumHeight = 2.0f * cameraDistance * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
-		frustumWidth = frustumHeight * camera.aspect;
+		frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+		frustumWidth = frustumHeight * mainCamera.aspect;
 
-		for (int i = 0; i < pooledObjects.Length; i++)
+		for (int i = 0; i < _pooledObjects.Length; i++)
 		{
-			if ((pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
-			    && (pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
-			    && (pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
-			    && (pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight))
+			if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
+			    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
+			    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
+			    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight))
 			{
-					pooledObjects[i].SetActive(true);
+					_pooledObjects[i].SetActive(true);
 			}
 			else
 			{
-				pooledObjects[i].SetActive(false);
+				_pooledObjects[i].SetActive(false);
 			}
 		}
 	}
@@ -117,7 +121,7 @@ public class MapManager : MonoBehaviour {
 	 * Check the object pool in camera view and update their activation every second.
 	 */
 	void Update() {
-		checkObjectPool();
+		check_object_pool();
 	}
 	
 	/**
