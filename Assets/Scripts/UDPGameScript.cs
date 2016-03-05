@@ -1,11 +1,38 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
 using System;
 
-public class MenuScript : MonoBehaviour {	
+/*
+This is the MenuScript Code replaced with the newly added Client Library GameClient functions.
+
+This can be used as an example, used for realz or discarded.
+*/
+public class UDPGameScript : MonoBehaviour {
+
+	[DllImport("ClientLibrary.so")]
+	private static extern IntPtr Game_CreateClient();
+
+    [DllImport("ClientLibrary.so")]
+    private static extern void Game_DisposeClient();
+
+    [DllImport("ClientLibrary.so")]
+	private static extern int Game_ConnectToServer(IntPtr client, 
+	                                                      string  ipAddress, 
+	                                                      short port);
+
+	[DllImport("ClientLibrary.so")]
+	private static extern int Game_Send(IntPtr client, 
+	                                    string message, 
+	                                    int size);
+	[DllImport("ClientLibrary.so")]
+	private static extern IntPtr Game_GetData(IntPtr client);
+
+	[DllImport("ClientLibrary.so")]
+	private static extern int Game_StartReadThread(IntPtr client);
+	
     public enum MenuStates
     {
         Previous, Settings, Connect, Lobby
@@ -29,8 +56,11 @@ public class MenuScript : MonoBehaviour {
     public GameObject team_select_panel;
     public GameObject class_select_panel;
 
+	private	IntPtr GameClient;
+
 	private string RecievedData = "Waiting for Inputs...";
-    void Awake()
+    
+void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
 
@@ -43,11 +73,14 @@ public class MenuScript : MonoBehaviour {
 
         team_select_panel.SetActive(false);
         class_select_panel.SetActive(false);
+
+		GameClient = Game_CreateClient();
     }
 	bool connected = false;
-	void Update()
+
+    void Update()
 	{
-		string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
+		string tmp = Marshal.PtrToStringAnsi(Game_GetData(GameClient));
 		if(!String.Equals(tmp,"[]"))
 		{
 			RecievedData = "equals?";
@@ -74,14 +107,14 @@ public class MenuScript : MonoBehaviour {
             _SwitchMenu(MenuStates.Lobby);
 
             // Connect to the server
-			if(NetworkingManager.TCP_ConnectToServer(ip, 7000) < 0)
+			if(Game_ConnectToServer(GameClient, ip, 7000) < 0)
 			{
 				// Error check here
 				Debug.Log("Cant connect to server\n");
 			}
 
 			// Thread creation
-			if(NetworkingManager.TCP_StartReadThread() < 0)
+			if(Game_StartReadThread(GameClient) < 0)
 			{
 				// Error check here
 				Debug.Log("Error creating read thread\n");
@@ -108,7 +141,7 @@ public class MenuScript : MonoBehaviour {
         //_AddPlayerToLobbyList(_player_name, team);
 
 		// Send dummy packet
-		if(NetworkingManager.TCP_Send(_player_name + " selected " + team + "!", 30) < 0)
+		if(Game_Send(GameClient, _player_name + " selected " + team + "!", 30) < 0)
 		{
 			// handle error here 
 			Debug.Log("SelectTeam(): Packet sending failed\n");
@@ -128,7 +161,7 @@ public class MenuScript : MonoBehaviour {
         class_select_panel.SetActive(false);
 
 		// Send dummy packet
-		if(NetworkingManager.TCP_Send(_player_name + "selected class " + value + "!", 20) < 0)
+		if(Game_Send(GameClient, _player_name + "selected class " + value + "!", 20) < 0)
 		{
 			// handle error here
 			Debug.Log("SelectClass(): Pakcet sending failed");

@@ -46,6 +46,7 @@ void * LobbyClient::Recv()
         message += bytesRead;
         bytesToRead -= bytesRead;
       }
+      printf("Got message: %s\n", message);
       // push message to queue
       CBPushBack(&CBPackets, message);
       free(message);
