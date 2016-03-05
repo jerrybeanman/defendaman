@@ -62,34 +62,38 @@ public class MapManager : MonoBehaviour {
 	 * Use this for initialization.
 	 */
 	void Start() {
-		// Find all objects with the tag "Tile" and add them to the arraylist.
-		pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
-		print("pooledObjects size: " + pooledObjects.Length);
-
-		// Deactivate all game objects on start.
-		for (int i = 0; i < pooledObjects.Length; i++)
-		{
-			pooledObjects[i].SetActive(false);
-		}
-
 		// Initial check to see which game objects are in camera view.
-		checkObjectPool();
+
 	}
 
-	/**
+
+    void instantiate_pool()
+    {
+        // Find all objects with the tag "Tile" and add them to the arraylist.
+        pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
+        print("pooledObjects size: " + pooledObjects.Length);
+
+        // Deactivate all game objects on start.
+        for (int i = 0; i < pooledObjects.Length; i++)
+        {
+            pooledObjects[i].SetActive(false);
+        }
+
+        checkObjectPool();
+    }
+
+    /**
 	 * Utilizes object pooling to only render map tiles which are within the camera's
 	 * view frustum.
 	 * 
 	 * Iterate through the list of pooled objects. If the object is in the camera, set it to 
 	 * active. Else, set it to unactive.
 	 */
-	public void checkObjectPool()
+    public void checkObjectPool()
 	{
 		cameraPosition = camera.GetComponent<Transform>().position;
-		// cameraDistance = camera.GetComponent<Transform>().position.z;
-		// I thought the camera distance would be its z component, but this magic number
-		// seems to work better.
-		cameraDistance = -5; 
+		cameraDistance = Mathf.Abs(camera.GetComponent<Transform>().position.z - pooledObjects[0].GetComponent<Transform>().position.z);
+        print("camdistance " + cameraDistance);
 		frustumHeight = 2.0f * cameraDistance * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 		frustumWidth = frustumHeight * camera.aspect;
 
@@ -166,6 +170,7 @@ public class MapManager : MonoBehaviour {
 		case EventType.CREATE_MAP:
 			create_map(message);
 			draw_map();
+            instantiate_pool();
 			break;
 		case EventType.RESOUCE_TAKEN:
 			break;
@@ -198,11 +203,11 @@ public class MapManager : MonoBehaviour {
 			for (int y = 0; y < _mapHeight; y++)
 				_map[x, y] = mapX[y].AsInt;
 		}
-		// Thomas/Jaegar's map generation function goes here
-		// draw(map);
-	}
-	
-	/*------------------------------------------------------------------------------------------------------------------
+        // Thomas/Jaegar's map generation function goes here
+        // draw(map);
+    }
+
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: placeSprites
     --
     -- DATE: February 19, 2016
@@ -223,7 +228,7 @@ public class MapManager : MonoBehaviour {
     -- there will be a different value in the array for each sprite. It also generates a 2collision box on the water tiles so thatr objects
     -- cannot enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
-	private void draw_map() {
+    private void draw_map() {
 		if (_map == null)
 			return;
 		for (int x = 0; x < _mapWidth; x++)
