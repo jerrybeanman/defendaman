@@ -14,7 +14,7 @@ EchoServer:
 	$(CC) -o EchoServer udp_echo_svr.c
 
 clean:
-	rm -f *.o core.* Game
+	rm -f *.o core.* Game Lobby EchoServer
 
 Client.o: Client.cpp Client.h
 	$(CC) -c -g Client.cpp
@@ -24,3 +24,8 @@ game.o:	game.cpp
 
 main.o: main.cpp
 	$(CC) -c -g main.cpp
+
+library:
+	$(CC) -o ClientLibrary.so 
+	client_library.cpp Client.cpp LobbyClient.cpp GameClient.cpp 
+	-O3 -fPIC -shared -std=c++11 CircularBuffer.cpp

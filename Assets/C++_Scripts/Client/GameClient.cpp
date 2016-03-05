@@ -31,7 +31,7 @@ void * GameClient::Recv()
         char *message = (char *) malloc(PACKETLEN);
         while((recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length)) < PACKETLEN)
          {
-           printf("Recv\n");
+           //printf("Recv socket:%zu, message:%s \n", serverAddr.sin_port, message);
           if(bytesRead < 0)
           {
             printf("recv() failed with errno: %d\n", errno);
@@ -53,8 +53,10 @@ void * GameClient::Recv()
 int GameClient::Send(char * message, int size)
 {
     socklen_t length = sizeof(serverAddr);
+    printf("Send socket:%zu \n", serverAddr.sin_port);
     if (sendto(serverSocket, message, size, 0, (struct sockaddr *)&serverAddr, length) == -1)
     {
+        printf("Failed to send");
         std::cerr << "sendto() failed with errno: " << errno << std::endl;
         return errno;
     }

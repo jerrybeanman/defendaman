@@ -26,6 +26,4 @@ main.o: main.cpp
 	$(CC) -c -g main.cpp
 
 library:
-	$(CC) -o ClientLibrary.so 
-	client_library.cpp Client.cpp LobbyClient.cpp GameClient.cpp 
-	-O3 -fPIC -shared -std=c++11 CircularBuffer.cpp ../../../build
+	$(CC) -o ClientLibrary.so client_library.cpp Client.cpp LobbyClient.cpp GameClient.cpp -O3 -fPIC -shared -std=c++11 CircularBuffer.cpp
