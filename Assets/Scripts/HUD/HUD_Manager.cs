@@ -59,12 +59,6 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
 		}
-
-		if(passiveSkill.ProgressBar.fillAmount < 1)
-		{
-			passiveSkill.ProgressBar.fillAmount += Time.deltaTime / passiveSkill.CoolDown;
-			passiveSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, passiveSkill.ProgressBar.fillAmount);
-		}
 	}
 
 	/*----------------------------------------------------------------------------
@@ -173,26 +167,6 @@ public class HUD_Manager : MonoBehaviour {
 		{
 			subSkill.ProgressBar.fillAmount = 0f;
 			subSkill.CoolDown = CoolDown;
-		}
-	}
-
-	/*----------------------------------------------------------------------------
-    --	Sets fill amount of passive skill's progress bar to empty whenever a skill is 
-    --  being used. The fill amount will be recharged in Update() corresponding to 
-    --  the CoolDown value
-    --
-    --	Interface:  public void UsePassive(float CoolDown)
-    --	            [CoolDown] Skill cool down value in seconds. 
-    --
-    --	programmer: Jerry Jia
-    --	@return: void
-	------------------------------------------------------------------------------*/
-	public void UsePassive(float Cooldown)
-	{
-		if(passiveSkill.ProgressBar.fillAmount >= 1)
-		{
-			passiveSkill.ProgressBar.fillAmount = 0f;
-			passiveSkill.CoolDown = Cooldown;
 		}
 	}
 }

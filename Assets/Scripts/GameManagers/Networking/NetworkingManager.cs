@@ -23,7 +23,7 @@ public enum DataType
 
 public enum Protocol
 {
-    TCP, UDP
+    TCP, UDP, NA
 }
 
 /*Carson
@@ -346,9 +346,9 @@ public class NetworkingManager : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.Label(new Rect(8, 0, Screen.width, Screen.height), "Last Received: " + result);
+       /* GUI.Label(new Rect(8, 0, Screen.width, Screen.height), "Last Received: " + result);
         GUI.Label(new Rect(8, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
-        GUI.Label(new Rect(8, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
+        GUI.Label(new Rect(8, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);*/
     }
 
     string create_test_json()
