@@ -8,6 +8,7 @@ Client::Client()
 {
   // Initialize the circular buffer
   CBInitialize(&CBPackets, MAXPACKETS, PACKETLEN);
+  
   // allocate space for the one packet of data
   // that is being exposed to unity
   currentData = (char *)malloc(PACKETLEN);
@@ -57,5 +58,6 @@ char* Client::GetData()
   {
     strcpy(currentData, "[]");
   }
+  printf("%s\n", currentData);
   return currentData;
 }

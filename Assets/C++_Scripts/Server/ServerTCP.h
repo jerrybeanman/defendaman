@@ -74,21 +74,19 @@ namespace Networking
             */
             void Broadcast(char * message) override;
 
-						/*Prints a player */
-						void PrintPlayer(Player p);
+			/*Parses incoming JSON and process request*/
+			void CheckServerRequest(int playerId, int code, int idValue, int requestValue);
 
-						/*Parses incoming JSON and process request*/
-						void CheckServerRequest(int playerId, int code, int idValue, int requestValue);
-						/* Check ready status on all connected players*/
-						bool AllPlayersReady();
+			/* Check ready status on all connected players*/
+			bool AllPlayersReady();
 
-						std::vector<Player> setPlayerList();
+			std::vector<Player> setPlayerList();
 
         private:
-						Player newPlayer;
-						//Enum for the networking team to determine the type of message requested.
-						enum teamCode {Networking = 6};
-						enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3};
+			Player newPlayer;
+			//Enum for the networking team to determine the type of message requested.
+			enum teamCode {Networking = 6};
+			enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3};
 
 	};
 }

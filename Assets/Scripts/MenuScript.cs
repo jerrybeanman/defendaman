@@ -30,6 +30,7 @@ public class MenuScript : MonoBehaviour {
     public GameObject class_select_panel;
 
 	private string RecievedData = "Waiting for Inputs...";
+
     void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
@@ -107,9 +108,13 @@ public class MenuScript : MonoBehaviour {
 		// This call is causing an error
         //_AddPlayerToLobbyList(_player_name, team);
 
+		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+		packetData.Add(new Pair<string, string>("TeamID", team.ToString()));
+
 		// Send dummy packet
-		if(NetworkingManager.TCP_Send(_player_name + " selected " + team + "!", 30) < 0)
+		if(NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 1, packetData, Protocol.NA), 256) < 0)
 		{
+
 			// handle error here 
 			Debug.Log("SelectTeam(): Packet sending failed\n");
 		}
