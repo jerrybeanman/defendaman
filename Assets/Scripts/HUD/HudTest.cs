@@ -17,7 +17,5 @@ public class HudTest : MonoBehaviour {
 			HUD_Manager.instance.UseMainSkill(1.0f);
 		if(Input.GetKeyDown("e"))
 			HUD_Manager.instance.UseSubSkill(5.0f);
-		if(Input.GetKeyDown("space"))
-			HUD_Manager.instance.UsePassive(5.0f);
 	}
 }
