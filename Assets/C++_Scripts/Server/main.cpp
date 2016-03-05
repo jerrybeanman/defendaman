@@ -1,14 +1,15 @@
 
 #include "Server.h"
 #include "ServerTCP.h"
+#include "ServerUDP.h"
 
 using namespace Networking;
-
 
 int main()
 {
   int rc;
   ServerTCP TestServer;
+  ServerUDP UDPServer;
 
   if((rc = TestServer.InitializeSocket(7000)) != 0)
   {

@@ -3,6 +3,10 @@
 #include <sstream>      // std::istringstream
 #include "Server.h"
 
+
+//TODO: Implement this instead of Networking enum
+#define TEAMCODE 6
+
 namespace Networking
 {
 	class ServerTCP : public Server
@@ -21,7 +25,7 @@ namespace Networking
 
                 @return: socket file descriptor
             */
-            int InitializeSocket(short port);
+            int InitializeSocket(short port) override;
 
             /*
                 Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
@@ -57,7 +61,7 @@ namespace Networking
 
                 @return: Thread execution code
             */
-          	void * Receive();
+          	void * Receive() override;
 
 	        /*
                 Sends a message to all the clients
@@ -68,15 +72,20 @@ namespace Networking
 
                 @return: void
             */
-            void Broadcast(char * message);
+            void Broadcast(char * message) override;
 
 						/*Prints a player */
 						void PrintPlayer(Player p);
 
+						/*Parses incoming JSON and process request*/
+						void CheckServerRequest(int playerId, int code, int idValue, int requestValue);
+						/* Check ready status on all connected players*/
+						bool AllPlayersReady();
+
+						std::vector<Player> setPlayerList();
+
         private:
 						Player newPlayer;
-						/* List of players currently connected to the server */
-						std::vector<Player>             _PlayerList;
 						//Enum for the networking team to determine the type of message requested.
 						enum teamCode {Networking = 6};
 						enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3};
