@@ -2,17 +2,17 @@
 # Makefile
 # Jerry Jia
 
-CC=g++
-NAME=Server
-FLAGS=-Wall
+CC= g++
+NAME= Server
+FLAGS= -std=c++11 -Wall
 LIBRARIES = -pthread
-S_FILES= Server.cpp ServerTCP.cpp main.cpp
+S_FILES= Server.cpp ServerTCP.cpp ServerUDP.cpp main.cpp
 OBJECT_FILES=$(S_FILES:.cpp=.o)
 META_FILES=$(S_FILES:.cpp=.cpp.meta)
 
 
-$(NAME): 	$(OBJECT_FILES)
-		$(CC) $(LIBRARIES) $(FLAGS) -o $(NAME) $(OBJECT_FILES)
+all: 
+		$(CC) $(FLAGS) $(LIBRARIES) -o $(NAME) $(S_FILES)
 
 debug:
 		$(CC) $(FLAGS) -g -o $(NAME) $(OBJECT_FILES)
@@ -20,6 +20,6 @@ clean:
 		rm $(OBJECT_FILES) $(NAME) $(META_FILES) Makefile.meta
 
 remake:
-		make cleanclera
+		make clean
 		clear
 		make
