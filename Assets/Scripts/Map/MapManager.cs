@@ -171,6 +171,7 @@ public class MapManager : MonoBehaviour {
     -- cannot enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
+        GameData.TeamSpawnPoints.Clear();
         if (_map == null)
             return;
         for (int x = 0; x < _mapWidth; x++)
@@ -182,6 +183,10 @@ public class MapManager : MonoBehaviour {
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
+
+                if (_map[x,y] >= 200 && _map[x,y] <= 201) {
+                        GameData.TeamSpawnPoints.Add(new Pair<int,int>(x,y));
+                }
             }
     }
 }

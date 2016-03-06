@@ -215,6 +215,9 @@ public class NetworkingManager : MonoBehaviour
         return Game_StartReadThread(UDPClient);
     }
 
+    [DllImport("MapGeneration.so")]
+    private static extern string GenerateMap(int seed);
+
     /*// Imported function from C++ library for receiving data
     [DllImport("NetworkingLibrary.so")]
     public static extern IntPtr receiveData();
@@ -329,36 +332,45 @@ public class NetworkingManager : MonoBehaviour
 
     void StartGame(JSONClass data)
     {
-        int myPlayer = data["playerID"].AsInt;
+        int myPlayer = GameData.MyPlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
-        foreach (JSONClass playerData in data["playersData"].AsArray)
-        {
+        update_data(GenerateMap(data["Seed"].AsInt));
+
+        //foreach (JSONClass playerData in data["playersData"].AsArray)
+        foreach (var playerData in GameData.LobbyData) {
             Debug.Log("Player Data: " + playerData.ToString());
 
-            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(playerData["x"].AsInt, playerData["y"].AsInt, -10), Quaternion.identity)).gameObject;
+            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.TeamID-1].first, GameData.TeamSpawnPoints[playerData.TeamID-1].second, -10), Quaternion.identity)).gameObject;
 
-            //TODO: Get classby creation packet
-            if (myPlayer == playerData["ID"].AsInt)
+            switch(playerData.ClassType)
             {
-                createdPlayer.AddComponent<NinjaClass>();
+                case ClassType.Ninja:
+                    createdPlayer.AddComponent<NinjaClass>();
+                    break;
+                case ClassType.Gunner:
+                    createdPlayer.AddComponent<GunnerClass>();
+                    break;
+                case ClassType.Wizard:
+                    createdPlayer.AddComponent<WizardClass>();
+                    break;
+                default:
+                    Debug.Log("Player " + playerData.PlayerID + " has not selected a valid class. Defaulting to Gunner");
+                    createdPlayer.AddComponent<GunnerClass>();
+                    break;
             }
-            else
+
+
+            createdPlayer.GetComponent<BaseClass>().team = playerData.TeamID;
+            createdPlayer.GetComponent<BaseClass>().playerID = playerData.PlayerID;
+
+            //if (playerData.King) //Uncomment this one line when kings are in place
+                kings.Add(new Pair<int, int>(playerData.TeamID, playerData.PlayerID));
+
+            if (myPlayer == playerData.PlayerID)
             {
-                createdPlayer.AddComponent<GunnerClass>();
-            }
-
-
-            createdPlayer.GetComponent<BaseClass>().team = playerData["Team"].AsInt;
-            createdPlayer.GetComponent<BaseClass>().playerID = playerData["ID"].AsInt;
-
-            if (playerData["King"].AsInt == 1)
-                kings.Add(new Pair<int, int>(playerData["Team"].AsInt, playerData["ID"].AsInt));
-
-            if (myPlayer == playerData["ID"].AsInt)
-            {
-                myTeam = playerData["Team"].AsInt;
+                myTeam = playerData.TeamID;
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
@@ -370,7 +382,7 @@ public class NetworkingManager : MonoBehaviour
             }
             else {
                 createdPlayer.AddComponent<NetworkingManager_test1>();
-                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData["ID"].AsInt;
+                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData.PlayerID;
                 //Created another player
             }
         }
