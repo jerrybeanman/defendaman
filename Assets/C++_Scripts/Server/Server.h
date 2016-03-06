@@ -15,7 +15,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#define PACKETLEN       128
+#define PACKETLEN       256
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 

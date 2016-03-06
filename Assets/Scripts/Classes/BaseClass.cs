@@ -25,8 +25,8 @@ public abstract class BaseClass : MonoBehaviour {
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
         yourPlayerID = networkingManager.player.GetComponent<BaseClass>().playerID;
-        allyKingID = networkingManager.allyKingID;
-        enemyKingID = networkingManager.enemyKingID;
+        allyKingID = GameData.AllyKingID;
+        enemyKingID = GameData.EnemyKingID;
 
         NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
 
