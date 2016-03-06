@@ -35,6 +35,7 @@ void * LobbyClient::Recv()
   {
       int bytesToRead = PACKETLEN;
       char *message = (char *) malloc(PACKETLEN);
+      memset(message, 0, PACKETLEN);
       while((bytesRead = recv(serverSocket, message, bytesToRead, 0)) < PACKETLEN)
       {
         //printf("Recv\n");
@@ -46,7 +47,7 @@ void * LobbyClient::Recv()
         message += bytesRead;
         bytesToRead -= bytesRead;
       }
-      printf("Got message: %s\n", message);
+      printf("Message: %s\n", message);
       // push message to queue
       CBPushBack(&CBPackets, message);
       free(message);
