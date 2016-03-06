@@ -21,5 +21,5 @@ public class GameData
     public static int AllyKingID { get; set; }
 
     //Pair of x/y spawn points where index+1 is teamid
-    public static List<Pair<int, int>> TeamSpawnPoints { get; set; }
+    public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();
 }

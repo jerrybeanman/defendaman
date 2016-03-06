@@ -235,7 +235,6 @@ public class MapManager : MonoBehaviour {
     -- cannot enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
-        GameData.TeamSpawnPoints.Clear();
         if (_map == null)
             return;
 
