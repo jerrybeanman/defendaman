@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
+#endif
 
+#if UNITY_EDITOR
 public class GLDebug : MonoBehaviour
 {
 	private struct Line
@@ -463,3 +466,4 @@ public class GLDebug : MonoBehaviour
 		DrawLine (up_4, up_1, color, duration, depthTest);
 	}
 }
+#endif
