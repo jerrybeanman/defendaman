@@ -66,7 +66,7 @@ int ServerTCP::Accept(Player * player)
 
     _PlayerList.push_back(*player);
 
-    sprintf(buf, "Player %lu has joined the lobby\n", _PlayerList.size());
+    sprintf(buf, "[{DataType : 6, ID : 4, PlayerID : %lu}]", _PlayerList.size());
     printf(buf);
     this->ServerTCP::Broadcast(buf);
     newPlayer = *player;

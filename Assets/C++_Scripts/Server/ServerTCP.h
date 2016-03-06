@@ -86,7 +86,7 @@ namespace Networking
 			Player newPlayer;
 			//Enum for the networking team to determine the type of message requested.
 			enum teamCode {Networking = 6};
-			enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3};
+			enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3, PlayerJoinedLobby = 4, GameStart = 5};
 
 	};
 }
