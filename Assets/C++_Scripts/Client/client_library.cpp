@@ -32,7 +32,6 @@ extern "C" void TCP_DisposeClient(LobbyClient* client)
 	if(client != NULL)
 	{
 		delete client;
-		client = NULL;
 	}
 }
 
@@ -115,6 +114,7 @@ extern "C" char * TCP_GetData(LobbyClient * client)
 */
 extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 {
+	printf("TCP SEND: %s\n", message);
 	return client->Send(message, size);
 }
 
@@ -171,7 +171,7 @@ extern "C" int Game_ConnectToServer(GameClient * client, const char * name, shor
 {
 	if(client != NULL)
 		return client->Init_Client_Socket(name, port);
-    return -1;
+  return -1;
 }
 
 /*
@@ -230,7 +230,7 @@ extern "C" char * Game_GetData(GameClient * client)
 				[size]		Size of the packet
 
 	Programmer: Gabriel Lee, Tyler Trepanier
-	
+
 	@return: -1 for failure, 0 on success
 */
 extern "C" int Game_Send(GameClient * client, char * message, int size)

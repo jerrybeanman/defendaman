@@ -22,7 +22,7 @@ int GameClient::Init_Client_Socket(const char* name, short port)
 }
 void * GameClient::Recv()
 {
-    int bytesRead;
+    int bytesRead = 0;
     socklen_t length = 0;
     while(1)
     {

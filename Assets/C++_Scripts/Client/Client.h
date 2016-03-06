@@ -14,8 +14,6 @@
 #include <pthread.h>
 #include "CircularBuffer.h"
 
-#define TeamRequest1 1
-#define TeamRequest2 2
 #define PACKETLEN    256
 #define MAXPACKETS   10
 
