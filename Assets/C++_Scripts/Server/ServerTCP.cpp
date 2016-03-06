@@ -120,7 +120,13 @@ void * ServerTCP::Receive()
           printf(buf);
           this->ServerTCP::Broadcast(buf);
           //Remove player from player list
-          _PlayerList.erase( std::remove_if( _PlayerList.begin(), _PlayerList.end(), [&](Player const& p) { return tmpPlayer.id == p.id; }), _PlayerList.end());
+          for (auto i: _PlayerList)
+            std::cout << i.id << std::endl;
+
+          _PlayerList.erase(std::remove_if( _PlayerList.begin(), _PlayerList.end(), [&](Player const& p) { return tmpPlayer.id == p.id; }), _PlayerList.end());
+
+          for (auto i: _PlayerList)
+            std::cout << i.id << std::endl;
 
           return 0;
       	}

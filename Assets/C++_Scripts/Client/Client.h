@@ -22,7 +22,8 @@ namespace Networking
     class Client
     {
         public:
-          pthread_t ReadThread;
+          int             serverSocket;
+          pthread_t       ReadThread;
 
           Client();
           virtual ~Client() {};
@@ -41,7 +42,6 @@ namespace Networking
 
         protected:
             CircularBuffer  CBPackets; // buffer for data coming in from network
-            int             serverSocket;
             struct          sockaddr_in serverAddr;
             char*           currentData; // the single instance of data exposed to Unity for reading
     };
