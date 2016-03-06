@@ -46,8 +46,6 @@ public class NetworkingManager : MonoBehaviour
     // Game object to send data of
     public Transform playerType;
     public GameObject player;
-    public int enemyKingID;
-    public int allyKingID;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
@@ -59,13 +57,17 @@ public class NetworkingManager : MonoBehaviour
     private static List<string> jsonUDPObjectsToSend = new List<string>();
     
     public static IntPtr TCPClient { get; private set; }
+    public static IntPtr UDPClient { get; private set; }
 
     #endregion
 
     void Start()
     {
         try {
-            TCPClient = TCP_CreateClient();
+            //TCPClient = TCP_CreateClient();
+            UDPClient = Game_CreateClient();
+            UDP_ConnectToServer("192.168.0.14", 7000);
+            UDP_StartReadThread();
         } catch (Exception e)
         {
             Debug.Log(e.ToString());
@@ -112,7 +114,13 @@ public class NetworkingManager : MonoBehaviour
 
     private void update_data(string JSONGameState)
     {
-        var gameObjects = JSON.Parse(JSONGameState).AsArray;
+        JSONArray gameObjects = null;
+        try {
+            gameObjects = JSON.Parse(JSONGameState).AsArray;
+        } catch (Exception e) {
+            Debug.Log(e.ToString());
+            return;
+        }
         foreach (var node in gameObjects.Children)
         {
             var obj = node.AsObject;
@@ -174,13 +182,46 @@ public class NetworkingManager : MonoBehaviour
         return TCP_StartReadThread(TCPClient);
     }
 
-    // Imported function from C++ library for receiving data
+    [DllImport("ClientLibrary.so")]
+    public static extern IntPtr Game_CreateClient();
+
+    [DllImport("ClientLibrary.so")]
+    private static extern void Game_DisposeClient(IntPtr client);
+    public static void UDP_DisposeClient() {
+        Game_DisposeClient(UDPClient);
+    }
+
+    [DllImport("ClientLibrary.so")]
+    private static extern int Game_ConnectToServer(IntPtr client, string ipAddress, short port);
+    public static int UDP_ConnectToServer(string ipAddress, short port) {
+        return Game_ConnectToServer(UDPClient, ipAddress, port);
+    }
+
+    [DllImport("ClientLibrary.so")]
+    private static extern int Game_Send(IntPtr client, string message, int size);
+    public static int UDP_SendData(string message, int size) {
+        return Game_Send(UDPClient, message, 512);
+    }
+
+    [DllImport("ClientLibrary.so")]
+    private static extern IntPtr Game_GetData(IntPtr client);
+    public static IntPtr UDP_GetData() {
+        return Game_GetData(UDPClient);
+    }
+
+    [DllImport("ClientLibrary.so")]
+    private static extern int Game_StartReadThread(IntPtr client);
+    public static int UDP_StartReadThread() {
+        return Game_StartReadThread(UDPClient);
+    }
+
+    /*// Imported function from C++ library for receiving data
     [DllImport("NetworkingLibrary.so")]
     public static extern IntPtr receiveData();
 
     // Imported function from C++ library for sending data
     [DllImport("NetworkingLibrary.so")]
-    public static extern void sendDataUDP(string data);
+    public static extern void sendDataUDP(string data);*/
 
     //On Linux, send data to C++ file
     private void send_data()
@@ -191,7 +232,7 @@ public class NetworkingManager : MonoBehaviour
         {
             if (tcp != "[]")
                 TCP_Send(tcp, tcp.Length);
-            sendDataUDP(udp);
+            UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
             lastTCP = tcp;
@@ -204,7 +245,7 @@ public class NetworkingManager : MonoBehaviour
     {
         //On Linux, get a proper packet
         if (Application.platform == RuntimePlatform.LinuxPlayer) {
-            result = Marshal.PtrToStringAnsi(receiveData());
+            result = Marshal.PtrToStringAnsi(UDP_GetData());
         } else {
             //On Windows, return whatever JSON data we want to generate/test for
             result = create_test_json();
@@ -227,7 +268,8 @@ public class NetworkingManager : MonoBehaviour
                 var memberItems = new List<Pair<string, string>>();
                 memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
                 memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-                memberItems.Add(new Pair<string, string>("rotation", player.GetComponent<PlayerRotation>().curRotation.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationZ", player.GetComponent<PlayerRotation>().curRotation.z.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationW", player.GetComponent<PlayerRotation>().curRotation.w.ToString()));
                 send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems, protocol);
             }
         }
@@ -255,12 +297,14 @@ public class NetworkingManager : MonoBehaviour
     public static string send_next_packet(DataType type, int id, List<Pair<string, string>> memersToSend, Protocol protocol)
     {
         string sending = "";
+        if (protocol == Protocol.NA)
+            sending += "[";
         sending = "{";
-        sending += " \"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
+        sending += " DataType : " + (int)type + ", ID : " + id + ",";
 
         foreach (var pair in memersToSend)
         {
-            sending += " \"" + pair.first + "\" : " + pair.second + ",";
+            sending += " " + pair.first + " : " + pair.second + ",";
         }
 
         sending = sending.Remove(1, 1);
@@ -334,9 +378,9 @@ public class NetworkingManager : MonoBehaviour
         foreach (var king in kings)
         {
             if (king.first == myTeam)
-                allyKingID = king.second;
+                GameData.AllyKingID = king.second;
             else
-                enemyKingID = king.second;
+                GameData.EnemyKingID = king.second;
         }
     }
 
@@ -348,12 +392,12 @@ public class NetworkingManager : MonoBehaviour
     string result = "receiving failed";
     string lastUDP = "Last UDP";
     string lastTCP = "Last TCP";
-
+    
     void OnGUI()
     {
-       /* GUI.Label(new Rect(8, 0, Screen.width, Screen.height), "Last Received: " + result);
+        GUI.Label(new Rect(8, 0, Screen.width, Screen.height), "Last Received: " + result);
         GUI.Label(new Rect(8, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
-        GUI.Label(new Rect(8, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);*/
+        GUI.Label(new Rect(8, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
     }
 
     string create_test_json()
