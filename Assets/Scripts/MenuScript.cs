@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
 using System;
+using UnityEngine;
 
 public class MenuScript : MonoBehaviour {	
     public enum MenuStates
@@ -48,11 +48,14 @@ public class MenuScript : MonoBehaviour {
 	bool connected = false;
 	void Update()
 	{
-		string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
-		if(!String.Equals(tmp,"[]"))
+		if(connected)
 		{
-			RecievedData = "equals?";
-			RecievedData = tmp;
+			string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
+			if(!String.Equals(tmp,"[]"))
+			{
+				RecievedData = "equals?";
+				RecievedData = tmp;
+			}
 		}
 	}
 
@@ -87,6 +90,7 @@ public class MenuScript : MonoBehaviour {
 				// Error check here
 				Debug.Log("Error creating read thread\n");
 			}
+			connected = true;
         }
     }
 
@@ -114,7 +118,6 @@ public class MenuScript : MonoBehaviour {
 		// Send dummy packet
 		if(NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 1, packetData, Protocol.NA), 256) < 0)
 		{
-
 			// handle error here 
 			Debug.Log("SelectTeam(): Packet sending failed\n");
 		}
@@ -129,11 +132,14 @@ public class MenuScript : MonoBehaviour {
 
     public void SelectClass(int value)
     {
+		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+		packetData.Add(new Pair<string, string>("ClassID", value.ToString()));
+
         // TODO: associate class value with player here
         class_select_panel.SetActive(false);
 
 		// Send dummy packet
-		if(NetworkingManager.TCP_Send(_player_name + "selected class " + value + "!", 20) < 0)
+		if(NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 1, packetData, Protocol.NA), 256) < 0)
 		{
 			// handle error here
 			Debug.Log("SelectClass(): Pakcet sending failed");
@@ -266,4 +272,18 @@ public class MenuScript : MonoBehaviour {
         _SwitchMenu(MenuStates.Previous);
     }
 
+	public void LeaveLobby()
+	{
+		if(connected)
+		{
+			foreach (GameObject go in _lobby_list)
+			{
+				Destroy(go);
+				_y_offset--;
+			}
+			_SwitchMenu(MenuStates.Previous);
+			connected = false;
+			NetworkingManager.TCP_DisposeClient();
+		}
+	}
 }

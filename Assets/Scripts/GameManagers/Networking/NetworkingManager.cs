@@ -155,6 +155,11 @@ public class NetworkingManager : MonoBehaviour
     [DllImport("ClientLibrary.so")]
     public static extern IntPtr TCP_CreateClient();
 
+	[DllImport("ClientLibrary.so")]
+	public static extern void TCP_DisposeClient(IntPtr client);
+	public static void TCP_DisposeClient(){
+		TCP_DisposeClient(TCPClient);
+	}
     [DllImport("ClientLibrary.so")]
     private static extern int TCP_ConnectToServer(IntPtr client, string ipAddress, short port);
     public static int TCP_ConnectToServer(string ipAddress, short port) {
