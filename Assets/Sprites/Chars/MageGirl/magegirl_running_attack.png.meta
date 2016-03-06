@@ -1,34 +1,34 @@
 fileFormatVersion: 2
-guid: ce65ea7cef48c3842bb173aeb92a2c59
-timeCreated: 1456922466
+guid: fd2d43ffd73aa6c46886c4855c8f2b5d
+timeCreated: 1457090641
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: magegirl_defendaman_256_grid_0
-    21300002: magegirl_defendaman_256_grid_1
-    21300004: magegirl_defendaman_256_grid_2
-    21300006: magegirl_defendaman_256_grid_3
-    21300008: magegirl_defendaman_256_grid_4
-    21300010: magegirl_defendaman_256_grid_5
-    21300012: magegirl_defendaman_256_grid_6
-    21300014: magegirl_defendaman_256_grid_7
-    21300016: magegirl_defendaman_256_grid_8
-    21300018: magegirl_defendaman_256_grid_9
-    21300020: magegirl_defendaman_256_grid_10
-    21300022: magegirl_defendaman_256_grid_11
-    21300024: magegirl_defendaman_256_grid_12
-    21300026: magegirl_defendaman_256_grid_13
-    21300028: magegirl_defendaman_256_grid_14
-    21300030: magegirl_defendaman_256_grid_15
-    21300032: magegirl_defendaman_256_grid_16
-    21300034: magegirl_defendaman_256_grid_17
-    21300036: magegirl_defendaman_256_grid_18
-    21300038: magegirl_defendaman_256_grid_19
-    21300040: magegirl_defendaman_256_grid_20
-    21300042: magegirl_defendaman_256_grid_21
-    21300044: magegirl_defendaman_256_grid_22
-    21300046: magegirl_defendaman_256_grid_23
-    21300048: magegirl_defendaman_256_grid_24
+    21300000: magegirl_running_attack_0
+    21300002: magegirl_running_attack_1
+    21300004: magegirl_running_attack_2
+    21300006: magegirl_running_attack_3
+    21300008: magegirl_running_attack_4
+    21300010: magegirl_running_attack_5
+    21300012: magegirl_running_attack_6
+    21300014: magegirl_running_attack_7
+    21300016: magegirl_running_attack_8
+    21300018: magegirl_running_attack_9
+    21300020: magegirl_running_attack_10
+    21300022: magegirl_running_attack_11
+    21300024: magegirl_running_attack_12
+    21300026: magegirl_running_attack_13
+    21300028: magegirl_running_attack_14
+    21300030: magegirl_running_attack_15
+    21300032: magegirl_running_attack_16
+    21300034: magegirl_running_attack_17
+    21300036: magegirl_running_attack_18
+    21300038: magegirl_running_attack_19
+    21300040: magegirl_running_attack_20
+    21300042: magegirl_running_attack_21
+    21300044: magegirl_running_attack_22
+    21300046: magegirl_running_attack_23
+    21300048: magegirl_running_attack_24
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -62,7 +62,6 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
-  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
@@ -75,253 +74,253 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: magegirl_defendaman_256_grid_0
+    - name: magegirl_running_attack_0
       rect:
         serializedVersion: 2
-        x: 41
-        y: 1743
-        width: 174
-        height: 257
+        x: 140
+        y: 1782
+        width: 277
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_1
+    - name: magegirl_running_attack_1
       rect:
         serializedVersion: 2
-        x: 477
-        y: 1743
-        width: 174
-        height: 257
+        x: 575
+        y: 1783
+        width: 278
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_2
+    - name: magegirl_running_attack_2
       rect:
         serializedVersion: 2
-        x: 913
-        y: 1743
-        width: 174
-        height: 257
+        x: 1012
+        y: 1783
+        width: 278
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_3
+    - name: magegirl_running_attack_3
       rect:
         serializedVersion: 2
-        x: 1349
-        y: 1744
-        width: 174
-        height: 256
+        x: 1448
+        y: 1783
+        width: 277
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_4
+    - name: magegirl_running_attack_4
       rect:
         serializedVersion: 2
-        x: 1785
-        y: 1743
-        width: 174
-        height: 257
+        x: 1882
+        y: 1783
+        width: 280
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_5
+    - name: magegirl_running_attack_5
       rect:
         serializedVersion: 2
-        x: 41
-        y: 1307
-        width: 175
-        height: 257
+        x: 140
+        y: 1345
+        width: 275
+        height: 321
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_6
+    - name: magegirl_running_attack_6
       rect:
         serializedVersion: 2
-        x: 477
-        y: 1307
-        width: 174
-        height: 258
+        x: 575
+        y: 1345
+        width: 276
+        height: 322
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_7
+    - name: magegirl_running_attack_7
       rect:
         serializedVersion: 2
-        x: 899
-        y: 1307
-        width: 174
-        height: 257
+        x: 1010
+        y: 1345
+        width: 277
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_8
+    - name: magegirl_running_attack_8
       rect:
         serializedVersion: 2
-        x: 1335
-        y: 1307
-        width: 174
-        height: 257
+        x: 1448
+        y: 1345
+        width: 275
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_9
+    - name: magegirl_running_attack_9
       rect:
         serializedVersion: 2
-        x: 1769
-        y: 1306
-        width: 174
-        height: 257
+        x: 1884
+        y: 1345
+        width: 276
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_10
+    - name: magegirl_running_attack_10
       rect:
         serializedVersion: 2
-        x: 41
-        y: 871
-        width: 174
-        height: 257
+        x: 140
+        y: 911
+        width: 277
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_11
+    - name: magegirl_running_attack_11
       rect:
         serializedVersion: 2
-        x: 477
-        y: 870
-        width: 174
-        height: 257
+        x: 576
+        y: 911
+        width: 275
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_12
+    - name: magegirl_running_attack_12
       rect:
         serializedVersion: 2
-        x: 913
-        y: 871
-        width: 174
-        height: 257
+        x: 1012
+        y: 911
+        width: 275
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_13
+    - name: magegirl_running_attack_13
       rect:
         serializedVersion: 2
-        x: 1349
-        y: 871
-        width: 174
-        height: 257
+        x: 1448
+        y: 911
+        width: 275
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_14
+    - name: magegirl_running_attack_14
       rect:
         serializedVersion: 2
-        x: 1785
-        y: 871
-        width: 174
-        height: 257
+        x: 1882
+        y: 911
+        width: 277
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_15
+    - name: magegirl_running_attack_15
       rect:
         serializedVersion: 2
-        x: 41
-        y: 434
-        width: 174
-        height: 257
+        x: 140
+        y: 474
+        width: 277
+        height: 321
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_16
+    - name: magegirl_running_attack_16
       rect:
         serializedVersion: 2
-        x: 477
-        y: 433
-        width: 174
-        height: 258
+        x: 576
+        y: 475
+        width: 277
+        height: 320
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_17
+    - name: magegirl_running_attack_17
       rect:
         serializedVersion: 2
-        x: 913
-        y: 436
-        width: 174
-        height: 257
+        x: 1010
+        y: 475
+        width: 279
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_18
+    - name: magegirl_running_attack_18
       rect:
         serializedVersion: 2
-        x: 1348
-        y: 435
-        width: 178
-        height: 257
+        x: 1447
+        y: 475
+        width: 278
+        height: 320
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_19
+    - name: magegirl_running_attack_19
       rect:
         serializedVersion: 2
-        x: 1781
-        y: 437
-        width: 184
-        height: 257
+        x: 1880
+        y: 475
+        width: 282
+        height: 320
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_20
+    - name: magegirl_running_attack_20
       rect:
         serializedVersion: 2
-        x: 40
-        y: 0
-        width: 178
-        height: 256
+        x: 137
+        y: 39
+        width: 280
+        height: 318
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_21
+    - name: magegirl_running_attack_21
       rect:
         serializedVersion: 2
-        x: 477
-        y: 0
-        width: 174
-        height: 256
+        x: 576
+        y: 39
+        width: 276
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_22
+    - name: magegirl_running_attack_22
       rect:
         serializedVersion: 2
-        x: 913
-        y: 0
-        width: 174
-        height: 257
+        x: 1010
+        y: 39
+        width: 279
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_23
+    - name: magegirl_running_attack_23
       rect:
         serializedVersion: 2
-        x: 1349
-        y: 0
-        width: 174
-        height: 255
+        x: 1448
+        y: 39
+        width: 276
+        height: 319
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: magegirl_defendaman_256_grid_24
+    - name: magegirl_running_attack_24
       rect:
         serializedVersion: 2
-        x: 1785
-        y: 0
-        width: 174
-        height: 257
+        x: 1882
+        y: 38
+        width: 278
+        height: 320
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
