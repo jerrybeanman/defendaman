@@ -46,8 +46,6 @@ public class NetworkingManager : MonoBehaviour
     // Game object to send data of
     public Transform playerType;
     public GameObject player;
-    public int enemyKingID;
-    public int allyKingID;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
@@ -299,6 +297,8 @@ public class NetworkingManager : MonoBehaviour
     public static string send_next_packet(DataType type, int id, List<Pair<string, string>> memersToSend, Protocol protocol)
     {
         string sending = "";
+        if (protocol == Protocol.NA)
+            sending += "[";
         sending = "{";
         sending += " DataType : " + (int)type + ", ID : " + id + ",";
 
@@ -378,9 +378,9 @@ public class NetworkingManager : MonoBehaviour
         foreach (var king in kings)
         {
             if (king.first == myTeam)
-                allyKingID = king.second;
+                GameData.AllyKingID = king.second;
             else
-                enemyKingID = king.second;
+                GameData.EnemyKingID = king.second;
         }
     }
 
