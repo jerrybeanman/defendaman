@@ -83,6 +83,7 @@ namespace Networking
         	struct sockaddr_in     _ServerAddress;
         	int 				   _UDPReceivingSocket;
             int                    _TCPAcceptingSocket;
+			std::vector<struct sockaddr_in> _ClientAddresses;
 
     };
 }
