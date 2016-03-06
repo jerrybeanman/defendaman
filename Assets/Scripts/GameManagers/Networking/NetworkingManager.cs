@@ -312,8 +312,6 @@ public class NetworkingManager : MonoBehaviour
                 myTeam = playerData["Team"].AsInt;
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
-                if (GameObject.Find("Minimap Camera") != null)
-                    GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
                 player.AddComponent<Movement>();
                 player.AddComponent<PlayerRotation>();
                 player.AddComponent<Attack>();
