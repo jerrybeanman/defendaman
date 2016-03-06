@@ -1,0 +1,331 @@
+fileFormatVersion: 2
+guid: c05c97afc8d572240b13e7a2c618038b
+timeCreated: 1456908026
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: gunboi_running_0
+    21300002: gunboi_running_1
+    21300004: gunboi_running_2
+    21300006: gunboi_running_3
+    21300008: gunboi_running_4
+    21300010: gunboi_running_5
+    21300012: gunboi_running_6
+    21300014: gunboi_running_7
+    21300016: gunboi_running_8
+    21300018: gunboi_running_9
+    21300020: gunboi_running_10
+    21300022: gunboi_running_11
+    21300024: gunboi_running_12
+    21300026: gunboi_running_13
+    21300028: gunboi_running_14
+    21300030: gunboi_running_15
+    21300032: gunboi_running_16
+    21300034: gunboi_running_17
+    21300036: gunboi_running_18
+    21300038: gunboi_running_19
+    21300040: gunboi_running_20
+    21300042: gunboi_running_21
+    21300044: gunboi_running_22
+    21300046: gunboi_running_23
+    21300048: gunboi_running_24
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: gunboi_running_0
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 1745
+        width: 234
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_1
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 1745
+        width: 227
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_2
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 1745
+        width: 224
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_3
+      rect:
+        serializedVersion: 2
+        x: 1324
+        y: 1745
+        width: 224
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_4
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1744
+        width: 224
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_5
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 1308
+        width: 225
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_6
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 1308
+        width: 225
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_7
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 1309
+        width: 224
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_8
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 1309
+        width: 225
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_9
+      rect:
+        serializedVersion: 2
+        x: 1761
+        y: 1308
+        width: 225
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_10
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 873
+        width: 225
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_11
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 871
+        width: 225
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_12
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 872
+        width: 225
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_13
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 873
+        width: 225
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_14
+      rect:
+        serializedVersion: 2
+        x: 1754
+        y: 873
+        width: 234
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_15
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 437
+        width: 225
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_16
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 438
+        width: 224
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_17
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 438
+        width: 224
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_18
+      rect:
+        serializedVersion: 2
+        x: 1324
+        y: 438
+        width: 224
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_19
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 435
+        width: 224
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_20
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 0
+        width: 225
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_21
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 0
+        width: 224
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_22
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 0
+        width: 224
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_23
+      rect:
+        serializedVersion: 2
+        x: 1324
+        y: 0
+        width: 224
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: gunboi_running_24
+      rect:
+        serializedVersion: 2
+        x: 1755
+        y: 1
+        width: 234
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
