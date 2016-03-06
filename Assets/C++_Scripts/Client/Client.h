@@ -16,7 +16,9 @@
 
 #define TeamRequest1 1
 #define TeamRequest2 2
+
 #define PACKETLEN    512
+
 #define MAXPACKETS   10
 
 namespace Networking
