@@ -31,6 +31,7 @@ extern "C" void TCP_DisposeClient(LobbyClient* client)
 {
 	if(client != NULL)
 	{
+		close(client->socket);
 		delete client;
 		client = NULL;
 	}

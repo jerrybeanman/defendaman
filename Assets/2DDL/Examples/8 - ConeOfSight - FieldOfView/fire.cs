@@ -65,7 +65,7 @@ public class fire : MonoBehaviour {
 
 	internal void shot(GameObject obj){
 		//Debug.DrawLine(lineOfSight.transform.position, obj.transform.position, Color.green);
-		GLDebug.DrawLine(lineOfSight.transform.position, obj.transform.position,Color.green);
+//		GLDebug.DrawLine(lineOfSight.transform.position, obj.transform.position,Color.green);
 
 		if(! audioSrc.isPlaying){
 			audioSrc.Play();

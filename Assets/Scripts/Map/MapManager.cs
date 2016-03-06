@@ -182,9 +182,8 @@ public class MapManager : MonoBehaviour {
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
-                }
             }
     }
-
+}
 
 }
