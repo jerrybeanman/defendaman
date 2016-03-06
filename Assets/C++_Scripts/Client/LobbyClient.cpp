@@ -60,6 +60,7 @@ void * LobbyClient::Recv()
 */
 int LobbyClient::Send(char * message, int size)
 {
+    printf("Message in Send: %s\n", message);
     if (send(serverSocket, message, size, 0) == -1)
     {
       std::cerr << "send() failed with errno: " << errno << std::endl;

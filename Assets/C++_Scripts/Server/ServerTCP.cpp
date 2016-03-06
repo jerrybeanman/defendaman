@@ -119,7 +119,10 @@ void * ServerTCP::Receive()
       		sprintf(buf, "Player %d has left the lobby \n", tmpPlayer.id + 1);
           printf(buf);
           this->ServerTCP::Broadcast(buf);
-      		return 0;
+          //Remove player from player list
+          _PlayerList.erase( std::remove_if( _PlayerList.begin(), _PlayerList.end(), [&](Player const& p) { return tmpPlayer.id == p.id; }), _PlayerList.end());
+
+          return 0;
       	}
         std::cout << buf << std::endl;
         /*Parsed  based on json array*/
