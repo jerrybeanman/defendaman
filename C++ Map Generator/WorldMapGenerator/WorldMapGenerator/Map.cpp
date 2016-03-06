@@ -240,7 +240,7 @@ void Map::createSpawnPoints (int ** map, int teams) {
 			continue;
 		}
 	}
-	validateSpawns (map, spawnPoints, teams);
+	//validateSpawns (map, spawnPoints, teams);
 }
 
 void Map::validateSpawns (int ** map, int ** spawnPoints, int teams) {

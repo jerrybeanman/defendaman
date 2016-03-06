@@ -17,14 +17,14 @@ void drawMap (int ** mapArray, Map map) {
 
 int main () {
 	char c;
-	Map *map = new Map (10, 10, 24);
+	Map *map = new Map (50, 50, 24);
 	do {
 		map->randomizeSeed ();
 		map->buildMapBase ();
 		map->createBaseScenery ();
 		map->joinMaps (map->getMapBase (), map->getMapTemp ());
-		map->createSpawnPoints (map->getMapBase (), 4);
-		//printf("%s", map->ConvertToJSONString (map->getMapBase ()).c_str());
+		map->createSpawnPoints (map->getMapBase (), 2);
+		printf("%s", map->ConvertToJSONString (map->getMapBase ()).c_str());
 		//drawMap (map->getMapBase (), *map);
 		printf ("\n\nEnter 'q' to quit, any other key will regernate.\n\n");
 		c = getchar ();
@@ -32,4 +32,15 @@ int main () {
 		map = map2;
 	} while (c != 'q');
 	return 0;
+}
+
+
+const char * GenerateMap (int seed) {
+	Map *map = new Map (50, 50, 24);
+	map->mapSeed = seed;
+	map->buildMapBase ();
+	map->createBaseScenery ();
+	map->joinMaps (map->getMapBase (), map->getMapTemp ());
+	map->createSpawnPoints (map->getMapBase (), 2);
+	return (map->ConvertToJSONString (map->getMapBase ()).c_str ());
 }
