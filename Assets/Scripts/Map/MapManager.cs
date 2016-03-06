@@ -235,6 +235,7 @@ public class MapManager : MonoBehaviour {
     -- cannot enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
+<<<<<<< HEAD
 		if (_map == null)
 			return;
 		for (int x = 0; x < _mapWidth; x++)
@@ -252,4 +253,21 @@ public class MapManager : MonoBehaviour {
 	}
 	
 	
+=======
+        if (_map == null)
+            return;
+        for (int x = 0; x < _mapWidth; x++)
+            for (int y = 0; y < _mapHeight; y++) {
+                //If the 2D array is land
+                if (_map[x, y] >= 0 && _map[x, y] < 100) {
+                    _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[ _map[x, y] % _mapSolids.Count];
+                    Instantiate(_obstacle, new Vector3(x, y), Quaternion.identity);
+                } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
+                    _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
+                    Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
+            }
+    }
+}
+
+>>>>>>> e43f621e828dc0460cc42c1c9cea452516a3b614
 }
