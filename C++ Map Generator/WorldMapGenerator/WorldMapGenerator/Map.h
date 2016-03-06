@@ -24,7 +24,7 @@ class Map {
 		This is a list of object ids that will be possible to be generated at the beginning of the game.
 		Expect these ID's to start at 0 and go to the end of the list. The top value, of the baseSceneryMax
 		will be added to them.
-		This will cause index 0 of the objectIDList to start at 199, and increasing from there.
+		This will cause index 0 of the objectIDList to start at 200, and increasing from there.
 		*/
 		objectIDList = new int[1];
 		for (int i = 1; i <= 1; i++)
@@ -84,11 +84,11 @@ class Map {
 	const int baseWallMax = 99;
 	const int baseSceneryDefault = 100;
 	const int baseSceneryMax = 199;
+	int mapSeed;
 
 	private:
 	int mapWidth;
 	int mapHeight;
-	int mapSeed;
 	int ** mapBase;
 	int ** tempLayer;
 	int baseWallChance;
