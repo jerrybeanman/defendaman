@@ -66,7 +66,7 @@ public class NetworkingManager : MonoBehaviour
     void Start()
     {
         try {
-            TCPClient = TCP_CreateClient();
+            //TCPClient = TCP_CreateClient();
             UDPClient = Game_CreateClient();
             UDP_ConnectToServer("192.168.0.14", 7000);
             UDP_StartReadThread();
@@ -121,6 +121,7 @@ public class NetworkingManager : MonoBehaviour
             gameObjects = JSON.Parse(JSONGameState).AsArray;
         } catch (Exception e) {
             Debug.Log(e.ToString());
+            return;
         }
         foreach (var node in gameObjects.Children)
         {
@@ -196,7 +197,7 @@ public class NetworkingManager : MonoBehaviour
     [DllImport("ClientLibrary.so")]
     private static extern int Game_Send(IntPtr client, string message, int size);
     public static int UDP_SendData(string message, int size) {
-        return Game_Send(UDPClient, message, size);
+        return Game_Send(UDPClient, message, 512);
     }
 
     [DllImport("ClientLibrary.so")]
@@ -264,7 +265,8 @@ public class NetworkingManager : MonoBehaviour
                 var memberItems = new List<Pair<string, string>>();
                 memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
                 memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-                memberItems.Add(new Pair<string, string>("rotation", player.GetComponent<PlayerRotation>().curRotation.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationZ", player.GetComponent<PlayerRotation>().curRotation.z.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationW", player.GetComponent<PlayerRotation>().curRotation.w.ToString()));
                 send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems, protocol);
             }
         }
@@ -293,11 +295,11 @@ public class NetworkingManager : MonoBehaviour
     {
         string sending = "";
         sending = "{";
-        sending += " \"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
+        sending += " DataType : " + (int)type + ", ID : " + id + ",";
 
         foreach (var pair in memersToSend)
         {
-            sending += " \"" + pair.first + "\" : " + pair.second + ",";
+            sending += " " + pair.first + " : " + pair.second + ",";
         }
 
         sending = sending.Remove(1, 1);
