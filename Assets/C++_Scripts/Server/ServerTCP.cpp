@@ -121,11 +121,10 @@ void * ServerTCP::Receive()
           this->ServerTCP::Broadcast(buf);
       		return 0;
       	}
-
         std::cout << buf << std::endl;
-
         /*Parsed  based on json array*/
-        sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &requestValue);
+        //pls
+        sscanf(buf, "%*s %*s %d %*s %*s %*s %d %*s %*s %*s %d ", &code, &idValue, &requestValue);
         this->ServerTCP::CheckServerRequest(tmpPlayer.id, code, idValue, requestValue);
 
       	/* Broadcast echo packet back to all players */
@@ -141,6 +140,7 @@ void * ServerTCP::Receive()
 */
 void ServerTCP::Broadcast(char * message)
 {
+  std::cout << "MESSAGE IN BROADCAST" << message << std::endl;
 	for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
 	{
 		if(send(_PlayerList[i].socket, message, PACKETLEN, 0) == -1)
@@ -179,6 +179,7 @@ void ServerTCP::CheckServerRequest(int playerId, int code, int idValue, int requ
       this->ServerTCP::Broadcast(buf); // or use flag to ignore all recv messages
     }
   }
+  std::cout << "END OF CHECK SERVER REQUEST" << std::endl;
   free(buf);
 }
 /* Check ready status on all connected players
