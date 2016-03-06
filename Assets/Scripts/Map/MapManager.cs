@@ -96,32 +96,34 @@ public class MapManager : MonoBehaviour {
     private void check_object_pool()
 	{
 		cameraPosition = mainCamera.GetComponent<Transform>().position;
-        //cameraDistance = Mathf.Abs(camera.GetComponent<Transform>().position.z - pooledObjects[0].GetComponent<Transform>().position.z);
-        print("camdistance " + cameraDistance);
 		frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 		frustumWidth = frustumHeight * mainCamera.aspect;
 
-		for (int i = 0; i < _pooledObjects.Length; i++)
-		{
-			if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
-			    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
-			    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
-			    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight))
-			{
-					_pooledObjects[i].SetActive(true);
-			}
-			else
-			{
-				_pooledObjects[i].SetActive(false);
-			}
-		}
+        if (_pooledObjects != null)
+        {
+            for (int i = 0; i < _pooledObjects.Length; i++)
+            {
+                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
+                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
+                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
+                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight))
+                {
+                    _pooledObjects[i].SetActive(true);
+                }
+                else
+                {
+                    _pooledObjects[i].SetActive(false);
+                }
+            }
+        }
 	}
 	
 	/**
 	 * Check the object pool in camera view and update their activation every second.
 	 */
 	void Update() {
-		check_object_pool();
+        check_object_pool();
+   
 	}
 	
 	/**
