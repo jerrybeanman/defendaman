@@ -21,7 +21,7 @@ int ServerTCP::InitializeSocket(short port)
     }
 
     /* Allows other sockets to bind() to this port, unless there is an active listening socket bound to the port already. */
-	setsockopt(_TCPAcceptingSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	  setsockopt(_TCPAcceptingSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
     /* Fill in server address information */
     memset(&_ServerAddress, 0, sizeof(struct sockaddr_in));
@@ -96,6 +96,7 @@ void * ServerTCP::Receive()
     Player tmpPlayer = newPlayer;
   	int BytesRead;
     char * buf;						          	/* buffer read from one recv call      	  */
+
     //JSON segments
     char dataType[30];
     int code;
@@ -120,8 +121,7 @@ void * ServerTCP::Receive()
           this->ServerTCP::Broadcast(buf);
       		return 0;
       	}
-
-        std::cout << "Buffer in RECV: " << buf << std::endl;
+        std::cout << buf << std::endl;
         /*Parsed  based on json array*/
         //pls
         sscanf(buf, "%*s %*s %d %*s %*s %*s %d %*s %*s %*s %d ", &code, &idValue, &requestValue);
@@ -150,13 +150,6 @@ void ServerTCP::Broadcast(char * message)
 			return;
 		}
 	}
-}
-
-void ServerTCP::PrintPlayer(Player p)
-{
-	std::cout << "Recieved Player " << p.id + 1 << " update: " << std::endl;
-	std::cout << "	Username: " << p.username << std::endl;
-	std::cout << "	Team name:  " << p.team << std::endl;
 }
 
 /*Parses incoming JSON and process request*/

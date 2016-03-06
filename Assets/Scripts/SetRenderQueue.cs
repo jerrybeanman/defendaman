@@ -6,7 +6,7 @@
 	reference the same materials.
 */
 
-using UnityEngine;
+/*using UnityEngine;
 
 [AddComponentMenu("Rendering/SetRenderQueue")]
 
@@ -24,4 +24,4 @@ public class SetRenderQueue : MonoBehaviour
             materials[i].renderQueue = m_queues[i];
         }
     }
-}
+}*/
