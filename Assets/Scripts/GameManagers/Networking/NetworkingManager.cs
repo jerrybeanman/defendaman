@@ -312,7 +312,11 @@ public class NetworkingManager : MonoBehaviour
 
         sending = sending.Remove(1, 1);
         sending = sending.Remove(sending.Length - 1, 1);
-        sending += "},";
+        if (protocol != Protocol.NA)
+            sending += "},";
+        else
+            sending += "}]";
+
         switch (protocol)
         {
             case Protocol.UDP:
