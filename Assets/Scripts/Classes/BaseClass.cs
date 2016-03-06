@@ -70,15 +70,21 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         var attack = other.gameObject.GetComponent<Trigger>();
-        if (attack.teamID == team)
+
+        if (attack != null)
         {
-            return;
+           
+            if (attack.teamID == team)
+            {
+                return;
+            }
+            if (doDamage(attack.damage) <= 0.0f)
+            {
+                //death
+                Destroy(gameObject);
+            }
         }
-        if (doDamage(attack.damage) <= 0.0f)
-        {
-            //death
-            Destroy(gameObject);
-        }
+
     }
 
     void receiveAttackFromServer(JSONClass playerData)

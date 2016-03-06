@@ -45,6 +45,9 @@ public class Inventory : MonoBehaviour
             slot_list.Add(Instantiate(inventory_slot));
             slot_list[i].GetComponent<InventorySlot>().slot_pos = i;
             slot_list[i].transform.SetParent(_slot_panel.transform);
+            // Sets scaling factor of gridlayout component to 1 to work with
+            // the unity "Scale With Screen Size" ui scale mode
+            slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
         AddItem(0);
         AddItem(1);
@@ -58,16 +61,14 @@ public class Inventory : MonoBehaviour
      * it on a slot containing the same item.
      * Updates the attributes of the Item: item, amount, and item_pos  
      */
-    public void AddItem(int id)
+    public void AddItem(int id, int amt = 1)
     {
         Item _item_to_add = _item_manager.FetchItemById(id);
         int item_idx;
         if (_item_to_add.stackable && (item_idx = check_if_item_in_inventory(_item_to_add)) != -1)
         {
             ItemData data = slot_list[item_idx].transform.GetChild(0).GetComponent<ItemData>();
-            if (data.amount == 0)
-                data.amount++;
-            data.amount++;
+            data.amount += amt;
             data.transform.GetChild(0).GetComponent<Text>().text = data.amount.ToString();
         }
         else
@@ -80,8 +81,11 @@ public class Inventory : MonoBehaviour
                     GameObject _item_obj = Instantiate(inventory_item);
                     _item_obj.GetComponent<ItemData>().item = _item_to_add;
                     _item_obj.GetComponent<ItemData>().item_pos = i;
-                    _item_obj.GetComponent<ItemData>().amount++;
+                    _item_obj.GetComponent<ItemData>().amount += amt;
                     _item_obj.transform.SetParent(slot_list[i].transform);
+                    // Sets scaling factor of gridlayout component to 1 to work with
+                    // the unity "Scale With Screen Size" ui scale mode
+                    _item_obj.transform.localScale = new Vector3(1, 1, 1);
                     _item_obj.transform.position = Vector2.zero; //centers item relative to parent
                     _item_obj.GetComponent<Image>().sprite = _item_to_add.sprite;
                     _item_obj.name = _item_to_add.title; //name shown in the inspector

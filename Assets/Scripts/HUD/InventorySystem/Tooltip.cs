@@ -10,8 +10,8 @@ using UnityEngine.UI;
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-public class Tooltip : MonoBehaviour {
-
+public class Tooltip : MonoBehaviour
+{ 
     private Item _item;
     private string _data;
     private GameObject _tooltip;
@@ -30,13 +30,15 @@ public class Tooltip : MonoBehaviour {
         }
     }
      
-    public void Activate(Item item) {
+    public void Activate(Item item)
+    {
         this._item = item;
         ConstructDataString();
         _tooltip.SetActive(true);
     }
 
-    public void Deactivate() {
+    public void Deactivate()
+    {
         _tooltip.SetActive(false);
     }
 
