@@ -3,6 +3,28 @@
 #include "LobbyClient.h"
 using namespace Networking;
 
+int getSO_ERROR(int fd) {
+   int err = 1;
+   socklen_t len = sizeof err;
+   if (-1 == getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&err, &len))
+      printf("getSO_ERROR\n");
+   if (err)
+      errno = err;              // set errno to the socket SO_ERROR
+   return err;
+}
+void closeSocket(int fd)
+{
+	// *not* the Windows closesocket()
+   if (fd >= 0) {
+      getSO_ERROR(fd); // first clear any errors, which can cause close to fail
+      if (shutdown(fd, SHUT_RDWR) < 0) // secondly, terminate the 'reliable' delivery
+         if (errno != ENOTCONN && errno != EINVAL) // SGI causes EINVAL
+            printf("shutdown\n");
+      if (close(fd) < 0) // finally call close()
+         printf("close\n");
+   }
+}
+
 /*
 	Creates a client object, which will return an IntPtr type in C#
 
@@ -31,9 +53,9 @@ extern "C" void TCP_DisposeClient(LobbyClient* client)
 {
 	if(client != NULL)
 	{
-		close(client->socket);
-		delete client;
-		client = NULL;
+		printf("Closing Client.............\n");
+		closeSocket(client->serverSocket);
+		//free(client)
 	}
 }
 
@@ -116,6 +138,7 @@ extern "C" char * TCP_GetData(LobbyClient * client)
 */
 extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 {
+	printf("TCP SEND: %s\n", message);
 	return client->Send(message, size);
 }
 
@@ -172,7 +195,7 @@ extern "C" int Game_ConnectToServer(GameClient * client, const char * name, shor
 {
 	if(client != NULL)
 		return client->Init_Client_Socket(name, port);
-    return -1;
+  return -1;
 }
 
 /*
@@ -231,7 +254,7 @@ extern "C" char * Game_GetData(GameClient * client)
 				[size]		Size of the packet
 
 	Programmer: Gabriel Lee, Tyler Trepanier
-	
+
 	@return: -1 for failure, 0 on success
 */
 extern "C" int Game_Send(GameClient * client, char * message, int size)
