@@ -14,6 +14,7 @@ int GameClient::Init_Client_Socket(const char* name, short port)
         fatal("failed to create TCP socket");
         return 1;
     }
+    printf("GameClient::Init_Client_Socket Weee\n");
 
     // Initialize socket addresss
     Init_SockAddr(name, port);
@@ -29,16 +30,19 @@ void * GameClient::Recv()
         length = sizeof(serverAddr);
         int bytesToRead = PACKETLEN;
         char *message = (char *) malloc(PACKETLEN);
-        while((recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length)) < PACKETLEN)
-         {
-           //printf("Recv socket:%zu, message:%s \n", serverAddr.sin_port, message);
-          if(bytesRead < 0)
-          {
-            printf("recv() failed with errno: %d\n", errno);
-            return (void *)errno;
-          }
-          message += bytesRead;
-          bytesToRead -= bytesRead;
+        bytesRead = recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length);
+        //printf("Recv socket:%zu, message:%s \n", serverAddr.sin_port, message);
+        if (bytesRead < 0 && errno != 11)
+        {
+          printf("recv() failed with errno: %d\n", errno);
+          free(message);
+          return (void *)errno;
+        }
+
+        if (bytesRead <= 0)
+        {
+          free(message);
+          continue;
         }
         // push message to queue
         CBPushBack(&CBPackets, message);
@@ -53,7 +57,6 @@ void * GameClient::Recv()
 int GameClient::Send(char * message, int size)
 {
     socklen_t length = sizeof(serverAddr);
-    printf("Send socket:%zu \n", serverAddr.sin_port);
     if (sendto(serverSocket, message, size, 0, (struct sockaddr *)&serverAddr, length) == -1)
     {
         printf("Failed to send");
@@ -61,4 +64,18 @@ int GameClient::Send(char * message, int size)
         return errno;
     }
     return 0;
+}
+
+char* GameClient::GetData()
+{
+  if (CBPackets.Count != 0)
+  {
+    memset(currentData, 0, PACKETLEN);
+    CBPop(&CBPackets, currentData);
+  } else
+  {
+    strcpy(currentData, "[]");
+  }
+  //printf("GameClient::GetData(): Count:%d, Message:%s\n", CBPackets.Count, currentData);
+  return currentData;
 }

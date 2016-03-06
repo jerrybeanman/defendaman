@@ -115,7 +115,6 @@ extern "C" char * TCP_GetData(LobbyClient * client)
 */
 extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 {
-	printf("Hit <msg:%s>\n");
 	return client->Send(message, size);
 }
 
@@ -219,7 +218,6 @@ extern "C" int Game_StartReadThread(GameClient * client)
 */
 extern "C" char * Game_GetData(GameClient * client)
 {
-	printf("Game_GetData");
 		return client->GetData();
 }
 
@@ -232,11 +230,10 @@ extern "C" char * Game_GetData(GameClient * client)
 				[size]		Size of the packet
 
 	Programmer: Gabriel Lee, Tyler Trepanier
-	
+
 	@return: -1 for failure, 0 on success
 */
 extern "C" int Game_Send(GameClient * client, char * message, int size)
 {
-	printf("Game_Send, msg:%s size:%d\n", message, size);
 	return client->Send(message, size);
 }

@@ -30,9 +30,16 @@ int Client::Init_SockAddr(const char* hostname, short hostport)
     addr.sin_family      = AF_INET;
     addr.sin_port        = htons(hostport);
 
+
     if((host = gethostbyname(hostname)) == 0)
     {
         std::cout << "Error in gethostbyname" << std::endl;
+        printf("EROROROROROROROROROROROROROROROOOOOOOOOOOOOOOOOOOOOOOO\n");
+        printf("EROROROROROROROROROROROROROROROOOOOOOOOOOOOOOOOOOOOOOO\n");
+        printf("EROROROROROROROROROROROROROROROOOOOOOOOOOOOOOOOOOOOOOO\n");
+        printf("EROROROROROROROROROROROROROROROOOOOOOOOOOOOOOOOOOOOOOO\n");
+        printf("EROROROROROROROROROROROROROROROOOOOOOOOOOOOOOOOOOOOOOO\n");
+        printf("EROROROROROROROROROROROROROROROOOOOOOOOOOOOOOOOOOOOOOO\n");
         return 1;
     }
 
