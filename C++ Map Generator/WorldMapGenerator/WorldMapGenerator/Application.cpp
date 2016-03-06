@@ -35,7 +35,6 @@ int main () {
 }
 
 
-
 const char * GenerateMap (int seed) {
 	Map *map = new Map (50, 50, 24);
 	map->mapSeed = seed;
