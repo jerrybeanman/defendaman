@@ -116,7 +116,12 @@ public class NetworkingManager : MonoBehaviour
 
     private void update_data(string JSONGameState)
     {
-        var gameObjects = JSON.Parse(JSONGameState).AsArray;
+        JSONArray gameObjects = null;
+        try {
+            gameObjects = JSON.Parse(JSONGameState).AsArray;
+        } catch (Exception e) {
+            Debug.Log(e.ToString());
+        }
         foreach (var node in gameObjects.Children)
         {
             var obj = node.AsObject;
