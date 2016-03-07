@@ -64,7 +64,7 @@ public class NetworkingManager : MonoBehaviour
     void Start()
     {
         try {
-            //TCPClient = TCP_CreateClient();
+            TCPClient = TCP_CreateClient();
             UDPClient = Game_CreateClient();
             UDP_ConnectToServer("192.168.0.14", 7000);
             UDP_StartReadThread();
@@ -78,14 +78,12 @@ public class NetworkingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        send_data();
-    }
-
-    void FixedUpdate()
-    {
         update_data(receive_data());
+        send_data();
+        if (Input.GetKeyDown(KeyCode.Space))
+            StartOfGame();
     }
-
+    
     ////Code for subscribing to updates from client-server system////
     #region SubscriberSystem
     /*
@@ -353,9 +351,9 @@ public class NetworkingManager : MonoBehaviour
         Debug.Log("Back to StartGame");
         //foreach (JSONClass playerData in data["playersData"].AsArray)
         foreach (var playerData in GameData.LobbyData) {
-            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.TeamID-1].first, GameData.TeamSpawnPoints[playerData.TeamID-1].second, -10), Quaternion.identity)).gameObject;
+            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID-1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID-1].second, -10), Quaternion.identity)).gameObject;
 
-            switch(playerData.ClassType)
+            switch(playerData.Value.ClassType)
             {
                 case ClassType.Ninja:
                     createdPlayer.AddComponent<NinjaClass>();
@@ -367,21 +365,21 @@ public class NetworkingManager : MonoBehaviour
                     createdPlayer.AddComponent<WizardClass>();
                     break;
                 default:
-                    Debug.Log("Player " + playerData.PlayerID + " has not selected a valid class. Defaulting to Gunner");
+                    Debug.Log("Player " + playerData.Value.PlayerID + " has not selected a valid class. Defaulting to Gunner");
                     createdPlayer.AddComponent<GunnerClass>();
                     break;
             }
 
 
-            createdPlayer.GetComponent<BaseClass>().team = playerData.TeamID;
-            createdPlayer.GetComponent<BaseClass>().playerID = playerData.PlayerID;
+            createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
+            createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
 
             //if (playerData.King) //Uncomment this one line when kings are in place
-                kings.Add(new Pair<int, int>(playerData.TeamID, playerData.PlayerID));
+                kings.Add(new Pair<int, int>(playerData.Value.TeamID, playerData.Value.PlayerID));
 
-            if (myPlayer == playerData.PlayerID)
+            if (myPlayer == playerData.Value.PlayerID)
             {
-                myTeam = playerData.TeamID;
+                myTeam = playerData.Value.TeamID;
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
@@ -393,7 +391,7 @@ public class NetworkingManager : MonoBehaviour
             }
             else {
                 createdPlayer.AddComponent<NetworkingManager_test1>();
-                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData.PlayerID;
+                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData.Value.PlayerID;
                 //Created another player
             }
         }
@@ -418,9 +416,9 @@ public class NetworkingManager : MonoBehaviour
     
     void OnGUI()
     {
-        GUI.Label(new Rect(8, 0, Screen.width, Screen.height), "Last Received: " + result);
-        GUI.Label(new Rect(8, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
-        GUI.Label(new Rect(8, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
+        GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
+        GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
+        GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
     }
 
     public void StartOfGame()
@@ -430,8 +428,8 @@ public class NetworkingManager : MonoBehaviour
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
 
-        GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
+        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
+        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
 
         GameData.MyPlayerID = 1;
 

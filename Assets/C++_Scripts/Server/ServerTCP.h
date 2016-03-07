@@ -2,6 +2,7 @@
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
 #include "Server.h"
+#include "../Unity_Plugin/json11.hpp"
 
 
 //TODO: Implement this instead of Networking enum
@@ -25,7 +26,7 @@ namespace Networking
 
                 @return: socket file descriptor
             */
-            int InitializeSocket(short port) override;
+      int InitializeSocket(short port) override;
 
             /*
                 Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
@@ -38,7 +39,7 @@ namespace Networking
 
                 return: socket file descriptor
             */
-            int Accept(Player * player);
+      int Accept(Player * player);
 
             /*
                 Creates a child process to handle incoming messages from new player that has just connected to the lobby
@@ -50,7 +51,7 @@ namespace Networking
 
                 return: child PDI (0 for child process)
             */
-            static void * CreateClientManager(void * server);
+      static void * CreateClientManager(void * server);
 
            /*
                 Recieves data from child process that is dedicated for each player's socket
@@ -61,33 +62,35 @@ namespace Networking
 
                 @return: Thread execution code
             */
-          	void * Receive() override;
+      void * Receive() override;
 
-	        /*
-                Sends a message to all the clients
+	    /*
+          Sends a message to all the clients
 
-                Interface:  void Broadcast(char * message)
+          Interface:  void Broadcast(char * message)
 
-                Programmer: Jerry Jia
+          Programmer: Jerry Jia
 
-                @return: void
-            */
-            void Broadcast(char * message) override;
+          @return: void
+      */
+      void Broadcast(char * message) override;
+
+			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
 			/*Parses incoming JSON and process request*/
-			void CheckServerRequest(int playerId, int code, int idValue, int requestValue);
+			void CheckServerRequest(int playerId, char * buffer);
 
 			/* Check ready status on all connected players*/
 			bool AllPlayersReady();
 
 			std::vector<Player> setPlayerList();
 
-        private:
+    private:
 			Player newPlayer;
+
 			//Enum for the networking team to determine the type of message requested.
 			enum teamCode {Networking = 6};
 			enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3, PlayerJoinedLobby = 4, GameStart = 5};
-
 	};
 }
 

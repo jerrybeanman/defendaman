@@ -19,7 +19,6 @@
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
-
 /*
    Structure of a PlayerNetworkEntity
  ** Will move to a more appropriate location later
@@ -32,6 +31,7 @@ typedef struct Player
     int            id;
     char           username[32];
     int            team;
+    int            playerClass;
     bool           isReady;
 } Player;
 
