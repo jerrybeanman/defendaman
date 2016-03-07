@@ -72,6 +72,7 @@ public class NetworkingManager : MonoBehaviour
         {
             Debug.Log(e.ToString());
         }
+        Debug.Log(send_next_packet(DataType.Lobby, 3, new List<Pair<string, string>> {new Pair<string, string>("Key", "Value")}, Protocol.NA));
     }
 
     // Update is called once per frame
@@ -309,15 +310,15 @@ public class NetworkingManager : MonoBehaviour
         string sending = "";
         if (protocol == Protocol.NA)
             sending += "[";
-        sending = "{";
-        sending += " DataType : " + (int)type + ", ID : " + id + ",";
+        sending += "{";
+        sending += "DataType : " + (int)type + ", ID : " + id + ",";
 
         foreach (var pair in memersToSend)
         {
             sending += " " + pair.first + " : " + pair.second + ",";
         }
-
-        sending = sending.Remove(1, 1);
+        //if (protocol != Protocol.NA)
+        //    sending = sending.Remove(1, 1);
         sending = sending.Remove(sending.Length - 1, 1);
         if (protocol != Protocol.NA)
             sending += "},";
@@ -333,7 +334,6 @@ public class NetworkingManager : MonoBehaviour
                 jsonTCPObjectsToSend.Add(sending);
                 break;
         }
-
         return sending;
     }
     #endregion 
