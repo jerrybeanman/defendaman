@@ -48,6 +48,7 @@ void * LobbyClient::Recv()
         bytesToRead -= bytesRead;
       }
       printf("Message: %s\n", message);
+      
       // push message to queue
       CBPushBack(&CBPackets, message);
       free(message);
@@ -60,6 +61,7 @@ void * LobbyClient::Recv()
 */
 int LobbyClient::Send(char * message, int size)
 {
+    printf("Message in Send: %s\n", message);
     if (send(serverSocket, message, size, 0) == -1)
     {
       std::cerr << "send() failed with errno: " << errno << std::endl;
