@@ -6,7 +6,7 @@ CC= g++
 NAME= Server
 FLAGS= -std=c++11 -Wall -ggdb
 LIBRARIES = -pthread
-S_FILES= Server.cpp ServerTCP.cpp ServerUDP.cpp main.cpp
+S_FILES= Server.cpp ServerTCP.cpp ServerUDP.cpp main.cpp ../Unity_Plugin/json11.cpp
 OBJECT_FILES=$(S_FILES:.cpp=.o)
 META_FILES=$(S_FILES:.cpp=.cpp.meta)
 
