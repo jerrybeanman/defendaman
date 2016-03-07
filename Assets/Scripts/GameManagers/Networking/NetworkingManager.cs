@@ -72,17 +72,18 @@ public class NetworkingManager : MonoBehaviour
         {
             Debug.Log(e.ToString());
         }
-        Debug.Log(send_next_packet(DataType.Lobby, 3, new List<Pair<string, string>> {new Pair<string, string>("Key", "Value")}, Protocol.NA));
+        StartOfGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        update_data(receive_data());
         send_data();
+    }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            StartOfGame();
+    void FixedUpdate()
+    {
+        update_data(receive_data());
     }
 
     ////Code for subscribing to updates from client-server system////
@@ -311,11 +312,11 @@ public class NetworkingManager : MonoBehaviour
         if (protocol == Protocol.NA)
             sending += "[";
         sending += "{";
-        sending += "DataType : " + (int)type + ", ID : " + id + ",";
+        sending += "\"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
 
         foreach (var pair in memersToSend)
         {
-            sending += " " + pair.first + " : " + pair.second + ",";
+            sending += " \"" + pair.first + "\" : " + pair.second + ",";
         }
         //if (protocol != Protocol.NA)
         //    sending = sending.Remove(1, 1);
@@ -431,15 +432,13 @@ public class NetworkingManager : MonoBehaviour
 
         GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
         GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
-        GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 3, TeamID = 1 });
-        GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 4, TeamID = 2 });
-        GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 5, TeamID = 1 });
-        GameData.LobbyData.Add(new PlayerData { ClassType = ClassType.Gunner, PlayerID = 6, TeamID = 2 });
 
-        GameData.MyPlayerID = 3;
+        GameData.MyPlayerID = 1;
 
-        GameData.TeamSpawnPoints.Add(new Pair<int, int>(3, 3));
-        GameData.TeamSpawnPoints.Add(new Pair<int, int>(5, 5));
+        if (Application.platform != RuntimePlatform.LinuxPlayer) {
+            GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
+            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
+        }
 
         update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }
