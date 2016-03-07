@@ -174,7 +174,8 @@ public class MapManager : MonoBehaviour {
 		// Enums are not ints in C# :(
 		switch ((EventType)id) {
 		case EventType.CREATE_MAP:
-			create_map(message);
+            Debug.Log("handle_event() : CREATE_MAP");
+            create_map(message);
 			draw_map();
             instantiate_pool();
 			break;
@@ -235,6 +236,7 @@ public class MapManager : MonoBehaviour {
     -- cannot enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
+        Debug.Log("draw_map()");
         if (_map == null)
             return;
 
