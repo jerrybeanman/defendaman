@@ -78,12 +78,16 @@ namespace Networking
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
 			/*Parses incoming JSON and process request*/
-			void CheckServerRequest(int playerId, char * buffer);
+			void CheckServerRequest(Player player, char * buffer);
 
 			/* Check ready status on all connected players*/
 			bool AllPlayersReady();
 
 			std::vector<Player> setPlayerList();
+    
+            std::string constructPlayerTable();
+
+            void sendToClient(Player player, char * message);
 
     private:
 			Player newPlayer;

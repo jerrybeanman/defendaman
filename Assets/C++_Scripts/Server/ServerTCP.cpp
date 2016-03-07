@@ -126,7 +126,7 @@ void * ServerTCP::Receive()
         /* Data received */
         std::cout << "Data Received: " << buf << std::endl;
         //Handle Data Received
-        this->ServerTCP::CheckServerRequest(tmpPlayer.id, buf);
+        this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
       	/* Broadcast echo packet back to all players */
       	this->ServerTCP::Broadcast(buf);
     }
@@ -149,9 +149,22 @@ void ServerTCP::Broadcast(char * message)
 		}
 	}
 }
+/*
+	Sends a message to a specific client
+*/
+void ServerTCP::sendToClient(Player player, char * message)
+{
+	if(send(player.socket, message, PACKETLEN, 0) == -1)
+	{
+		std::cerr << "Broadcast() failed for player id: " << player.id << std::endl;
+		std::cerr << "errno: " << errno << std::endl;
+		return;
+	}
+}
+
 
 /* Parses incoming JSON and process request */
-void ServerTCP::CheckServerRequest(int playerId, char * buffer)
+void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
   char * buf;
   buf = (char *)malloc(PACKETLEN);
@@ -171,12 +184,13 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
     //Player joining team request
     case TeamChangeRequest:
       std::cout << "Team change: " << requestValue << std::endl;
-      _PlayerList[playerId].team = requestValue;
+      _PlayerList[player.id].team = requestValue;
       break;
 
     //Player joining class request
     case ClassChangeRequest:
-      //TODO
+	  std::cout << "Class change: " << requestValue << std::endl;
+      _PlayerList[player.id].playerClass= requestValue;
       break;
 
     //Player making a ready request
@@ -185,12 +199,12 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
       //Player not ready
       if (requestValue == 0)
       {
-        _PlayerList[playerId].isReady = false;
+        _PlayerList[player.id].isReady = false;
       }
       //Player is ready
       else if (requestValue == 1)
       {
-        _PlayerList[playerId].isReady =  true;
+        _PlayerList[player.id].isReady =  true;
       }
       //All players in lobby are ready
       if (this->ServerTCP::AllPlayersReady())
@@ -204,6 +218,12 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
 
     //New Player has joined lobby
     case PlayerJoinedLobby:
+	  char* message = { 0 };
+	  std::cout << "New Player Change: " << username << std::endl; 
+	  strcpy(_PlayerList[player.id].username, username.c_str());
+	  strcpy(message, constructPlayerTable().c_str());
+	  //Send player a table of players
+	  sendToClient(player, message);
       break;
   }
   free(buf);
@@ -216,8 +236,7 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
 void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username)
 {
   //Testing Proof of Concept
-  char * test = "[{\"DataType\" : 6, \"ID\" : 1, \"PlayerID\" : 0, \"TeamID\" : 1}]";
-  std::string packet(test);
+  std::string packet(buffer);
   std::string error;
 
   //Parse buffer as JSON array
@@ -231,11 +250,10 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
   }
 
   //Parsing data in JSON object
-  //TODO: The rest of the variables
   DataType = json["DataType"].int_value();
   ID = json["ID"].int_value();
   IDValue = json["TeamID"].int_value();
-
+  username = json["UserName"].string_value();
 }
 /* Check ready status on all connected players
 
@@ -246,14 +264,30 @@ bool ServerTCP::AllPlayersReady()
   for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
 	{
     if(_PlayerList[i].isReady == false)
-		{
+	{
       printf("Player %d is not ready\n", _PlayerList[i].id);
 			return false;
-		} else {
-      printf("Player %d is ready\n", _PlayerList[i].id);
-    }
+	} else {
+      	printf("Player %d is ready\n", _PlayerList[i].id);
+    	}
 	}
   return true;
+}
+std::string ServerTCP::constructPlayerTable()
+{
+	std::string packet = "{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : ";
+	for (std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
+	{
+		std::string tempUserName(_PlayerList[i].username);
+		packet += "[{PlayerID: " + std::to_string(_PlayerList[i].id); 
+		packet += ", UserName : " + tempUserName; 
+		packet += ", TeamID : " +  std::to_string(_PlayerList[i].team); 
+		packet += ", ClassID : " + std::to_string(_PlayerList[i].playerClass); 
+		packet += ", Ready : " + std::to_string(Server::isReadyToInt(_PlayerList[i])); 
+		packet += "}";	
+	}
+	packet += "]}";
+	return packet;	
 }
 /*
   Returns the registered player list from the game lobby
