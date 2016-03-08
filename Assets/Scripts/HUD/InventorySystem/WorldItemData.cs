@@ -49,6 +49,7 @@ public class WorldItemData : MonoBehaviour
 	void Update () {
         if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
         {
+            Debug.Log("Pick up registered");
             // data to send to server indicating that the player wants to pick up an item
             // world_item_id
             // _player_id    
@@ -71,6 +72,7 @@ public class WorldItemData : MonoBehaviour
             other.gameObject.GetComponent<BaseClass>().playerID == _player_id)
         {
             trigger_entered = true;
+            Debug.Log("trigger entered registered");
         }
     }
 
