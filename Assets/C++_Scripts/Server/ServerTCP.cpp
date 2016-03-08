@@ -130,6 +130,7 @@ void * ServerTCP::Receive()
         //Handle Data Received
         this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
       	/* Broadcast echo packet back to all players */
+        //TODO - Send ID of new player to all players
       	this->ServerTCP::Broadcast(buf);
     }
     free(buf);
@@ -257,7 +258,10 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
   //Parsing data in JSON object
   DataType = json["DataType"].int_value();
   ID = json["ID"].int_value();
-  IDValue = json["TeamID"].int_value();
+  IDValue = json["TeamID"].int_value();         //Check if player is making a team request
+  if (IDValue == 0)
+    IDValue = json["ClassID"].int_value();      //Check if player is making a class request
+
   username = json["UserName"].string_value();
 
   std::cout << "Data Type: " << DataType << std::endl;
@@ -285,19 +289,20 @@ bool ServerTCP::AllPlayersReady()
 }
 std::string ServerTCP::constructPlayerTable()
 {
-	std::string packet = "{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : ";
+	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : ";
 	for (std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
 	{
 		std::string tempUserName(_PlayerList[i].username);
 		packet += "[{PlayerID: " + std::to_string(_PlayerList[i].id);
-		packet += ", UserName : " + tempUserName;
+		packet += ", UserName : \"" + tempUserName + "\"";
 		packet += ", TeamID : " +  std::to_string(_PlayerList[i].team);
 		packet += ", ClassID : " + std::to_string(_PlayerList[i].playerClass);
 		packet += ", Ready : " + std::to_string(Server::isReadyToInt(_PlayerList[i]));
 		packet += "}";
 	}
-	packet += "]}";
-	std::cout << "JSON PACKET: " << packet << std::endl;
+	packet += "]}]";
+
+  std::cout << "THIS IS OUR PACKET THAT WE ARE SENDING" << packet << std::endl;
 	return packet;
 }
 /*
