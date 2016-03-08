@@ -31,7 +31,6 @@ void * GameClient::Recv()
         char *message = (char *) malloc(PACKETLEN);
         while((recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length)) < PACKETLEN)
          {
-           printf("Recv\n");
           if(bytesRead < 0)
           {
             printf("recv() failed with errno: %d\n", errno);
