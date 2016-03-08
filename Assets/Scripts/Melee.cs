@@ -12,4 +12,9 @@ public abstract class Melee : Trigger
     {
         //cleaving attack, deal with destruction in animator
     }
+
+    void Update()
+    {
+        transform.position = transform.parent.position;
+    }
 }

@@ -428,7 +428,7 @@ public class NetworkingManager : MonoBehaviour
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
 
-        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
+        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = 1, TeamID = 1 });
         GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
 
         GameData.MyPlayerID = 1;
