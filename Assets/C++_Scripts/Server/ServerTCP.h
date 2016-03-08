@@ -84,7 +84,7 @@ namespace Networking
 			bool AllPlayersReady();
 
 			std::vector<Player> setPlayerList();
-    
+
             std::string constructPlayerTable();
 
             void sendToClient(Player player, char * message);

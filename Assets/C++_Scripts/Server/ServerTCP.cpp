@@ -63,6 +63,8 @@ int ServerTCP::Accept(Player * player)
     /* Not the best way to do it since we're using vectors */
     player->id = _PlayerList.size() + 1;
     player->isReady = false;
+    player->playerClass = 0;
+    player->team = 0;
 
     //Add player to list
     _PlayerList.push_back(*player);
@@ -173,6 +175,8 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
   int code, idValue, requestValue;
   std::string username;
 
+  std::cout << "Received buffer in check request: " << buffer << std::endl;
+
   //Parse JSON buffer
   parseServerRequest(buffer, code, idValue, requestValue, username);
 
@@ -218,12 +222,13 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
 
     //New Player has joined lobby
     case PlayerJoinedLobby:
-	  char* message = { 0 };
-	  std::cout << "New Player Change: " << username << std::endl; 
-	  strcpy(_PlayerList[player.id].username, username.c_str());
+	  char* message = (char*)malloc(PACKETLEN);
+	  std::cout << "New Player Change: " << username << std::endl;
+	  strcpy(_PlayerList[player.id-1].username, username.c_str());
 	  strcpy(message, constructPlayerTable().c_str());
 	  //Send player a table of players
 	  sendToClient(player, message);
+    free(message);
       break;
   }
   free(buf);
@@ -236,9 +241,9 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
 void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username)
 {
   //Testing Proof of Concept
+  char * test = "[{\"DataType\" : 6, \"ID\" : 1, \"PlayerID\" : 0, \"TeamID\" : 1, \"Username\" : \"John Cena\"}]";
   std::string packet(buffer);
   std::string error;
-
   //Parse buffer as JSON array
   Json json = Json::parse(packet, error).array_items()[0];
 
@@ -254,6 +259,11 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
   ID = json["ID"].int_value();
   IDValue = json["TeamID"].int_value();
   username = json["UserName"].string_value();
+
+  std::cout << "Data Type: " << DataType << std::endl;
+  std::cout << "ID: " << ID << std::endl;
+  std::cout << "IDValue: " << IDValue<< std::endl;
+  std::cout << "Username: " << username << std::endl;
 }
 /* Check ready status on all connected players
 
@@ -279,15 +289,16 @@ std::string ServerTCP::constructPlayerTable()
 	for (std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
 	{
 		std::string tempUserName(_PlayerList[i].username);
-		packet += "[{PlayerID: " + std::to_string(_PlayerList[i].id); 
-		packet += ", UserName : " + tempUserName; 
-		packet += ", TeamID : " +  std::to_string(_PlayerList[i].team); 
-		packet += ", ClassID : " + std::to_string(_PlayerList[i].playerClass); 
-		packet += ", Ready : " + std::to_string(Server::isReadyToInt(_PlayerList[i])); 
-		packet += "}";	
+		packet += "[{PlayerID: " + std::to_string(_PlayerList[i].id);
+		packet += ", UserName : " + tempUserName;
+		packet += ", TeamID : " +  std::to_string(_PlayerList[i].team);
+		packet += ", ClassID : " + std::to_string(_PlayerList[i].playerClass);
+		packet += ", Ready : " + std::to_string(Server::isReadyToInt(_PlayerList[i]));
+		packet += "}";
 	}
 	packet += "]}";
-	return packet;	
+	std::cout << "JSON PACKET: " << packet << std::endl;
+	return packet;
 }
 /*
   Returns the registered player list from the game lobby
