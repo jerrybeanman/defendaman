@@ -242,7 +242,7 @@ public class MapManager : MonoBehaviour {
 			//If the 2D array is land
 			if (_map[x, y] >= 0 && _map[x, y] < 100) {
 				_obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[ _map[x, y] % _mapSolids.Count];
-				Instantiate(_obstacle, new Vector3(x, y), Quaternion.identity);
+				Instantiate(_obstacle, new Vector3(x, y, -1), Quaternion.identity);
 			} else if (_map[x, y] >= 100 && _map[x, y] < 200) {
 				_tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
 				Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
