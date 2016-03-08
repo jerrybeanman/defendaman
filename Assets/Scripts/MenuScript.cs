@@ -121,6 +121,7 @@ public class MenuScript : MonoBehaviour {
 						GameData.LobbyData[PlayerPacketID].PlayerID = PlayerPacketID;
 						GameData.LobbyData[PlayerPacketID].Username = packet[NetworkKeyString.UserName];
 					}
+					FormatedData = "GOTEM";
 					break;
 				}
 				case NetworkCode.UpdatePlayerList:
@@ -186,7 +187,12 @@ public class MenuScript : MonoBehaviour {
 			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 			packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, _player_name));
 			SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerJoinedLobby, packetData, Protocol.NA);
-
+			// Send dummy packet
+			if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
+			{
+				// handle error here 
+				Debug.Log("SelectTeam(): Packet sending failed\n");
+			}
 		}else
 			RecievedData = "IP length is zero";
 
