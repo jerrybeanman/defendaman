@@ -26,14 +26,16 @@ public class WorldItemManager : MonoBehaviour
     ItemManager _item_manager;
     public GameObject world_item;
     Inventory _inventory;
+    int _my_player_id;
 
     /*
-     * Retrives the ItemManager and the Inventory Script
+     * Retrives the ItemManager script, the Inventory script and the player id
      */
     void Start ()
     {
         _item_manager = GetComponent<ItemManager>();
         _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
+        _my_player_id = GameData.MyPlayerID;
 
         // Adding initial world items (testing)
         CreateWorldItem("test", 0, 1, new Vector3(55, 55, 0));
@@ -61,7 +63,6 @@ public class WorldItemManager : MonoBehaviour
      */
     public void ProcessPickUpEvent(string world_item_id, int player_id, int item_id, int amt)
     {
-        int _my_player_id = GameObject.Find("GameManager").GetComponent<NetworkingManager>().myPlayer;
         if (_my_player_id == player_id)
         {
             _inventory.AddItem(item_id, amt);
@@ -76,7 +77,6 @@ public class WorldItemManager : MonoBehaviour
      */
     public void ProcessDropEvent(string world_item_id, int player_id, int item_id, int amt, int inv_pos, Vector3 position)
     {
-        int _my_player_id = GameObject.Find("GameManager").GetComponent<NetworkingManager>().myPlayer;
         if (_my_player_id == player_id)
         {
             CreateWorldItem(world_item_id, item_id, amt, position);

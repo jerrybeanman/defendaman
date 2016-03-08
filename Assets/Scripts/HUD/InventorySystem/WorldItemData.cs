@@ -33,7 +33,7 @@ public class WorldItemData : MonoBehaviour
      */
     void Start ()
     {
-        _player_id = GameObject.Find("GameManager").GetComponent<NetworkingManager>().myPlayer;
+        _player_id = GameData.MyPlayerID;
     }
 	
 	/* 

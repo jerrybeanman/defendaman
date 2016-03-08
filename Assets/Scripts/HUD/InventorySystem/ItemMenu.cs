@@ -83,8 +83,13 @@ public class ItemMenu : MonoBehaviour
     public void DropItemOnClick()
     {
         Vector3 position = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
-        int _player_id = GameObject.Find("GameManager").GetComponent<NetworkingManager>().myPlayer;
+        int _player_id = GameData.MyPlayerID;
         string _world_item_id = _player_id + "_" + _dropped_item_instance_id++;
+        /*
+        foreach (var id in GameData.LobbyData.Keys)
+        {
+            var classtype = GameData.LobbyData[id].ClassType;
+        }*/
 
         // Data to send to server indicating that the player wants to drop an item from his inventory
         // _player_id

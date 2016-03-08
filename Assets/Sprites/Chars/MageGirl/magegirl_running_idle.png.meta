@@ -1,0 +1,330 @@
+fileFormatVersion: 2
+guid: 93e7da38c1239e249828dcbd0eb72f0c
+timeCreated: 1457089539
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: magegirl_running_idle_0
+    21300002: magegirl_running_idle_1
+    21300004: magegirl_running_idle_2
+    21300006: magegirl_running_idle_3
+    21300008: magegirl_running_idle_4
+    21300010: magegirl_running_idle_5
+    21300012: magegirl_running_idle_6
+    21300014: magegirl_running_idle_7
+    21300016: magegirl_running_idle_8
+    21300018: magegirl_running_idle_9
+    21300020: magegirl_running_idle_10
+    21300022: magegirl_running_idle_11
+    21300024: magegirl_running_idle_12
+    21300026: magegirl_running_idle_13
+    21300028: magegirl_running_idle_14
+    21300030: magegirl_running_idle_15
+    21300032: magegirl_running_idle_16
+    21300034: magegirl_running_idle_17
+    21300036: magegirl_running_idle_18
+    21300038: magegirl_running_idle_19
+    21300040: magegirl_running_idle_20
+    21300042: magegirl_running_idle_21
+    21300044: magegirl_running_idle_22
+    21300046: magegirl_running_idle_23
+    21300048: magegirl_running_idle_24
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: magegirl_running_idle_0
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 1782
+        width: 277
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_1
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 1783
+        width: 278
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_2
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 1783
+        width: 278
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_3
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 1783
+        width: 277
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_4
+      rect:
+        serializedVersion: 2
+        x: 1882
+        y: 1783
+        width: 280
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_5
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 1345
+        width: 275
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_6
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 1345
+        width: 276
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_7
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 1345
+        width: 277
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_8
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 1345
+        width: 275
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_9
+      rect:
+        serializedVersion: 2
+        x: 1884
+        y: 1345
+        width: 276
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_10
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 911
+        width: 277
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_11
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 911
+        width: 275
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_12
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 911
+        width: 275
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_13
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 911
+        width: 275
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_14
+      rect:
+        serializedVersion: 2
+        x: 1882
+        y: 911
+        width: 277
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_15
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 474
+        width: 277
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_16
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 475
+        width: 277
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_17
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 475
+        width: 279
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_18
+      rect:
+        serializedVersion: 2
+        x: 1447
+        y: 475
+        width: 278
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_19
+      rect:
+        serializedVersion: 2
+        x: 1880
+        y: 475
+        width: 282
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_20
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 39
+        width: 280
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_21
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 39
+        width: 276
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_22
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 39
+        width: 279
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_23
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 39
+        width: 276
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_running_idle_24
+      rect:
+        serializedVersion: 2
+        x: 1882
+        y: 38
+        width: 278
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
