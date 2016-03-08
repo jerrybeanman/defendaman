@@ -3,7 +3,8 @@ using System.Collections;
 
 public class WizardClass : BaseClass
 {
-    int[] distance = new int[2]{ 10, 1000};
+    // note that max distance for the special attack is meant to be the duration that the magic circle stays 
+    int[] distance = new int[2]{ 10, 100};
     int[] speed = new int[2] { 100, 0 };
     Rigidbody2D fireball = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
     Rigidbody2D magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
@@ -40,9 +41,9 @@ public class WizardClass : BaseClass
         // mousePos.y = 0.4f;
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, mousePos, Quaternion.identity);
-        attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 0;
-        attack.GetComponent<BasicRanged>().maxDistance = distance[1];
+        attack.GetComponent<MagicCircle>().teamID = team;
+        attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
+        attack.GetComponent<MagicCircle>().maxDistance = distance[1];
 
         return cooldowns[1];
     }
