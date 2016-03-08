@@ -45,7 +45,7 @@ public class MapManager : MonoBehaviour {
     //public MapSprites mp;
     public GameObject _tile;
     public GameObject _obstacle;
-    public GameObject _world_item;
+    //public GameObject _world_item;
     public List<Sprite> _mapSolids;
     public List<Sprite> _mapWalkable;
 

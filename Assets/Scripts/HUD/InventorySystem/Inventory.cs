@@ -9,12 +9,15 @@ static class Constants
 }
 
 /*-----------------------------------------------------------------------------
--- Inventory.cs - Responsible for storing the weapons/items of the players
+-- Inventory.cs - Script attached to the Inventory game object that stores a 
+--                list of Slot game objects and Item game objects. 
+--                Responsible for managing the weapons/items of a player
 --
 -- FUNCTIONS:
 --		void Start()
 --		public void AddItem(int id)
 --		int check_if_item_in_inventory(Item item)
+--      public void DestroyInventoryItem(int inv_pos)
 --
 -- DATE:		17/02/2016
 -- REVISIONS:	(V1.0)
@@ -29,10 +32,12 @@ public class Inventory : MonoBehaviour
     public GameObject inventory_slot;
     public GameObject inventory_item;
 
-    //int _slot_amount;
     public List<Item> inventory_item_list = new List<Item>();
     public List<GameObject> slot_list = new List<GameObject>();
 
+    /*
+     * Initializes empty inventory slot containing empty item objects
+     */
     void Start()
     {
         _item_manager = GetComponent<ItemManager>();
@@ -41,7 +46,6 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < Constants.SLOT_AMOUNT; i++)
         {
             inventory_item_list.Add(new Item());
-            //Debug.Log(i);
             slot_list.Add(Instantiate(inventory_slot));
             slot_list[i].GetComponent<InventorySlot>().slot_pos = i;
             slot_list[i].transform.SetParent(_slot_panel.transform);
@@ -49,6 +53,7 @@ public class Inventory : MonoBehaviour
             // the unity "Scale With Screen Size" ui scale mode
             slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
+        // Adding initial items to the inventory (testing)
         AddItem(0);
         AddItem(1);
         AddItem(1);
@@ -56,8 +61,7 @@ public class Inventory : MonoBehaviour
 
 
     /* 
-     * Assuming to be adding one item at the time.
-     * Takes an item id and adds an Item object into an open slot in the inventory or stacks 
+     * Takes an item id and the amount and adds an Item object into an open slot in the inventory or stacks 
      * it on a slot containing the same item.
      * Updates the attributes of the Item: item, amount, and item_pos  
      */
@@ -79,18 +83,37 @@ public class Inventory : MonoBehaviour
                 {
                     inventory_item_list[i] = _item_to_add;
                     GameObject _item_obj = Instantiate(inventory_item);
-                    _item_obj.GetComponent<ItemData>().item = _item_to_add;
-                    _item_obj.GetComponent<ItemData>().item_pos = i;
-                    _item_obj.GetComponent<ItemData>().amount += amt;
+                    ItemData data = _item_obj.GetComponent<ItemData>();
+                    data.item = _item_to_add;
+                    data.item_pos = i;
+                    data.amount += amt;
+                    if (_item_to_add.stackable)
+                        data.transform.GetChild(0).GetComponent<Text>().text = data.amount.ToString();
                     _item_obj.transform.SetParent(slot_list[i].transform);
                     // Sets scaling factor of gridlayout component to 1 to work with
                     // the unity "Scale With Screen Size" ui scale mode
                     _item_obj.transform.localScale = new Vector3(1, 1, 1);
-                    _item_obj.transform.position = Vector2.zero; //centers item relative to parent
+                    _item_obj.transform.localPosition = Vector2.zero; //centers item relative to parent
                     _item_obj.GetComponent<Image>().sprite = _item_to_add.sprite;
                     _item_obj.name = _item_to_add.title; //name shown in the inspector
                     break;
                 }
+            }
+        }
+    }
+
+    /* 
+     * Destroys the item in the specified inventory slot position
+     */
+    public void DestroyInventoryItem(int inv_pos)
+    {
+        GameObject[] _inventory_items = GameObject.FindGameObjectsWithTag("InventoryItem");
+        foreach (GameObject _inventory_item in _inventory_items)
+        {
+            if (_inventory_item.GetComponent<ItemData>().item_pos == inv_pos)
+            {
+                Destroy(_inventory_item);
+                break;
             }
         }
     }
