@@ -21,4 +21,24 @@ public class BasicRanged : Projectile
             Destroy(gameObject);
         }
     }
+
+    /*
+    //Test burning projectile script
+    protected override void OnTriggerEnter2D(Collider2D other)
+    {
+        base.OnTriggerEnter2D(other);
+        if (other.gameObject.GetComponent<BaseClass>() != null && teamID != other.gameObject.GetComponent<BaseClass>().team)
+        {
+            var burn = other.gameObject.GetComponent<Burn>();
+            if (burn == null)
+            {
+                other.gameObject.AddComponent<Burn>();
+            }
+            else
+            {
+                burn.duration = 600;
+            }
+        }
+    }
+    */
 }

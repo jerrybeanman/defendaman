@@ -97,6 +97,12 @@ public abstract class BaseClass : MonoBehaviour {
 
         //gameObject.GetComponentInChildren<Transform>().localScale = new Vector3(.5f, 1, 1);
 
+        if (ClassStat.CurrentHp <= 0.0f)
+        {
+            //death
+            Destroy(gameObject);
+        }
+
         return ClassStat.CurrentHp;
     }
 
@@ -111,11 +117,7 @@ public abstract class BaseClass : MonoBehaviour {
             {
                 return;
             }
-            if (doDamage(attack.damage) <= 0.0f)
-            {
-                //death
-                Destroy(gameObject);
-            }
+            doDamage(attack.damage);
         }
 
     }
