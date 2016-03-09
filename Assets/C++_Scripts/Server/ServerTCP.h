@@ -89,6 +89,9 @@ namespace Networking
 
             void sendToClient(Player player, char * message);
 
+            char * UpdatePlayerId(std::string packet, const Player& tmpPlayer);
+
+            std::string UpdateID(const Player& player);
     private:
 			Player newPlayer;
 

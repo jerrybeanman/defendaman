@@ -61,16 +61,13 @@ int ServerTCP::Accept(Player * player)
     }
 
     /* Not the best way to do it since we're using vectors */
-    player->id = _PlayerList.size() + 1;
+    player->id = _PlayerList.size();
     player->isReady = false;
     player->playerClass = 0;
     player->team = 0;
 
     //Add player to list
     _PlayerList.push_back(*player);
-
-    //Not sure about this
-    sprintf(buf, "[{DataType : 6, ID : 4, PlayerID : %d}]", player->id);
 
     //Broadcast to all players the new player ID
     this->ServerTCP::Broadcast(buf);
@@ -131,7 +128,7 @@ void * ServerTCP::Receive()
         this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
       	/* Broadcast echo packet back to all players */
         //TODO - Send ID of new player to all players
-      	this->ServerTCP::Broadcast(buf);
+        this->ServerTCP::Broadcast(buf);
     }
     free(buf);
     return 0;
@@ -176,7 +173,6 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
   int code, idValue, requestValue;
   std::string username;
 
-  std::cout << "Received buffer in check request: " << buffer << std::endl;
 
   //Parse JSON buffer
   parseServerRequest(buffer, code, idValue, requestValue, username);
@@ -225,11 +221,15 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
     case PlayerJoinedLobby:
 	  char* message = (char*)malloc(PACKETLEN);
 	  std::cout << "New Player Change: " << username << std::endl;
-	  strcpy(_PlayerList[player.id-1].username, username.c_str());
+	  strcpy(_PlayerList[player.id].username, username.c_str());
 	  strcpy(message, constructPlayerTable().c_str());
+
 	  //Send player a table of players
 	  sendToClient(player, message);
-    free(message);
+      //Create packet and send to every1
+        //We're developers
+      this->ServerTCP::Broadcast((char *)UpdateID(_PlayerList[player.id]).c_str());
+      free(message);
       break;
   }
   free(buf);
@@ -241,8 +241,6 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
 */
 void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username)
 {
-  //Testing Proof of Concept
-  char * test = "[{\"DataType\" : 6, \"ID\" : 1, \"PlayerID\" : 0, \"TeamID\" : 1, \"Username\" : \"John Cena\"}]";
   std::string packet(buffer);
   std::string error;
   //Parse buffer as JSON array
@@ -264,10 +262,6 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
 
   username = json["UserName"].string_value();
 
-  std::cout << "Data Type: " << DataType << std::endl;
-  std::cout << "ID: " << ID << std::endl;
-  std::cout << "IDValue: " << IDValue<< std::endl;
-  std::cout << "Username: " << username << std::endl;
 }
 /* Check ready status on all connected players
 
@@ -311,4 +305,23 @@ std::string ServerTCP::constructPlayerTable()
 std::vector<Player> ServerTCP::setPlayerList()
 {
   return _PlayerList;
+}
+std::string ServerTCP::UpdateID(const Player& player)
+{
+   char buf[PACKETLEN];
+    std::cout << player.username << std::endl;
+   sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
+   std::string temp(buf);
+    std::cout << "IN UPDATE ID: " << temp << std::endl;
+   return temp;
+}
+char *  ServerTCP::UpdatePlayerId(std::string packet, const Player& tmpPlayer) {
+    auto playerIdIndex = packet.find_last_of("\"PlayerID\" : ");
+    if(playerIdIndex != std::string::npos) {
+            packet.replace(playerIdIndex, 1, std::to_string(tmpPlayer.id));
+     } else {
+         std::cerr << "No player id" << std::endl;
+     }
+   std::cerr << (char *) packet.c_str() << std::endl;
+   return (char *)packet.c_str();
 }
