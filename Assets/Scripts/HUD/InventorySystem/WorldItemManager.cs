@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// public enum ItemUpdate { Pickup = 1, Drop = 2 }
 /*-----------------------------------------------------------------------------
 -- WorldItemManager.cs - Script attached to GameManager game object
 --                       responsible for managing world items.
@@ -23,6 +24,7 @@ using System.Collections;
 
 public class WorldItemManager : MonoBehaviour
 {
+    private int _dropped_item_instance_id;
     ItemManager _item_manager;
     public GameObject world_item;
     Inventory _inventory;
@@ -33,35 +35,42 @@ public class WorldItemManager : MonoBehaviour
      */
     void Start ()
     {
+        //NetworkingManager.Subscribe(ReceiveItemPickupPacket, DataType.Item, (int)ItemUpdate.Pickup);
         _item_manager = GetComponent<ItemManager>();
         _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
         _my_player_id = GameData.MyPlayerID;
 
         // Adding initial world items (testing)
-        CreateWorldItem("test", 0, 1, new Vector3(55, 55, 0));
-        CreateWorldItem("test1", 1, 1, new Vector3(60, 55, 0));
-        CreateWorldItem("test2", 0, 1, new Vector3(55, 60, 0));
+        CreateWorldItem(100, 0, 1, 30, 30);
+        CreateWorldItem(101, 1, 1, 35, 25);
+        CreateWorldItem(102, 0, 1, 36, 30);
     }
 
     /*
      * Creates a world item
      */
-    public void CreateWorldItem(string world_item_id, int item_id, int amt, Vector3 pos)
+    public void CreateWorldItem(int world_item_id, int item_id, int amt, int pos_x, int pos_y)
     {
         Item item = _item_manager.FetchItemById(item_id);
         GameObject _item = Instantiate(world_item);
         _item.GetComponent<WorldItemData>().world_item_id = world_item_id;
         _item.GetComponent<WorldItemData>().item = item;
         _item.GetComponent<WorldItemData>().amount = amt;
-        _item.transform.position = pos;       
+        _item.transform.position = new Vector3(pos_x, pos_y, -5);       
     }
+
+    /*
+    void ReceiveItemPickupPacket(JSONClass itemPacket)
+    {
+        ProcessPickUpEvent(itemPacket["WorldItemID"].AsInt, itemPacket["PlayerID"].AsInt, itemPacket["ItemID"].AsInt, itemPacket["Amount"].AsInt);
+    }*/
 
     /*
      * Processes a pick up message from the server.
      * Adds item to the player's inventory if the player id matches the player id in the message.
      * Removes item from the world.
      */
-    public void ProcessPickUpEvent(string world_item_id, int player_id, int item_id, int amt)
+    public void ProcessPickUpEvent(int world_item_id, int player_id, int item_id, int amt)
     {
         if (_my_player_id == player_id)
         {
@@ -75,11 +84,12 @@ public class WorldItemManager : MonoBehaviour
      * Removes item to the player's inventory if the player id matches the player id in the message.
      * Adds item to the world.
      */
-    public void ProcessDropEvent(string world_item_id, int player_id, int item_id, int amt, int inv_pos, Vector3 position)
+    public void ProcessDropEvent(int world_item_id, int player_id, int item_id,
+                                 int amt, int inv_pos, int pos_x, int pos_y)
     {
         if (_my_player_id == player_id)
         {
-            CreateWorldItem(world_item_id, item_id, amt, position);
+            CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
         }
         _inventory.DestroyInventoryItem(inv_pos);
         _inventory.inventory_item_list[inv_pos] = new Item();
@@ -89,7 +99,7 @@ public class WorldItemManager : MonoBehaviour
     /*
      * Find the world item with the matching world_item_id and destroys it
      */
-    public void DestroyWorldItem(string world_item_id)
+    public void DestroyWorldItem(int world_item_id)
     {
         GameObject[] _world_items = GameObject.FindGameObjectsWithTag("WorldItem");
         foreach (GameObject _world_item in _world_items)
@@ -100,5 +110,10 @@ public class WorldItemManager : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public int GenerateWorldItemId()
+    {
+        return _my_player_id * 1000000 + _dropped_item_instance_id++;
     }
 }
