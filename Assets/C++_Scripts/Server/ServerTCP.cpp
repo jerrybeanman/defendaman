@@ -61,17 +61,12 @@ int ServerTCP::Accept(Player * player)
     }
 
     /* Not the best way to do it since we're using vectors */
-    //player->id = _PlayerList.size() + 1;
     player->isReady = false;
 
     //Add player to list
-    //_PlayerList.push_back(*player);
-    std::string ipString = inet_ntoa(player->connection.sin_addr);
-    std::size_t index = ipString.find_last_of(".");
-    int id = stoi(ipString.substr(index+1));
-    printf("id of player is %d", id);
+    int id = getPlayerId(inet_ntoa(player->connection.sin_addr));
     player->id = id;
-    _PlayerMap.insert(std::pair<int, Player>(id, *player));
+    _PlayerTable.insert(std::pair<int, Player>(id, *player));
 
     //Not sure about this
     sprintf(buf, "[{DataType : 6, ID : 4, PlayerID : %d}]", player->id);
@@ -125,9 +120,8 @@ void * ServerTCP::Receive()
           this->ServerTCP::Broadcast(buf);
 
           //Remove player from player list
-          //_PlayerList.erase(std::remove_if( _PlayerList.begin(), _PlayerList.end(), [&](Player const& p) { return tmpPlayer.id == p.id; }), _PlayerList.end());
+          _PlayerTable.erase(tmpPlayer.id);
 
-          _PlayerMap.erase(tmpPlayer.id);
           return 0;
       	}
         /* Data received */
@@ -147,7 +141,7 @@ void * ServerTCP::Receive()
 void ServerTCP::Broadcast(char * message)
 {
   Player tmpPlayer;
-  for(const auto &pair : _PlayerMap)
+  for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
     if(send(tmpPlayer.socket, message, PACKETLEN, 0) == -1)
@@ -157,15 +151,6 @@ void ServerTCP::Broadcast(char * message)
 			return;
     }
   }
-	/*for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-		if(send(_PlayerList[i].socket, message, PACKETLEN, 0) == -1)
-		{
-			std::cerr << "Broadcast() failed for player id: " << _PlayerList[i].id << std::endl;
-			std::cerr << "errno: " << errno << std::endl;
-			return;
-		}
-	}*/
 }
 
 /* Parses incoming JSON and process request */
@@ -177,7 +162,6 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
   //variables needed to hold json values
   int code, idValue, requestValue;
   std::string username;
-  Player tmpPlayer = _PlayerMap.at(playerId);
 
   //Parse JSON buffer
   parseServerRequest(buffer, code, idValue, requestValue, username);
@@ -190,7 +174,7 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
     //Player joining team request
     case TeamChangeRequest:
       std::cout << "Team change: " << requestValue << std::endl;
-      tmpPlayer.team = requestValue;
+      _PlayerTable[playerId].team = requestValue;
       break;
 
     //Player joining class request
@@ -204,12 +188,14 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
       //Player not ready
       if (requestValue == 0)
       {
-        tmpPlayer.isReady = false;
+        _PlayerTable[playerId].isReady = false;
+        //tmpPlayer.isReady = false;
       }
       //Player is ready
       else if (requestValue == 1)
       {
-        tmpPlayer.isReady =  true;
+        _PlayerTable[playerId].isReady = true;
+        //tmpPlayer.isReady =  true;
       }
       //All players in lobby are ready
       if (this->ServerTCP::AllPlayersReady())
@@ -261,7 +247,7 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
 bool ServerTCP::AllPlayersReady()
 {
   Player tmpPlayer;
-  for(const auto &pair : _PlayerMap)
+  for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
     if(tmpPlayer.isReady == false)
@@ -272,16 +258,6 @@ bool ServerTCP::AllPlayersReady()
       printf("Player %d is ready\n", tmpPlayer.id);
     }
   }
-  /*for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-    if(_PlayerList[i].isReady == false)
-		{
-      printf("Player %d is not ready\n", _PlayerList[i].id);
-			return false;
-		} else {
-      printf("Player %d is ready\n", _PlayerList[i].id);
-    }
-	}*/
   return true;
 }
 /*
@@ -299,7 +275,13 @@ std::string ServerTCP::generateMapSeed(){
 	std::string packet = "{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}";
 	return packet;
 
-std::map<int, Player> ServerTCP::getPlayerMap()
+std::map<int, Player> ServerTCP::getPlayerTable()
 {
-  return _PlayerMap;
+  return _PlayerTable;
+}
+
+int ServerTCP::getPlayerId(std::string ipString)
+{
+  std::size_t index = ipString.find_last_of(".");
+  return stoi(ipString.substr(index+1));
 }

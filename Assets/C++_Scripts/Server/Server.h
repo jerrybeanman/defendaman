@@ -67,7 +67,7 @@ namespace Networking
 
     /* List of players currently connected to the server */
     std::vector<Player>             _PlayerList;
-    std::map<int, Player>           _PlayerMap;
+    std::map<int, Player>           _PlayerTable;
 
 	};
 }

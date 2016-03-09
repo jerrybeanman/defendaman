@@ -87,7 +87,7 @@ namespace Networking
 			std::string generateMapSeed();
 
 			std::vector<Player> setPlayerList();
-			std::map<int, Player> getPlayerMap();
+			std::map<int, Player> getPlayerTable();
 
     private:
 			Player newPlayer;
