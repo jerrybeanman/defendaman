@@ -11,6 +11,7 @@ public class Burn : Debuff
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        player.doDamage(0.5f);
+        if ((duration % 10) == 0)
+        player.doDamage(1f);
     }
 }
