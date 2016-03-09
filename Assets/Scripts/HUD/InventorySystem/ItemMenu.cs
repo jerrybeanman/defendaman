@@ -21,20 +21,22 @@ using UnityEngine.UI;
 -----------------------------------------------------------------------------*/
 public class ItemMenu : MonoBehaviour
 {
-    private int _dropped_item_instance_id;
+    //private int _dropped_item_instance_id;
     private Item _item;
     private int _amt;
     private int _inv_pos;
     private GameObject _item_menu;
-
+    private WorldItemManager _world_item_manager;
     /*
-     * Retrives the ItemMenu game object and sets it to inactive
+     * Retrieves the ItemMenu game object and sets it to inactive.
+     * Retrieves the WorldItemManager script.
      */
     void Start ()
     {
         _item_menu = GameObject.Find("Item Menu"); 
-        _item_menu.SetActive(false);	
-	}
+        _item_menu.SetActive(false);
+        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+    }
 
     /*
      * Sets the position of the ItemMenu to the position of the mouse cursor
@@ -84,7 +86,7 @@ public class ItemMenu : MonoBehaviour
     {
         Vector3 position = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
         int _player_id = GameData.MyPlayerID;
-        string _world_item_id = _player_id + "_" + _dropped_item_instance_id++;
+        int _world_item_id = _world_item_manager.GenerateWorldItemId();
         /*
         foreach (var id in GameData.LobbyData.Keys)
         {
@@ -100,8 +102,8 @@ public class ItemMenu : MonoBehaviour
         // position
 
         // Temporary call for testing
-        WorldItemManager _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
-        _world_item_manager.ProcessDropEvent(_world_item_id, _player_id, _item.id, _amt, _inv_pos, position);
+        _world_item_manager.ProcessDropEvent(_world_item_id, _player_id, _item.id, 
+            _amt, _inv_pos, (int)position.x, (int)position.y);
         Deactivate();
     }
 
