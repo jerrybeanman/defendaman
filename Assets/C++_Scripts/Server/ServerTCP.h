@@ -84,6 +84,7 @@ namespace Networking
 			bool AllPlayersReady();
 
 			std::vector<Player> setPlayerList();
+			std::string generateMapSeed();
 
     private:
 			Player newPlayer;
