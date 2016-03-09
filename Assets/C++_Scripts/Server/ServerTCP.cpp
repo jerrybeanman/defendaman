@@ -274,6 +274,7 @@ std::string ServerTCP::generateMapSeed(){
 	mapSeed = rand ();
 	std::string packet = "{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}";
 	return packet;
+}
 
 std::map<int, Player> ServerTCP::getPlayerTable()
 {
