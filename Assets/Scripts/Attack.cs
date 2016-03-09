@@ -18,7 +18,6 @@ public class Attack : MonoBehaviour {
     void Update() {
         if (Input.GetKey(KeyCode.Mouse0) && attackReady) {
             //left click attack
-            gameObject.GetComponent<Movement>().doBlink(20f);
             attackReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             float delay = player.basicAttack(dir);
@@ -49,6 +48,14 @@ public class Attack : MonoBehaviour {
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D)) {
             gameObject.GetComponent<Animator>().SetBool("moving", false);
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Mouse2))
+        {
+            gameObject.GetComponent<Animator>().SetBool("attacking", true);
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse1) || Input.GetKeyUp(KeyCode.Mouse2))
+        {
+            gameObject.GetComponent<Animator>().SetBool("attacking", false);
         }
 
     }
