@@ -13,9 +13,9 @@ public abstract class Effect : MonoBehaviour
         player = gameObject.GetComponent<BaseClass>();
     }
     
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
-        if(duration-- < 0)
+        if(--duration < 0)
         {
             Destroy(this);
         }
