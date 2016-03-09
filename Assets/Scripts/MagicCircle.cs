@@ -2,10 +2,10 @@
 using System.Collections;
 using System;
 
-public class MagicCircle : Projectile
+public class MagicCircle : Area
 {
     private Vector2 startPos;
-    public int maxDistance;
+    public int duration;
 
     //projectile speed
 
@@ -14,30 +14,64 @@ public class MagicCircle : Projectile
         startPos = transform.position;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // this calculates how long the circle stays for
-        maxDistance--;
-        if (maxDistance <= 0)
+        if (--duration < 0)
         {
             Destroy(gameObject);
         }
     }
 
-    protected override void OnTriggerEnter2D(Collider2D other)
+    protected void OnTriggerStay2D(Collider2D other) 
     {
+        // if same team
         if (other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
         {
-            //gameObject.AddComponent("MagicBuff");
+            var b = other.gameObject.GetComponent<MagicBuff>();
+            if (b == null)
+            {
+                other.gameObject.AddComponent<MagicBuff>();
+            }
+            else
+            {
+                b.duration = 150;
+            }
+            return;
+        } 
+        else if (other.gameObject.GetComponent<BaseClass>() != null && teamID != other.gameObject.GetComponent<BaseClass>().team)
+        {
+            var db = other.gameObject.GetComponent<MagicDebuff>();
+            if (db == null)
+            {
+                other.gameObject.AddComponent<MagicDebuff>();
+            }
+            else
+            {
+                db.duration = 150;
+            }
             return;
         }
     }
 
-    protected void onTriggerStay2D(Collider2D other) 
-    {
+    protected void OnTriggerExit2D(Collider2D other) {
+        // if same team
         if (other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
         {
-            //gameObject.AddComponent("MagicBuff");
+            var b = other.gameObject.GetComponent<MagicBuff>();
+            if (b != null)
+            {
+                b.duration = -1;
+            }
+            return;
+        } 
+        else if (other.gameObject.GetComponent<BaseClass>() != null && teamID != other.gameObject.GetComponent<BaseClass>().team)
+        {
+            var db = other.gameObject.GetComponent<MagicDebuff>();
+            if (db != null)
+            {
+                db.duration = -1;
+            }
             return;
         }
     }
