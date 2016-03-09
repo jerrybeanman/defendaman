@@ -1,6 +1,7 @@
 #ifndef SERVER_TCP
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
+#include <arpa/inet.h>
 #include "Server.h"
 #include "../Unity_Plugin/json11.hpp"
 
@@ -83,8 +84,10 @@ namespace Networking
 			/* Check ready status on all connected players*/
 			bool AllPlayersReady();
 
-			std::vector<Player> setPlayerList();
 			std::string generateMapSeed();
+
+			std::vector<Player> setPlayerList();
+			std::map<int, Player> getPlayerMap();
 
     private:
 			Player newPlayer;
