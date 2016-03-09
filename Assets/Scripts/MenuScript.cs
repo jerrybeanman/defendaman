@@ -50,10 +50,10 @@ public class MenuScript : MonoBehaviour {
 
 	//----OnGUI test strings-------
 	private string RecievedData = "Waiting for Inputs...";
-	private string FormatedData;
+	private string FormatedData = "Foramted...";
 
 	private string SendingPacket;
-	private int PlayerID;
+	private int PlayerID = -1;
     void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
@@ -80,13 +80,15 @@ public class MenuScript : MonoBehaviour {
 				int PlayerPacketID;
 
 				RecievedData = tmp;
-
+				Debug.Log("[Debug]: " + tmp);
 				var packet = (JSON.Parse(RecievedData).AsArray)[0];
 				PlayerPacketID = packet[NetworkKeyString.PlayerID].AsInt;
 				switch((NetworkCode)packet["ID"].AsInt)
 				{
 				case NetworkCode.TeamChangeRequest:
 				{
+					Debug.Log("[Debug]: Team chagne request");
+					Debug.Log("[Debug]: Content--" + tmp);
 					int TeamID = packet[NetworkKeyString.TeamID].AsInt;
 					GameData.LobbyData[PlayerPacketID].TeamID = TeamID;
 
@@ -96,6 +98,8 @@ public class MenuScript : MonoBehaviour {
 				}
 				case NetworkCode.ClassChangeRequest:
 				{
+					Debug.Log("[Debug]: Class change request");
+					Debug.Log("[Debug]: Content--" + tmp);
 					int ClassID = packet[NetworkKeyString.ClassID].AsInt;
 					GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)ClassID;
 
@@ -105,6 +109,8 @@ public class MenuScript : MonoBehaviour {
 				}
 				case NetworkCode.ReadyRequest:
 				{
+					Debug.Log("[Debug]: Ready request");
+					Debug.Log("[Debug]: Content--" + tmp);
 					bool IsReady = packet[NetworkKeyString.Ready].AsBool;
 					GameData.LobbyData[PlayerPacketID].Ready = IsReady;
 
@@ -114,28 +120,43 @@ public class MenuScript : MonoBehaviour {
 				}
 				case NetworkCode.PlayerJoinedLobby:
 				{
-					if(GameData.MyPlayerID == 0)
-						GameData.MyPlayerID = PlayerPacketID;
-					else
+					Debug.Log("[Debug]: Player has joined lobby");
+					Debug.Log("[Debug]: Content--" + tmp);
+					
+					PlayerData tmpPlayer = new PlayerData();
+					tmpPlayer.PlayerID = PlayerPacketID;
+					tmpPlayer.Username = packet[NetworkKeyString.UserName];
+					if(PlayerID == -1)
 					{
-						GameData.LobbyData[PlayerPacketID].PlayerID = PlayerPacketID;
-						GameData.LobbyData[PlayerPacketID].Username = packet[NetworkKeyString.UserName];
+						PlayerID = PlayerPacketID;
+						GameData.MyPlayerID = PlayerPacketID;
+						Debug.Log("[UltraDebug] Updated Player ID: " + PlayerID);
+						
 					}
-					FormatedData = "GOTEM";
+					else	
+						GameData.LobbyData.Add(PlayerPacketID, tmpPlayer);
 					break;
 				}
 				case NetworkCode.UpdatePlayerList:
 				{
+					Debug.Log("[Debug]: Got update table message");
+					Debug.Log("[Debug]: Content--" + tmp);
+					
 					// fills in existing player data
 					foreach(JSONNode playerData in packet["LobbyData"].AsArray) 
 					{
+						Debug.Log("[Debug]: IN UPDATEPLAYERLIST");
 						int id = playerData[NetworkKeyString.PlayerID].AsInt;
 						GameData.LobbyData[id].PlayerID 	= id;
 						GameData.LobbyData[id].ClassType 	= (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
 						GameData.LobbyData[id].TeamID 		= playerData[NetworkKeyString.TeamID].AsInt;
 						GameData.LobbyData[id].Ready 		= playerData[NetworkKeyString.Ready].AsBool;
 						GameData.LobbyData[id].Username		= playerData[NetworkKeyString.UserName];
+
+						Debug.Log("[Debug]: Player ID: " + GameData.LobbyData[id].PlayerID.ToString() + "ClassID: " + 
+						          GameData.LobbyData[id].ClassType.ToString() + "TeamID: " + GameData.LobbyData[id].TeamID.ToString() + "Username: " + GameData.LobbyData[id].Username);
 					}
+					FormatedData = "UpdatePlayerList";
 					break;
 				}
 				case NetworkCode.GameStart:
@@ -185,7 +206,7 @@ public class MenuScript : MonoBehaviour {
 			connected = true;
 
 			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-			packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, _player_name));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + _player_name + "\""));
 			SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerJoinedLobby, packetData, Protocol.NA);
 			// Send dummy packet
 			if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
@@ -216,7 +237,6 @@ public class MenuScript : MonoBehaviour {
 		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, team.ToString()));
 		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.TeamChangeRequest, packetData, Protocol.NA);
-		Debug.Log(SendingPacket);
 		// Send dummy packet
 		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
 		{
@@ -235,7 +255,6 @@ public class MenuScript : MonoBehaviour {
 		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, value.ToString()));
 		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ClassChangeRequest, packetData, Protocol.NA);
-		Debug.Log(SendingPacket);
 		
 		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
 		{
@@ -253,8 +272,6 @@ public class MenuScript : MonoBehaviour {
 		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.StartGame, "1"));
 		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA);
-		Debug.Log(SendingPacket);
-		
 		// Send dummy packet
 		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
 		{
@@ -271,7 +288,6 @@ public class MenuScript : MonoBehaviour {
 		packetData.Add (new Pair<string, string>("PlayerID", PlayerID.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.Ready, isReady ? "1" : "0"));
 		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ReadyRequest, packetData, Protocol.NA);
-		Debug.Log(SendingPacket);
 		
 		// Send dummy packet
 		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
