@@ -69,6 +69,7 @@ public abstract class BaseClass : MonoBehaviour {
 			this._classStat.MaxHp = value.MaxHp;
 			this._classStat.MoveSpeed = value.MoveSpeed;
 			this._classStat.AtkPower = value.AtkPower;
+            this._classStat.Defense = value.Defense;
 		}
 	}
 
@@ -97,6 +98,12 @@ public abstract class BaseClass : MonoBehaviour {
 
         //gameObject.GetComponentInChildren<Transform>().localScale = new Vector3(.5f, 1, 1);
 
+        if (ClassStat.CurrentHp <= 0.0f)
+        {
+            //death
+            Destroy(gameObject);
+        }
+
         return ClassStat.CurrentHp;
     }
 
@@ -111,11 +118,7 @@ public abstract class BaseClass : MonoBehaviour {
             {
                 return;
             }
-            if (doDamage(attack.damage) <= 0.0f)
-            {
-                //death
-                Destroy(gameObject);
-            }
+            doDamage(attack.damage);
         }
 
     }
@@ -164,6 +167,7 @@ public abstract class BaseClass : MonoBehaviour {
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
+        public float Defense;
         //TODO: defensive stats, etc.
 	}
 }

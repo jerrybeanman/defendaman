@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class BasicRanged : Projectile
+public class Fireball : Projectile
 {
     private Vector2 startPos;
     public int maxDistance;
@@ -22,8 +22,6 @@ public class BasicRanged : Projectile
         }
     }
 
-    /*
-    //Test burning projectile script
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         base.OnTriggerEnter2D(other);
@@ -40,5 +38,4 @@ public class BasicRanged : Projectile
             }
         }
     }
-    */
 }
