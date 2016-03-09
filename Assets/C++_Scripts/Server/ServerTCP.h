@@ -86,6 +86,9 @@ namespace Networking
 
 			std::string generateMapSeed();
 
+			/* Generates an int for player based on IP of player */
+			int getPlayerId(std::string ipString);
+
 			std::vector<Player> setPlayerList();
 			std::map<int, Player> getPlayerTable();
 
