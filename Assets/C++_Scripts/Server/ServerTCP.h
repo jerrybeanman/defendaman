@@ -75,6 +75,10 @@ namespace Networking
       */
       void Broadcast(char * message) override;
 
+			void PrepareSelect() override;
+
+			int SetSocketOpt() override;
+
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
 			/*Parses incoming JSON and process request*/

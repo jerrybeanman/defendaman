@@ -29,6 +29,12 @@ namespace Networking
             */
             void Broadcast(char* message) override;
 
+						static void * CreateClientManager(void * server);
+
+						void PrepareSelect() override;
+
+						int SetSocketOpt() override;
+
 						void SetPlayerList(std::vector<Player> players);
 	};
 }

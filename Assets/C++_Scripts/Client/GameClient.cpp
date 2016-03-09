@@ -2,7 +2,9 @@
 using namespace Networking;
 
 /*
-    Initialize socket, and server address to lookup to
+    Initialize socket.
+
+    Rogrammer: Gabriel Lee, Tyler Trepanier-Bracken
 
     @return: socket file descriptor and the server address for future use
 */
@@ -59,3 +61,9 @@ int GameClient::Send(char * message, int size)
     }
     return 0;
 }
+
+/*
+    Initialize socket, and server address to lookup to
+
+    @return: socket file descriptor and the server address for future use
+*/

@@ -150,6 +150,63 @@ void ServerTCP::Broadcast(char * message)
 	}
 }
 
+/*
+Prepares the PlayerList with 24 invalid players, required to make sure
+that the socket is set to -1 if the socket is not being used for the
+function SelectRecv.
+
+Programmer: Vivek Kalia, Tyler Trepanier-Bracken
+*/
+void ServerTCP::PrepareSelect()
+{
+    /* UNTESTED!!!!!
+    Player _bad;
+
+    //Initialize all components to be invalid!
+    _bad.socket = -1;
+    bzero((char *)&_bad.connection, sizeof(struct sockaddr_in));
+    _bad.id = -1;
+    memset(_bad.username, 0, sizeof(_bad.username));
+    _bad.team = -1;
+    _bad.playerClass = -1;
+    _bad.isReady = false;
+
+    fprintf(stderr, "[UDP Socket:%d]\n", _UDPReceivingSocket);
+
+    _maxfd = _UDPReceivingSocket;
+    _maxi = -1;
+
+    //Initialize the Player list to bad values.
+    std::vector<Player> _clients(24, _bad); //TODO Define 24 as a constant variable
+    _PlayerList = _clients;
+
+    FD_ZERO(&_allset);
+    FD_SET(_UDPReceivingSocket, &_allset);
+    */
+}
+
+/*
+Thread that forever reads in data from all clients.
+
+Programmer: Unknown
+
+Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
+              Added in select functionality
+*/
+int ServerTCP::SetSocketOpt()
+{
+  /*  UNTESTED!!!!!!!!
+  // set SO_REUSEADDR so port can be resused imemediately after exit, i.e., after CTRL-c
+    int flag = 1;
+    if (setsockopt (_UDPReceivingSocket, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
+	{
+        fatal("setsockopt");
+		    return -1;
+	}
+	return 0;
+  */
+}
+
 /* Parses incoming JSON and process request */
 void ServerTCP::CheckServerRequest(int playerId, char * buffer)
 {

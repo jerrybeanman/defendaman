@@ -57,12 +57,20 @@ namespace Networking
 
     virtual void * Receive() = 0;
 
+    virtual void PrepareSelect() = 0;
+
+    virtual int SetSocketOpt() = 0;
+
 		void fatal(const char* error);
 
 		protected:
 		struct sockaddr_in     _ServerAddress;
 		int 				           _UDPReceivingSocket;
 		int                    _TCPAcceptingSocket;
+    fd_set                 _allset;              // File descriptor set for connected sockets
+    int                    _maxfd;               //Maximum amount of file descriptors
+    int                    _maxi;                // Current maximum connections
+
 
     /* List of players currently connected to the server */
     std::vector<Player>             _PlayerList;
