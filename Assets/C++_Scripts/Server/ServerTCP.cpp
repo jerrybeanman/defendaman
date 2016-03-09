@@ -194,10 +194,8 @@ void ServerTCP::CheckServerRequest(int playerId, char * buffer)
       }
       //All players in lobby are ready
       if (this->ServerTCP::AllPlayersReady())
-      {
-        printf("All players are ready\n");
-        sprintf(buf, "Game is starting!\n");
-        printf(buf);
+      {     	
+        strcpy(buf, (generateMapSeed()).c_str());
         this->ServerTCP::Broadcast(buf);
       }
       break;
@@ -261,4 +259,12 @@ bool ServerTCP::AllPlayersReady()
 std::vector<Player> ServerTCP::setPlayerList()
 {
   return _PlayerList;
+}
+
+std::string ServerTCP::generateMapSeed(){
+	int mapSeed;
+	srand (time (NULL));
+	mapSeed = rand ();
+	std::string packet = "{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}";
+	return packet;
 }

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 32973839147a37c42857a0887c254285
-timeCreated: 1457415369
+timeCreated: 1457547898
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -62,6 +62,7 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
+  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
@@ -81,8 +82,8 @@ TextureImporter:
         y: 1992
         width: 372
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .290667146, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_1
       rect:
@@ -91,8 +92,8 @@ TextureImporter:
         y: 1992
         width: 362
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .272740811, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_2
       rect:
@@ -101,8 +102,8 @@ TextureImporter:
         y: 1992
         width: 358
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .276438802, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_3
       rect:
@@ -111,8 +112,8 @@ TextureImporter:
         y: 1992
         width: 357
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .281871647, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_4
       rect:
@@ -121,8 +122,8 @@ TextureImporter:
         y: 1992
         width: 349
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .276871562, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_5
       rect:
@@ -131,8 +132,8 @@ TextureImporter:
         y: 1557
         width: 357
         height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .269753337, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_6
       rect:
@@ -141,8 +142,8 @@ TextureImporter:
         y: 1557
         width: 355
         height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .274549365, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_7
       rect:
@@ -151,8 +152,8 @@ TextureImporter:
         y: 1557
         width: 347
         height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .281819195, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_8
       rect:
@@ -161,8 +162,8 @@ TextureImporter:
         y: 1556
         width: 338
         height: 260
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .295208633, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_9
       rect:
@@ -171,8 +172,8 @@ TextureImporter:
         y: 1556
         width: 319
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .310135126, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_10
       rect:
@@ -181,8 +182,8 @@ TextureImporter:
         y: 1121
         width: 348
         height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .288661987, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_11
       rect:
@@ -191,8 +192,8 @@ TextureImporter:
         y: 1120
         width: 351
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .278142959, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_12
       rect:
@@ -201,8 +202,8 @@ TextureImporter:
         y: 1118
         width: 354
         height: 261
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .286133498, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_13
       rect:
@@ -211,8 +212,8 @@ TextureImporter:
         y: 1121
         width: 358
         height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .282480925, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_14
       rect:
@@ -221,8 +222,8 @@ TextureImporter:
         y: 1120
         width: 366
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .299056262, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_15
       rect:
@@ -231,8 +232,8 @@ TextureImporter:
         y: 684
         width: 363
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .277357042, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_16
       rect:
@@ -241,8 +242,8 @@ TextureImporter:
         y: 685
         width: 360
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .275501847, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_17
       rect:
@@ -251,8 +252,8 @@ TextureImporter:
         y: 685
         width: 362
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .276741832, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_18
       rect:
@@ -261,8 +262,8 @@ TextureImporter:
         y: 684
         width: 370
         height: 260
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .268719971, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_19
       rect:
@@ -271,8 +272,8 @@ TextureImporter:
         y: 684
         width: 367
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .279783815, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_20
       rect:
@@ -281,18 +282,18 @@ TextureImporter:
         y: 248
         width: 366
         height: 260
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .279181987, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_21
       rect:
         serializedVersion: 2
         x: 703
-        y: 248
+        y: 246
         width: 364
         height: 260
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .277968854, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_22
       rect:
@@ -301,8 +302,8 @@ TextureImporter:
         y: 248
         width: 364
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .277968854, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_23
       rect:
@@ -311,8 +312,8 @@ TextureImporter:
         y: 248
         width: 365
         height: 260
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .285089374, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: gunboi_defendaman_256_grid_attack_24
       rect:
@@ -321,8 +322,8 @@ TextureImporter:
         y: 249
         width: 373
         height: 259
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: .296071231, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
