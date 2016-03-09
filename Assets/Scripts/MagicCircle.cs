@@ -28,7 +28,7 @@ public class MagicCircle : Projectile
     {
         if (other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
         {
-            // gameObject.AddComponent("MagicalBuff");
+            //gameObject.AddComponent("MagicBuff");
             return;
         }
     }
@@ -36,7 +36,7 @@ public class MagicCircle : Projectile
     protected void onTriggerStay2D(Collider2D other) {
         if (other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
         {
-            // gameObject.AddComponent("MagicalBuff");
+            //gameObject.AddComponent("MagicBuff");
             return;
         }
     }
