@@ -18,6 +18,7 @@ public class GunnerClass : BaseClass
         //placeholder numbers
         this._classStat.MoveSpeed = 5;
         this._classStat.AtkPower = 20;
+        this._classStat.Defense = 5;
 
         var controller = Resources.Load("Controllers/gunboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;

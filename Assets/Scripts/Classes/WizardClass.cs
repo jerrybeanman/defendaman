@@ -4,9 +4,9 @@ using System.Collections;
 public class WizardClass : BaseClass
 {
     // note that max distance for this special attack is meant to be the duration that the magic circle stays 
-    int[] distance = new int[2]{ 10, 0 };
-    int[] speed = new int[2] { 100, 0 };
-    Rigidbody2D fireball = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+    int[] distance = new int[2]{ 20, 0 };
+    int[] speed = new int[2] { 80, 0 };
+    Rigidbody2D fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
     Rigidbody2D magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
 
 	public WizardClass()
@@ -18,7 +18,8 @@ public class WizardClass : BaseClass
 
         //placeholder numbers
         this._classStat.MoveSpeed = 2;
-        this._classStat.AtkPower = 15;
+        this._classStat.AtkPower = 3;
+        this._classStat.Defense  = 5;
 
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -28,17 +29,15 @@ public class WizardClass : BaseClass
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
-        //base.basicAttack(dir);
-        // temp
-        /*
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
-        attack.AddForce(dir * speed[0]);
-        attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
-        attack.GetComponent<BasicRanged>().maxDistance = distance[0];
-        */
+        base.basicAttack(dir);
 
-        return 0; //cooldowns[0];
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
+        attack.AddForce(dir * speed[0]);
+        attack.GetComponent<Fireball>().teamID = team;
+        attack.GetComponent<Fireball>().damage = ClassStat.AtkPower;
+        attack.GetComponent<Fireball>().maxDistance = distance[0];
+
+        return cooldowns[0];
     }
 
     public override float specialAttack(Vector2 dir)
