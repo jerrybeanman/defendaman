@@ -69,6 +69,7 @@ public abstract class BaseClass : MonoBehaviour {
 			this._classStat.MaxHp = value.MaxHp;
 			this._classStat.MoveSpeed = value.MoveSpeed;
 			this._classStat.AtkPower = value.AtkPower;
+            this._classStat.Defense = value.Defense;
 		}
 	}
 
@@ -166,6 +167,7 @@ public abstract class BaseClass : MonoBehaviour {
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
+        public float Defense;
         //TODO: defensive stats, etc.
 	}
 }
