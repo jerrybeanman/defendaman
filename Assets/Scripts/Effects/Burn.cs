@@ -8,9 +8,9 @@ public class Burn : Debuff
         duration = 60;
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
         player.doDamage(0.5f);
     }
 }
