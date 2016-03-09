@@ -7,6 +7,7 @@ public class MagicBuff : MonoBehaviour {
 
     BaseClass player;
     int lifetime = 30;
+    
 
     void Start() {
         player = gameObject.GetComponent<BaseClass>();

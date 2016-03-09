@@ -12,7 +12,7 @@ public class GunnerClass : BaseClass
 	{
         this._className = "Gunner";
         this._classDescription = "Test class Gunner";
-        this._classStat.CurrentHp = 50;
+        this._classStat.CurrentHp = 100;
         this._classStat.MaxHp = 150;
 
         //placeholder numbers
