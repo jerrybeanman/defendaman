@@ -22,7 +22,7 @@ using System.Collections.Generic;
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ItemMenu : MonoBehaviour
 {
     //private int _dropped_item_instance_id;
     private Item _item;
@@ -74,6 +74,7 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void UseItemOnClick()
     {
         Debug.Log("use item: " + _item.id);
+        GameData.MouseBlocked = false;
         Deactivate();
     }
 
@@ -98,12 +99,14 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         else
         {
             // Send Network message
-            List<Pair<string, string>> msg = _world_item_manager.CreateDropItemNetworkMessage(_item.id, _amt, _inv_pos);
+            List<Pair<string, string>> msg = 
+                _world_item_manager.CreateDropItemNetworkMessage(_item.id, _amt, _inv_pos);
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
             // Pretend that a drop message was received
             _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
         }
+        GameData.MouseBlocked = false;
         Deactivate();
     }
 
@@ -114,17 +117,8 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void CancelOnClick()
     {
         Debug.Log("cancel: " + _item.id);
-        Deactivate();
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        GameData.MouseBlocked = true;
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
         GameData.MouseBlocked = false;
+        Deactivate();
     }
 }
 

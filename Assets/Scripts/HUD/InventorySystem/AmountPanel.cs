@@ -39,14 +39,12 @@ public class AmountPanel : MonoBehaviour {
 
    public void OkDropButtonOnClick()
     {
-        Debug.Log("OK");
         _drop_amt = int.Parse(_amt_input_field.GetComponent<InputField>().text);
         if (_drop_amt > 0 && _drop_amt <= _amt)
         {
-            Debug.Log("can drop");
-            Debug.Log(_drop_amt);
             // Send Network message
-            List<Pair<string, string>> msg = _world_item_manager.CreateDropItemNetworkMessage(_item.id, _drop_amt, _inv_pos);
+            List<Pair<string, string>> msg = 
+                _world_item_manager.CreateDropItemNetworkMessage(_item.id, _drop_amt, _inv_pos);
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
             // Pretend that a drop message was received
@@ -58,12 +56,10 @@ public class AmountPanel : MonoBehaviour {
         {
             _error_text.text = "Invalid amount";
         }
-
     }
 
     public void CancelDropButtonOnClick()
     {
-        Debug.Log("Cancel");
         Deactivate();
     }
 }

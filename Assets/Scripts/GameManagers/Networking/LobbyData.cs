@@ -20,7 +20,6 @@ public class GameData
     public static int MyPlayerID { get; set; }
     public static int EnemyKingID { get; set; }
     public static int AllyKingID { get; set; }
-    public static bool ItemDragging { get; set; }
     public static bool MouseBlocked { get; set; }
 
     //Pair of x/y spawn points where index+1 is teamid

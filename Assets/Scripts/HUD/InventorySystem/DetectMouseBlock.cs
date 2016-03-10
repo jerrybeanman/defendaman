@@ -12,9 +12,6 @@ public class DetectMouseBlock : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!GameData.ItemDragging)
-        {
-            GameData.MouseBlocked = false;
-        }  
+        GameData.MouseBlocked = false;
     }
 }

@@ -54,7 +54,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         if (item != null)
         {
-            GameData.ItemDragging = true;
             this.transform.SetParent(this.transform.parent.parent);
             this.transform.position = eventData.position - _offset;
             GetComponent<CanvasGroup>().blocksRaycasts = false;
@@ -77,7 +76,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnEndDrag(PointerEventData eventData)
     {
-        GameData.ItemDragging = false;
         this.transform.SetParent(_inventory.slot_list[item_pos].transform);
         this.transform.position = _inventory.slot_list[item_pos].transform.position;
         GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -99,7 +97,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnPointerEnter(PointerEventData eventData)
     {
-        GameData.MouseBlocked = true;
         _tooltip.Activate(item);
         
     }
@@ -109,12 +106,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!GameData.ItemDragging)
-        {
-            GameData.MouseBlocked = false;
-            _tooltip.Deactivate();
-        }
-        
+        _tooltip.Deactivate();        
     }
 
     /*
