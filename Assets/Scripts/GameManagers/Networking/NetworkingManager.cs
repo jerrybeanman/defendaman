@@ -63,7 +63,7 @@ public class NetworkingManager : MonoBehaviour
 
     void Start()
     {
-        Subscribe(StartGame, DataType.StartGame);
+        /*Subscribe(StartGame, DataType.StartGame);
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
@@ -71,7 +71,7 @@ public class NetworkingManager : MonoBehaviour
         GameData.LobbyData.Add(1, new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
         GameData.LobbyData.Add(2, new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
 
-        GameData.MyPlayerID = 2;
+        GameData.MyPlayerID = 2;*/
 
         try
         {
@@ -85,7 +85,7 @@ public class NetworkingManager : MonoBehaviour
             Debug.Log(e.ToString());
         }
 
-        update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
+        //update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }
 
     // Update is called once per frame
@@ -98,9 +98,9 @@ public class NetworkingManager : MonoBehaviour
             data = receive_data();
         } while (data != "[]");*/
         update_data(receive_data());
-        //send_data();
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //    StartOfGame();
+        send_data();
+        if (Input.GetKeyDown(KeyCode.Space))
+            StartOfGame();
     }
     
     ////Code for subscribing to updates from client-server system////
