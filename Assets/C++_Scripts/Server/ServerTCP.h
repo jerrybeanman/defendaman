@@ -79,7 +79,7 @@ namespace Networking
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
 			/*Parses incoming JSON and process request*/
-			void CheckServerRequest(int playerId, char * buffer);
+			void CheckServerRequest(Player player, char * buffer);
 
 			/* Check ready status on all connected players*/
 			bool AllPlayersReady();
@@ -89,9 +89,14 @@ namespace Networking
 			/* Generates an int for player based on IP of player */
 			int getPlayerId(std::string ipString);
 
-			std::vector<Player> setPlayerList();
 			std::map<int, Player> getPlayerTable();
 
+            std::string constructPlayerTable();
+
+            void sendToClient(Player player, char * message);
+
+
+            std::string UpdateID(const Player& player);
     private:
 			Player newPlayer;
 

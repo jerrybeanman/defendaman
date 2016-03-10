@@ -64,7 +64,12 @@ public class NetworkingManager : MonoBehaviour
 
     void Start()
     {
-        
+        try {
+            TCPClient = TCP_CreateClient();
+        } catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+        }
     }
 
     // Update is called once per frame
@@ -110,7 +115,6 @@ public class NetworkingManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M))
         {
             myID = 7;
-            StartOfGame();
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -461,22 +465,6 @@ public class NetworkingManager : MonoBehaviour
 
     public void StartOfGame()
     {
-        /*Subscribe(StartGame, DataType.StartGame);
-
-        GameData.TeamSpawnPoints.Clear();
-        GameData.LobbyData.Clear();
-
-        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
-
-        GameData.MyPlayerID = 1;
-
-        if (Application.platform != RuntimePlatform.LinuxPlayer) {
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
-        }
-
-        update_data("[{DataType : 4, ID : 0, Seed : 1000}]");*/
         Subscribe(StartGame, DataType.StartGame);
 
         GameData.TeamSpawnPoints.Clear();
@@ -502,7 +490,6 @@ public class NetworkingManager : MonoBehaviour
         update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
         try
         {
-            TCPClient = TCP_CreateClient();
             UDPClient = Game_CreateClient();
             UDP_ConnectToServer("192.168.0.14", 8000);
             UDP_StartReadThread();
