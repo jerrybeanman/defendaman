@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <utility>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <pthread.h>
 #include <errno.h>
@@ -18,7 +19,6 @@
 #define PACKETLEN       256
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
-
 
 /*
    Structure of a PlayerNetworkEntity
@@ -32,6 +32,7 @@ typedef struct Player
     int            id;
     char           username[32];
     int            team;
+    int            playerClass;
     bool           isReady;
 } Player;
 
@@ -66,6 +67,7 @@ namespace Networking
 
     /* List of players currently connected to the server */
     std::vector<Player>             _PlayerList;
+    std::map<int, Player>           _PlayerTable;
 
 	};
 }

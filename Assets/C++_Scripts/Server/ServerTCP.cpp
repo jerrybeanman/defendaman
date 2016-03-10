@@ -1,6 +1,7 @@
 #include "ServerTCP.h"
 
 using namespace Networking;
+using namespace json11;
 
 /*
 	Initialize socket, server address to lookup to, and connect to the server
@@ -10,8 +11,7 @@ using namespace Networking;
 int ServerTCP::InitializeSocket(short port)
 {
     int err = -1;
-
-	int optval = 1;	/* set SO_REUSEADDR on a socket to true (1) */
+	  int optval = 1;	/* set SO_REUSEADDR on a socket to true (1) */
 
     /* Create a TCP streaming socket */
     if ((_TCPAcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
@@ -35,7 +35,6 @@ int ServerTCP::InitializeSocket(short port)
         std::cout << "InitializeSocket: bind() failed with errno " << errno << std::endl;
         return err;
     }
-
     /* Listen for connections */
     listen(_TCPAcceptingSocket, MAXCONNECTIONS);
 
@@ -48,31 +47,36 @@ int ServerTCP::InitializeSocket(short port)
 
 	@return: id that is assigned to the player
 */
+
 int ServerTCP::Accept(Player * player)
 {
     char buf[PACKETLEN];
     unsigned int        ClientLen = sizeof(player->connection);
-    printf("before accept\n");
+
     /* Accepts a connection from the client */
     if ((player->socket = accept(_TCPAcceptingSocket, (struct sockaddr *)&player->connection, &ClientLen)) == -1)
     {
         std::cerr << "Accept() failed with errno" << errno << std::endl;
         return -1;
     }
-    printf("After accept\n");
+
     /* Not the best way to do it since we're using vectors */
-    player->id = _PlayerList.size();
     player->isReady = false;
 
-    _PlayerList.push_back(*player);
+    //Add player to list
+    int id = getPlayerId(inet_ntoa(player->connection.sin_addr));
+    player->id = id;
+    _PlayerTable.insert(std::pair<int, Player>(id, *player));
 
-    sprintf(buf, "Player %lu has joined the lobby\n", _PlayerList.size());
-    printf(buf);
+    //Not sure about this
+    sprintf(buf, "[{DataType : 6, ID : 4, PlayerID : %d}]", player->id);
+
+    //Broadcast to all players the new player ID
     this->ServerTCP::Broadcast(buf);
+
     newPlayer = *player;
     return player->id;
 }
-
 
 /*
 	Creates a child process to handle incoming messages from new player that has just connected to the lobby
@@ -81,10 +85,8 @@ int ServerTCP::Accept(Player * player)
 */
 void * ServerTCP::CreateClientManager(void * server)
 {
-    /* God forbid */
     return ((ServerTCP *)server)->Receive();
 }
-
 
 /*
 	Recieves data from child process that is dedicated for each player's socket
@@ -97,36 +99,35 @@ void * ServerTCP::Receive()
   	int BytesRead;
     char * buf;						          	/* buffer read from one recv call      	  */
 
-    //JSON segments
-    char dataType[30];
-    int code;
-    char id[30];
-    int idValue;
-    int requestValue;
-
   	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
     while (1)
     {
       	BytesRead = recv (tmpPlayer.socket, buf, PACKETLEN, 0);
 
-      	if(BytesRead < 0) /* recv() failed */
+        /* recv() failed */
+      	if(BytesRead < 0)
       	{
       		printf("recv() failed with errno: %d", errno);
       		return 0;
       	}
-      	if(BytesRead == 0) /* client disconnected */
+        /* client disconnected */
+      	if(BytesRead == 0)
       	{
-      		sprintf(buf, "Player %d has left the lobby \n", tmpPlayer.id + 1);
+      		sprintf(buf, "Player %d has left the lobby \n", tmpPlayer.id);
           printf(buf);
-          this->ServerTCP::Broadcast(buf);
-      		return 0;
-      	}
-        std::cout << buf << std::endl;
-        /*Parsed  based on json array*/
-        //pls
-        sscanf(buf, "%*s %*s %d %*s %*s %*s %d %*s %*s %*s %d ", &code, &idValue, &requestValue);
-        this->ServerTCP::CheckServerRequest(tmpPlayer.id, code, idValue, requestValue);
 
+          //Send all players that this player has left
+          this->ServerTCP::Broadcast(buf);
+
+          //Remove player from player list
+          _PlayerTable.erase(tmpPlayer.id);
+
+          return 0;
+      	}
+        /* Data received */
+        std::cout << "Data Received: " << buf << std::endl;
+        //Handle Data Received
+        this->ServerTCP::CheckServerRequest(tmpPlayer.id, buf);
       	/* Broadcast echo packet back to all players */
       	this->ServerTCP::Broadcast(buf);
     }
@@ -136,51 +137,108 @@ void * ServerTCP::Receive()
 
 /*
 	Sends a message to all the clients
-
 */
 void ServerTCP::Broadcast(char * message)
 {
-  std::cout << "MESSAGE IN BROADCAST" << message << std::endl;
-	for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-		if(send(_PlayerList[i].socket, message, PACKETLEN, 0) == -1)
-		{
-			std::cerr << "Broadcast() failed for player id: " << _PlayerList[i].id + 1 << std::endl;
+  Player tmpPlayer;
+  for(const auto &pair : _PlayerTable)
+  {
+    tmpPlayer = pair.second;
+    if(send(tmpPlayer.socket, message, PACKETLEN, 0) == -1)
+    {
+      std::cerr << "Broadcast() failed for player id: " << pair.first << std::endl;
 			std::cerr << "errno: " << errno << std::endl;
 			return;
-		}
-	}
-}
-
-/*Parses incoming JSON and process request*/
-void ServerTCP::CheckServerRequest(int playerId, int code, int idValue, int requestValue)
-{
-  char * buf;
-  buf = (char *)malloc(PACKETLEN); 	/* allocates memory */
-  if(code == Networking && idValue == TeamChangeRequest)
-  {
-    std::cout << "Team change: " << requestValue << std::endl;
-    _PlayerList[playerId].team = requestValue;
-  } else if (code == Networking && idValue == ReadyRequest)
-  {
-    std::cout << "Ready change: " << requestValue << std::endl;
-    if (requestValue == 0)
-    {
-      _PlayerList[playerId].isReady = false;
-    } else if (requestValue == 1)
-    {
-      _PlayerList[playerId].isReady =  true;
-    }
-    if (this->ServerTCP::AllPlayersReady())
-    {
-      printf("All players are ready\n");
-      sprintf(buf, "Game is starting!\n");
-      printf(buf);
-      this->ServerTCP::Broadcast(buf); // or use flag to ignore all recv messages
     }
   }
-  std::cout << "END OF CHECK SERVER REQUEST" << std::endl;
+}
+
+/* Parses incoming JSON and process request */
+void ServerTCP::CheckServerRequest(int playerId, char * buffer)
+{
+  char * buf;
+  buf = (char *)malloc(PACKETLEN);
+
+  //variables needed to hold json values
+  int code, idValue, requestValue;
+  std::string username;
+
+  //Parse JSON buffer
+  parseServerRequest(buffer, code, idValue, requestValue, username);
+
+  if (code != Networking)
+    return;
+
+  switch(idValue)
+  {
+    //Player joining team request
+    case TeamChangeRequest:
+      std::cout << "Team change: " << requestValue << std::endl;
+      _PlayerTable[playerId].team = requestValue;
+      break;
+
+    //Player joining class request
+    case ClassChangeRequest:
+      //TODO
+      break;
+
+    //Player making a ready request
+    case ReadyRequest:
+      std::cout << "Ready change: " << requestValue << std::endl;
+      //Player not ready
+      if (requestValue == 0)
+      {
+        _PlayerTable[playerId].isReady = false;
+        //tmpPlayer.isReady = false;
+      }
+      //Player is ready
+      else if (requestValue == 1)
+      {
+        _PlayerTable[playerId].isReady = true;
+        //tmpPlayer.isReady =  true;
+      }
+      //All players in lobby are ready
+      if (this->ServerTCP::AllPlayersReady())
+      {
+        strcpy(buf, (generateMapSeed()).c_str());
+        this->ServerTCP::Broadcast(buf);
+      }
+      break;
+
+    //New Player has joined lobby
+    case PlayerJoinedLobby:
+      break;
+  }
   free(buf);
+}
+/*
+    Takes in a buffer holding the JSON string received from the client and formats the data into
+    the variables that are passed in to be used in other functions.
+    Example: [{"DataType" : 6, "ID" : 1, "PlayerID" : 0, "TeamID" : 1}]
+*/
+void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username)
+{
+  //Testing Proof of Concept
+  char * test = "[{\"DataType\" : 6, \"ID\" : 1, \"PlayerID\" : 0, \"TeamID\" : 1}]";
+  std::string packet(test);
+  std::string error;
+
+  //Parse buffer as JSON array
+  Json json = Json::parse(packet, error).array_items()[0];
+
+  //Parse failed
+  if (!error.empty())
+  {
+    printf("Failed: %s\n", error.c_str());
+    return;
+  }
+
+  //Parsing data in JSON object
+  //TODO: The rest of the variables
+  DataType = json["DataType"].int_value();
+  ID = json["ID"].int_value();
+  IDValue = json["TeamID"].int_value();
+
 }
 /* Check ready status on all connected players
 
@@ -188,16 +246,18 @@ void ServerTCP::CheckServerRequest(int playerId, int code, int idValue, int requ
 */
 bool ServerTCP::AllPlayersReady()
 {
-  for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-    if(!_PlayerList[i].isReady)
-		{
-      printf("Player %d is not ready\n", _PlayerList[i].id + 1);
+  Player tmpPlayer;
+  for(const auto &pair : _PlayerTable)
+  {
+    tmpPlayer = pair.second;
+    if(tmpPlayer.isReady == false)
+    {
+      printf("Player %d is not ready\n", tmpPlayer.id);
 			return false;
-		} else {
-      printf("Player %d is ready\n", _PlayerList[i].id + 1);
+    } else {
+      printf("Player %d is ready\n", tmpPlayer.id);
     }
-	}
+  }
   return true;
 }
 /*
@@ -206,4 +266,23 @@ bool ServerTCP::AllPlayersReady()
 std::vector<Player> ServerTCP::setPlayerList()
 {
   return _PlayerList;
+}
+
+std::string ServerTCP::generateMapSeed(){
+	int mapSeed;
+	srand (time (NULL));
+	mapSeed = rand ();
+	std::string packet = "{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}";
+	return packet;
+}
+
+std::map<int, Player> ServerTCP::getPlayerTable()
+{
+  return _PlayerTable;
+}
+
+int ServerTCP::getPlayerId(std::string ipString)
+{
+  std::size_t index = ipString.find_last_of(".");
+  return stoi(ipString.substr(index+1));
 }
