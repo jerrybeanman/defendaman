@@ -18,6 +18,7 @@ public class GunnerClass : BaseClass
         //placeholder numbers
         this._classStat.MoveSpeed = 5;
         this._classStat.AtkPower = 20;
+        this._classStat.Defense = 5;
 
         var controller = Resources.Load("Controllers/gunboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -46,7 +47,6 @@ public class GunnerClass : BaseClass
         //parameters: dir, team, damage, range
         //float speed = 200;
 
-        //
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, transform.position, transform.rotation);
         attack.AddForce(dir * speed[1]);
         attack.GetComponent<BasicRanged>().teamID = team;
