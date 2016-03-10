@@ -66,8 +66,8 @@ public class NetworkingManager : MonoBehaviour
         try {
             TCPClient = TCP_CreateClient();
             UDPClient = Game_CreateClient();
-            UDP_ConnectToServer("192.168.0.14", 7000);
-            UDP_StartReadThread();
+           // UDP_ConnectToServer("192.168.0.14", 7000);
+            //UDP_StartReadThread();
         } catch (Exception e)
         {
             Debug.Log(e.ToString());
@@ -423,20 +423,20 @@ public class NetworkingManager : MonoBehaviour
 
     public void StartOfGame()
     {
-        Subscribe(StartGame, DataType.StartGame);
+        /*Subscribe(StartGame, DataType.StartGame);
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
 
-        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
+         GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
+         GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
 
         GameData.MyPlayerID = 1;
 
         if (Application.platform != RuntimePlatform.LinuxPlayer) {
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
-        }
+        }*/
 
         update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }

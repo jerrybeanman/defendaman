@@ -102,97 +102,119 @@ public class MenuScript : MonoBehaviour {
             {
                 // NOTE:: This indicates the player that sent the packet, not the current player ID
                 int PlayerPacketID;
-
+				Debug.Log("[Debug]: " + tmp);
                 RecievedData = tmp;
                 var packet = (JSON.Parse(RecievedData).AsArray)[0];
                 PlayerPacketID = packet[NetworkKeyString.PlayerID].AsInt;
                 switch ((NetworkCode)packet["ID"].AsInt)
                 {
                     case NetworkCode.TeamChangeRequest:
-                        {
-                            Debug.Log("[Debug]: Team chagne request");
-                            Debug.Log("[Debug]: Content--" + tmp);
-                            int TeamID = packet[NetworkKeyString.TeamID].AsInt;
-                            GameData.LobbyData[PlayerPacketID].TeamID = TeamID;
+                    {
+                        Debug.Log("[Debug]: Team chagne request");
+                        Debug.Log("[Debug]: Content--" + tmp);
+                        int TeamID = packet[NetworkKeyString.TeamID].AsInt;
+                        GameData.LobbyData[PlayerPacketID].TeamID = TeamID;
 
-                            FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", for team request on team: " + TeamID.ToString();
-                            // TODO::Spenser - Do GUI update here using TeamID and PlayerPacketID when player has changed team
-
-                            break;
-                        }
+                        FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", for team request on team: " + TeamID.ToString();
+						PrintData();
+				
+						UpdateLobbyList();
+				
+                        break;
+                    }
                     case NetworkCode.ClassChangeRequest:
-                        {
-                            Debug.Log("[Debug]: Class change request");
-                            Debug.Log("[Debug]: Content--" + tmp);
-                            int ClassID = packet[NetworkKeyString.ClassID].AsInt;
-                            GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)ClassID;
+                    {
+                        Debug.Log("[Debug]: Class change request");
+                        Debug.Log("[Debug]: Content--" + tmp);
+                        int ClassID = packet[NetworkKeyString.ClassID].AsInt;
+                        GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)ClassID;
 
-                            FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", for class request on class: " + ClassID.ToString();
-                            // TODO::Spener - DO GUI update here using ClassID and PlayerPacketID when player has changed class
-                            break;
-                        }
+                        FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", for class request on class: " + ClassID.ToString();
+						PrintData();
+				
+						UpdateLobbyList();
+                        break;
+                    }
                     case NetworkCode.ReadyRequest:
-                        {
-                            Debug.Log("[Debug]: Ready request");
-                            Debug.Log("[Debug]: Content--" + tmp);
-                            bool IsReady = packet[NetworkKeyString.Ready].AsBool;
-                            GameData.LobbyData[PlayerPacketID].Ready = IsReady;
+                    {
+                        Debug.Log("[Debug]: Ready request");
+                        Debug.Log("[Debug]: Content--" + tmp);
+                        bool IsReady = packet[NetworkKeyString.Ready].AsBool;
+                        GameData.LobbyData[PlayerPacketID].Ready = IsReady;
 
-                            FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", which is " + (IsReady ? "Ready" : "Not Ready");
-                            // TODO::Spenser - Do GUI update here using IsReady and PlayerPacketID when player changed ready status
-                            break;
-                        }
+                        FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", which is " + (IsReady ? "Ready" : "Not Ready");
+				
+						PrintData();
+						UpdateLobbyList();
+                        break;
+                    }
                     case NetworkCode.PlayerJoinedLobby:
+                    {
+                        Debug.Log("[Debug]: Player has joined lobby");
+                        Debug.Log("[Debug]: Content--" + tmp);
+
+                        PlayerData tmpPlayer = new PlayerData();
+                        tmpPlayer.PlayerID = PlayerPacketID;
+                        tmpPlayer.Username = packet[NetworkKeyString.UserName];
+                        if (PlayerID == -1)
                         {
-                            Debug.Log("[Debug]: Player has joined lobby");
-                            Debug.Log("[Debug]: Content--" + tmp);
+                            PlayerID = PlayerPacketID;
+                            GameData.MyPlayerID = PlayerPacketID;
+                            Debug.Log("[UltraDebug] Updated Player ID: " + PlayerID);
 
-                            PlayerData tmpPlayer = new PlayerData();
-                            tmpPlayer.PlayerID = PlayerPacketID;
-                            tmpPlayer.Username = packet[NetworkKeyString.UserName];
-                            if (PlayerID == -1)
-                            {
-                                PlayerID = PlayerPacketID;
-                                GameData.MyPlayerID = PlayerPacketID;
-                                Debug.Log("[UltraDebug] Updated Player ID: " + PlayerID);
-
-                            }
-                            else
-                                GameData.LobbyData.Add(PlayerPacketID, tmpPlayer);
-                            break;
                         }
+                        else
+                            GameData.LobbyData.Add(PlayerPacketID, tmpPlayer);
+						PrintData();
+				
+						UpdateLobbyList();
+                        break;
+                    }
                     case NetworkCode.UpdatePlayerList:
+                    {
+                        Debug.Log("[Debug]: Got update table message");
+                        Debug.Log("[Debug]: Content--" + tmp);
+
+                        // fills in existing player data
+                        foreach (JSONNode playerData in packet["LobbyData"].AsArray)
                         {
-                            Debug.Log("[Debug]: Got update table message");
-                            Debug.Log("[Debug]: Content--" + tmp);
+							int id = playerData[NetworkKeyString.PlayerID].AsInt;
+							Debug.Log("[Debug]: IN UPDATEPLAYERLIST");
+							PlayerData tempPlayer 	= new PlayerData();
+							tempPlayer.PlayerID  	= id;
+							tempPlayer.ClassType 	= (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
+							tempPlayer.TeamID 		= playerData[NetworkKeyString.TeamID].AsInt;
+							tempPlayer.Ready 		= playerData[NetworkKeyString.Ready].AsBool;
+							tempPlayer.Username		= playerData[NetworkKeyString.UserName];
+                            GameData.LobbyData.Add(id, tempPlayer);
 
-                            // fills in existing player data
-                            foreach (JSONNode playerData in packet["LobbyData"].AsArray)
-                            {
-                                Debug.Log("[Debug]: IN UPDATEPLAYERLIST");
-                                int id = playerData[NetworkKeyString.PlayerID].AsInt;
-                                GameData.LobbyData[id].PlayerID = id;
-                                GameData.LobbyData[id].ClassType = (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
-                                GameData.LobbyData[id].TeamID = playerData[NetworkKeyString.TeamID].AsInt;
-                                GameData.LobbyData[id].Ready = playerData[NetworkKeyString.Ready].AsBool;
-                                GameData.LobbyData[id].Username = playerData[NetworkKeyString.UserName];
-
-                                Debug.Log("[Debug]: Player ID: " + GameData.LobbyData[id].PlayerID.ToString() + "ClassID: " +
-                                          GameData.LobbyData[id].ClassType.ToString() + "TeamID: " + GameData.LobbyData[id].TeamID.ToString() + "Username: " + GameData.LobbyData[id].Username);
-                            }
-                            FormatedData = "UpdatePlayerList";
-                            break;
+                            Debug.Log("[Debug]: Player ID: " + GameData.LobbyData[id].PlayerID.ToString() + "ClassID: " +
+                                      GameData.LobbyData[id].ClassType.ToString() + "TeamID: " + GameData.LobbyData[id].TeamID.ToString() + "Username: " + GameData.LobbyData[id].Username);
                         }
+                        FormatedData = "UpdatePlayerList";
+						UpdateLobbyList();	
+                        break;
+                    }
                     case NetworkCode.GameStart:
-                        {
-                            // start the game
-                            break;
-                        }
+                    {
+                        // start the game
+                        break;
+                    }
                 }
 
             }
         }
     }
+
+	void PrintData()
+	{
+		Debug.Log("[Debug]: IN PrintData()");
+		foreach(PlayerData p in GameData.LobbyData.Values)
+		{
+			Debug.Log("[Debug]: Player ID: " + p.PlayerID.ToString() + "ClassID: " +
+			          p.ClassType.ToString() + "TeamID: " + p.TeamID.ToString() + "Username: " + p.Username);
+		}
+	}
 
     void OnGUI()
     {
@@ -204,19 +226,19 @@ public class MenuScript : MonoBehaviour {
     // === connection menu ===
     public void JoinLobby()
     {
+		Debug.Log("Scamaaaaaz");
         string name = _GetInputText("NameInput");
         string ip = _GetInputText("IPInput");
-        _SwitchMenu(MenuStates.Lobby);
         // TODO: validate player name and IP addr
         if (!(name.Length == 0) && !(ip.Length == 0))
         {
             _player_name = name;
-
+			Debug.Log("[Debug] IP: " + ip + "User Name:" + name);
             // Connect to the server
             if (NetworkingManager.TCP_ConnectToServer(ip, 7000) < 0)
             {
                 RecievedData = "Cant connect to server";
-                return;
+                return;	
             }
             // Thread creation
             if (NetworkingManager.TCP_StartReadThread() < 0)
@@ -239,9 +261,10 @@ public class MenuScript : MonoBehaviour {
             }
         } else
             RecievedData = "IP length is zero";
-
-    }
-
+		_SwitchMenu(MenuStates.Lobby);
+		
+	}
+	
     // === game lobby menu ===
 
     public void UpdateLobbyList()
@@ -265,6 +288,7 @@ public class MenuScript : MonoBehaviour {
         Debug.Log("lobby size = " + GameData.LobbyData.Count);
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
+			Debug.Log ("PlayerUsername: " + p.Username);
             AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++));
         }
     }
