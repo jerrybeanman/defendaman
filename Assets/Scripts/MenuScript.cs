@@ -218,7 +218,14 @@ public class MenuScript : MonoBehaviour {
 
     // === game lobby menu ===
 
-    public void AddToLobby(int team, int player_id)
+    private void UpdateLobbyList()
+    {
+        // scan list of connected players
+        // add each player to respective team list
+        // on list change, remove and re add players from lists
+    }
+
+    private void AddToLobby(int team, int player_id)
     {
         List<Transform> team_to_set = (team == 1 ? _team1_slots : _team2_slots);
         Debug.Log(team_to_set.Count);
@@ -226,11 +233,16 @@ public class MenuScript : MonoBehaviour {
 
     }
 
-    public void RemoveFromLobby(int team, int player_id)
+    private void RemoveFromLobby(int team, int player_id)
     {
         GameObject team_to_set = (team == 1 ? team1_list : team2_list);
 
 
+    }
+
+    public void AddPlayer1()
+    {
+        AddToLobby(1, 0);
     }
 
     public void AddPlayer2()
