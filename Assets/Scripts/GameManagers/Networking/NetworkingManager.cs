@@ -60,47 +60,66 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr UDPClient { get; private set; }
 
     #endregion
+    int myID = -1;
 
     void Start()
     {
-        /*Subscribe(StartGame, DataType.StartGame);
-
-        GameData.TeamSpawnPoints.Clear();
-        GameData.LobbyData.Clear();
-
-        GameData.LobbyData.Add(1, new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData.Add(2, new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
-
-        GameData.MyPlayerID = 2;*/
-
-        try
-        {
-            TCPClient = TCP_CreateClient();
-            UDPClient = Game_CreateClient();
-            UDP_ConnectToServer("192.168.0.14", 8000);
-            UDP_StartReadThread();
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
-
-        //update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*string data = receive_data();
-        do
+        if (myID != -1)
         {
-            update_data(data);
-            data = receive_data();
-        } while (data != "[]");*/
-        update_data(receive_data());
-        send_data();
-        if (Input.GetKeyDown(KeyCode.Space))
+            foreach (var player in GameData.LobbyData)
+                update_data(receive_data());
+            send_data();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            myID = 1;
             StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            myID = 2;
+            StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            myID = 3;
+            StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            myID = 4;
+            StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            myID = 5;
+            StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            myID = 6;
+            StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            myID = 7;
+            StartOfGame();
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            myID = 8;
+            StartOfGame();
+        }
+
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //    StartOfGame();
     }
     
     ////Code for subscribing to updates from client-server system////
@@ -361,6 +380,7 @@ public class NetworkingManager : MonoBehaviour
 
     void StartGame(JSONClass data)
     {
+        int myPlayer = GameData.MyPlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
@@ -395,7 +415,7 @@ public class NetworkingManager : MonoBehaviour
             //if (playerData.King) //Uncomment this one line when kings are in place
                 kings.Add(new Pair<int, int>(playerData.Value.TeamID, playerData.Value.PlayerID));
 
-            if (GameData.MyPlayerID == playerData.Value.PlayerID)
+            if (myPlayer == playerData.Value.PlayerID)
             {
                 myTeam = playerData.Value.TeamID;
                 player = createdPlayer;
@@ -441,7 +461,7 @@ public class NetworkingManager : MonoBehaviour
 
     public void StartOfGame()
     {
-        Subscribe(StartGame, DataType.StartGame);
+        /*Subscribe(StartGame, DataType.StartGame);
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
@@ -456,7 +476,41 @@ public class NetworkingManager : MonoBehaviour
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
         }
 
+        update_data("[{DataType : 4, ID : 0, Seed : 1000}]");*/
+        Subscribe(StartGame, DataType.StartGame);
+
+        GameData.TeamSpawnPoints.Clear();
+        GameData.LobbyData.Clear();
+
+        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
+        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
+        GameData.LobbyData[3] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 3, TeamID = 1 });
+        GameData.LobbyData[4] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 4, TeamID = 2 });
+        GameData.LobbyData[5] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 5, TeamID = 1 });
+        GameData.LobbyData[6] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 6, TeamID = 2 });
+        GameData.LobbyData[7] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 7, TeamID = 1 });
+        GameData.LobbyData[8] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 8, TeamID = 2 });
+
+        GameData.MyPlayerID = myID;
+
+        if (Application.platform != RuntimePlatform.LinuxPlayer)
+        {
+            GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
+            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
+        }
+
         update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
+        try
+        {
+            TCPClient = TCP_CreateClient();
+            UDPClient = Game_CreateClient();
+            UDP_ConnectToServer("192.168.0.14", 8000);
+            UDP_StartReadThread();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+        }
     }
 
     #endregion

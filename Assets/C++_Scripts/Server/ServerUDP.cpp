@@ -5,6 +5,11 @@ using namespace Networking;
 /*
 	Initialize socket, server address to lookup to, and connect to the server
 
+  Programmer: Gabriel Lee
+  
+  Revision: 
+    March 9, 2016 - Changed the socket to be non-blocking
+
 	@return: socket file descriptor
 */
 int ServerUDP::InitializeSocket(short port)
@@ -12,7 +17,7 @@ int ServerUDP::InitializeSocket(short port)
   int err = -1;
 
     /* Create a TCP streaming socket */
-    if ((_UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM, 0)) == -1 )
+    if ((_UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM | SOCK_NONBLOCK, 0)) == -1 )
     {
         fatal("InitializeSocket: socket() failed\n");
         return _UDPReceivingSocket;
