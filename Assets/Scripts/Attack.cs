@@ -8,15 +8,23 @@ public class Attack : MonoBehaviour {
     BaseClass player;
 
     bool attackReady = true, specialReady = true;
-    
+    float LeftEdgeInventory;
+    float TopEdgeInventory;
+
    //Start of scripts creation. Used to instantiate variables in our case.
     void Start() {
         player = gameObject.GetComponent<BaseClass>();
+        
     }
     
     //Called every frame
     void Update() {
-        if (Input.GetKey(KeyCode.Mouse0) && attackReady) {
+        if (Input.GetKey(KeyCode.Mouse0) && attackReady && !GameData.MouseBlocked) {
+            //LeftEdgeInventory = GameObject.Find("Inventory Panel").transform.position.x;
+            //TopEdgeInventory = GameObject.Find("Title Panel").transform.position.y;
+            //Debug.Log("invpanelposX: " + LeftEdgeInventory + " titlePanelPosY: " + TopEdgeInventory);
+            //Debug.Log("nouse pos: " + Input.mousePosition);
+
             //left click attack
             attackReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
@@ -29,7 +37,7 @@ public class Attack : MonoBehaviour {
             }, Protocol.UDP);
         } 
 
-        if (Input.GetKey(KeyCode.Mouse1) && specialReady) {
+        if (Input.GetKey(KeyCode.Mouse1) && specialReady && !GameData.MouseBlocked) {
             //right click attack
             specialReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;

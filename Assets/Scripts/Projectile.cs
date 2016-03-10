@@ -3,6 +3,8 @@ using System.Collections;
 
 public abstract class Projectile : Trigger
 {
+    public int pierce = 0;
+
     public Projectile()
     {
 
@@ -18,6 +20,8 @@ public abstract class Projectile : Trigger
         {
             return;
         }
-        Destroy(gameObject);
+        if(--pierce < 0) {
+            Destroy(gameObject);
+        }
     }
 }

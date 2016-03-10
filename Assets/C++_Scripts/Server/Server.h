@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <utility>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <pthread.h>
 #include <errno.h>
@@ -67,7 +68,8 @@ namespace Networking
 		int                    _TCPAcceptingSocket;
 
     /* List of players currently connected to the server */
-    std::vector<Player>             _PlayerList;
+    std::map<int, Player>           _PlayerTable;
+
 	};
 }
 #endif

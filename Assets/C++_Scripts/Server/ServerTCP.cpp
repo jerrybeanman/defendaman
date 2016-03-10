@@ -60,14 +60,14 @@ int ServerTCP::Accept(Player * player)
         return -1;
     }
 
-    /* Not the best way to do it since we're using vectors */
-    player->id = _PlayerList.size();
     player->isReady = false;
     player->playerClass = 0;
     player->team = 0;
 
     //Add player to list
-    _PlayerList.push_back(*player);
+    int id = getPlayerId(inet_ntoa(player->connection.sin_addr));
+    player->id = id;
+    _PlayerTable.insert(std::pair<int, Player>(id, *player));
 
     //Broadcast to all players the new player ID
     this->ServerTCP::Broadcast(buf);
@@ -118,7 +118,7 @@ void * ServerTCP::Receive()
           this->ServerTCP::Broadcast(buf);
 
           //Remove player from player list
-          _PlayerList.erase(std::remove_if( _PlayerList.begin(), _PlayerList.end(), [&](Player const& p) { return tmpPlayer.id == p.id; }), _PlayerList.end());
+          _PlayerTable.erase(tmpPlayer.id);
 
           return 0;
       	}
@@ -139,15 +139,17 @@ void * ServerTCP::Receive()
 */
 void ServerTCP::Broadcast(char * message)
 {
-	for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-		if(send(_PlayerList[i].socket, message, PACKETLEN, 0) == -1)
-		{
-			std::cerr << "Broadcast() failed for player id: " << _PlayerList[i].id << std::endl;
+  Player tmpPlayer;
+  for(const auto &pair : _PlayerTable)
+  {
+    tmpPlayer = pair.second;
+    if(send(tmpPlayer.socket, message, PACKETLEN, 0) == -1)
+    {
+      std::cerr << "Broadcast() failed for player id: " << pair.first << std::endl;
 			std::cerr << "errno: " << errno << std::endl;
 			return;
-		}
-	}
+    }
+  }
 }
 /*
 	Sends a message to a specific client
@@ -185,13 +187,13 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
     //Player joining team request
     case TeamChangeRequest:
       std::cout << "Team change: " << requestValue << std::endl;
-      _PlayerList[player.id].team = requestValue;
+      _PlayerTable[player.id].team = requestValue;
       break;
 
     //Player joining class request
     case ClassChangeRequest:
 	  std::cout << "Class change: " << requestValue << std::endl;
-      _PlayerList[player.id].playerClass= requestValue;
+     _PlayerTable [player.id].playerClass= requestValue;
       break;
 
     //Player making a ready request
@@ -200,19 +202,19 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       //Player not ready
       if (requestValue == 0)
       {
-        _PlayerList[player.id].isReady = false;
+        _PlayerTable[player.id].isReady = false;
+        //tmpPlayer.isReady = false;
       }
       //Player is ready
       else if (requestValue == 1)
       {
-        _PlayerList[player.id].isReady =  true;
+        _PlayerTable[player.id].isReady = true;
+        //tmpPlayer.isReady =  true;
       }
       //All players in lobby are ready
       if (this->ServerTCP::AllPlayersReady())
       {
-        printf("All players are ready\n");
-        sprintf(buf, "Game is starting!\n");
-        printf(buf);
+        strcpy(buf, (generateMapSeed()).c_str());
         this->ServerTCP::Broadcast(buf);
       }
       break;
@@ -221,14 +223,14 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
     case PlayerJoinedLobby:
 	  char* message = (char*)malloc(PACKETLEN);
 	  std::cout << "New Player Change: " << username << std::endl;
-	  strcpy(_PlayerList[player.id].username, username.c_str());
+	  strcpy(_PlayerTable[player.id].username, username.c_str());
 	  strcpy(message, constructPlayerTable().c_str());
 
 	  //Send player a table of players
 	  sendToClient(player, message);
       //Create packet and send to every1
         //We're developers
-      this->ServerTCP::Broadcast((char *)UpdateID(_PlayerList[player.id]).c_str());
+      this->ServerTCP::Broadcast((char *)UpdateID(_PlayerTable[player.id]).c_str());
       free(message);
       break;
   }
@@ -269,29 +271,31 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
 */
 bool ServerTCP::AllPlayersReady()
 {
-  for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-    if(_PlayerList[i].isReady == false)
-	{
-      printf("Player %d is not ready\n", _PlayerList[i].id);
+  Player tmpPlayer;
+  for(const auto &pair : _PlayerTable)
+  {
+    tmpPlayer = pair.second;
+    if(tmpPlayer.isReady == false)
+    {
+      printf("Player %d is not ready\n", tmpPlayer.id);
 			return false;
-	} else {
-      	printf("Player %d is ready\n", _PlayerList[i].id);
-    	}
-	}
+    } else {
+      printf("Player %d is ready\n", tmpPlayer.id);
+    }
+  }
   return true;
 }
 std::string ServerTCP::constructPlayerTable()
 {
 	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : ";
-	for (std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
+	for (auto it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
 	{
-		std::string tempUserName(_PlayerList[i].username);
-		packet += "[{PlayerID: " + std::to_string(_PlayerList[i].id);
+		std::string tempUserName((it->second).username);
+		packet += "[{PlayerID: " + std::to_string(it->first);
 		packet += ", UserName : \"" + tempUserName + "\"";
-		packet += ", TeamID : " +  std::to_string(_PlayerList[i].team);
-		packet += ", ClassID : " + std::to_string(_PlayerList[i].playerClass);
-		packet += ", Ready : " + std::to_string(Server::isReadyToInt(_PlayerList[i]));
+		packet += ", TeamID : " +  std::to_string((it->second).team);
+		packet += ", ClassID : " + std::to_string((it->second).playerClass);
+		packet += ", Ready : " + std::to_string(Server::isReadyToInt(it->second));
 		packet += "}";
 	}
 	packet += "]}]";
@@ -302,10 +306,6 @@ std::string ServerTCP::constructPlayerTable()
 /*
   Returns the registered player list from the game lobby
 */
-std::vector<Player> ServerTCP::setPlayerList()
-{
-  return _PlayerList;
-}
 std::string ServerTCP::UpdateID(const Player& player)
 {
    char buf[PACKETLEN];
@@ -315,13 +315,22 @@ std::string ServerTCP::UpdateID(const Player& player)
     std::cout << "IN UPDATE ID: " << temp << std::endl;
    return temp;
 }
-char *  ServerTCP::UpdatePlayerId(std::string packet, const Player& tmpPlayer) {
-    auto playerIdIndex = packet.find_last_of("\"PlayerID\" : ");
-    if(playerIdIndex != std::string::npos) {
-            packet.replace(playerIdIndex, 1, std::to_string(tmpPlayer.id));
-     } else {
-         std::cerr << "No player id" << std::endl;
-     }
-   std::cerr << (char *) packet.c_str() << std::endl;
-   return (char *)packet.c_str();
+
+std::string ServerTCP::generateMapSeed(){
+	int mapSeed;
+	srand (time (NULL));
+	mapSeed = rand ();
+	std::string packet = "{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}";
+	return packet;
+}
+
+std::map<int, Player> ServerTCP::getPlayerTable()
+{
+  return _PlayerTable;
+}
+
+int ServerTCP::getPlayerId(std::string ipString)
+{
+  std::size_t index = ipString.find_last_of(".");
+  return stoi(ipString.substr(index+1));
 }

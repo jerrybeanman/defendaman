@@ -18,7 +18,7 @@ for fail does not work
 */
 public enum DataType
 {
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6
+    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7
 }
 
 public enum Protocol
@@ -72,19 +72,18 @@ public class NetworkingManager : MonoBehaviour
         {
             Debug.Log(e.ToString());
         }
-        Debug.Log(send_next_packet(DataType.Lobby, 3, new List<Pair<string, string>> {new Pair<string, string>("Key", "Value")}, Protocol.NA));
+        StartOfGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*update_data(receive_data());
+        update_data(receive_data());
         send_data();
-
         if (Input.GetKeyDown(KeyCode.Space))
-            StartOfGame();*/
+            StartOfGame();
     }
-
+    
     ////Code for subscribing to updates from client-server system////
     #region SubscriberSystem
     /*
@@ -311,11 +310,11 @@ public class NetworkingManager : MonoBehaviour
         if (protocol == Protocol.NA)
             sending += "[";
         sending += "{";
-        sending += "DataType : " + (int)type + ", ID : " + id + ",";
+        sending += "\"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
 
         foreach (var pair in memersToSend)
         {
-            sending += " " + pair.first + " : " + pair.second + ",";
+            sending += " \"" + pair.first + "\" : " + pair.second + ",";
         }
         //if (protocol != Protocol.NA)
         //    sending = sending.Remove(1, 1);
@@ -431,15 +430,13 @@ public class NetworkingManager : MonoBehaviour
 
         GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
         GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
-        GameData.LobbyData[3] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 3, TeamID = 1 });
-        GameData.LobbyData[4] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 4, TeamID = 2 });
-        GameData.LobbyData[5] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 5, TeamID = 1 });
-        GameData.LobbyData[6] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 6, TeamID = 2 });
 
-        GameData.MyPlayerID = 3;
+        GameData.MyPlayerID = 1;
 
-        GameData.TeamSpawnPoints.Add(new Pair<int, int>(3, 3));
-        GameData.TeamSpawnPoints.Add(new Pair<int, int>(5, 5));
+        if (Application.platform != RuntimePlatform.LinuxPlayer) {
+            GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
+            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
+        }
 
         update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }

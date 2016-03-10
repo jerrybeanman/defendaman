@@ -69,6 +69,7 @@ public abstract class BaseClass : MonoBehaviour {
 			this._classStat.MaxHp = value.MaxHp;
 			this._classStat.MoveSpeed = value.MoveSpeed;
 			this._classStat.AtkPower = value.AtkPower;
+            this._classStat.Defense = value.Defense;
 		}
 	}
 
@@ -97,25 +98,35 @@ public abstract class BaseClass : MonoBehaviour {
 
         //gameObject.GetComponentInChildren<Transform>().localScale = new Vector3(.5f, 1, 1);
 
+        if (ClassStat.CurrentHp <= 0.0f)
+        {
+            //death
+            Destroy(gameObject);
+        }
+
         return ClassStat.CurrentHp;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         var attack = other.gameObject.GetComponent<Trigger>();
-        if (attack.teamID == team)
+
+        if (attack != null)
         {
-            return;
+           
+            if (attack.teamID == team)
+            {
+                return;
+            }
+            doDamage(attack.damage);
         }
-        if (doDamage(attack.damage) <= 0.0f)
-        {
-            //death
-            Destroy(gameObject);
-        }
+
     }
 
     void receiveAttackFromServer(JSONClass playerData)
     {
+        if (playerData["ID"] == GameData.MyPlayerID)
+            return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
         switch (playerData["Attack"].AsInt)
         {
@@ -156,6 +167,7 @@ public abstract class BaseClass : MonoBehaviour {
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
+        public float Defense;
         //TODO: defensive stats, etc.
 	}
 }
