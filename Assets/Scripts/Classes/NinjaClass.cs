@@ -22,6 +22,7 @@ public class NinjaClass : BaseClass
         //placeholder numbers
         this._classStat.MoveSpeed = 25;
         this._classStat.AtkPower = 15;
+        this._classStat.Defense = 5;
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -39,6 +40,10 @@ public class NinjaClass : BaseClass
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
+        if (gameObject.GetComponent<MagicDebuff>() == null) {
+            gameObject.GetComponent<Movement>().doBlink(20f);
+        }
+
         return 2;
     }
 }

@@ -79,7 +79,7 @@ public class NetworkingManager : MonoBehaviour
     void Update()
     {
         update_data(receive_data());
-        send_data();
+        //send_data();
         if (Input.GetKeyDown(KeyCode.Space))
             StartOfGame();
     }

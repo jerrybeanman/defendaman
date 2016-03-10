@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System;
 
 /*-----------------------------------------------------------------------------
 -- ItemMenu.cs - Script attached to ItemMenu game object resposible for 
@@ -19,7 +21,7 @@ using UnityEngine.UI;
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-public class ItemMenu : MonoBehaviour
+public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     //private int _dropped_item_instance_id;
     private Item _item;
@@ -35,7 +37,7 @@ public class ItemMenu : MonoBehaviour
     {
         _item_menu = GameObject.Find("Item Menu"); 
         _item_menu.SetActive(false);
-        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();    
     }
 
     /*
@@ -87,6 +89,7 @@ public class ItemMenu : MonoBehaviour
         Vector3 position = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
         int _player_id = GameData.MyPlayerID;
         int _world_item_id = _world_item_manager.GenerateWorldItemId();
+        
         /*
         foreach (var id in GameData.LobbyData.Keys)
         {
@@ -116,4 +119,15 @@ public class ItemMenu : MonoBehaviour
         Debug.Log("cancel: " + _item.id);
         Deactivate();
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        GameData.MouseBlocked = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        GameData.MouseBlocked = false;
+    }
 }
+
