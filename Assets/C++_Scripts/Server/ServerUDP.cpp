@@ -5,6 +5,11 @@ using namespace Networking;
 /*
 	Initialize socket, server address to lookup to, and connect to the server
 
+  Programmer: Gabriel Lee
+  
+  Revision: 
+    March 9, 2016 - Changed the socket to be non-blocking
+
 	@return: socket file descriptor
 */
 int ServerUDP::InitializeSocket(short port)
@@ -12,7 +17,7 @@ int ServerUDP::InitializeSocket(short port)
   int err = -1;
 
     /* Create a TCP streaming socket */
-    if ((_UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM, 0)) == -1 )
+    if ((_UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM | SOCK_NONBLOCK, 0)) == -1 )
     {
         fatal("InitializeSocket: socket() failed\n");
         return _UDPReceivingSocket;
@@ -57,9 +62,9 @@ void * ServerUDP::Receive()
 */
 void ServerUDP::Broadcast(char* message)
 {
-  for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
+  for(auto it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
   {
-    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&_PlayerList[i].connection, sizeof(&_PlayerList[i].connection)) == -1)
+    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&(it->second).connection, sizeof(&(it->second).connection)) == -1)
     {
       std::cerr << "errno: " << errno << std::endl;
       return;
@@ -69,7 +74,7 @@ void ServerUDP::Broadcast(char* message)
 /*
   Registers the passed in Player list as a class member to be used in broadcasting UDP packets.
 */
-void ServerUDP::SetPlayerList(std::vector<Player> players)
+void ServerUDP::SetPlayerList(std::map<int, Player> players)
 {
-  _PlayerList = players;
+  _PlayerTable = players;
 }

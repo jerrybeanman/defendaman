@@ -242,4 +242,20 @@ public class Movement : MonoBehaviour
 
     }
 
+    public void setAbs()
+    {
+        movestyles = movestyle.absolute;
+    }
+    public void setRel()
+    {
+        movestyles = movestyle.relative;
+    }
+    public int getInputType()
+    {
+        if (movestyles == movestyle.absolute)
+            return 1;
+        else
+            return 0;
+    }
+
 }

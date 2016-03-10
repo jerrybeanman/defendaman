@@ -29,7 +29,7 @@ namespace Networking
             */
             void Broadcast(char* message) override;
 
-						void SetPlayerList(std::vector<Player> players);
+						void SetPlayerList(std::map<int, Player> players);
 	};
 }
 

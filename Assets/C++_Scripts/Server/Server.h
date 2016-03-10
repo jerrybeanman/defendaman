@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <utility>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <pthread.h>
 #include <errno.h>
@@ -55,9 +56,11 @@ namespace Networking
 		 */
 		virtual void Broadcast(char * message) = 0;
 
-    virtual void * Receive() = 0;
+        virtual void * Receive() = 0;
 
 		void fatal(const char* error);
+
+        int isReadyToInt(Player player);
 
 		protected:
 		struct sockaddr_in     _ServerAddress;
@@ -65,7 +68,7 @@ namespace Networking
 		int                    _TCPAcceptingSocket;
 
     /* List of players currently connected to the server */
-    std::vector<Player>             _PlayerList;
+    std::map<int, Player>           _PlayerTable;
 
 	};
 }
