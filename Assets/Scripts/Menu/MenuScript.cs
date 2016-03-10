@@ -54,6 +54,7 @@ public class MenuScript : MonoBehaviour {
 
 	private string SendingPacket;
 	private int PlayerID = -1;
+	private bool connected = false;
     void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
@@ -68,7 +69,6 @@ public class MenuScript : MonoBehaviour {
         team_select_panel.SetActive(false);
         class_select_panel.SetActive(false);
     }
-	bool connected = false;
 	void Update()
 	{
 		if(connected)
@@ -80,7 +80,6 @@ public class MenuScript : MonoBehaviour {
 				int PlayerPacketID;
 
 				RecievedData = tmp;
-				Debug.Log("[Debug]: " + tmp);
 				var packet = (JSON.Parse(RecievedData).AsArray)[0];
 				PlayerPacketID = packet[NetworkKeyString.PlayerID].AsInt;
 				switch((NetworkCode)packet["ID"].AsInt)
