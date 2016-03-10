@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections.Generic;
 
 /*-----------------------------------------------------------------------------
 -- ItemMenu.cs - Script attached to ItemMenu game object resposible for 
@@ -21,14 +22,17 @@ using System;
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ItemMenu : MonoBehaviour
 {
     //private int _dropped_item_instance_id;
     private Item _item;
     private int _amt;
     private int _inv_pos;
     private GameObject _item_menu;
+    private AmountPanel _amount_panel;
     private WorldItemManager _world_item_manager;
+
+
     /*
      * Retrieves the ItemMenu game object and sets it to inactive.
      * Retrieves the WorldItemManager script.
@@ -37,7 +41,8 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         _item_menu = GameObject.Find("Item Menu"); 
         _item_menu.SetActive(false);
-        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();    
+        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _amount_panel = GameObject.Find("Inventory").GetComponent<AmountPanel>();    
     }
 
     /*
@@ -69,6 +74,7 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void UseItemOnClick()
     {
         Debug.Log("use item: " + _item.id);
+        GameData.MouseBlocked = false;
         Deactivate();
     }
 
@@ -86,27 +92,21 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
      */
     public void DropItemOnClick()
     {
-        Vector3 position = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
-        int _player_id = GameData.MyPlayerID;
-        int _world_item_id = _world_item_manager.GenerateWorldItemId();
-        
-        /*
-        foreach (var id in GameData.LobbyData.Keys)
+        if (_amt > 1 && _item.stackable)
         {
-            var classtype = GameData.LobbyData[id].ClassType;
-        }*/
+            _amount_panel.Activate(_item, _amt, _inv_pos);
+        }
+        else
+        {
+            // Send Network message
+            List<Pair<string, string>> msg = 
+                _world_item_manager.CreateDropItemNetworkMessage(_item.id, _amt, _inv_pos);
+            NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
-        // Data to send to server indicating that the player wants to drop an item from his inventory
-        // _player_id
-        // _world_item_id
-        // _item.id
-        // _amt
-        // _inv_pos
-        // position
-
-        // Temporary call for testing
-        _world_item_manager.ProcessDropEvent(_world_item_id, _player_id, _item.id, 
-            _amt, _inv_pos, (int)position.x, (int)position.y);
+            // Pretend that a drop message was received
+            _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+        }
+        GameData.MouseBlocked = false;
         Deactivate();
     }
 
@@ -117,17 +117,8 @@ public class ItemMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void CancelOnClick()
     {
         Debug.Log("cancel: " + _item.id);
-        Deactivate();
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        GameData.MouseBlocked = true;
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
         GameData.MouseBlocked = false;
+        Deactivate();
     }
 }
 
