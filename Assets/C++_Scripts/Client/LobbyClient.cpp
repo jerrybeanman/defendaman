@@ -12,7 +12,7 @@ int LobbyClient::Init_Client_Socket(const char* name, short port)
     // create TCP socket
     if((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        fatal("failed to create TCP socket");
+        printf("failed to create TCP socket\n");
         return -1;
     }
 
@@ -23,7 +23,7 @@ int LobbyClient::Init_Client_Socket(const char* name, short port)
     if(connect(serverSocket, (struct sockaddr*) &serverAddr, sizeof(serverAddr)) == -1)
     {
         std::cout << errno << std::endl;
-        fatal("failed to connect to remote host");
+        printf("failed to connect to remote host\n");
         return -1;
     }
     return 1;
@@ -38,7 +38,6 @@ void * LobbyClient::Recv()
       memset(message, 0, PACKETLEN);
       while((bytesRead = recv(serverSocket, message, bytesToRead, 0)) < PACKETLEN)
       {
-        //printf("Recv\n");
         if(bytesRead < 0)
         {
           printf("recv() failed with errno: %d\n", errno);
@@ -47,8 +46,7 @@ void * LobbyClient::Recv()
         message += bytesRead;
         bytesToRead -= bytesRead;
       }
-      printf("Message: %s\n", message);
-      
+
       // push message to queue
       CBPushBack(&CBPackets, message);
       free(message);
@@ -61,7 +59,6 @@ void * LobbyClient::Recv()
 */
 int LobbyClient::Send(char * message, int size)
 {
-    printf("Message in Send: %s\n", message);
     if (send(serverSocket, message, size, 0) == -1)
     {
       std::cerr << "send() failed with errno: " << errno << std::endl;

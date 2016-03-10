@@ -97,21 +97,29 @@ public abstract class BaseClass : MonoBehaviour {
 
         //gameObject.GetComponentInChildren<Transform>().localScale = new Vector3(.5f, 1, 1);
 
+        if (ClassStat.CurrentHp <= 0.0f)
+        {
+            //death
+            Destroy(gameObject);
+        }
+
         return ClassStat.CurrentHp;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         var attack = other.gameObject.GetComponent<Trigger>();
-        if (attack.teamID == team)
+
+        if (attack != null)
         {
-            return;
+           
+            if (attack.teamID == team)
+            {
+                return;
+            }
+            doDamage(attack.damage);
         }
-        if (doDamage(attack.damage) <= 0.0f)
-        {
-            //death
-            Destroy(gameObject);
-        }
+
     }
 
     void receiveAttackFromServer(JSONClass playerData)
