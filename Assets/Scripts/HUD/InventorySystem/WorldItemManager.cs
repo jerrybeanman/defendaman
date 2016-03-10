@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
+using System.Collections.Generic;
 
-// public enum ItemUpdate { Pickup = 1, Drop = 2 }
+enum ItemUpdate { Pickup = 1, Drop = 2 }
 /*-----------------------------------------------------------------------------
 -- WorldItemManager.cs - Script attached to GameManager game object
 --                       responsible for managing world items.
@@ -35,7 +37,9 @@ public class WorldItemManager : MonoBehaviour
      */
     void Start ()
     {
-        //NetworkingManager.Subscribe(ReceiveItemPickupPacket, DataType.Item, (int)ItemUpdate.Pickup);
+        NetworkingManager.Subscribe(ReceiveItemPickupPacket, DataType.Item, (int)ItemUpdate.Pickup);
+        NetworkingManager.Subscribe(ReceiveItemDropPacket, DataType.Item, (int)ItemUpdate.Drop);
+
         _item_manager = GetComponent<ItemManager>();
         _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
         _my_player_id = GameData.MyPlayerID;
@@ -59,11 +63,19 @@ public class WorldItemManager : MonoBehaviour
         _item.transform.position = new Vector3(pos_x, pos_y, -5);       
     }
 
-    /*
-    void ReceiveItemPickupPacket(JSONClass itemPacket)
+    
+    public void ReceiveItemPickupPacket(JSONClass itemPacket)
     {
-        ProcessPickUpEvent(itemPacket["WorldItemID"].AsInt, itemPacket["PlayerID"].AsInt, itemPacket["ItemID"].AsInt, itemPacket["Amount"].AsInt);
-    }*/
+        ProcessPickUpEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt, 
+            itemPacket["ItemId"].AsInt, itemPacket["Amount"].AsInt);
+    }
+
+    public void ReceiveItemDropPacket(JSONClass itemPacket)
+    {
+        ProcessDropEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt, 
+            itemPacket["ItemId"].AsInt, itemPacket["Amount"].AsInt, itemPacket["InvPos"].AsInt,
+            itemPacket["PosX"].AsInt,itemPacket["PosY"].AsInt);
+    }
 
     /*
      * Processes a pick up message from the server.
@@ -91,8 +103,8 @@ public class WorldItemManager : MonoBehaviour
         {
             CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
         }
-        _inventory.DestroyInventoryItem(inv_pos);
-        _inventory.inventory_item_list[inv_pos] = new Item();
+        _inventory.DestroyInventoryItem(inv_pos, amt);
+        //_inventory.inventory_item_list[inv_pos] = new Item();
         
     }
 
@@ -115,5 +127,51 @@ public class WorldItemManager : MonoBehaviour
     public int GenerateWorldItemId()
     {
         return _my_player_id * 1000000 + _dropped_item_instance_id++;
+    }
+
+    public List<Pair<string, string>> CreateDropItemNetworkMessage(int item_id, int amt, int inv_pos)
+    {
+        List<Pair<string, string>> _drop_item_message = new List<Pair<string, string>>();
+
+        Vector3 position 
+            = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
+        int _world_item_id = GenerateWorldItemId();
+        int _player_id = GameData.MyPlayerID;
+
+        _drop_item_message.Add(new Pair<string, string>("WorldItemId", _world_item_id.ToString()));
+        _drop_item_message.Add(new Pair<string, string>("PlayerId", _player_id.ToString()));
+        _drop_item_message.Add(new Pair<string, string>("ItemId", item_id.ToString()));
+        _drop_item_message.Add(new Pair<string, string>("Amount", amt.ToString()));
+        _drop_item_message.Add(new Pair<string, string>("InvPos", inv_pos.ToString()));
+        _drop_item_message.Add(new Pair<string, string>("PosX", ((int)position.x).ToString()));
+        _drop_item_message.Add(new Pair<string, string>("PosY", ((int)position.y).ToString()));
+
+        return _drop_item_message;
+    }
+
+    // For testing, packets from server arrive as JSONClass type
+    public JSONClass ConvertListToJSONClass(List<Pair<string, string>> list)
+    {
+        JSONClass JsonClass = new JSONClass();
+        foreach (Pair<string, string> obj in list)
+        {
+            JsonClass[obj.first] = obj.second;
+        }
+        return JsonClass;
+    }
+
+
+    //int world_item_id, int player_id, int item_id, int amt
+    public List<Pair<string, string>> CreatePickupItemNetworkMessage(int world_item_id, int item_id, int amt)
+    {
+        List<Pair<string, string>> _pickup_item_message = new List<Pair<string, string>>();
+        int _player_id = GameData.MyPlayerID;
+
+        _pickup_item_message.Add(new Pair<string, string>("WorldItemId", world_item_id.ToString()));
+        _pickup_item_message.Add(new Pair<string, string>("PlayerId", _player_id.ToString()));
+        _pickup_item_message.Add(new Pair<string, string>("ItemId", item_id.ToString()));
+        _pickup_item_message.Add(new Pair<string, string>("Amount", amt.ToString()));
+        
+        return _pickup_item_message;
     }
 }

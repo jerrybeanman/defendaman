@@ -1,29 +1,69 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class AmountPanel : MonoBehaviour {
 
     private Item _item;
+    private int _amt;
+    private int _inv_pos;
+    private int _drop_amt;
+    private GameObject _amt_input_field;
     private GameObject _amount_panel;
+    private Text _error_text;
+    private WorldItemManager _world_item_manager;
 
     void Start () {
+        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
         _amount_panel = GameObject.Find("Amount Panel");
+        _amt_input_field = GameObject.Find("Amount InputField");
+        _error_text = _amount_panel.transform.Find("Error Text").GetComponent<Text>();
         _amount_panel.SetActive(false);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
-    public void Activate(Item item)
+    public void Activate(Item item, int amt, int inv_pos)
     {
-        this._item = item;
+        _item = item;
+        _amt = amt;
+        _inv_pos = inv_pos;
         _amount_panel.SetActive(true);
+        _error_text.text = "";
+        _amt_input_field.GetComponent<InputField>().text = _amt.ToString();
     }
 
     public void Deactivate()
     {
         _amount_panel.SetActive(false);
+    }
+
+   public void OkDropButtonOnClick()
+    {
+        Debug.Log("OK");
+        _drop_amt = int.Parse(_amt_input_field.GetComponent<InputField>().text);
+        if (_drop_amt > 0 && _drop_amt <= _amt)
+        {
+            Debug.Log("can drop");
+            Debug.Log(_drop_amt);
+            // Send Network message
+            List<Pair<string, string>> msg = _world_item_manager.CreateDropItemNetworkMessage(_item.id, _drop_amt, _inv_pos);
+            NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
+
+            // Pretend that a drop message was received
+            _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+
+            Deactivate();
+        }
+        else
+        {
+            _error_text.text = "Invalid amount";
+        }
+
+    }
+
+    public void CancelDropButtonOnClick()
+    {
+        Debug.Log("Cancel");
+        Deactivate();
     }
 }
