@@ -73,7 +73,10 @@ extern "C" void TCP_DisposeClient(LobbyClient* client)
 extern "C" int TCP_ConnectToServer(LobbyClient * client, const char * name, short port)
 {
 	if(client != NULL)
+  {
+    printf("before TCP_ConnectToServer\n");
 		return client->Init_Client_Socket(name, port);
+  }
     return -1;
 }
 
@@ -138,7 +141,6 @@ extern "C" char * TCP_GetData(LobbyClient * client)
 */
 extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 {
-	printf("TCP SEND: %s\n", message);
 	return client->Send(message, size);
 }
 

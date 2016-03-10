@@ -1,11 +1,24 @@
+/**********************************************************
+Project: Defendaman
+Source File: GameClient.cpp
+Revision History:
+    Date        Author      Description
+    2016-03-09  Gabriel Lee Added function headers and comments.
+Description: Class to handle data transfers for the client during the game using UDP.
+**********************************************************/
 #include "GameClient.h"
 using namespace Networking;
 
-/*
-    Initialize socket, and server address to lookup to
-
-    @return: socket file descriptor and the server address for future use
-*/
+/**********************************************************
+Description: Initialize socket, and server address to lookup to.
+Parameters: 
+    name - The host name of the server.
+    port - The port number of the server.
+Returns: Socket file descriptor and the server address for future use.
+Revision History:
+    Date        Author      Description
+    2016-03-09  Gabriel Lee Added function headers and comments.
+**********************************************************/
 int GameClient::Init_Client_Socket(const char* name, short port)
 {
     // create UDP socket
@@ -20,6 +33,17 @@ int GameClient::Init_Client_Socket(const char* name, short port)
 
     return 0;
 }
+
+/**********************************************************
+Description: Function to receive data from the server. 
+             The data received from the server is put onto 
+             the circular buffer.
+Parameters: none
+Returns: void
+Revision History:
+    Date        Author      Description
+    2016-03-09  Gabriel Lee Added function headers and comments.
+**********************************************************/
 void * GameClient::Recv()
 {
     int bytesRead = 0;
@@ -30,15 +54,14 @@ void * GameClient::Recv()
         int bytesToRead = PACKETLEN;
         char *message = (char *) malloc(PACKETLEN);
         while((recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length)) < PACKETLEN)
-         {
-           printf("Recv\n");
-          if(bytesRead < 0)
-          {
-            printf("recv() failed with errno: %d\n", errno);
-            return (void *)errno;
-          }
-          message += bytesRead;
-          bytesToRead -= bytesRead;
+        {
+            if(bytesRead < 0)
+            {
+                printf("recv() failed with errno: %d\n", errno);
+                return (void *)errno;
+            }
+            message += bytesRead;
+            bytesToRead -= bytesRead;
         }
         // push message to queue
         CBPushBack(&CBPackets, message);
@@ -46,10 +69,19 @@ void * GameClient::Recv()
     }
     return NULL;
 }
-/*
-    Wrapper function for UDP sendTo function. Failing to send prints an error
-    message with the data intended to send.
-*/
+
+/**********************************************************
+Description: Wrapper function for UDP sendTo function. 
+             Failing to send prints an error message with 
+             the data intended to send.
+Parameters:
+    message - The pointer to the data to be sent to the server
+    size - The size of the data to send
+Returns: Zero on success, otherwise the error number.
+Revision History:
+    Date        Author      Description
+    2016-03-09  Gabriel Lee Added function headers and comments.
+**********************************************************/
 int GameClient::Send(char * message, int size)
 {
     socklen_t length = sizeof(serverAddr);
