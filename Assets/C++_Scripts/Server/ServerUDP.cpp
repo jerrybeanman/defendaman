@@ -1,4 +1,7 @@
 #include "ServerUDP.h"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 using namespace Networking;
 
@@ -85,34 +88,66 @@ void * ServerUDP::Receive()
 {
     int err = 0;
     int nready = 0;
+    int numPlayers = 0;
     struct sockaddr_in Client;              /* Incoming client's socket address information */
     unsigned ClientLen = sizeof(Client);
     char* buf = (char *)malloc(BUFSIZE);
     fd_set rset;
+    char con[24][7000];
+    Player playa[24];
+    bool found = false;
 
+    memset(con, 0, sizeof(con));
     fprintf(stderr, "[maxfd:%d]\n", _maxfd);
+    char temp14[7000];
 
-    while (1)
+    while (1)	
     {
       rset = _allset;
       nready = select(_maxfd + 1, &rset, NULL, NULL, NULL);
 
       if(nready > 0 && FD_ISSET(_UDPReceivingSocket, &rset))
       {
-        if((err = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
+      	std::cerr << "hello." << std::endl;
+
+	if((err = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
         {
             fatal("UDP_Server_Recv: recvfrom() failed\n");
-            return 0;
+            //return 0;
         }
+	fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
+	
+	for(int i = 0; i < 24; i++)
+	{
+		if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
+		{
+			found = true;
+                        break;
+		}
+		else
+		{
+			found = false;
+		}
+	}	
+	if(!found)
+	{	
+		memcpy(&_PlayerList[numPlayers].connection, &Client, sizeof(Client));
+		sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
+	}
+	std::cout << buf << std::endl;
+	//std::cout << "FUCK YOU: " << connections[0] << std::endl;
+	
+
+	//TODO: Fix this for future implemenation. Need to parse a vector that TCP delivers
+	//Issue: this will only broadcast to the SENDING CLIENT only and will break on more than one client.
+
+      	Broadcast(buf);
       }
       else
       {
           fprintf(stderr, "ServerUDP: select error.\n");
       }
 
-      std::cout << buf << std::endl;
-
-      //this->ServerUDP::Broadcast(buf);
     }
     /* Unsure where to put this, this will clear up the select stuff
     close(_UDPReceivingSocket);
@@ -126,13 +161,19 @@ void * ServerUDP::Receive()
 */
 void ServerUDP::Broadcast(char* message)
 {
+  std::cerr << "size:" <<_PlayerList.size() << std::endl;
   for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
   {
-    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&_PlayerList[i].connection, sizeof(&_PlayerList[i].connection)) == -1)
+    if(strcmp(inet_ntoa (_PlayerList[i].connection.sin_addr), "0.0.0.0") == 0)
+	continue;
+    fprintf(stderr, "Trying: %s\n", inet_ntoa (_PlayerList[i].connection.sin_addr));
+
+    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&_PlayerList[i].connection, sizeof(sockaddr_in)) == -1)
     {
-      std::cerr << "errno: " << errno << std::endl;
+      std::cerr << "ServerUDP::Broadcast errno: " << errno << std::endl;
       return;
     }
+    
   }
 }
 /*
