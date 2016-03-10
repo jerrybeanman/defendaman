@@ -105,17 +105,31 @@ public class Inventory : MonoBehaviour
     /* 
      * Destroys the item in the specified inventory slot position
      */
-    public void DestroyInventoryItem(int inv_pos)
+    public void DestroyInventoryItem(int inv_pos, int num_items)
     {
         GameObject[] _inventory_items = GameObject.FindGameObjectsWithTag("InventoryItem");
-        foreach (GameObject _inventory_item in _inventory_items)
+        
+        ItemData _data;
+        //if ((data.amount - num_items) <= 0)
         {
-            if (_inventory_item.GetComponent<ItemData>().item_pos == inv_pos)
+            foreach (GameObject _inventory_item in _inventory_items)
             {
-                Destroy(_inventory_item);
-                break;
+                _data = _inventory_item.GetComponent<ItemData>();
+                if (_data.item_pos == inv_pos)
+                {
+                    if ((_data.amount -= num_items) <= 0)
+                    {
+                        Destroy(_inventory_item);
+                        inventory_item_list[inv_pos] = new Item();
+                    }
+                    else
+                    {
+                        _data.transform.GetChild(0).GetComponent<Text>().text = _data.amount.ToString();
+                    }
+                    break;
+                }
             }
-        }
+        }   
     }
 
     /* 
