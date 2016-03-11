@@ -1,6 +1,7 @@
 #ifndef SERVER_TCP
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
+#include <arpa/inet.h>
 #include "Server.h"
 #include "../Unity_Plugin/json11.hpp"
 
@@ -73,7 +74,7 @@ namespace Networking
 
           @return: void
       */
-      void Broadcast(char * message) override;
+      void Broadcast(char * message, sockaddr_in * excpt = NULL) override;
 
 			void PrepareSelect() override;
 
@@ -82,13 +83,24 @@ namespace Networking
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
 			/*Parses incoming JSON and process request*/
-			void CheckServerRequest(int playerId, char * buffer);
+			void CheckServerRequest(Player player, char * buffer);
 
 			/* Check ready status on all connected players*/
 			bool AllPlayersReady();
 
-			std::vector<Player> setPlayerList();
+			std::string generateMapSeed();
 
+			/* Generates an int for player based on IP of player */
+			int getPlayerId(std::string ipString);
+
+			std::map<int, Player> getPlayerTable();
+
+      std::string constructPlayerTable();
+
+      void sendToClient(Player player, char * message);
+
+
+      std::string UpdateID(const Player& player);
     private:
 			Player newPlayer;
 

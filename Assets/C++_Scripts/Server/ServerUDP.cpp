@@ -8,6 +8,11 @@ using namespace Networking;
 /*
 	Initialize socket, server address to lookup to, and connect to the server
 
+  Programmer: Gabriel Lee
+  
+  Revision: 
+    March 9, 2016 - Changed the socket to be non-blocking
+
 	@return: socket file descriptor
 */
 int ServerUDP::InitializeSocket(short port)
@@ -15,7 +20,7 @@ int ServerUDP::InitializeSocket(short port)
   int err = -1;
 
     /* Create a TCP streaming socket */
-    if ((_UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM, 0)) == -1 )
+    if ((_UDPReceivingSocket = socket(AF_INET, SOCK_DGRAM | SOCK_NONBLOCK, 0)) == -1 )
     {
         fatal("InitializeSocket: socket() failed\n");
         return _UDPReceivingSocket;
@@ -86,102 +91,110 @@ Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
 */
 void * ServerUDP::Receive()
 {
-    int err = 0;
-    int nready = 0;
-    int numPlayers = 0;
-    struct sockaddr_in Client;              /* Incoming client's socket address information */
-    unsigned ClientLen = sizeof(Client);
-    char* buf = (char *)malloc(BUFSIZE);
-    fd_set rset;
-    char con[24][7000];
-    Player playa[24];
-    bool found = false;
+  int err = 0;
+  int nready = 0;
+  int numPlayers = 0;
+  struct sockaddr_in Client;              /* Incoming client's socket address information */
+  unsigned ClientLen = sizeof(Client);
+  char* buf = (char *)malloc(BUFSIZE);
+  fd_set rset;
+  char con[24][7000];
+  bool found = false;
 
-    memset(con, 0, sizeof(con));
-    fprintf(stderr, "[maxfd:%d]\n", _maxfd);
-    char temp14[7000];
+  memset(con, 0, sizeof(con));
+  fprintf(stderr, "[maxfd:%d]\n", _maxfd);
 
-    while (1)	
+  while (1) 
+  {
+    rset = _allset;
+    nready = select(_maxfd + 1, &rset, NULL, NULL, NULL);
+
+    if(nready > 0 && FD_ISSET(_UDPReceivingSocket, &rset))
     {
-      rset = _allset;
-      nready = select(_maxfd + 1, &rset, NULL, NULL, NULL);
+      std::cerr << "hello." << std::endl;
 
-      if(nready > 0 && FD_ISSET(_UDPReceivingSocket, &rset))
+      if((err = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
       {
-      	std::cerr << "hello." << std::endl;
-
-	if((err = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
+          fatal("UDP_Server_Recv: recvfrom() failed\n");
+          //return 0;
+      }
+      fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
+    
+      for(int i = 0; i < 24; i++)
+      {
+        if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
         {
-            fatal("UDP_Server_Recv: recvfrom() failed\n");
-            //return 0;
+          found = true; //(numPlayers - 24)
+          break;
         }
-	fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
-	
-	for(int i = 0; i < 24; i++)
-	{
-		if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
-		{
-			found = true;
-                        break;
-		}
-		else
-		{
-			found = false;
-		}
-	}	
-	if(!found)
-	{	
-		memcpy(&_PlayerList[numPlayers].connection, &Client, sizeof(Client));
-		sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
-	}
-	std::cout << buf << std::endl;
-	//std::cout << "FUCK YOU: " << connections[0] << std::endl;
-	
+        else
+        {
+          found = false;
+        }
+      } 
+      if(!found)
+      { 
+        //memcpy(&_PlayerList[numPlayers].connection, &Client, sizeof(Client));
+        std::map<int, Player>::iterator it;
+        it = _PlayerTable.find(numPlayers-24);
+        if(it == _PlayerTable.end())
+        {
+          fprintf(stderr, "ServerUDP::Receive: Playerlist full.\n");
 
-	//TODO: Fix this for future implemenation. Need to parse a vector that TCP delivers
-	//Issue: this will only broadcast to the SENDING CLIENT only and will break on more than one client.
-
-      	Broadcast(buf);
+        }
+        else
+        {
+          memcpy(&it->second.connection, &Client, sizeof(Client));
+        }
+        sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
       }
-      else
-      {
-          fprintf(stderr, "ServerUDP: select error.\n");
-      }
+      std::cout << buf << std::endl;
+    
 
+      //TODO: Fix this for future implemenation. Need to parse a vector that TCP delivers
+      //Issue: this will only broadcast to the SENDING CLIENT only and will break on more than one client.
+      Broadcast(buf);
     }
-    /* Unsure where to put this, this will clear up the select stuff
-    close(_UDPReceivingSocket);
-    FD_CLR(_UDPReceivingSocket, &_allset);
-    */
+    else
+    {
+      fprintf(stderr, "ServerUDP: select error.\n");
+    }
     free(buf);
+  }
+  /* Unsure where to put this, this will clear up the select stuff
+  close(_UDPReceivingSocket);
+  FD_CLR(_UDPReceivingSocket, &_allset);
+  */
 }
 
 /*
 	Sends a message to all the clients
+  
+  Revision: 
+  Date       Author      Description
+  2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
 */
-void ServerUDP::Broadcast(char* message)
+void ServerUDP::Broadcast(char* message, sockaddr_in * excpt)
 {
-  std::cerr << "size:" <<_PlayerList.size() << std::endl;
-  for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
+  for(auto it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
   {
-    if(strcmp(inet_ntoa (_PlayerList[i].connection.sin_addr), "0.0.0.0") == 0)
-	continue;
-    fprintf(stderr, "Trying: %s\n", inet_ntoa (_PlayerList[i].connection.sin_addr));
-
-    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&_PlayerList[i].connection, sizeof(sockaddr_in)) == -1)
+    if(strcmp(inet_ntoa ((it->second).connection.sin_addr), "0.0.0.0") == 0)
+      continue;
+    if(strcmp(inet_ntoa ((it->second).connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
+      continue;
+    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&(it->second).connection, sizeof(&(it->second).connection)) == -1)
     {
-      std::cerr << "ServerUDP::Broadcast errno: " << errno << std::endl;
+      std::cerr << "errno: " << errno << std::endl;
       return;
     }
-    
   }
 }
 /*
   Registers the passed in Player list as a class member to be used in broadcasting UDP packets.
 */
-void ServerUDP::SetPlayerList(std::vector<Player> players)
+void ServerUDP::SetPlayerList(std::map<int, Player> players)
 {
-  _PlayerList = players;
+  _PlayerTable = players;
 }
 
 /*
@@ -209,9 +222,15 @@ void ServerUDP::PrepareSelect()
     _maxfd = _UDPReceivingSocket;
     _maxi = -1;
 
+    std::map<int,Player> _clients;
+
     //Initialize the Player list to bad values.
-    std::vector<Player> _clients(24, _bad); //TODO Define 24 as a constant variable
-    _PlayerList = _clients;
+    for(int x = -24; x < 0; x++)
+    {
+      _clients[x] = _bad;
+    }
+    
+    _PlayerTable = _clients;
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);

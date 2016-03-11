@@ -27,15 +27,16 @@ namespace Networking
 	           /*
                 Sends a message to all the clients
             */
-            void Broadcast(char* message) override;
+            void Broadcast(char* message, sockaddr_in * excpt = NULL) override;
 
-						static void * CreateClientManager(void * server);
+			void SetPlayerList(std::map<int, Player> players);
 
-						void PrepareSelect() override;
+			static void * CreateClientManager(void * server);
 
-						int SetSocketOpt() override;
+			void PrepareSelect() override;
 
-						void SetPlayerList(std::vector<Player> players);
+			int SetSocketOpt() override;
+
 	};
 }
 

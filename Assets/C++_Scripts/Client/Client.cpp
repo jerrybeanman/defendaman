@@ -9,7 +9,6 @@ Date        Author      Description
 #include "Client.h"
 using namespace Networking;
 
-<<<<<<< HEAD
 /**********************************************************
 Description: Class constructor
 Parameters: none

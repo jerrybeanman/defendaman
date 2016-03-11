@@ -27,7 +27,49 @@ public class Movement : MonoBehaviour
 
 
     }
+    //Checks if the end teleport point is valid, or if it is in a wall
+    bool checkEnd(Vector2 vec, double distance)
+    {
 
+        RaycastHit2D hit = Physics2D.Raycast(rb2d.position + vec * (float)distance, -Vector2.up, 0.0001f);
+        if (hit.collider != null)
+        {
+            return false;
+        }
+        return true;
+    }
+    //Call to blink. distance is the max range of the blink, in world coordinates
+    public bool doBlink(float distance) {
+        Vector2 mousePos = Input.mousePosition;
+        double angle = getInfo();
+        double mouseDistance = getDistance(mousePos);
+      
+        if (mouseDistance < distance)
+        {
+            distance = (float)mouseDistance;
+          
+        }
+        Debug.Log("Mouse distnace: " + mouseDistance + " Real Distance: " + distance);
+        Vector2 vec = updateCoordinates(angle);
+        if(checkEnd(vec, distance))
+        {
+            rb2d.MovePosition(rb2d.position + vec * distance);
+
+        }
+        //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
+        else
+        {
+
+            //return false;
+            var layerMask = (1 << 8);
+            RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
+            rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+            Debug.Log("Vector Distance: " + hit.distance);
+
+        }
+
+        return true;
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Equals))
@@ -99,6 +141,17 @@ public class Movement : MonoBehaviour
             modAngle = (Mathf.PI + System.Math.Atan(y / x));// % 360;
         }
         return modAngle;
+    }
+    private double getDistance(Vector2 mousePos)
+    {
+        float x, y;
+        x = (Input.mousePosition.x);
+        y = (Input.mousePosition.y);
+        Vector3 mouseposition = Camera.main.ScreenToWorldPoint(new Vector3(x, y, 0));
+        print(mouseposition);
+        x = mouseposition.x - rb2d.position.x;
+        y = mouseposition.y - rb2d.position.y;
+        return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
     }
     //convert rad to degree
     public double getDegree(double angle)
@@ -187,6 +240,22 @@ public class Movement : MonoBehaviour
     void OnCollisonExit2D(Collision2D collision)
     {
 
+    }
+
+    public void setAbs()
+    {
+        movestyles = movestyle.absolute;
+    }
+    public void setRel()
+    {
+        movestyles = movestyle.relative;
+    }
+    public int getInputType()
+    {
+        if (movestyles == movestyle.absolute)
+            return 1;
+        else
+            return 0;
     }
 
 }

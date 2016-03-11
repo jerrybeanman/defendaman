@@ -18,7 +18,7 @@ for fail does not work
 */
 public enum DataType
 {
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6
+    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7
 }
 
 public enum Protocol
@@ -59,29 +59,30 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr TCPClient { get; private set; }
     public static IntPtr UDPClient { get; private set; }
 
+    public static bool InGame = false;
+
     #endregion
 
     void Start()
     {
+        Subscribe(StartGame, DataType.StartGame);
         try {
             TCPClient = TCP_CreateClient();
-            UDPClient = Game_CreateClient();
-            UDP_ConnectToServer("192.168.0.14", 7000);
-            UDP_StartReadThread();
         } catch (Exception e)
         {
             Debug.Log(e.ToString());
         }
-        StartOfGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        update_data(receive_data());
-        send_data();
-        if (Input.GetKeyDown(KeyCode.Space))
-            StartOfGame();
+        if (InGame)
+        {
+            foreach (var player in GameData.LobbyData)
+                update_data(receive_data());
+            send_data();
+        }
     }
     
     ////Code for subscribing to updates from client-server system////
@@ -112,7 +113,7 @@ public class NetworkingManager : MonoBehaviour
         }
     }
 
-    private void update_data(string JSONGameState)
+    public void update_data(string JSONGameState)
     {
         JSONArray gameObjects = null;
         try {
@@ -342,6 +343,17 @@ public class NetworkingManager : MonoBehaviour
 
     void StartGame(JSONClass data)
     {
+        try
+        {
+            UDPClient = Game_CreateClient();
+            UDP_ConnectToServer("192.168.0.14", 8000);
+            UDP_StartReadThread();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+        }
+
         int myPlayer = GameData.MyPlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
@@ -419,26 +431,6 @@ public class NetworkingManager : MonoBehaviour
         GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
         GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
         GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
-    }
-
-    public void StartOfGame()
-    {
-        Subscribe(StartGame, DataType.StartGame);
-
-        GameData.TeamSpawnPoints.Clear();
-        GameData.LobbyData.Clear();
-
-        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
-
-        GameData.MyPlayerID = 1;
-
-        if (Application.platform != RuntimePlatform.LinuxPlayer) {
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
-        }
-
-        update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }
 
     #endregion

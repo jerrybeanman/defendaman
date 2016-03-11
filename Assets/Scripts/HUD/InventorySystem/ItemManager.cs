@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 
 /*-----------------------------------------------------------------------------
--- ItemManager.cs - Responsible for creating a list of Items from a JSON 
---                  object
+-- ItemManager.cs - Script attached to the Inventory and the GameManager 
+--                  game objects. Responsible for creating Item objects 
+--                  from a JSON file and storing them in a list.
 --
 -- FUNCTIONS:
 --		void Start()
@@ -21,9 +22,13 @@ public class ItemManager : MonoBehaviour {
     private List<Item> _item_database = new List<Item>();
     private JSONNode _item_data;
 
+    /*
+     * Reads data from a JSON file and creates the item list.
+     */
     void Start()
     {
-        _item_data = JSON.Parse(File.ReadAllText(Application.dataPath + "/StreamingAssets/Items.json"));
+        _item_data = JSON.Parse(File.ReadAllText(Application.dataPath + 
+            "/StreamingAssets/Items.json"));
         construct_item_list();
     }
 
@@ -63,7 +68,8 @@ public class ItemManager : MonoBehaviour {
 --
 -- FUNCTIONS:
 --		void Start()
---		void construct_item_list()
+--		public Item(int id, string title, int value, bool stackable, string slug)
+--      public Item()
 --
 -- DATE:		17/02/2016
 -- REVISIONS:	(V1.0)
