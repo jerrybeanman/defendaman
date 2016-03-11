@@ -2,54 +2,99 @@
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
 #include "Server.h"
+#include "../Unity_Plugin/json11.hpp"
+
+
+//TODO: Implement this instead of Networking enum
+#define TEAMCODE 6
 
 namespace Networking
 {
 	class ServerTCP : public Server
 	{
 		public:
+
 			ServerTCP(){}
 			~ServerTCP(){}
 	    	/*
 	            Initialize socket, server address to lookup to, and connect to the server
 
-	            @return: socket file descriptor
-            */
-            int InitializeSocket(short port);
+                Interface:  int InitializeSocket(short port)
+                            [port] Port number
 
-            /*
-                 Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
-                Add connected player to the list of players
+                programmer: Jerry Jia
 
                 @return: socket file descriptor
             */
-            int Accept(Player * player);
+      int InitializeSocket(short port) override;
+
+            /*
+                Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
+                Add connected player to the list of players
+
+                Interface:  int Accept(Player * player)
+                            [player] Pointer to a Player structure
+
+                programmer: Jerry Jia
+
+                return: socket file descriptor
+            */
+      int Accept(Player * player);
 
             /*
                 Creates a child process to handle incoming messages from new player that has just connected to the lobby
 
-                @return: child PDI (0 for child process)
-            */
-            int CreateClientManager(int PlayerID);
+                Interface:  void * CreateClientManager(void * server)
+                            [server] Pointer to a void, which has to be a Server object
 
-           /*   
+                Programmer: Jerry Jia
+
+                return: child PDI (0 for child process)
+            */
+      static void * CreateClientManager(void * server);
+
+           /*
                 Recieves data from child process that is dedicated for each player's socket
 
-                @return: 1 on success, -1 on error, 0 on disconnect
+                Interface:  void * Receive()
+
+                Programmer: Jerry Jia
+
+                @return: Thread execution code
             */
-            int Receive(Player * player);
+      void * Receive() override;
 
-	        /*
-                Sends a message to all the clients
+	    /*
+          Sends a message to all the clients
 
-            */
-            void Broadcast(std::string message);
+          Interface:  void Broadcast(char * message)
 
-            void PrintPlayer(Player p);
-        private:
+          Programmer: Jerry Jia
 
-            /* List of players currently connected to the server */
-            std::vector<Player>             _PlayerList;
+          @return: void
+      */
+      void Broadcast(char * message) override;
+
+			void PrepareSelect() override;
+
+			int SetSocketOpt() override;
+
+			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
+
+			/*Parses incoming JSON and process request*/
+			void CheckServerRequest(int playerId, char * buffer);
+
+			/* Check ready status on all connected players*/
+			bool AllPlayersReady();
+
+			std::vector<Player> setPlayerList();
+
+    private:
+			Player newPlayer;
+
+			//Enum for the networking team to determine the type of message requested.
+			enum teamCode {Networking = 6};
+			enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3, PlayerJoinedLobby = 4, GameStart = 5};
 	};
 }
 
