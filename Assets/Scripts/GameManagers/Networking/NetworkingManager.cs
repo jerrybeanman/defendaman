@@ -45,6 +45,7 @@ public class NetworkingManager : MonoBehaviour
     #region Variables
     // Game object to send data of
     public Transform playerType;
+	public Transform lightSource;
     public GameObject player;
 
     //Holds the subscriber data
@@ -355,7 +356,7 @@ public class NetworkingManager : MonoBehaviour
         }
 
         int myPlayer = GameData.MyPlayerID;
-        int myTeam = 0;
+        int myTeam = GameData.LobbyData[myPlayer].TeamID;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         update_data(GenerateMapInJSON(data["Seed"].AsInt));
@@ -382,6 +383,12 @@ public class NetworkingManager : MonoBehaviour
                     break;
             }
 
+			if (myTeam == playerData.Value.TeamID) {
+				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lighting.transform.parent = createdPlayer.transform;
+				lighting.transform.Rotate (0,0,-90);
+				lighting.transform.Translate(0,0,9);
+			}
 
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
