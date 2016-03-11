@@ -13,7 +13,8 @@ public enum NetworkCode
 	ReadyRequest 		= 3,
 	PlayerJoinedLobby 	= 4,
 	GameStart 			= 5,
-	UpdatePlayerList	= 6
+	UpdatePlayerList	= 6,
+	PlayerLeftLobby		= 7
 }
 public class NetworkKeyString
 {
@@ -44,6 +45,7 @@ public class MenuScript : MonoBehaviour {
     public GameObject settings_menu;
     public GameObject connect_menu;
     public GameObject lobby_menu;
+	public Toggle	  ready_toogle;
 
     public GameObject team1_list;
     public GameObject team2_list;
@@ -195,9 +197,16 @@ public class MenuScript : MonoBehaviour {
 						UpdateLobbyList();	
                         break;
                     }
+					case NetworkCode.PlayerLeftLobby:
+					{
+						GameData.LobbyData.Remove(PlayerPacketID);
+						UpdateLobbyList();
+						break;
+					}
                     case NetworkCode.GameStart:
                     {
-                        // start the game
+						FormatedData = "Player: " + PlayerPacketID + " has started the game!";
+						// start game stuff here
                         break;
                     }
                 }
@@ -225,8 +234,7 @@ public class MenuScript : MonoBehaviour {
 
     // === connection menu ===
     public void JoinLobby()
-    {
-		Debug.Log("Scamaaaaaz");
+    {			
         string name = _GetInputText("NameInput");
         string ip = _GetInputText("IPInput");
         // TODO: validate player name and IP addr
@@ -262,6 +270,7 @@ public class MenuScript : MonoBehaviour {
         } else
             RecievedData = "IP length is zero";
 		_SwitchMenu(MenuStates.Lobby);
+		
 		
 	}
 	
@@ -374,7 +383,6 @@ public class MenuScript : MonoBehaviour {
 		
 		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.StartGame, "1"));
 		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA);
 		// Send dummy packet
 		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
@@ -386,13 +394,13 @@ public class MenuScript : MonoBehaviour {
 		team_select_panel.SetActive(false);
 	}
 	
-	public void SetReady(bool isReady)
+	public void SetReady()
 	{
 		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-		packetData.Add (new Pair<string, string>("PlayerID", PlayerID.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.Ready, isReady ? "1" : "0"));
+		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
+		packetData.Add(new Pair<string, string>(NetworkKeyString.Ready, ready_toogle.isOn ? "1" : "0"));
 		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ReadyRequest, packetData, Protocol.NA);
-		
+
 		// Send dummy packet
 		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
 		{
@@ -438,6 +446,13 @@ public class MenuScript : MonoBehaviour {
 
 	public void LeaveLobby()
 	{
+		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
+		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerLeftLobby, packetData, Protocol.NA);
+		// Send dummy packet
+		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
+			Debug.Log("[Debug] LeaveLobby(): Packet sending failed");
+
 		if(connected)
 		{
 			connected = false;
