@@ -5,6 +5,12 @@
 #include "Server.h"
 #include "../Unity_Plugin/json11.hpp"
 
+#define PlayerID    "PlayerID"
+#define TeamID      "TeamID"
+#define ClassID     "ClassID"
+#define Ready       "Ready"
+#define StartGame   "StartGame"
+#define UserName    "UserName"
 
 //TODO: Implement this instead of Networking enum
 #define TEAMCODE 6
