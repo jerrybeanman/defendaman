@@ -189,10 +189,6 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       _PlayerTable[player.id].isReady = (json["Ready"].int_value() ? true : false);
       this->ServerTCP::Broadcast(buffer);
 
-      //All players in lobby are ready
-      if (this->ServerTCP::AllPlayersReady())
-        this->ServerTCP::Broadcast(generateMapSeed().c_str());
-
       break;
 
     //New Player has joined lobby
@@ -211,6 +207,16 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       _PlayerTable.erase(json["PlayerID"].int_value());
       this->ServerTCP::Broadcast(buffer);
       break;
+    case GameStart:
+      std::cout << "Player: " << json["PlayerID"].int_value() << " has started the game" << std::endl;
+      //All players in lobby are ready
+      if (this->ServerTCP::AllPlayersReady())
+      {
+        this->ServerTCP::Broadcast(buffer);
+        this->ServerTCP::Broadcast(generateMapSeed().c_str());
+      }
+      break;
+
   }
 }
 
