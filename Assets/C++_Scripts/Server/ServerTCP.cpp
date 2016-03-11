@@ -50,7 +50,6 @@ int ServerTCP::InitializeSocket(short port)
 
 int ServerTCP::Accept(Player * player)
 {
-    char buf[PACKETLEN];
     unsigned int        ClientLen = sizeof(player->connection);
 
     /* Accepts a connection from the client */
@@ -68,9 +67,6 @@ int ServerTCP::Accept(Player * player)
     int id = getPlayerId(inet_ntoa(player->connection.sin_addr));
     player->id = id;
     _PlayerTable.insert(std::pair<int, Player>(id, *player));
-
-    //Broadcast to all players the new player ID
-    this->ServerTCP::Broadcast(buf);
 
     newPlayer = *player;
     return player->id;
@@ -122,13 +118,8 @@ void * ServerTCP::Receive()
 
           return 0;
       	}
-        /* Data received */
-        std::cout << "Data Received: " << buf << std::endl;
         //Handle Data Received
         this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
-      	/* Broadcast echo packet back to all players */
-        //TODO - Send ID of new player to all players
-        this->ServerTCP::Broadcast(buf);
     }
     free(buf);
     return 0;
@@ -137,9 +128,10 @@ void * ServerTCP::Receive()
 /*
 	Sends a message to all the clients
 */
-void ServerTCP::Broadcast(char * message)
+void ServerTCP::Broadcast(const char * message)
 {
   Player tmpPlayer;
+
   for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
@@ -151,10 +143,11 @@ void ServerTCP::Broadcast(char * message)
     }
   }
 }
+
 /*
 	Sends a message to a specific client
 */
-void ServerTCP::sendToClient(Player player, char * message)
+void ServerTCP::sendToClient(Player player, const char * message)
 {
 	if(send(player.socket, message, PACKETLEN, 0) == -1)
 	{
@@ -168,77 +161,62 @@ void ServerTCP::sendToClient(Player player, char * message)
 /* Parses incoming JSON and process request */
 void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
-  char * buf;
-  buf = (char *)malloc(PACKETLEN);
+  std::string error;
+  Json json = Json::parse(buffer, error).array_items()[0];
 
-  //variables needed to hold json values
-  int code, idValue, requestValue;
-  std::string username;
-
-
-  //Parse JSON buffer
-  parseServerRequest(buffer, code, idValue, requestValue, username);
-
-  if (code != Networking)
+  if (json["DataType"].int_value() != Networking)
     return;
 
-  switch(idValue)
+  switch(json["ID"].int_value())
   {
     //Player joining team request
     case TeamChangeRequest:
-      std::cout << "Team change: " << requestValue << std::endl;
-      _PlayerTable[player.id].team = requestValue;
+      std::cout << "Team change: " << json["TeamID"].int_value() << std::endl;
+      _PlayerTable[player.id].team = json["TeamID"].int_value();
+      this->ServerTCP::Broadcast(buffer);
       break;
 
     //Player joining class request
     case ClassChangeRequest:
-	  std::cout << "Class change: " << requestValue << std::endl;
-     _PlayerTable [player.id].playerClass= requestValue;
+      std::cout << "Class change: " << json["ClassID"].int_value() << std::endl;
+      _PlayerTable [player.id].playerClass = json["ClassID"].int_value();
+      this->ServerTCP::Broadcast(buffer);
       break;
 
     //Player making a ready request
     case ReadyRequest:
-      std::cout << "Ready change: " << requestValue << std::endl;
-      //Player not ready
-      if (requestValue == 0)
-      {
-        _PlayerTable[player.id].isReady = false;
-        //tmpPlayer.isReady = false;
-      }
-      //Player is ready
-      else if (requestValue == 1)
-      {
-        _PlayerTable[player.id].isReady = true;
-        //tmpPlayer.isReady =  true;
-      }
+      std::cout << "Ready change: " << (json["Ready"].int_value() ? "ready" : "not ready") << std::endl;
+      _PlayerTable[player.id].isReady = (json["Ready"].int_value() ? true : false);
+      this->ServerTCP::Broadcast(buffer);
+
       //All players in lobby are ready
       if (this->ServerTCP::AllPlayersReady())
-      {
-        strcpy(buf, (generateMapSeed()).c_str());
-        this->ServerTCP::Broadcast(buf);
-      }
+        this->ServerTCP::Broadcast(generateMapSeed().c_str());
+
       break;
 
     //New Player has joined lobby
     case PlayerJoinedLobby:
-	  char* message = (char*)malloc(PACKETLEN);
-	  std::cout << "New Player Change: " << username << std::endl;
-	  strcpy(_PlayerTable[player.id].username, username.c_str());
-	  strcpy(message, constructPlayerTable().c_str());
+  	  std::cout << "New Player Change: " << json["UserName"].string_value() << std::endl;
+  	  strcpy(_PlayerTable[player.id].username, json["UserName"].string_value().c_str());
 
-	  //Send player a table of players
-	  sendToClient(player, message);
-      //Create packet and send to every1
-        //We're developers
-      this->ServerTCP::Broadcast((char *)UpdateID(_PlayerTable[player.id]).c_str());
-      free(message);
+  	  //Send player a table of players
+  	  sendToClient(player, constructPlayerTable().c_str());
+
+      //Create packet and send to everyone
+      this->ServerTCP::Broadcast(UpdateID(_PlayerTable[player.id]).c_str());
+      break;
+    case PlayerLeftLobby:
+      std::cout << "Player: " << json["PlayerID"].int_value() << " has left the lobby" << std::endl;
+      _PlayerTable.erase(json["PlayerID"].int_value());
+      this->ServerTCP::Broadcast(buffer);
       break;
   }
-  free(buf);
 }
+
 /*
-    Takes in a buffer holding the JSON string received from the client and formats the data into
-    the variables that are passed in to be used in other functions.
+     Takes in a buffer holding the JSON string received from the client and formats the data into
+     the variables that are passed in to be used in other functions.
     Example: [{"DataType" : 6, "ID" : 1, "PlayerID" : 0, "TeamID" : 1}]
 */
 void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username)
@@ -256,9 +234,9 @@ void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& ID
   }
 
   //Parsing data in JSON object
-  DataType = json["DataType"].int_value();
-  ID = json["ID"].int_value();
-  IDValue = json["TeamID"].int_value();         //Check if player is making a team request
+  DataType  = json["DataType"].int_value();
+  ID        = json["ID"].int_value();
+  IDValue   = json["TeamID"].int_value();         //Check if player is making a team request
   if (IDValue == 0)
     IDValue = json["ClassID"].int_value();      //Check if player is making a class request
 
@@ -308,12 +286,12 @@ std::string ServerTCP::constructPlayerTable()
 */
 std::string ServerTCP::UpdateID(const Player& player)
 {
-   char buf[PACKETLEN];
+    char buf[PACKETLEN];
     std::cout << player.username << std::endl;
-   sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
-   std::string temp(buf);
+    sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
+    std::string temp(buf);
     std::cout << "IN UPDATE ID: " << temp << std::endl;
-   return temp;
+    return temp;
 }
 
 std::string ServerTCP::generateMapSeed(){
