@@ -17,10 +17,10 @@ public class PlayerData {
 public class GameData
 {
     public static Dictionary<int,PlayerData> LobbyData = new Dictionary<int, PlayerData>();
-    public static int MyPlayerID { get; set; }
-    public static int EnemyKingID { get; set; }
-    public static int AllyKingID { get; set; }
-    public static bool MouseBlocked { get; set; }
+	public static PlayerData 	MyPlayer		{ get; set; }
+    public static int 			EnemyKingID 	{ get; set; }
+    public static int 			AllyKingID 		{ get; set; }
+    public static bool 			MouseBlocked 	{ get; set; }
 
     //Pair of x/y spawn points where index+1 is teamid
     public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();

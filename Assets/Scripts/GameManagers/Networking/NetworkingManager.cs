@@ -354,7 +354,7 @@ public class NetworkingManager : MonoBehaviour
             Debug.Log(e.ToString());
         }
 
-        int myPlayer = GameData.MyPlayerID;
+        int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
