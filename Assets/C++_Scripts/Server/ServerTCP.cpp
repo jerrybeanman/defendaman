@@ -140,7 +140,7 @@ void * ServerTCP::Receive()
 void ServerTCP::Broadcast(const char * message)
 {
   Player tmpPlayer;
-
+  std::cout << "In BroadCast(): " << message << std::endl;
   for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
@@ -180,8 +180,6 @@ void ServerTCP::sendToClient(Player player, const char * message)
  */
 void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
-  pthread_mutex_t access;
-  pthread_mutex_lock(&access);
   std::string error;
   Json json = Json::parse(buffer, error).array_items()[0];
 
@@ -239,7 +237,6 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       break;
 
   }
-  pthread_mutex_unlock(&access);
 }
 
 /**
