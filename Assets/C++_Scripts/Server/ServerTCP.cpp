@@ -161,6 +161,8 @@ void ServerTCP::sendToClient(Player player, const char * message)
 /* Parses incoming JSON and process request */
 void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
+  pthread_mutex_t access;
+  pthread_mutex_lock(&access);
   std::string error;
   Json json = Json::parse(buffer, error).array_items()[0];
 
@@ -218,6 +220,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       break;
 
   }
+  pthread_mutex_unlock(&access);
 }
 
 /*
@@ -271,18 +274,20 @@ bool ServerTCP::AllPlayersReady()
 }
 std::string ServerTCP::constructPlayerTable()
 {
-	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : ";
-	for (auto it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
+	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : [";
+	for (auto it = _PlayerTable.begin(); it != _PlayerTable.end();)
 	{
 		std::string tempUserName((it->second).username);
-		packet += "[{PlayerID: " + std::to_string(it->first);
-		packet += ", UserName : \"" + tempUserName + "\"";
+		packet += "{";
+    packet += "PlayerID: " + std::to_string(it->first);
+		packet += ",  UserName : \"" + tempUserName + "\"";
 		packet += ", TeamID : " +  std::to_string((it->second).team);
 		packet += ", ClassID : " + std::to_string((it->second).playerClass);
 		packet += ", Ready : " + std::to_string(Server::isReadyToInt(it->second));
-		packet += "}";
+		packet += (++it == _PlayerTable.end() ? "}" : "},");
 	}
-	packet += "]}]";
+	packet +=    "]";
+  packet += "}]";
 
   std::cout << "THIS IS OUR PACKET THAT WE ARE SENDING" << packet << std::endl;
 	return packet;
