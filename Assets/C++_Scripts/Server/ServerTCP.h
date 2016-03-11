@@ -74,7 +74,11 @@ namespace Networking
 
           @return: void
       */
-      void Broadcast(char * message) override;
+      void Broadcast(char * message, sockaddr_in * excpt = NULL) override;
+
+			void PrepareSelect() override;
+
+			int SetSocketOpt() override;
 
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
@@ -91,12 +95,12 @@ namespace Networking
 
 			std::map<int, Player> getPlayerTable();
 
-            std::string constructPlayerTable();
+      std::string constructPlayerTable();
 
-            void sendToClient(Player player, char * message);
+      void sendToClient(Player player, char * message);
 
 
-            std::string UpdateID(const Player& player);
+      std::string UpdateID(const Player& player);
     private:
 			Player newPlayer;
 

@@ -19,6 +19,7 @@ Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
 **********************************************************/
+
 int GameClient::Init_Client_Socket(const char* name, short port)
 {
     // create UDP socket
@@ -92,3 +93,9 @@ int GameClient::Send(char * message, int size)
     }
     return 0;
 }
+
+/*
+    Initialize socket, and server address to lookup to
+
+    @return: socket file descriptor and the server address for future use
+*/
