@@ -141,7 +141,8 @@ extern "C" char * TCP_GetData(LobbyClient * client)
 */
 extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 {
-	return client->Send(message, size);
+	// ITS ONLY PACKET LEN, IGNORE SIZE FOR NOW
+	return client->Send(message, PACKETLEN);
 }
 
 /*===========================================
