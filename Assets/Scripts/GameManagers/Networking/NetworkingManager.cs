@@ -375,7 +375,7 @@ public class NetworkingManager : MonoBehaviour
 				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 				lighting.transform.parent = createdPlayer.transform;
 				lighting.transform.Rotate (0,0,-90);
-				lighting.transform.Translate(0,-10,9);
+				lighting.transform.Translate(0,0,9);
 			}
 
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
