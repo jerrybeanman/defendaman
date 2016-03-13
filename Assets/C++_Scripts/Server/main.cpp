@@ -24,7 +24,7 @@ int main()
   SigController.sa_handler = StartUDP;
   SigController.sa_flags = 0;
   sigemptyset( &SigController.sa_mask );
-  sigaction(SIGINT, &a, NULL );
+  sigaction(SIGINT, &SigController, NULL );
 
   int rc;
 

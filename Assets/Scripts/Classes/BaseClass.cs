@@ -125,7 +125,7 @@ public abstract class BaseClass : MonoBehaviour {
 
     void receiveAttackFromServer(JSONClass playerData)
     {
-        if (playerData["ID"] == GameData.MyPlayerID)
+        if (playerData["ID"] == GameData.MyPlayer.PlayerID)
             return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
         switch (playerData["Attack"].AsInt)

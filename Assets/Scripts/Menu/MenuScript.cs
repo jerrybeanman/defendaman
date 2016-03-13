@@ -6,25 +6,6 @@ using System;
 using UnityEngine;
 using SimpleJSON;
 
-public enum NetworkCode
-{
-	TeamChangeRequest 	= 1,
-	ClassChangeRequest 	= 2,
-	ReadyRequest 		= 3,
-	PlayerJoinedLobby 	= 4,
-	GameStart 			= 5,
-	UpdatePlayerList	= 6,
-	PlayerLeftLobby		= 7
-}
-public class NetworkKeyString
-{
-	public static string PlayerID 	= "PlayerID";
-	public static string TeamID		= "TeamID";
-	public static string ClassID	= "ClassID";
-	public static string Ready		= "Ready";
-	public static string StartGame 	= "StartGame";
-	public static string UserName   = "UserName";
-}
 public class MenuScript : MonoBehaviour {
     public enum MenuStates
     {
@@ -37,7 +18,6 @@ public class MenuScript : MonoBehaviour {
 
     // list to keep track of which menu to go back to
     private List<GameObject> _menu_order = new List<GameObject>();
-    private string _player_name;
 
     public Canvas menu_canvas;
 
@@ -56,17 +36,13 @@ public class MenuScript : MonoBehaviour {
     public GameObject class_select_panel;
 
     //----OnGUI test strings-------
-    private string RecievedData = "Waiting for Inputs...";
-    private string FormatedData = "Foramted...";
 
     private List<Transform> _team1_slots;
     private List<Transform> _team2_slots;
 
     private string SendingPacket;
-    private int PlayerID = -1;
-    private bool connected = false;
 
-    void Awake()
+	void Awake()
     {
         menu_canvas = menu_canvas.GetComponent<Canvas>();
 
@@ -97,139 +73,22 @@ public class MenuScript : MonoBehaviour {
     }
     void Update()
     {
-        if (connected)
+		if (LobbyNetwork.connected)
         {
             string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
             if (!String.Equals(tmp, "[]"))
             {
-                // NOTE:: This indicates the player that sent the packet, not the current player ID
-                int PlayerPacketID;
-				Debug.Log("[Debug]: " + tmp);
-                RecievedData = tmp;
-                var packet = (JSON.Parse(RecievedData).AsArray)[0];
-                PlayerPacketID = packet[NetworkKeyString.PlayerID].AsInt;
-                switch ((NetworkCode)packet["ID"].AsInt)
-                {
-                    case NetworkCode.TeamChangeRequest:
-                    {
-                        Debug.Log("[Debug]: Team chagne request");
-                        Debug.Log("[Debug]: Content--" + tmp);
-                        int TeamID = packet[NetworkKeyString.TeamID].AsInt;
-                        GameData.LobbyData[PlayerPacketID].TeamID = TeamID;
-
-                        FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", for team request on team: " + TeamID.ToString();
-						PrintData();
-				
-						UpdateLobbyList();
-				
-                        break;
-                    }
-                    case NetworkCode.ClassChangeRequest:
-                    {
-                        Debug.Log("[Debug]: Class change request");
-                        Debug.Log("[Debug]: Content--" + tmp);
-                        int ClassID = packet[NetworkKeyString.ClassID].AsInt;
-                        GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)ClassID;
-
-                        FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", for class request on class: " + ClassID.ToString();
-						PrintData();
-				
-						UpdateLobbyList();
-                        break;
-                    }
-                    case NetworkCode.ReadyRequest:
-                    {
-                        Debug.Log("[Debug]: Ready request");
-                        Debug.Log("[Debug]: Content--" + tmp);
-                        bool IsReady = packet[NetworkKeyString.Ready].AsBool;
-                        GameData.LobbyData[PlayerPacketID].Ready = IsReady;
-
-                        FormatedData = "Recieved from player ID: " + PlayerPacketID.ToString() + ", which is " + (IsReady ? "Ready" : "Not Ready");
-				
-						PrintData();
-						UpdateLobbyList();
-                        break;
-                    }
-                    case NetworkCode.PlayerJoinedLobby:
-                    {
-                        Debug.Log("[Debug]: Player has joined lobby");
-                        Debug.Log("[Debug]: Content--" + tmp);
-
-                        PlayerData tmpPlayer = new PlayerData();
-                        tmpPlayer.PlayerID = PlayerPacketID;
-                        tmpPlayer.Username = packet[NetworkKeyString.UserName];
-                        if (PlayerID == -1)
-                        {
-                            PlayerID = PlayerPacketID;
-                            GameData.MyPlayerID = PlayerPacketID;
-                            Debug.Log("[UltraDebug] Updated Player ID: " + PlayerID);
-
-                        }
-                        else
-                            GameData.LobbyData.Add(PlayerPacketID, tmpPlayer);
-						PrintData();
-				
-						UpdateLobbyList();
-                        break;
-                    }
-                    case NetworkCode.UpdatePlayerList:
-                    {
-                        Debug.Log("[Debug]: Got update table message");
-                        Debug.Log("[Debug]: Content--" + tmp);
-
-                        // fills in existing player data
-                        foreach (JSONNode playerData in packet["LobbyData"].AsArray)
-                        {
-							int id = playerData[NetworkKeyString.PlayerID].AsInt;
-							Debug.Log("[Debug]: IN UPDATEPLAYERLIST");
-							PlayerData tempPlayer 	= new PlayerData();
-							tempPlayer.PlayerID  	= id;
-							tempPlayer.ClassType 	= (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
-							tempPlayer.TeamID 		= playerData[NetworkKeyString.TeamID].AsInt;
-							tempPlayer.Ready 		= playerData[NetworkKeyString.Ready].AsBool;
-							tempPlayer.Username		= playerData[NetworkKeyString.UserName];
-                            GameData.LobbyData.Add(id, tempPlayer);
-
-                            Debug.Log("[Debug]: Player ID: " + GameData.LobbyData[id].PlayerID.ToString() + "ClassID: " +
-                                      GameData.LobbyData[id].ClassType.ToString() + "TeamID: " + GameData.LobbyData[id].TeamID.ToString() + "Username: " + GameData.LobbyData[id].Username);
-                        }
-                        FormatedData = "UpdatePlayerList";
-						UpdateLobbyList();	
-                        break;
-                    }
-					case NetworkCode.PlayerLeftLobby:
-					{
-						GameData.LobbyData.Remove(PlayerPacketID);
-						UpdateLobbyList();
-						break;
-					}
-                    case NetworkCode.GameStart:
-                    {
-						FormatedData = "Player: " + PlayerPacketID + " has started the game!";
-						// start game stuff here
-                        break;
-                    }
-                }
-
+                LobbyNetwork.ParseLobbyData(tmp);
+                UpdateLobbyList();
             }
+            
         }
     }
-
-	void PrintData()
-	{
-		Debug.Log("[Debug]: IN PrintData()");
-		foreach(PlayerData p in GameData.LobbyData.Values)
-		{
-			Debug.Log("[Debug]: Player ID: " + p.PlayerID.ToString() + "ClassID: " +
-			          p.ClassType.ToString() + "TeamID: " + p.TeamID.ToString() + "Username: " + p.Username);
-		}
-	}
 
     void OnGUI()
     {
         GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
-        GUI.Label(new Rect(10, 40, Screen.width, Screen.height), RecievedData);
-        GUI.Label(new Rect(10, 60, Screen.width, Screen.height), FormatedData);
+        GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
     }
 
     // === connection menu ===
@@ -240,40 +99,22 @@ public class MenuScript : MonoBehaviour {
         // TODO: validate player name and IP addr
         if (!(name.Length == 0) && !(ip.Length == 0))
         {
-            _player_name = name;
+            GameData.MyPlayer.Username = name;
 			Debug.Log("[Debug] IP: " + ip + "User Name:" + name);
-            // Connect to the server
-            if (NetworkingManager.TCP_ConnectToServer(ip, 7000) < 0)
-            {
-                RecievedData = "Cant connect to server";
-                return;	
-            }
-            // Thread creation
-            if (NetworkingManager.TCP_StartReadThread() < 0)
-            {
-                RecievedData = "Error creating read thread";
-                return;
-            }
-
-            RecievedData = "Connected";
-            connected = true;
-
-            List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-            packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + _player_name + "\""));
-            SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerJoinedLobby, packetData, Protocol.NA);
-            // Send dummy packet
-            if (NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
-            {
-                // handle error here 
-                Debug.Log("SelectTeam(): Packet sending failed\n");
-            }
-        } else
-            RecievedData = "IP length is zero";
-		_SwitchMenu(MenuStates.Lobby);
+			if(!LobbyNetwork.Connect(ip))
+				return;
+			StartCoroutine(DoSend());
+			LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
+			_SwitchMenu(MenuStates.Lobby);
+        }
 		
 		
 	}
-	
+
+	IEnumerator DoSend()
+	{
+		yield return new WaitForSeconds(1);
+	}
     // === game lobby menu ===
 
     public void UpdateLobbyList()
@@ -326,18 +167,8 @@ public class MenuScript : MonoBehaviour {
     public void SelectTeam(int team)
     {
         team_select_panel.SetActive(false); // should do this after networking call
-
-		// Construct json packet 
-		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, team.ToString()));
-		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.TeamChangeRequest, packetData, Protocol.NA);
-		// Send dummy packet
-		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
-		{
-			// handle error here 
-			Debug.Log("SelectTeam(): Packet sending failed\n");
-		}
+		GameData.MyPlayer.TeamID = team;
+		LobbyNetwork.SendLobbyData(NetworkCode.TeamChangeRequest);
 
     }
 	public void SelectClass(int value)
@@ -363,17 +194,8 @@ public class MenuScript : MonoBehaviour {
                 ninja_panel.SetActive(true);
                 break;
         }
-		
-		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, value.ToString()));
-		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ClassChangeRequest, packetData, Protocol.NA);
-		
-		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
-		{
-			// handle error here
-			Debug.Log("SelectClass(): Pakcet sending failed");
-		}
+		GameData.MyPlayer.ClassType = (ClassType)value;
+		LobbyNetwork.SendLobbyData(NetworkCode.ClassChangeRequest);
 	}
 
 	public void StartGame()
@@ -381,32 +203,15 @@ public class MenuScript : MonoBehaviour {
 		// Don't need this atm
 		// Application.LoadLevel("HUDScene");
 		
-		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
-		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA);
-		// Send dummy packet
-		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
-		{
-			// handle error here 
-			Debug.Log("SelectTeam(): Packet sending failed\n");
-		}
+		LobbyNetwork.SendLobbyData(NetworkCode.GameStart);
 		
 		team_select_panel.SetActive(false);
 	}
 	
 	public void SetReady()
 	{
-		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.Ready, ready_toogle.isOn ? "1" : "0"));
-		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ReadyRequest, packetData, Protocol.NA);
-
-		// Send dummy packet
-		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
-		{
-			// handle error here
-			Debug.Log("SetReady(): Packet sending failed");
-		}
+		GameData.MyPlayer.Ready = (ready_toogle.isOn ? true : false);
+		LobbyNetwork.SendLobbyData(NetworkCode.ReadyRequest);
 	}
 
 
@@ -446,16 +251,10 @@ public class MenuScript : MonoBehaviour {
 
 	public void LeaveLobby()
 	{
-		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-		packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, PlayerID.ToString()));
-		SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerLeftLobby, packetData, Protocol.NA);
-		// Send dummy packet
-		if(NetworkingManager.TCP_Send(SendingPacket, 256) < 0)
-			Debug.Log("[Debug] LeaveLobby(): Packet sending failed");
-
-		if(connected)
+		LobbyNetwork.SendLobbyData(NetworkCode.PlayerLeftLobby);
+		if(LobbyNetwork.connected)
 		{
-			connected = false;
+			LobbyNetwork.connected = false;
 			NetworkingManager.TCP_DisposeClient();
 
 		}
