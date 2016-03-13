@@ -352,7 +352,7 @@ std::string ServerTCP::generateMapSeed(){
 	int mapSeed;
 	srand (time (NULL));
 	mapSeed = rand ();
-	std::string packet = "{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}";
+	std::string packet = "[{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}]";
 	return packet;
 }
 
