@@ -66,7 +66,7 @@ public class LobbyNetwork : MonoBehaviour {
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.TeamChangeRequest, packetData, Protocol.NA));
 			break;
 		case NetworkCode.ClassChangeRequest:
-			packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, GameData.MyPlayer.ClassType.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, (int)GameData.MyPlayer.ClassType);
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ClassChangeRequest, packetData, Protocol.NA));
 			break;
 		case NetworkCode.ReadyRequest:
@@ -139,6 +139,7 @@ public class LobbyNetwork : MonoBehaviour {
                 tmpPlayer.Username = packet[NetworkKeyString.UserName];
                 if (GameData.MyPlayer.PlayerID == -1)
                 {
+                	Debug.Log("[Debug]: Got our own ID!");
                     GameData.MyPlayer.PlayerID = PlayerPacketID;
                 }
                 else
