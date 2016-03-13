@@ -107,6 +107,8 @@ void * ServerTCP::Receive()
         /* recv() failed */
       	if(BytesRead < 0)
       	{
+          if(errno == EINTR)
+              continue;
       		printf("recv() failed with errno: %d", errno);
       		return 0;
       	}

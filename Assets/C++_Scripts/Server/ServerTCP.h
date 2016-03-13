@@ -2,6 +2,7 @@
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
 #include <arpa/inet.h>
+#include <signal.h>
 #include "Server.h"
 #include "../Unity_Plugin/json11.hpp"
 
