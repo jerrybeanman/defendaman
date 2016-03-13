@@ -355,8 +355,8 @@ public class NetworkingManager : MonoBehaviour
             Debug.Log(e.ToString());
         }
 
-        int myPlayer = GameData.MyPlayerID;
-        int myTeam = GameData.LobbyData[myPlayer].TeamID;
+        int myPlayer = GameData.MyPlayer.PlayerID;
+        int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         update_data(GenerateMapInJSON(data["Seed"].AsInt));
