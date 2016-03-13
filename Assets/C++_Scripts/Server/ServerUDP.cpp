@@ -52,7 +52,7 @@ void * ServerUDP::Receive()
           return 0;
       }
       std::cout << buf << std::endl;
-      //this->ServerUDP::Broadcast(buf);
+      //this->ServerUDP::Broadcast(const buf);
     }
     free(buf);
 }
@@ -60,7 +60,7 @@ void * ServerUDP::Receive()
 /*
 	Sends a message to all the clients
 */
-void ServerUDP::Broadcast(char* message)
+void ServerUDP::Broadcast(const char* message)
 {
   for(auto it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
   {
@@ -72,7 +72,7 @@ void ServerUDP::Broadcast(char* message)
   }
 }
 /*
-  Registers the passed in Player list as a class member to be used in broadcasting UDP packets.
+  Registers the passed in Player list as a class member to be used in broadcasticonst ng UDP packets.
 */
 void ServerUDP::SetPlayerList(std::map<int, Player> players)
 {

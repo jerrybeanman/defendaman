@@ -7,7 +7,6 @@ public class NinjaClass : BaseClass
 
     void Start()
     {
-        Debug.Log("test start");
         Rigidbody2D attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
         attack.transform.parent = transform;
     }

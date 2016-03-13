@@ -45,6 +45,7 @@ public class NetworkingManager : MonoBehaviour
     #region Variables
     // Game object to send data of
     public Transform playerType;
+	public Transform lightSource;
     public GameObject player;
 
     //Holds the subscriber data
@@ -68,9 +69,9 @@ public class NetworkingManager : MonoBehaviour
         Subscribe(StartGame, DataType.StartGame);
         try {
             TCPClient = TCP_CreateClient();
-        } catch (Exception e)
+        } catch (Exception)
         {
-            Debug.Log(e.ToString());
+            //On Windows
         }
     }
 
@@ -349,18 +350,17 @@ public class NetworkingManager : MonoBehaviour
             UDP_ConnectToServer("192.168.0.14", 8000);
             UDP_StartReadThread();
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Debug.Log(e.ToString());
+            //On Windows
         }
 
-        int myPlayer = GameData.MyPlayerID;
+        int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         update_data(GenerateMapInJSON(data["Seed"].AsInt));
-
-        Debug.Log("Back to StartGame");
+        
         //foreach (JSONClass playerData in data["playersData"].AsArray)
         foreach (var playerData in GameData.LobbyData) {
             var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID-1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID-1].second, -10), Quaternion.identity)).gameObject;
@@ -382,6 +382,12 @@ public class NetworkingManager : MonoBehaviour
                     break;
             }
 
+			if (myTeam == playerData.Value.TeamID) {
+				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lighting.transform.parent = createdPlayer.transform;
+				lighting.transform.Rotate (0,0,-90);
+				lighting.transform.Translate(0,0,9);
+			}
 
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
