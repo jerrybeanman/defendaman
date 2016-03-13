@@ -66,7 +66,7 @@ public class LobbyNetwork : MonoBehaviour {
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.TeamChangeRequest, packetData, Protocol.NA));
 			break;
 		case NetworkCode.ClassChangeRequest:
-			packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, (int)GameData.MyPlayer.ClassType);
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, ((int)GameData.MyPlayer.ClassType).ToString()));
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ClassChangeRequest, packetData, Protocol.NA));
 			break;
 		case NetworkCode.ReadyRequest:
