@@ -8,13 +8,6 @@ ServerUDP serverUDP;
 
 void StartUDP(int signo);
 
-void * testThread(void * t)
-{
-    std::string s;
-    getline(std::cin, s);
-    kill(getpid(), SIGINT);
-    return 0;
-}
 
 int main()
 {
@@ -24,7 +17,7 @@ int main()
   SigController.sa_handler = StartUDP;
   SigController.sa_flags = 0;
   sigemptyset( &SigController.sa_mask );
-  sigaction(SIGINT, &SigController, NULL );
+  sigaction(SIGTERM, &SigController, NULL );
 
   int rc;
 
@@ -33,8 +26,6 @@ int main()
     std::cerr << "TCP Server initialization failed." << std::endl;
     return -1;
   }
-  pthread_t testThrea;
-  pthread_create(&testThrea, NULL, &testThread ,0);
 
   std::cerr << "TCP Server initialized." << std::endl;
 

@@ -38,7 +38,7 @@ public class LobbyNetwork : MonoBehaviour {
 		if (NetworkingManager.TCP_ConnectToServer(ip, 7000) < 0)
 		{
 			RecievedData = "Cant connect to server";
-			return false;	
+			return false;
 		}
 		// Thread creation
 		if (NetworkingManager.TCP_StartReadThread() < 0)
@@ -46,7 +46,7 @@ public class LobbyNetwork : MonoBehaviour {
 			RecievedData = "Error creating read thread";
 			return false;
 		}
-		
+
 		RecievedData = "Connected";
 		connected = true;
 		return true;
@@ -54,7 +54,7 @@ public class LobbyNetwork : MonoBehaviour {
 
 	public static void SendLobbyData(NetworkCode code)
 	{
-		// Construct json packet 
+		// Construct json packet
 		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 		if(code != NetworkCode.PlayerJoinedLobby)
 			packetData.Add (new Pair<string, string>(NetworkKeyString.PlayerID, GameData.MyPlayer.PlayerID.ToString()));
