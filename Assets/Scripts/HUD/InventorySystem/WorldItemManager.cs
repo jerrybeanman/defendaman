@@ -23,7 +23,6 @@ enum ItemUpdate { Pickup = 1, Drop = 2 }
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-
 public class WorldItemManager : MonoBehaviour
 {
     private int _dropped_item_instance_id;
@@ -85,7 +84,7 @@ public class WorldItemManager : MonoBehaviour
     public void ProcessPickUpEvent(int world_item_id, int player_id, int item_id, int amt)
     {
         // if (_my_player_id == player_id) // Disabled for testing, the player ID is set later
-        if (GameData.MyPlayerID == player_id)
+        if (GameData.MyPlayer.PlayerID == player_id)
         {
             _inventory.AddItem(item_id, amt);
         }
@@ -101,7 +100,7 @@ public class WorldItemManager : MonoBehaviour
                                  int amt, int inv_pos, int pos_x, int pos_y)
     {
         // if (_my_player_id == player_id) // Disabled for testing, the player ID is set later
-        if (GameData.MyPlayerID == player_id)
+        if (GameData.MyPlayer.PlayerID == player_id)
         {
             CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
         }
@@ -127,7 +126,7 @@ public class WorldItemManager : MonoBehaviour
     public int GenerateWorldItemId()
     {
         //return _my_player_id * 1000000 + _dropped_item_instance_id++; // Disabled for testing, the player ID is set later
-        return GameData.MyPlayerID * 1000000 + _dropped_item_instance_id++;
+        return GameData.MyPlayer.PlayerID * 1000000 + _dropped_item_instance_id++;
     }
 
     public List<Pair<string, string>> CreateDropItemNetworkMessage(int item_id, int amt, int inv_pos)
