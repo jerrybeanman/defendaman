@@ -17,7 +17,7 @@ public class PlayerData {
 public class GameData
 {
     public static Dictionary<int,PlayerData> LobbyData = new Dictionary<int, PlayerData>();
-	public static PlayerData 	MyPlayer		{ get; set; }
+	public static PlayerData 	MyPlayer		= new PlayerData();
     public static int 			EnemyKingID 	{ get; set; }
     public static int 			AllyKingID 		{ get; set; }
     public static bool 			MouseBlocked 	{ get; set; }
