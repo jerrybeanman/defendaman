@@ -29,15 +29,17 @@ public class MagicDebuff : Buff {
         if ((applyrate % 30) == 0) 
         {
             if (magnitude < 10) {
-                player.ClassStat.AtkPower -= (atkdebuff);
-                player.ClassStat.Defense -= (defdebuf);
-                magnitude++;
+                if ((player.ClassStat.AtkPower > 10) && (player.ClassStat.Defense > 10)) {
+                    player.ClassStat.AtkPower -= (atkdebuff);
+                    player.ClassStat.Defense -= (defdebuf);
+                    magnitude++;
+                }
             }
         }
         if(--duration < 0)
         {
-            player.ClassStat.AtkPower += (magnitude*atkdebuff);
-            player.ClassStat.Defense += (magnitude*defdebuf);
+            player.ClassStat.AtkPower += (magnitude * atkdebuff);
+            player.ClassStat.Defense += (magnitude * defdebuf);
             player.ClassStat.MoveSpeed += speeddebuff;
             Destroy(this);
         }

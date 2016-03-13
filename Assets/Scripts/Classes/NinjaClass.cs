@@ -33,17 +33,24 @@ public class NinjaClass : BaseClass
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
-
-
         base.basicAttack(dir);
         return cooldowns[0];
     }
 
     public override float specialAttack(Vector2 dir)
     {
+<<<<<<< HEAD
         // colins blink
         base.specialAttack(dir);
         gameObject.GetComponent<Movement>().doBlink(20f);
         return cooldowns[1];
+=======
+        base.specialAttack(dir);
+        if (gameObject.GetComponent<MagicDebuff>() == null) {
+            gameObject.GetComponent<Movement>().doBlink(20f);
+        }
+
+        return 2;
+>>>>>>> 5e8a82a7d8dfa847982103a37441048fdaac9386
     }
 }
