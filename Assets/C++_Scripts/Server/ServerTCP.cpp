@@ -107,6 +107,8 @@ void * ServerTCP::Receive()
         /* recv() failed */
       	if(BytesRead < 0)
       	{
+          if(errno == EINTR)
+              continue;
       		printf("recv() failed with errno: %d", errno);
       		return 0;
       	}
@@ -233,6 +235,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       {
         this->ServerTCP::Broadcast(buffer);
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
+        kill(getpid(), SIGTERM);
       }
       break;
 

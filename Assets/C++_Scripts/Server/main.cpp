@@ -1,17 +1,27 @@
-
 #include "Server.h"
 #include "ServerTCP.h"
 #include "ServerUDP.h"
-
 using namespace Networking;
+
+ServerTCP serverTCP;
+ServerUDP serverUDP;
+
+void StartUDP(int signo);
+
 
 int main()
 {
-  int rc;
-  ServerTCP TestServer;
-  ServerUDP UDPServer;
+  // Set signal handler for case
+  // when game is ready to be started
+  struct sigaction SigController;
+  SigController.sa_handler = StartUDP;
+  SigController.sa_flags = 0;
+  sigemptyset( &SigController.sa_mask );
+  sigaction(SIGTERM, &SigController, NULL );
 
-  if((rc = TestServer.InitializeSocket(7000)) != 0)
+  int rc;
+
+  if((rc = serverTCP.InitializeSocket(7000)) != 0)
   {
     std::cerr << "TCP Server initialization failed." << std::endl;
     return -1;
@@ -26,13 +36,13 @@ int main()
 
       int playerID;
       struct Player player;
-      if ((playerID = TestServer.Accept(&player)) == -1)
+      if ((playerID = serverTCP.Accept(&player)) == -1)
       {
         std::cerr << "rip.\n" << std::endl;
       }
 
       /* Creates the thread to handle new clients */
-      if(pthread_create(&readThread, NULL, &ServerTCP::CreateClientManager, (void *) &TestServer) < 0)
+      if(pthread_create(&readThread, NULL, &ServerTCP::CreateClientManager, (void *) &serverTCP) < 0)
       {
         std::cerr << "thread creation failed" << std::endl;
       }
@@ -40,4 +50,14 @@ int main()
 
 
   return 0;
+}
+
+void StartUDP(int signo)
+{
+    std::string s;
+    std::cout << "UDP server starting.." << std::endl;
+    while(getline(std::cin, s))
+    {
+      std::cout << s <<std::endl;
+    }
 }
