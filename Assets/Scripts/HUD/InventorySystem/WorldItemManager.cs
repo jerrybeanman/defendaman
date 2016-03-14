@@ -23,7 +23,6 @@ enum ItemUpdate { Pickup = 1, Drop = 2 }
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-
 public class WorldItemManager : MonoBehaviour
 {
     private int _dropped_item_instance_id;

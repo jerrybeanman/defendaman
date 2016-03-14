@@ -6,7 +6,7 @@ using System.Text;
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
 
 public class PlayerData {
-    public int PlayerID { get; set; }
+    public int PlayerID  = -1;
     public string Username { get; set; }
     public int TeamID { get; set; }
     public ClassType ClassType { get; set; }
