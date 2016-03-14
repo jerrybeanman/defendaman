@@ -54,8 +54,8 @@ namespace Networking
 		   Sends a message to all the clients
 
 		 */
-		virtual void Broadcast(const char * message) = 0;
-
+		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
+    
     virtual void * Receive() = 0;
 
     virtual void PrepareSelect() = 0;

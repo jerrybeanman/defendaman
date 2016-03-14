@@ -37,7 +37,7 @@ int main()
   while(1)
   {
       //assign it into the player object if we want to manipulate the thread
-      pthread_t readThread, udpThread;
+      pthread_t readThread;
 
       int playerID;
       struct Player player;
@@ -65,18 +65,19 @@ int main()
 void StartUDP(int signo)
 {
     std::string s;
+		pthread_t udpThread;
     std::cout << "UDP server starting.." << std::endl;
 
-		if((rc = UDPServer.InitializeSocket(8000)) != 0)
+		if((rc = serverUDP.InitializeSocket(8000)) != 0)
 		{
 			std::cerr << "UDP Server initialization failed." << std::endl;
-			return -1;
+			return;
 		}
 
 		std::cerr << "UDP Server initialized." << std::endl;
 
 		// Creates the thread to handle new clients
-		if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &UDPServer) < 0)
+		if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &serverUDP) < 0)
 		{
 			std::cerr << "thread creation failed" << std::endl;
 		}
@@ -84,7 +85,7 @@ void StartUDP(int signo)
     while(getline(std::cin, s))
     {
 			std::cout << "Command [" << s << "] acknowledged." << std::endl;
-			if (s1.find(s2) != std::string::npos)
+			if (s.find("quit") != std::string::npos)
 			{
         std::cout << "quitting" << '\n';
 				break;
@@ -98,15 +99,15 @@ void StartUDP(int signo)
 //Called only when UDPTEST is defined
 void TestUDP()
 {
-	if((rc = UDPServer.InitializeSocket(8000)) != 0)
+	if((rc = serverUDP.InitializeSocket(8000)) != 0)
 	{
 	  std::cerr << "UDP Server initialization failed." << std::endl;
-	  return -1;
+	  exit(10);
 	}
 
 	std::cerr << "UDP Server initialized." << std::endl;
 
-	//UDPServer.SetPlayerList(players);
+	//serverUDP.SetPlayerList(players);
 
 
 	//assign it into the player object if we want to manipulate the thread

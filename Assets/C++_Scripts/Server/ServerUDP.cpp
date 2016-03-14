@@ -175,7 +175,7 @@ void * ServerUDP::Receive()
   2016-03-10 Gabriel Lee      Add functionality to add exception to broadcast
   2016-03-13 Tyler Trepanier  No longer segfaults when there isn't an excpt
 */
-void ServerUDP::Broadcast(char* message, sockaddr_in * excpt)
+void ServerUDP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   for(std::map<int, Player>::const_iterator it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
   {

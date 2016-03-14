@@ -81,7 +81,7 @@ namespace Networking
 
           @return: void
       */
-      void Broadcast(char * message, sockaddr_in * excpt = NULL) override;
+      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
 
 			void PrepareSelect() override;
 

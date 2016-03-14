@@ -144,7 +144,7 @@ void * ServerTCP::Receive()
   Date       Author      Description
   2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
 */
-void ServerTCP::Broadcast(char * message, sockaddr_in * excpt)
+void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
   std::cout << "In BroadCast(): " << message << std::endl;
