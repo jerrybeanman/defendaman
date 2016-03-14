@@ -88,21 +88,24 @@ Programmer: Unknown
 Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
               Added in select functionality
 
+           Tyler Trepanier-Bracken  2016/03/09
+              Fine tuned UDP sending and receiving.
+
+
 */
 void * ServerUDP::Receive()
 {
-  int err = 0;
-  int nready = 0;
-  int numPlayers = 0;
-  struct sockaddr_in Client;              /* Incoming client's socket address information */
-  unsigned ClientLen = sizeof(Client);
-  char* buf = (char *)malloc(BUFSIZE);
-  fd_set rset;
-  char con[24][7000];
-  bool found = false;
+  int nready = 0;                      // Data received indicator.
+  int numPlayers = 0;                  // Number of currently connected players.
+  struct sockaddr_in Client;           // Incoming client's socket address information
+  unsigned ClientLen = sizeof(Client); // Client address length
+  char* buf = (char *)malloc(BUFSIZE); // Buffer for receiving packets
+  fd_set rset;                         // Ready set
+  char con[24][64];                    // Currently connected clients (Saves time from map iterating).
+  bool found = false;                  // Checks to see if a packet received from a client was from the proper client.
+  std::map<int, Player>::iterator it;  // Map iterator
 
   memset(con, 0, sizeof(con));
-  fprintf(stderr, "[maxfd:%d]\n", _maxfd);
 
   while (1)
   {
@@ -111,11 +114,9 @@ void * ServerUDP::Receive()
 
     if(nready > 0 && FD_ISSET(_UDPReceivingSocket, &rset))
     {
-      std::cerr << "hello, map size is: " << _PlayerTable.size() << std::endl;
-      if((err = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
+      if((recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
       {
           fatal("UDP_Server_Recv: recvfrom() failed\n");
-          //return 0;
       }
       fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
 
@@ -132,11 +133,8 @@ void * ServerUDP::Receive()
         }
       }
 
-      std::cerr << "[Found:" << found << "]" << std::endl;
       if(!found)
       {
-        //memcpy(&_PlayerList[numPlayers].connection, &Client, sizeof(Client));
-        std::map<int, Player>::iterator it;
         it = _PlayerTable.find(numPlayers-24);
         if(it == _PlayerTable.end())
         {
@@ -152,9 +150,9 @@ void * ServerUDP::Receive()
       }
       std::cout << buf << std::endl;
 
-
-      //TODO: Fix this for future implemenation. Need to parse a vector that TCP delivers
-      //Issue: this will only broadcast to the SENDING CLIENT only and will break on more than one client.
+      //TODO: Refactor when the TCP passes over the map to the UDP server,
+      //      will need to place all connections already into the char** "con"
+      //Issue: Accepts random players that haven't been pre-connected.
       Broadcast(buf);
     }
     else
@@ -173,31 +171,26 @@ void * ServerUDP::Receive()
 	Sends a message to all the clients
 
   Revision:
-  Date       Author      Description
-  2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
+  Date       Author           Description
+  2016-03-10 Gabriel Lee      Add functionality to add exception to broadcast
+  2016-03-13 Tyler Trepanier  No longer segfaults when there isn't an excpt
 */
 void ServerUDP::Broadcast(char* message, sockaddr_in * excpt)
 {
-  std::cerr << "broadcasting" << std::endl;
   for(std::map<int, Player>::const_iterator it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
   {
+    //Do not allow invalid clients
     if(strcmp(inet_ntoa ((it->second).connection.sin_addr), "0.0.0.0") == 0)
       continue;
-    std::cerr << "Break here?" << std::endl;
+
+    //If there has been a single client specified, check if they don't
     if(excpt != NULL && strcmp(inet_ntoa ((it->second).connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
       continue;
-    std::cerr << "Break there?" << std::endl;
 
-
-      fprintf(stderr, "[Addy:%s][port:%d]\n",
-        inet_ntoa ((it->second).connection.sin_addr),
-        ntohs(it->second.connection.sin_port));
     if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&((it->second).connection), sizeof(sockaddr_in)) == -1)
     {
-      fprintf(stderr, "Failed to send to [%s]\n",
-        inet_ntoa ((it->second).connection.sin_addr));
+      fprintf(stderr, "Failed to send to [%s]\n", inet_ntoa ((it->second).connection.sin_addr));
       perror("ServerUDP::Broadcast");
-
       return;
     }
   }
@@ -237,7 +230,7 @@ void ServerUDP::PrepareSelect()
 
     std::map<int,Player> _clients;
 
-    //Initialize the Player list to bad values.
+    //Initialize the Player list to bad values
     for(int x = -24; x < 0; x++)
     {
       _clients[x] = _bad;
