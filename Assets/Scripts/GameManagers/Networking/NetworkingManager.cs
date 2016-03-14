@@ -68,9 +68,9 @@ public class NetworkingManager : MonoBehaviour
         Subscribe(StartGame, DataType.StartGame);
         try {
             TCPClient = TCP_CreateClient();
-        } catch (Exception e)
+        } catch (Exception)
         {
-            Debug.Log(e.ToString());
+            //On Windows
         }
     }
 
@@ -351,7 +351,7 @@ public class NetworkingManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log(e.ToString());
+            //On Windows
         }
 
         int myPlayer = GameData.MyPlayerID;
@@ -359,8 +359,7 @@ public class NetworkingManager : MonoBehaviour
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         update_data(GenerateMapInJSON(data["Seed"].AsInt));
-
-        Debug.Log("Back to StartGame");
+        
         //foreach (JSONClass playerData in data["playersData"].AsArray)
         foreach (var playerData in GameData.LobbyData) {
             var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID-1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID-1].second, -10), Quaternion.identity)).gameObject;
