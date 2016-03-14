@@ -133,13 +133,18 @@ void * ServerTCP::Receive()
     return 0;
 }
 
-/**
- * Sends a message to all clients within _ClientTable
- * @author Jerry Jia, Gabriella Chueng
- * @date   2016-03-11
- * @param  message    [description]
- */
-void ServerTCP::Broadcast(const char * message)
+/*
+	Sends a message to all the clients
+
+  @author Jerry Jia, Gabriella Chueng
+  @date   2016-03-11
+  @param  message    [description]
+
+  Revision:
+  Date       Author      Description
+  2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
+*/
+void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
   std::cout << "In BroadCast(): " << message << std::endl;
@@ -172,6 +177,62 @@ void ServerTCP::sendToClient(Player player, const char * message)
 	}
 }
 
+/*
+Prepares the PlayerList with 24 invalid players, required to make sure
+that the socket is set to -1 if the socket is not being used for the
+function SelectRecv.
+
+Programmer: Vivek Kalia, Tyler Trepanier-Bracken
+*/
+void ServerTCP::PrepareSelect() // UNTESTED!!!!! DO NOT USE YET!
+{
+    /*
+    Player _bad;
+
+    //Initialize all components to be invalid!
+    _bad.socket = -1;
+    bzero((char *)&_bad.connection, sizeof(struct sockaddr_in));
+    _bad.id = -1;
+    memset(_bad.username, 0, sizeof(_bad.username));
+    _bad.team = -1;
+    _bad.playerClass = -1;
+    _bad.isReady = false;
+
+    fprintf(stderr, "[UDP Socket:%d]\n", _UDPReceivingSocket);
+
+    _maxfd = _UDPReceivingSocket;
+    _maxi = -1;
+
+    //Initialize the Player list to bad values.
+    std::vector<Player> _clients(24, _bad); //TODO Define 24 as a constant variable
+    _PlayerList = _clients;
+
+    FD_ZERO(&_allset);
+    FD_SET(_UDPReceivingSocket, &_allset);
+    */
+}
+
+/*
+Thread that forever reads in data from all clients.
+
+Programmer: Unknown
+
+Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
+              Added in select functionality
+*/
+int ServerTCP::SetSocketOpt()
+{
+  /*
+  //  UNTESTED!!!!!!!!
+  // set SO_REUSEADDR so port can be resused imemediately after exit, i.e., after CTRL-c
+    int flag = 1;
+    if (setsockopt (_UDPReceivingSocket, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
+	{
+        fatal("setsockopt");
+		    return -1;
+	}*/
+	return 0;
+}
 
 /**
  * Parse client json message and determines server logic
@@ -235,6 +296,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       {
         this->ServerTCP::Broadcast(buffer);
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
+        kill(getpid(), SIGTERM);
       }
       break;
 
@@ -336,12 +398,12 @@ std::string ServerTCP::constructPlayerTable()
  */
 std::string ServerTCP::UpdateID(const Player& player)
 {
-    char buf[PACKETLEN];
-    std::cout << player.username << std::endl;
-    sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
-    std::string temp(buf);
-    std::cout << "IN UPDATE ID: " << temp << std::endl;
-    return temp;
+   char buf[PACKETLEN];
+   std::cout << player.username << std::endl;
+   sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
+   std::string temp(buf);
+   std::cout << "IN UPDATE ID: " << temp << std::endl;
+   return temp;
 }
 
 /**

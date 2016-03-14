@@ -153,13 +153,13 @@ extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 /*
 	Creates a game client object, which will return an IntPtr type in C#
 
-	Interface:	GameClient * Game_CreateClient()
+	Interface:	GameClient * UDP_CreateClient()
 
 	Programmer: Gabriel Lee, Tyler Trepanier
 
 	@return: new GameClient object
 */
-extern "C" GameClient * Game_CreateClient()
+extern "C" GameClient * UDP_CreateClient()
 {
 	return new GameClient();
 }
@@ -167,14 +167,14 @@ extern "C" GameClient * Game_CreateClient()
 /*
 	Free a game client object from heap
 
-	Interface: 	void Game_DisposeClient(GameClient* client)
+	Interface: 	void UDP_DisposeClient(GameClient* client)
 				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 
 	Programmer: Gabriel Lee, Tyler Trepanier
 
 	@return: void
 */
-extern "C" void Game_DisposeClient(GameClient* client)
+extern "C" void UDP_DisposeClient(GameClient* client)
 {
 	if(client != NULL)
 	{
@@ -186,7 +186,7 @@ extern "C" void Game_DisposeClient(GameClient* client)
 /*
 	Connects to the server, calls Init_TCP_Client_Socket() in the Client object
 
-	Interface:	int Game_ConnectToServer(Client * client, const char * name, short port)
+	Interface:	int UDP_ConnectToServer(Client * client, const char * name, short port)
 				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 				[name] 	 IP address of peer host
 
@@ -194,7 +194,7 @@ extern "C" void Game_DisposeClient(GameClient* client)
 
 	@return: int
 */
-extern "C" int Game_ConnectToServer(GameClient * client, const char * name, short port)
+extern "C" int UDP_ConnectToServer(GameClient * client, const char * name, short port)
 {
 	if(client != NULL)
 		return client->Init_Client_Socket(name, port);
@@ -204,14 +204,14 @@ extern "C" int Game_ConnectToServer(GameClient * client, const char * name, shor
 /*
 	Helper function for thread creation. Calls recv() on the Client object.
 
-	Interface:	void * Game_Recv(void * arg)
+	Interface:	void * UDP_Recv(void * arg)
 				[arg] Has to take a client object
 
 	Programmer: Gabriel Lee, Tyler Trepanier
 
 	@return: function pointer to Client->Recv()
 */
-void * Game_Recv(void * arg)
+void * UDP_Recv(void * arg)
 {
 	return ((Client *)arg)->Recv();
 }
@@ -219,23 +219,23 @@ void * Game_Recv(void * arg)
 /*
 	Creates a thread for recieving packet data
 
-	Interface:	void Game_StartReadThread(GameClient * client)
+	Interface:	void UDP_StartReadThread(GameClient * client)
 				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 
 	Programmer: Gabriel Lee, Tyler Trepanier
 
 	@return: int
 */
-extern "C" int Game_StartReadThread(GameClient * client)
+extern "C" int UDP_StartReadThread(GameClient * client)
 {
-	return pthread_create(&client->ReadThread, NULL, &Game_Recv, (void *)client);
+	return pthread_create(&client->ReadThread, NULL, &UDP_Recv, (void *)client);
 }
 
 
 /*
 	Grabs data packets stored in the circular buffer in the Client object
 
-	Interface:	char * Game_GetData(Client * client)
+	Interface:	char * UDP_GetData(Client * client)
 				[client] Pointer to the client object (In this case, the IntPtr value in C#)
 
 
@@ -243,7 +243,7 @@ extern "C" int Game_StartReadThread(GameClient * client)
 
 	@return: "[]" if the circular buffer is empty, otherwise the packet pointed by rear in client->CircularBuf
 */
-extern "C" char * Game_GetData(GameClient * client)
+extern "C" char * UDP_GetData(GameClient * client)
 {
 		return client->GetData();
 }
@@ -251,7 +251,7 @@ extern "C" char * Game_GetData(GameClient * client)
 /*
 	Sends a message to the server socket
 
-	Interface:	int Game_Send(Client * client, char * message, int size)
+	Interface:	int UDP_Send(Client * client, char * message, int size)
 				[client] 	Pointer to the client object (In this case, the IntPtr value in C#)
 				[message]	The packet to send
 				[size]		Size of the packet
@@ -260,7 +260,7 @@ extern "C" char * Game_GetData(GameClient * client)
 
 	@return: -1 for failure, 0 on success
 */
-extern "C" int Game_Send(GameClient * client, char * message, int size)
+extern "C" int UDP_Send(GameClient * client, char * message, int size)
 {
 	return client->Send(message, size);
 }
