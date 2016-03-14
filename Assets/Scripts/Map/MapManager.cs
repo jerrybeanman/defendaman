@@ -74,6 +74,7 @@ public class MapManager : MonoBehaviour {
         // Find all objects with the tag "Tile" and add them to the arraylist.
         _pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
         print("pooledObjects size: " + _pooledObjects.Length);
+        
 
         // Deactivate all game objects on start.
         for (int i = 0; i < _pooledObjects.Length; i++) {
@@ -166,7 +167,6 @@ public class MapManager : MonoBehaviour {
         // Enums are not ints in C# :(
         switch ((EventType)id) {
             case EventType.CREATE_MAP:
-                Debug.Log("handle_event() : CREATE_MAP");
                 create_map(message);
                 draw_map();
                 instantiate_pool();
@@ -244,7 +244,5 @@ public class MapManager : MonoBehaviour {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
             }
-        Debug.Log("draw_map()");
     }
-
 }
