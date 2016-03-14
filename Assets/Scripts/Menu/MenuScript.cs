@@ -75,6 +75,7 @@ public class MenuScript : MonoBehaviour {
     {
 		if (LobbyNetwork.connected)
         {
+			Debug.Log("[Debug] Menuscript()::Upate()");
             string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
             if (!String.Equals(tmp, "[]"))
             {

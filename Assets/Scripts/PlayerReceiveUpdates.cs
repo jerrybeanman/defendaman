@@ -5,7 +5,7 @@ using SimpleJSON;
 
 //Carson
 //Enemy/Allies updating script
-public class NetworkingManager_test1 : MonoBehaviour {
+public class PlayerReceiveUpdates : MonoBehaviour {
     public int playerID;
 
 	// Use this for initialization
