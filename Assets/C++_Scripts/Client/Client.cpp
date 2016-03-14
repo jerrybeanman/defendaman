@@ -37,12 +37,9 @@ Client::Client()
 /**********************************************************
 Description: Initialize the socket address structure by recieving the port number and
 either the hostname or an IPV4 address.
-<<<<<<< HEAD
-=======
 
 Progarmmer: Jerry Jia
 
->>>>>>> 05df07e3c49bd3da28df795b798386443e07d217
 Parameters:
     hostname - The host name of the server.
     hostport - The port number of the server.
