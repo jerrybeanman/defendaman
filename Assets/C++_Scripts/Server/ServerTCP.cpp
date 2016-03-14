@@ -235,6 +235,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       {
         this->ServerTCP::Broadcast(buffer);
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
+        kill(getpid(), SIGTERM);
       }
       break;
 

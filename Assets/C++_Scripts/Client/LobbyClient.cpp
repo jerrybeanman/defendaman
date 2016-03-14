@@ -1,9 +1,14 @@
 /**********************************************************
 Project: Defendaman
+
 Source File: LobbyClient.cpp
+
+Programmer: Jerry Jia
+
 Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
+
 Description: Class to handle data transfers for the client while in the lobby using TCP.
 **********************************************************/
 #include "LobbyClient.h"
@@ -12,12 +17,17 @@ using namespace Networking;
 
 /**********************************************************
 Description: Initialize socket, server address to lookup to, and connect to the server.
+
+Progarmmer: Jerry Jia
+
 Parameters:
     name - The host name of the server.
     port - The port number of the server.
+
 Returns: Socket file descriptor.
+
 Revision History:
-    Date        Author      Description
+    Date        By      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
 **********************************************************/
 int LobbyClient::Init_Client_Socket(const char* name, short port)
@@ -43,11 +53,16 @@ int LobbyClient::Init_Client_Socket(const char* name, short port)
 }
 
 /**********************************************************
-Description: Function to receive data from the server. 
-             The data received from the server is put onto 
+Description: Function to receive data from the server.
+             The data received from the server is put onto
              the circular buffer.
+
+Progarmmer: Jerry Jia
+
 Parameters: none
+
 Returns: void
+
 Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
@@ -78,13 +93,18 @@ void * LobbyClient::Recv()
 }
 
 /**********************************************************
-Description: Wrapper function for TCP send function. 
-             Failing to send prints an error message with 
+Description: Wrapper function for TCP send function.
+             Failing to send prints an error message with
              the data intended to send.
+
+Progarmmer: Jerry Jia
+
 Parameters:
     message - The pointer to the data to be sent to the server
     size - The size of the data to send
+
 Returns: Zero on success, otherwise the error number.
+
 Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
