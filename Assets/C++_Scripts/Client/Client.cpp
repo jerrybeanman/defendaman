@@ -74,12 +74,9 @@ int Client::Init_SockAddr(const char* hostname, short hostport)
 
 /**********************************************************
 Description: Wrapper function to report errors.
-<<<<<<< HEAD
-=======
 
 Programmer: Jerry jia
 
->>>>>>> 05df07e3c49bd3da28df795b798386443e07d217
 Parameters:
     error - The error information to report.
 
