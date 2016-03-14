@@ -196,7 +196,7 @@ void ServerUDP::Broadcast(char* message, sockaddr_in * excpt)
   }
 }
 /*
-  Registers the passed in Player list as a class member to be used in broadcasting UDP packets.
+  Registers the passed in Player list as a class member to be used in broadcasticonst ng UDP packets.
 */
 void ServerUDP::SetPlayerList(std::map<int, Player> players)
 {

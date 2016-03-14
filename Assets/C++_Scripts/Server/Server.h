@@ -16,7 +16,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#define PACKETLEN       2048
+#define PACKETLEN       512
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
@@ -54,9 +54,9 @@ namespace Networking
 		   Sends a message to all the clients
 
 		 */
-		virtual void Broadcast(char * message, sockaddr_in * excpt = NULL) = 0;
+		virtual void Broadcast(const char * message) = 0;
 
-        virtual void * Receive() = 0;
+    virtual void * Receive() = 0;
 
     virtual void PrepareSelect() = 0;
 

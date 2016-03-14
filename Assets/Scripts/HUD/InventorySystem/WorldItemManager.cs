@@ -23,7 +23,6 @@ enum ItemUpdate { Pickup = 1, Drop = 2 }
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
-
 public class WorldItemManager : MonoBehaviour
 {
     private int _dropped_item_instance_id;
@@ -35,14 +34,14 @@ public class WorldItemManager : MonoBehaviour
     /*
      * Retrives the ItemManager script, the Inventory script and the player id
      */
-    void Start ()
+    void Start()
     {
         NetworkingManager.Subscribe(ReceiveItemPickupPacket, DataType.Item, (int)ItemUpdate.Pickup);
         NetworkingManager.Subscribe(ReceiveItemDropPacket, DataType.Item, (int)ItemUpdate.Drop);
 
         _item_manager = GetComponent<ItemManager>();
         _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
-        _my_player_id = GameData.MyPlayerID;
+        _my_player_id = GameData.MyPlayer.PlayerID;
 
         // Adding initial world items (testing)
         CreateWorldItem(100, 0, 1, 30, 30);
@@ -60,21 +59,21 @@ public class WorldItemManager : MonoBehaviour
         _item.GetComponent<WorldItemData>().world_item_id = world_item_id;
         _item.GetComponent<WorldItemData>().item = item;
         _item.GetComponent<WorldItemData>().amount = amt;
-        _item.transform.position = new Vector3(pos_x, pos_y, -5);       
+        _item.transform.position = new Vector3(pos_x, pos_y, -5);
     }
 
-    
+
     public void ReceiveItemPickupPacket(JSONClass itemPacket)
     {
-        ProcessPickUpEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt, 
+        ProcessPickUpEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt,
             itemPacket["ItemId"].AsInt, itemPacket["Amount"].AsInt);
     }
 
     public void ReceiveItemDropPacket(JSONClass itemPacket)
     {
-        ProcessDropEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt, 
+        ProcessDropEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt,
             itemPacket["ItemId"].AsInt, itemPacket["Amount"].AsInt, itemPacket["InvPos"].AsInt,
-            itemPacket["PosX"].AsInt,itemPacket["PosY"].AsInt);
+            itemPacket["PosX"].AsInt, itemPacket["PosY"].AsInt);
     }
 
     /*
@@ -84,7 +83,8 @@ public class WorldItemManager : MonoBehaviour
      */
     public void ProcessPickUpEvent(int world_item_id, int player_id, int item_id, int amt)
     {
-        if (_my_player_id == player_id)
+        // if (_my_player_id == player_id) // Disabled for testing, the player ID is set later
+        if (GameData.MyPlayer.PlayerID == player_id)
         {
             _inventory.AddItem(item_id, amt);
         }
@@ -99,13 +99,12 @@ public class WorldItemManager : MonoBehaviour
     public void ProcessDropEvent(int world_item_id, int player_id, int item_id,
                                  int amt, int inv_pos, int pos_x, int pos_y)
     {
-        if (_my_player_id == player_id)
+        // if (_my_player_id == player_id) // Disabled for testing, the player ID is set later
+        if (GameData.MyPlayer.PlayerID == player_id)
         {
             CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
         }
         _inventory.DestroyInventoryItem(inv_pos, amt);
-        //_inventory.inventory_item_list[inv_pos] = new Item();
-        
     }
 
     /*
@@ -126,17 +125,18 @@ public class WorldItemManager : MonoBehaviour
 
     public int GenerateWorldItemId()
     {
-        return _my_player_id * 1000000 + _dropped_item_instance_id++;
+        //return _my_player_id * 1000000 + _dropped_item_instance_id++; // Disabled for testing, the player ID is set later
+        return GameData.MyPlayer.PlayerID * 1000000 + _dropped_item_instance_id++;
     }
 
     public List<Pair<string, string>> CreateDropItemNetworkMessage(int item_id, int amt, int inv_pos)
     {
         List<Pair<string, string>> _drop_item_message = new List<Pair<string, string>>();
 
-        Vector3 position 
+        Vector3 position
             = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
         int _world_item_id = GenerateWorldItemId();
-        int _player_id = GameData.MyPlayerID;
+        int _player_id = GameData.MyPlayer.PlayerID;
 
         _drop_item_message.Add(new Pair<string, string>("WorldItemId", _world_item_id.ToString()));
         _drop_item_message.Add(new Pair<string, string>("PlayerId", _player_id.ToString()));
@@ -165,13 +165,13 @@ public class WorldItemManager : MonoBehaviour
     public List<Pair<string, string>> CreatePickupItemNetworkMessage(int world_item_id, int item_id, int amt)
     {
         List<Pair<string, string>> _pickup_item_message = new List<Pair<string, string>>();
-        int _player_id = GameData.MyPlayerID;
+        int _player_id = GameData.MyPlayer.PlayerID;
 
         _pickup_item_message.Add(new Pair<string, string>("WorldItemId", world_item_id.ToString()));
         _pickup_item_message.Add(new Pair<string, string>("PlayerId", _player_id.ToString()));
         _pickup_item_message.Add(new Pair<string, string>("ItemId", item_id.ToString()));
         _pickup_item_message.Add(new Pair<string, string>("Amount", amt.ToString()));
-        
+
         return _pickup_item_message;
     }
 }
