@@ -350,7 +350,7 @@ public class NetworkingManager : MonoBehaviour
             UDP_ConnectToServer("192.168.0.14", 8000);
             UDP_StartReadThread();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             //On Windows
         }
