@@ -3,23 +3,26 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Globalization;
+using SimpleJSON;
 
 public class HUD_Manager : MonoBehaviour {
 	#region Subclasses
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;		public Animator HealthAnimator; }
+	public class PlayerProfile 	{ public Image Health;			public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class AllyKing 		{ public Image Health;		public Animator HealthAnimator; }
+	public class AllyKing 		{ public Image Health;			public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;		public Animator HealthAnimator; }
+	public class EnemyKing 		{ public Image Health;			public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;		public Animator CurrencyAnimator; }
+	public class Currency 		{ public Text  Amount;			public Animator CurrencyAnimator; 	}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;	public float CoolDown; }
+	public class MainSkill 		{ public Image ProgressBar;		public float CoolDown; 				}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;	public float CoolDown; }
+	public class SubSkill 		{ public Image ProgressBar;		public float CoolDown; 				}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;	public float CoolDown; }
+	public class PassiveSkill 	{ public Image ProgressBar;		public float CoolDown; 				}
+	[System.Serializable]
+	public class MessageHistory { public GameObject Container; 	public GameObject AllyMessage; public GameObject EnemyMessage; }
 	#endregion
 
 	// Singleton object
@@ -33,6 +36,7 @@ public class HUD_Manager : MonoBehaviour {
 	public MainSkill			mainSkill;
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
+	public MessageHistory		messageHistory;
 
 	// Singleton pattern
 	void Awake()
@@ -44,6 +48,26 @@ public class HUD_Manager : MonoBehaviour {
 		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
 	}
 
+	void Start()
+	{
+		NetworkingManager.Subscribe(UpdateChat, DataType.UI, 1);
+	}
+
+	void UpdateChat(JSONClass data)
+	{
+		/*int team = data[NetworkKeyString.TeamID].AsInt;
+		string username = data[NetworkKeyString.UserName];
+		string message = data[NetworkKeyString.Message];
+
+		if(team == 1)
+		{
+			messageHistory.
+		}
+		childObject = Instantiate (arrow) as GameObject;								//Instantitate arrow
+		childObject.transform.SetParent (parentObject.transform, false);				//Make arrow a child object of InputHistory*/
+	}
+
+	}
 	// For rechargin skills whenever they are used
 	void Update()
 	{
@@ -60,7 +84,7 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
 		}
 	}
-
+	
 	/*----------------------------------------------------------------------------
     --	Update player hp on the HUD, and triggers the "TakeDmg" animation
     --

@@ -17,16 +17,7 @@ public enum NetworkCode
 	PlayerLeftLobby		= 7
 }
 
-// Lobby message key fields 
-public class NetworkKeyString
-{
-	public static string PlayerID 	= "PlayerID";
-	public static string TeamID		= "TeamID";
-	public static string ClassID	= "ClassID";
-	public static string Ready		= "Ready";
-	public static string StartGame 	= "StartGame";
-	public static string UserName   = "UserName";
-}
+
 
 public class LobbyNetwork : MonoBehaviour {
 
