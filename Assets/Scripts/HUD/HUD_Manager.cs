@@ -50,24 +50,53 @@ public class HUD_Manager : MonoBehaviour {
 
 	void Start()
 	{
-		NetworkingManager.Subscribe(UpdateChat, DataType.UI, 1);
+		// NOTE:: For testing purposes
+		GameData.MyPlayer.TeamID = 1;
+
+		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
-	void UpdateChat(JSONClass data)
+	void UpdateChatCallBack(JSONClass data)
 	{
-		/*int team = data[NetworkKeyString.TeamID].AsInt;
+		int team = data[NetworkKeyString.TeamID].AsInt;
 		string username = data[NetworkKeyString.UserName];
 		string message = data[NetworkKeyString.Message];
 
-		if(team == 1)
-		{
-			messageHistory.
-		}
-		childObject = Instantiate (arrow) as GameObject;								//Instantitate arrow
-		childObject.transform.SetParent (parentObject.transform, false);				//Make arrow a child object of InputHistory*/
+		UpdateChat(team);
 	}
 
+	public void UpdateChat(int team)
+	{
+		// NOTE:: For Testing purposes
+		string username= "[Dong]"; string message= "[herro]";
+		GameObject childObject;
+		// Ally Message
+		if(team == GameData.MyPlayer.TeamID)
+		{
+			foreach(Transform child in messageHistory.AllyMessage.transform)
+			{
+				if(child.name == "Name")
+					child.GetComponent<Text>().text = username;
+				else
+					child.GetComponent<Text>().text = message;
+			}
+			childObject = Instantiate (messageHistory.AllyMessage) as GameObject;								//Instantitate arrow
+			childObject.transform.SetParent (messageHistory.Container.transform, false);						//Make arrow a child object of InputHistory
+		}else
+		{
+			foreach(Transform child in messageHistory.EnemyMessage.transform)
+			{
+				if(child.name == "Name")
+					child.GetComponent<Text>().text = username;
+				else
+					child.GetComponent<Text>().text = message;
+			}
+			childObject = Instantiate (messageHistory.EnemyMessage) as GameObject;								//Instantitate arrow
+			childObject.transform.SetParent (messageHistory.Container.transform, false);				//Make arrow a child object of InputHistory
+		}
 	}
+
+
 	// For rechargin skills whenever they are used
 	void Update()
 	{
