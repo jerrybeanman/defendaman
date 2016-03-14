@@ -9,8 +9,8 @@ using namespace Networking;
 	Initialize socket, server address to lookup to, and connect to the server
 
   Programmer: Gabriel Lee
-  
-  Revision: 
+
+  Revision:
     March 9, 2016 - Changed the socket to be non-blocking
 
 	@return: socket file descriptor
@@ -104,22 +104,21 @@ void * ServerUDP::Receive()
   memset(con, 0, sizeof(con));
   fprintf(stderr, "[maxfd:%d]\n", _maxfd);
 
-  while (1) 
+  while (1)
   {
     rset = _allset;
     nready = select(_maxfd + 1, &rset, NULL, NULL, NULL);
 
     if(nready > 0 && FD_ISSET(_UDPReceivingSocket, &rset))
     {
-      std::cerr << "hello." << std::endl;
-
+      std::cerr << "hello, map size is: " << _PlayerTable.size() << std::endl;
       if((err = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
       {
           fatal("UDP_Server_Recv: recvfrom() failed\n");
           //return 0;
       }
       fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
-    
+
       for(int i = 0; i < 24; i++)
       {
         if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
@@ -131,9 +130,11 @@ void * ServerUDP::Receive()
         {
           found = false;
         }
-      } 
+      }
+
+      std::cerr << "[Found:" << found << "]" << std::endl;
       if(!found)
-      { 
+      {
         //memcpy(&_PlayerList[numPlayers].connection, &Client, sizeof(Client));
         std::map<int, Player>::iterator it;
         it = _PlayerTable.find(numPlayers-24);
@@ -145,11 +146,12 @@ void * ServerUDP::Receive()
         else
         {
           memcpy(&it->second.connection, &Client, sizeof(Client));
+          sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
         }
-        sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
+
       }
       std::cout << buf << std::endl;
-    
+
 
       //TODO: Fix this for future implemenation. Need to parse a vector that TCP delivers
       //Issue: this will only broadcast to the SENDING CLIENT only and will break on more than one client.
@@ -159,8 +161,8 @@ void * ServerUDP::Receive()
     {
       fprintf(stderr, "ServerUDP: select error.\n");
     }
-    free(buf);
   }
+  free(buf);
   /* Unsure where to put this, this will clear up the select stuff
   close(_UDPReceivingSocket);
   FD_CLR(_UDPReceivingSocket, &_allset);
@@ -169,22 +171,33 @@ void * ServerUDP::Receive()
 
 /*
 	Sends a message to all the clients
-  
-  Revision: 
+
+  Revision:
   Date       Author      Description
   2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
 */
 void ServerUDP::Broadcast(char* message, sockaddr_in * excpt)
 {
-  for(auto it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
+  std::cerr << "broadcasting" << std::endl;
+  for(std::map<int, Player>::const_iterator it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
   {
     if(strcmp(inet_ntoa ((it->second).connection.sin_addr), "0.0.0.0") == 0)
       continue;
-    if(strcmp(inet_ntoa ((it->second).connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
+    std::cerr << "Break here?" << std::endl;
+    if(excpt != NULL && strcmp(inet_ntoa ((it->second).connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
       continue;
-    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&(it->second).connection, sizeof(&(it->second).connection)) == -1)
+    std::cerr << "Break there?" << std::endl;
+
+
+      fprintf(stderr, "[Addy:%s][port:%d]\n",
+        inet_ntoa ((it->second).connection.sin_addr),
+        ntohs(it->second.connection.sin_port));
+    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&((it->second).connection), sizeof(sockaddr_in)) == -1)
     {
-      std::cerr << "errno: " << errno << std::endl;
+      fprintf(stderr, "Failed to send to [%s]\n",
+        inet_ntoa ((it->second).connection.sin_addr));
+      perror("ServerUDP::Broadcast");
+
       return;
     }
   }
@@ -229,7 +242,7 @@ void ServerUDP::PrepareSelect()
     {
       _clients[x] = _bad;
     }
-    
+
     _PlayerTable = _clients;
 
     FD_ZERO(&_allset);

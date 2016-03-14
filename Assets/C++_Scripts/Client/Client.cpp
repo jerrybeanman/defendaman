@@ -29,7 +29,7 @@ Client::Client()
 /**********************************************************
 Description: Initialize the socket address structure by recieving the port number and
 either the hostname or an IPV4 address.
-Parameters: 
+Parameters:
     hostname - The host name of the server.
     hostport - The port number of the server.
 Returns: Socket file descriptor and the server address for future use.
@@ -62,7 +62,7 @@ int Client::Init_SockAddr(const char* hostname, short hostport)
 
 /**********************************************************
 Description: Wrapper function to report errors.
-Parameters: 
+Parameters:
     error - The error information to report.
 Returns: void
 Revision History:
@@ -88,7 +88,7 @@ char* Client::GetData()
     {
         memset(currentData, 0, PACKETLEN);
         CBPop(&CBPackets, currentData);
-    } 
+    }
     else
     {
         strcpy(currentData, "[]");

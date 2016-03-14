@@ -137,7 +137,7 @@ void * ServerTCP::Receive()
 /*
 	Sends a message to all the clients
 
-  Revision: 
+  Revision:
   Date       Author      Description
   2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
 */
@@ -200,7 +200,7 @@ void ServerTCP::PrepareSelect()
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);
-    
+
 }
 
 
@@ -222,7 +222,7 @@ int ServerTCP::SetSocketOpt()
 		    return -1;
 	}
 	return 0;
-  
+
 }
 */
 /* Parses incoming JSON and process request */
