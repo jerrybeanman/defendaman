@@ -8,21 +8,22 @@ using SimpleJSON;
 public class HUD_Manager : MonoBehaviour {
 	#region Subclasses
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;			public Animator HealthAnimator; 	}
+	public class PlayerProfile 	{ public Image Health;				public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class AllyKing 		{ public Image Health;			public Animator HealthAnimator; 	}
+	public class AllyKing 		{ public Image Health;				public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;			public Animator HealthAnimator; 	}
+	public class EnemyKing 		{ public Image Health;				public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;			public Animator CurrencyAnimator; 	}
+	public class Currency 		{ public Text  Amount;				public Animator CurrencyAnimator; 	}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;		public float CoolDown; 				}
+	public class MainSkill 		{ public Image ProgressBar;			public float CoolDown; 				}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;		public float CoolDown; 				}
+	public class SubSkill 		{ public Image ProgressBar;			public float CoolDown; 				}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;		public float CoolDown; 				}
+	public class PassiveSkill 	{ public Image ProgressBar;			public float CoolDown; 				}
 	[System.Serializable]
-	public class MessageHistory { public GameObject Container; 	public GameObject AllyMessage; public GameObject EnemyMessage; }
+	public class Chat			{ public InputField input;			public GameObject Container; 	
+								  public GameObject AllyMessage;	public GameObject EnemyMessage; 	}
 	#endregion
 
 	// Singleton object
@@ -36,7 +37,7 @@ public class HUD_Manager : MonoBehaviour {
 	public MainSkill			mainSkill;
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
-	public MessageHistory		messageHistory;
+	public Chat					chat;
 
 	// Singleton pattern
 	void Awake()
@@ -56,51 +57,27 @@ public class HUD_Manager : MonoBehaviour {
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
-	void UpdateChatCallBack(JSONClass data)
-	{
-		int team = data[NetworkKeyString.TeamID].AsInt;
-		string username = data[NetworkKeyString.UserName];
-		string message = data[NetworkKeyString.Message];
-
-		UpdateChat(team);
-	}
-
-	public void UpdateChat(int team)
-	{
-		// NOTE:: For Testing purposes
-		string username= "[Dong]"; string message= "[herro]";
-		GameObject childObject;
-		// Ally Message
-		if(team == GameData.MyPlayer.TeamID)
-		{
-			foreach(Transform child in messageHistory.AllyMessage.transform)
-			{
-				if(child.name == "Name")
-					child.GetComponent<Text>().text = username;
-				else
-					child.GetComponent<Text>().text = message;
-			}
-			childObject = Instantiate (messageHistory.AllyMessage) as GameObject;								//Instantitate arrow
-			childObject.transform.SetParent (messageHistory.Container.transform, false);						//Make arrow a child object of InputHistory
-		}else
-		{
-			foreach(Transform child in messageHistory.EnemyMessage.transform)
-			{
-				if(child.name == "Name")
-					child.GetComponent<Text>().text = username;
-				else
-					child.GetComponent<Text>().text = message;
-			}
-			childObject = Instantiate (messageHistory.EnemyMessage) as GameObject;								//Instantitate arrow
-			childObject.transform.SetParent (messageHistory.Container.transform, false);				//Make arrow a child object of InputHistory
-		}
-	}
-
-
+	bool InputSelected = false;
 	// For rechargin skills whenever they are used
 	void Update()
 	{
+		if(Input.GetKeyDown(KeyCode.Return))
+		{
 
+			if(!InputSelected)
+			{
+				print ("selecting");
+				chat.input.Select();
+				InputSelected = true;
+			}
+			else
+			{
+				print ("seding");
+				UpdateChat(GameData.MyPlayer.TeamID);
+				InputSelected = false;
+				chat.input.text = "";
+			}
+		}
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
 			mainSkill.ProgressBar.fillAmount  += Time.deltaTime / mainSkill.CoolDown;
@@ -111,6 +88,46 @@ public class HUD_Manager : MonoBehaviour {
 		{
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
+		}
+	}
+
+	void UpdateChatCallBack(JSONClass data)
+	{
+		int team = data[NetworkKeyString.TeamID].AsInt;
+		string username = data[NetworkKeyString.UserName];
+		string message = data[NetworkKeyString.Message];
+		
+		UpdateChat(team);
+	}
+	
+	public void UpdateChat(int team)
+	{
+		// NOTE:: For Testing purposes
+		string username= "[Dong]"; string message= "herro";
+		GameObject childObject;
+		// Ally Message
+		if(team == GameData.MyPlayer.TeamID)
+		{
+			foreach(Transform child in chat.AllyMessage.transform)
+			{
+				if(child.name == "Name")
+					child.GetComponent<Text>().text = username;
+				else
+					child.GetComponent<Text>().text = message;
+			}
+			childObject = Instantiate (chat.AllyMessage) as GameObject;								//Instantitate arrow
+			childObject.transform.SetParent (chat.Container.transform, false);						//Make arrow a child object of InputHistory
+		}else
+		{
+			foreach(Transform child in chat.EnemyMessage.transform)
+			{
+				if(child.name == "Name")
+					child.GetComponent<Text>().text = username;
+				else
+					child.GetComponent<Text>().text = message;
+			}
+			childObject = Instantiate (chat.EnemyMessage) as GameObject;								//Instantitate arrow
+			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
 	
