@@ -15,6 +15,8 @@ namespace Networking
           void * Recv() override;
 
           int Send(char * message, int size) override;
+
+          char* GetData();
     };
 }
 #endif
