@@ -27,7 +27,7 @@ namespace Networking
 	           /*
                 Sends a message to all the clients
             */
-            void Broadcast(char* message) override;
+            void Broadcast(const char* message) override;
 
 						void SetPlayerList(std::map<int, Player> players);
 	};
