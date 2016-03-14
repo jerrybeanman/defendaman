@@ -3,23 +3,26 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Globalization;
+using SimpleJSON;
 
 public class HUD_Manager : MonoBehaviour {
 	#region Subclasses
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;		public Animator HealthAnimator; }
+	public class PlayerProfile 	{ public Image Health;			public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class AllyKing 		{ public Image Health;		public Animator HealthAnimator; }
+	public class AllyKing 		{ public Image Health;			public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;		public Animator HealthAnimator; }
+	public class EnemyKing 		{ public Image Health;			public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;		public Animator CurrencyAnimator; }
+	public class Currency 		{ public Text  Amount;			public Animator CurrencyAnimator; 	}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;	public float CoolDown; }
+	public class MainSkill 		{ public Image ProgressBar;		public float CoolDown; 				}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;	public float CoolDown; }
+	public class SubSkill 		{ public Image ProgressBar;		public float CoolDown; 				}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;	public float CoolDown; }
+	public class PassiveSkill 	{ public Image ProgressBar;		public float CoolDown; 				}
+	[System.Serializable]
+	public class MessageHistory { public GameObject Container; 	public GameObject AllyMessage; public GameObject EnemyMessage; }
 	#endregion
 
 	// Singleton object
@@ -33,6 +36,7 @@ public class HUD_Manager : MonoBehaviour {
 	public MainSkill			mainSkill;
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
+	public MessageHistory		messageHistory;
 
 	// Singleton pattern
 	void Awake()
@@ -43,6 +47,55 @@ public class HUD_Manager : MonoBehaviour {
 			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
 		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
 	}
+
+	void Start()
+	{
+		// NOTE:: For testing purposes
+		GameData.MyPlayer.TeamID = 1;
+
+		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
+	}
+
+	void UpdateChatCallBack(JSONClass data)
+	{
+		int team = data[NetworkKeyString.TeamID].AsInt;
+		string username = data[NetworkKeyString.UserName];
+		string message = data[NetworkKeyString.Message];
+
+		UpdateChat(team);
+	}
+
+	public void UpdateChat(int team)
+	{
+		// NOTE:: For Testing purposes
+		string username= "[Dong]"; string message= "[herro]";
+		GameObject childObject;
+		// Ally Message
+		if(team == GameData.MyPlayer.TeamID)
+		{
+			foreach(Transform child in messageHistory.AllyMessage.transform)
+			{
+				if(child.name == "Name")
+					child.GetComponent<Text>().text = username;
+				else
+					child.GetComponent<Text>().text = message;
+			}
+			childObject = Instantiate (messageHistory.AllyMessage) as GameObject;								//Instantitate arrow
+			childObject.transform.SetParent (messageHistory.Container.transform, false);						//Make arrow a child object of InputHistory
+		}else
+		{
+			foreach(Transform child in messageHistory.EnemyMessage.transform)
+			{
+				if(child.name == "Name")
+					child.GetComponent<Text>().text = username;
+				else
+					child.GetComponent<Text>().text = message;
+			}
+			childObject = Instantiate (messageHistory.EnemyMessage) as GameObject;								//Instantitate arrow
+			childObject.transform.SetParent (messageHistory.Container.transform, false);				//Make arrow a child object of InputHistory
+		}
+	}
+
 
 	// For rechargin skills whenever they are used
 	void Update()
@@ -60,7 +113,7 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
 		}
 	}
-
+	
 	/*----------------------------------------------------------------------------
     --	Update player hp on the HUD, and triggers the "TakeDmg" animation
     --

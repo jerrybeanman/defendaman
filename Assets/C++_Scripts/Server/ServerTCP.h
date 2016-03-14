@@ -81,7 +81,11 @@ namespace Networking
 
           @return: void
       */
-      void Broadcast(const char * message) override;
+      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
+
+			void PrepareSelect() override;
+
+			int SetSocketOpt() override;
 
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
@@ -103,7 +107,8 @@ namespace Networking
       void sendToClient(Player player, const char * message);
 
       std::string UpdateID(const Player& player);
-    private:
+
+		private:
 			Player newPlayer;
 
 			//Enum for the networking team to determine the type of message requested.
