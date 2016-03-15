@@ -57,22 +57,28 @@ namespace Networking
 
             std::string UpdateID(const Player& player);
 
+      /* Shuts down the game server */
+      void ShutDownGameServer(void);
+
+      void RestartServer(void); // PLACEHOLDER FOR RESTARTING THE TCP LOBBY
+
 		private:
 			Player newPlayer;
             int socketPair[2];
 			//Enum for the networking team to determine the type of message requested.
 			enum DataType { Networking = 6 };
 			enum LobbyCode
-              {
-                TeamChangeRequest   = 1,
-                ClassChangeRequest  = 2,
-                ReadyRequest        = 3,
-                PlayerJoinedLobby   = 4,
-                GameStart           = 5,
-                UpdatePlayerList    = 6,
-                PlayerLeftLobby     = 7
+      {
+        TeamChangeRequest   = 1,
+        ClassChangeRequest  = 2,
+        ReadyRequest        = 3,
+        PlayerJoinedLobby   = 4,
+        GameStart           = 5,
+        UpdatePlayerList    = 6,
+        PlayerLeftLobby     = 7,
+        GameEnd             = 8
 
-              };
+      };
 	};
 }
 

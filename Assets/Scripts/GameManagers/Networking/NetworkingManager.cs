@@ -69,9 +69,9 @@ public class NetworkingManager : MonoBehaviour
         Subscribe(StartGame, DataType.StartGame);
         try {
             TCPClient = TCP_CreateClient();
-        } catch (Exception e)
+        } catch (Exception)
         {
-            Debug.Log(e.ToString());
+            //On Windows
         }
     }
 
@@ -111,6 +111,15 @@ public class NetworkingManager : MonoBehaviour
         {
             //Add our callback to the list of entries under that pair of datatype and ID.
             _subscribedActions[pair].Add(callback);
+        }
+    }
+
+    public static void Unsubscribe(DataType dataType, int id = 0)
+    {
+        Pair<DataType, int> pair = new Pair<DataType, int>(dataType, id);
+        if (_subscribedActions.ContainsKey(pair))
+        {
+            _subscribedActions.Remove(pair);
         }
     }
 
@@ -185,36 +194,36 @@ public class NetworkingManager : MonoBehaviour
     }
 
     [DllImport("ClientLibrary.so")]
-    public static extern IntPtr Game_CreateClient();
+    public static extern IntPtr UDP_CreateClient();
 
     [DllImport("ClientLibrary.so")]
-    private static extern void Game_DisposeClient(IntPtr client);
+    private static extern void UDP_DisposeClient(IntPtr client);
     public static void UDP_DisposeClient() {
-        Game_DisposeClient(UDPClient);
+        UDP_DisposeClient(UDPClient);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern int Game_ConnectToServer(IntPtr client, string ipAddress, short port);
+    private static extern int UDP_ConnectToServer(IntPtr client, string ipAddress, short port);
     public static int UDP_ConnectToServer(string ipAddress, short port) {
-        return Game_ConnectToServer(UDPClient, ipAddress, port);
+        return UDP_ConnectToServer(UDPClient, ipAddress, port);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern int Game_Send(IntPtr client, string message, int size);
+    private static extern int UDP_Send(IntPtr client, string message, int size);
     public static int UDP_SendData(string message, int size) {
-        return Game_Send(UDPClient, message, 512);
+        return UDP_Send(UDPClient, message, 512);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern IntPtr Game_GetData(IntPtr client);
+    private static extern IntPtr UDP_GetData(IntPtr client);
     public static IntPtr UDP_GetData() {
-        return Game_GetData(UDPClient);
+        return UDP_GetData(UDPClient);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern int Game_StartReadThread(IntPtr client);
+    private static extern int UDP_StartReadThread(IntPtr client);
     public static int UDP_StartReadThread() {
-        return Game_StartReadThread(UDPClient);
+        return UDP_StartReadThread(UDPClient);
     }
 
     [DllImport("MapGenerationLibrary.so")]
@@ -346,13 +355,13 @@ public class NetworkingManager : MonoBehaviour
     {
         try
         {
-            UDPClient = Game_CreateClient();
-            UDP_ConnectToServer("192.168.0.14", 8000);
+            UDPClient = UDP_CreateClient();
+            UDP_ConnectToServer("192.168.0.3", 8000);
             UDP_StartReadThread();
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Debug.Log(e.ToString());
+            //On Windows
         }
 
         int myPlayer = GameData.MyPlayer.PlayerID;
@@ -360,8 +369,7 @@ public class NetworkingManager : MonoBehaviour
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
         update_data(GenerateMapInJSON(data["Seed"].AsInt));
-
-        Debug.Log("Back to StartGame");
+        
         //foreach (JSONClass playerData in data["playersData"].AsArray)
         foreach (var playerData in GameData.LobbyData) {
             var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID-1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID-1].second, -10), Quaternion.identity)).gameObject;
@@ -383,12 +391,13 @@ public class NetworkingManager : MonoBehaviour
                     break;
             }
 
-			if (myTeam == playerData.Value.TeamID) {
+            //TODO: Get Micah to re-hook this up. Current fails cause missing a prefab
+			/*if (myTeam == playerData.Value.TeamID) {
 				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 				lighting.transform.parent = createdPlayer.transform;
 				lighting.transform.Rotate (0,0,-90);
 				lighting.transform.Translate(0,0,9);
-			}
+			}*/
 
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
@@ -404,13 +413,12 @@ public class NetworkingManager : MonoBehaviour
                 if (GameObject.Find("Minimap Camera") != null)
                     GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
                 player.AddComponent<Movement>();
-                //player.AddComponent<PlayerRotation>();
                 player.AddComponent<Attack>();
                 //Created our player
             }
             else {
-                createdPlayer.AddComponent<NetworkingManager_test1>();
-                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData.Value.PlayerID;
+                createdPlayer.AddComponent<PlayerReceiveUpdates>();
+                createdPlayer.GetComponent<PlayerReceiveUpdates>().playerID = playerData.Value.PlayerID;
                 //Created another player
             }
         }
