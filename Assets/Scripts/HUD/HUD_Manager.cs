@@ -9,22 +9,25 @@ using System.Collections.Generic;
 public class HUD_Manager : MonoBehaviour {
 	#region Subclasses
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;				public Animator HealthAnimator; 	}
+	public class PlayerProfile 	{ public Image Health;						public Animator HealthAnimator; 	}
+	[System.Serializable]	
+	public class AllyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class AllyKing 		{ public Image Health;				public Animator HealthAnimator; 	}
+	public class EnemyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;				public Animator HealthAnimator; 	}
+	public class Currency 		{ public Text  Amount;						public Animator CurrencyAnimator; 	}
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;				public Animator CurrencyAnimator; 	}
+	public class MainSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;			public float CoolDown; 				}
+	public class SubSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;			public float CoolDown; 				}
+	public class PassiveSkill 	{ public Image ProgressBar;					public float CoolDown; 				}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;			public float CoolDown; 				}
+	public class Chat			{ public InputField input;					public GameObject Container; 	
+								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
 	[System.Serializable]
-	public class Chat			{ public InputField input;			public GameObject Container; 	
-								  public GameObject AllyMessage;	public GameObject EnemyMessage; 	}
+	public class Shop			{ public GameObject MainPanel;				public List<GameObject> StructuresList;
+								  public List<GameObject> ConsumablesList;										}
 	#endregion
 
 	// Singleton object
@@ -39,6 +42,7 @@ public class HUD_Manager : MonoBehaviour {
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
+	public Shop					shop;		
 
 	// Singleton pattern
 	void Awake()
@@ -57,8 +61,17 @@ public class HUD_Manager : MonoBehaviour {
 	}
 
 	bool InputSelected = false;
+
 	// For rechargin skills whenever they are used
 	void Update()
+	{
+		CheckChatAction();
+		CheckSkillStatus();
+		CheckShopOption();
+	}
+
+
+	void CheckChatAction()
 	{
 		if(Input.GetKeyDown(KeyCode.Return))
 		{
@@ -75,23 +88,39 @@ public class HUD_Manager : MonoBehaviour {
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
 				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
-
+				
 				UpdateChat(0, "Jerry", chat.input.text);
 				chat.input.text = "";
 				chat.input.interactable = false;
 			}
 		}
+	}
+
+	void CheckSkillStatus()
+	{
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
 			mainSkill.ProgressBar.fillAmount  += Time.deltaTime / mainSkill.CoolDown;
 			mainSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
 		}
-			
+		
 		if(subSkill.ProgressBar.fillAmount < 1)
 		{
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
 		}
+	}
+	void CheckShopOption()
+	{
+		if(Input.GetKeyDown(KeyCode.M))
+		{
+			DisplayShop();
+		}
+	}
+
+	public void DisplayShop()
+	{
+		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
 	}
 
 	private static void Send(string packet)

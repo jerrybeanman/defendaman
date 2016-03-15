@@ -102,15 +102,20 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         var attack = other.gameObject.GetComponent<Trigger>();
-
+        Debug.Log("Projectile hit");
         if (attack != null)
         {
-           
+            Debug.Log("Attack was not null");
             if (attack.teamID == team)
             {
+                Debug.Log("Same team");
                 return;
             }
             doDamage(attack.damage);
+        }
+        else
+        {
+            Debug.Log("Attack was null");
         }
 
     }
