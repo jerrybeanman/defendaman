@@ -2,10 +2,12 @@
 using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
+using System;
 
 //Carson
 public class GameManager : MonoBehaviour {
     public static GameManager instance;
+    public Transform AI;
 
     public enum LobbyData { GameEnd = 1, Disconnected = 2 }
 
@@ -61,11 +63,29 @@ public class GameManager : MonoBehaviour {
         var manager = GetComponent<NetworkingManager>();
         
         manager.update_data(NetworkingManager.GenerateMapInJSON(seed));
-        
+        int x = 0;
+        Vector2 check = new Vector2();
+
+        /*while (x < 20)
+        {
+            System.Random rnd = new System.Random();
+            int xCoord = rnd.Next(1,99);
+            int yCoord = rnd.Next(1,99);
+            check.x = xCoord;
+            check.y = yCoord;
+            RaycastHit2D hit = Physics2D.Raycast(check, Vector2.up, 0.0001f);
+            if (hit.collider != null)
+            {
+                continue;
+            }
+            x++;
+            var createdAI = ((Transform)Instantiate(AI, new Vector3(xCoord,yCoord, -10), Quaternion.identity)).gameObject;
+        }*/
+        var createdAI = ((Transform)Instantiate(AI, new Vector3(40, 40, -10), Quaternion.identity)).gameObject;
+
         foreach (var playerData in GameData.LobbyData)
         {
             var createdPlayer = ((Transform)Instantiate(manager.playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
-
             switch (playerData.Value.ClassType)
             {
                 case ClassType.Ninja:

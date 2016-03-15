@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
 // Lobby message key fields 
@@ -32,7 +33,9 @@ public class GameData
     public static int 			EnemyKingID 	{ get; set; }
     public static int 			AllyKingID 		{ get; set; }
     public static bool 			MouseBlocked 	{ get; set; }
+    public static Dictionary<int, Vector3> PlayerPosition = new Dictionary<int, Vector3>();
 
     //Pair of x/y spawn points where index+1 is teamid
     public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();
+    public static Pair<int, int> aiSpawn = new Pair<int, int>(10, 10);
 }
