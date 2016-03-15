@@ -100,7 +100,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
-			mainSkill.ProgressBar.fillAmount  += Time.deltaTime / mainSkill.CoolDown;
+			mainSkill.ProgressBar.fillAmount += Time.deltaTime / mainSkill.CoolDown;
 			mainSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
 		}
 		
@@ -112,10 +112,14 @@ public class HUD_Manager : MonoBehaviour {
 	}
 	void CheckShopOption()
 	{
-		if(Input.GetKeyDown(KeyCode.M))
+		if(!chat.input.IsInteractable())
 		{
-			DisplayShop();
+			if(Input.GetKeyDown(KeyCode.M))
+			{
+				DisplayShop();
+			}
 		}
+
 	}
 
 	public void DisplayShop()
@@ -163,7 +167,7 @@ public class HUD_Manager : MonoBehaviour {
 				else
 					child.GetComponent<Text>().text = message;
 			}
-			childObject = Instantiate (chat.EnemyMessage) as GameObject;								//Instantitate arrow
+			childObject = Instantiate (chat.EnemyMessage) as GameObject;					//Instantitate arrow
 			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
