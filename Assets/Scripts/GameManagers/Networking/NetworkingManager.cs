@@ -60,8 +60,6 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr TCPClient { get; private set; }
     public static IntPtr UDPClient { get; private set; }
 
-    public static bool InGame = false;
-
 	public static NetworkingManager instance;
 
     #endregion
@@ -78,19 +76,21 @@ public class NetworkingManager : MonoBehaviour
 
     void Start()
     {
-        Subscribe(StartGame, DataType.StartGame);
-        try {
-            TCPClient = TCP_CreateClient();
-        } catch (Exception)
-        {
-            //On Windows
-        }
+		if (!GameData.GameStart) 
+		{
+			try {
+				TCPClient = TCP_CreateClient();
+			} catch (Exception)
+			{
+				//On Windows
+			}
+		}
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (InGame)
+        if (GameData.GameStart)
         {
             foreach (var player in GameData.LobbyData)
                 update_data(receive_data());
@@ -365,7 +365,7 @@ public class NetworkingManager : MonoBehaviour
     ////Game creation code
     #region StartOfGame
 
-    public static void StartGame(JSONClass data)
+    public static void StartGame()
     {
         try
         {

@@ -122,6 +122,8 @@ public class GameManager : MonoBehaviour {
             else
                 GameData.EnemyKingID = king.second;
         }
+
+		NetworkingManager.StartGame();
     }
 
     private void gameEnd(JSONClass packet)
