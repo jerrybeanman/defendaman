@@ -11,6 +11,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         NetworkingManager.Subscribe(update_position, DataType.Player, playerID);
+        GameData.PlayerPosition.Add(playerID, transform.position);
 	}
 
     void update_position(JSONClass player) {
@@ -18,5 +19,6 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         transform.position = position;
         Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat) * Quaternion.Euler(0, 0, 90);
         transform.rotation = rotation;
+        GameData.PlayerPosition[playerID] = position;
     }
 }

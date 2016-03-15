@@ -1,16 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NinjaClass : BaseClass
+public class NinjaClass : MeleeClass
 {
-    //Rigidbody2D sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
-
-    void Start()
-    {
-        //Rigidbody2D attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        //attack.transform.parent = transform;
-    }
-
 	public NinjaClass()
 	{
         this._className = "Ninja";
