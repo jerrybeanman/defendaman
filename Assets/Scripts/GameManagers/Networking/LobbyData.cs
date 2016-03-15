@@ -4,6 +4,17 @@ using System.Linq;
 using System.Text;
 
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
+// Lobby message key fields 
+public class NetworkKeyString
+{
+	public static string PlayerID 	= "PlayerID";
+	public static string TeamID		= "TeamID";
+	public static string ClassID	= "ClassID";
+	public static string Ready		= "Ready";
+	public static string StartGame 	= "StartGame";
+	public static string UserName   = "UserName";
+	public static string Message	= "Message";
+}
 
 public class PlayerData {
     public int PlayerID  = -1;

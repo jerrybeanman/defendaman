@@ -54,9 +54,9 @@ int main()
   }
 
 	/*
-	Assuming that this thread goes on forever until the signal is caught
-	where it starts the StartUDP function which actually begins the UDP.
-	UDP will end when quit is done.
+		Assuming that this thread goes on forever until the signal is caught
+		where it starts the StartUDP function which actually begins the UDP.
+		UDP will end when quit is done.
 	*/
 
 	return 0;
