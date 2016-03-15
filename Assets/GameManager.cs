@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
     void Start()
     {
         NetworkingManager.Subscribe(gameEnd, DataType.Lobby, (int)LobbyData.GameEnd);
+		StartGame (GameData.Seed);
     }
 
     public void PlayerTookDamage(int playerID, float damage, BaseClass.PlayerBaseStat ClassStat)
@@ -58,13 +59,12 @@ public class GameManager : MonoBehaviour {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
-        var manager = GetComponent<NetworkingManager>();
         
-        manager.update_data(NetworkingManager.GenerateMapInJSON(seed));
+        NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
         
         foreach (var playerData in GameData.LobbyData)
         {
-            var createdPlayer = ((Transform)Instantiate(manager.playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
+			var createdPlayer = ((Transform)Instantiate(NetworkingManager.instance.playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
             switch (playerData.Value.ClassType)
             {
@@ -100,12 +100,12 @@ public class GameManager : MonoBehaviour {
             if (myPlayer == playerData.Value.PlayerID)
             {
                 myTeam = playerData.Value.TeamID;
-                manager.player = createdPlayer;
-                GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = manager.player.transform;
+				NetworkingManager.instance.player = createdPlayer;
+				GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = NetworkingManager.instance.player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
-                    GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = manager.player.transform;
-                manager.player.AddComponent<Movement>();
-                manager.player.AddComponent<Attack>();
+					GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = NetworkingManager.instance.player.transform;
+				NetworkingManager.instance.player.AddComponent<Movement>();
+				NetworkingManager.instance.player.AddComponent<Attack>();
                 //Created our player
             }
             else {

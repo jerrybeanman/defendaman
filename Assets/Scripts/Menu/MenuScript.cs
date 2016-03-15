@@ -97,6 +97,7 @@ public class MenuScript : MonoBehaviour {
     {			
         string name = _GetInputText("NameInput");
         string ip = _GetInputText("IPInput");
+		GameData.IP = ip;
         // TODO: validate player name and IP addr
         if (!(name.Length == 0) && !(ip.Length == 0))
         {

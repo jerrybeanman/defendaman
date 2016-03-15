@@ -62,7 +62,19 @@ public class NetworkingManager : MonoBehaviour
 
     public static bool InGame = false;
 
+	public static NetworkingManager instance;
+
     #endregion
+
+	void Awake()
+	{
+		print ("[Debug] NetworkingManager::Awake()");
+		if (instance == null)				//Check if instance already exists
+			instance = this;				//if not, set instance to this
+		else if (instance != this)			//If instance already exists and it's not this:
+			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
+		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+	}
 
     void Start()
     {
@@ -140,7 +152,9 @@ public class NetworkingManager : MonoBehaviour
 
             if (dataType == (int)DataType.Environment)
             {
-                gameObject.GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
+				print("[Debug]" + GameObject.Find ("GameManager").name);
+				print("[Debug]" + GameObject.Find ("GameManager").GetComponent<MapManager>().name);
+				GameObject.Find ("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
             }
 
             if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
@@ -356,7 +370,7 @@ public class NetworkingManager : MonoBehaviour
         try
         {
             UDPClient = UDP_CreateClient();
-            UDP_ConnectToServer("192.168.0.10", 7000);
+            UDP_ConnectToServer(GameData.IP, 8000);
             UDP_StartReadThread();
         }
         catch (Exception)
