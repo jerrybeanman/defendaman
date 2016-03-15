@@ -1,14 +1,34 @@
-﻿using UnityEngine;
+﻿/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    WizardClass.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      override float basicAttack(Vector2 dir)
+--      override float specialAttack(Vector2 dir)
+--
+--  DATE:           March 9, 2016
+--
+--  REVISIONS:      (Date and Description)
+--
+--  DESIGNERS:      Hank Lo
+--
+--  PROGRAMMER:     Hank Lo
+--
+--  NOTES:
+--  This class contains the logic that relates to the Wizard Class.
+---------------------------------------------------------------------------------------*/
+using UnityEngine;
 using System.Collections;
 
 public class WizardClass : BaseClass
 {
-    // note that max distance for this special attack is meant to be the duration that the magic circle stays 
     int[] distance = new int[2]{ 20, 0 };
     int[] speed = new int[2] { 80, 0 };
     Rigidbody2D fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
     Rigidbody2D magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
 
+    //
 	public WizardClass()
 	{
         this._className = "Wizard";

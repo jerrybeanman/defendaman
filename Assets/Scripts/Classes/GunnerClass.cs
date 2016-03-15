@@ -8,6 +8,7 @@ public class GunnerClass : BaseClass
     Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
     Rigidbody2D bullet2 = (Rigidbody2D)Resources.Load("Prefabs/Bullet2", typeof(Rigidbody2D));
 
+    //hank
     public GunnerClass()
 	{
         this._className = "Gunner";

@@ -1,4 +1,24 @@
-﻿using UnityEngine;
+﻿/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    NinjaClass.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      override float basicAttack(Vector2 dir)
+--      override float specialAttack(Vector2 dir)
+--
+--  DATE:           March 9, 2016
+--
+--  REVISIONS:      (Date and Description)
+--
+--  DESIGNERS:      Hank Lo
+--
+--  PROGRAMMER:     Hank Lo
+--
+--  NOTES:
+--  This class contains the logic that relates to the Ninja Class.
+---------------------------------------------------------------------------------------*/
+using UnityEngine;
 using System.Collections;
 
 public class NinjaClass : BaseClass
@@ -28,6 +48,7 @@ public class NinjaClass : BaseClass
         return cooldowns[0];
     }
 
+    // hank
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
