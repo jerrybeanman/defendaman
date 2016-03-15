@@ -55,7 +55,7 @@ public class GameStart_Testing : MonoBehaviour {
 
     public void StartOfGame()
     {
-        NetworkingManager.InGame = true;
+		GameData.GameStart = true;
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();

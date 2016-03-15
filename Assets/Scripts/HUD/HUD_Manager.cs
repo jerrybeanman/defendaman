@@ -4,26 +4,30 @@ using UnityEngine.UI;
 using System;
 using System.Globalization;
 using SimpleJSON;
+using System.Collections.Generic;
 
 public class HUD_Manager : MonoBehaviour {
 	#region Subclasses
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;				public Animator HealthAnimator; 	}
+	public class PlayerProfile 	{ public Image Health;						public Animator HealthAnimator; 	}
+	[System.Serializable]	
+	public class AllyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class AllyKing 		{ public Image Health;				public Animator HealthAnimator; 	}
+	public class EnemyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;				public Animator HealthAnimator; 	}
+	public class Currency 		{ public Text  Amount;						public Animator CurrencyAnimator; 	}
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;				public Animator CurrencyAnimator; 	}
+	public class MainSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;			public float CoolDown; 				}
+	public class SubSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;			public float CoolDown; 				}
+	public class PassiveSkill 	{ public Image ProgressBar;					public float CoolDown; 				}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;			public float CoolDown; 				}
+	public class Chat			{ public InputField input;					public GameObject Container; 	
+								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
 	[System.Serializable]
-	public class Chat			{ public InputField input;			public GameObject Container; 	
-								  public GameObject AllyMessage;	public GameObject EnemyMessage; 	}
+	public class Shop			{ public GameObject MainPanel;				public List<GameObject> StructuresList;
+								  public List<GameObject> ConsumablesList;										}
 	#endregion
 
 	// Singleton object
@@ -38,6 +42,7 @@ public class HUD_Manager : MonoBehaviour {
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
+	public Shop					shop;		
 
 	// Singleton pattern
 	void Awake()
@@ -51,9 +56,7 @@ public class HUD_Manager : MonoBehaviour {
 
 	void Start()
 	{
-		// NOTE:: For testing purposes
-		GameData.MyPlayer.TeamID = 1;
-
+		GameData.GameStart = true;
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
@@ -61,49 +64,82 @@ public class HUD_Manager : MonoBehaviour {
 	// For rechargin skills whenever they are used
 	void Update()
 	{
+		CheckChatAction();
+		CheckSkillStatus();
+		CheckShopOption();
+	}
+
+
+	void CheckChatAction()
+	{
 		if(Input.GetKeyDown(KeyCode.Return))
 		{
-
-			if(!InputSelected)
+			if(!chat.input.IsInteractable())
 			{
-				print ("selecting");
+				chat.input.interactable = true;
 				chat.input.Select();
-				InputSelected = true;
+				chat.input.ActivateInputField();
 			}
 			else
 			{
-				print ("seding");
-				UpdateChat(GameData.MyPlayer.TeamID);
-				InputSelected = false;
+				// Send the packet, with Team ID and username
+				/*List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
+				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
+				
+				UpdateChat(0, "Jerry", chat.input.text);
 				chat.input.text = "";
+				chat.input.interactable = false;
 			}
 		}
+	}
+
+	void CheckSkillStatus()
+	{
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
 			mainSkill.ProgressBar.fillAmount  += Time.deltaTime / mainSkill.CoolDown;
 			mainSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
 		}
-			
+		
 		if(subSkill.ProgressBar.fillAmount < 1)
 		{
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
 		}
 	}
+	void CheckShopOption()
+	{
+		if(Input.GetKeyDown(KeyCode.M))
+		{
+			DisplayShop();
+		}
+	}
+
+	public void DisplayShop()
+	{
+		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
+	}
+
+	private static void Send(string packet)
+	{
+		if(NetworkingManager.TCP_Send(packet, 256) < 0)
+			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
+	}
 
 	void UpdateChatCallBack(JSONClass data)
 	{
-		int team = data[NetworkKeyString.TeamID].AsInt;
+		int team 		= data[NetworkKeyString.TeamID].AsInt;
 		string username = data[NetworkKeyString.UserName];
-		string message = data[NetworkKeyString.Message];
+		string message 	= data[NetworkKeyString.Message];
 		
-		UpdateChat(team);
+		UpdateChat(team, username, message);
 	}
 	
-	public void UpdateChat(int team)
+	public void UpdateChat(int team, string username, string message)
 	{
-		// NOTE:: For Testing purposes
-		string username= "[Dong]"; string message= "herro";
+		username = "[" + username + "]:";
 		GameObject childObject;
 		// Ally Message
 		if(team == GameData.MyPlayer.TeamID)

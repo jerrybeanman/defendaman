@@ -5,11 +5,10 @@ using System.Collections;
 public class Movement : MonoBehaviour
 {
     enum movestyle { absolute, relative };
-    public float moveSpeed = 5;
     Vector2 looking;
     private Rigidbody2D rb2d;
     string up, down, left, right;
-    public float speed = 5;
+    public float speed;
     movestyle movestyles;
     float midX, midY;
 
@@ -24,8 +23,8 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-
-
+        speed = gameObject.GetComponent<BaseClass>().ClassStat.MoveSpeed;
+        GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
     //Checks if the end teleport point is valid, or if it is in a wall
     bool checkEnd(Vector2 vec, double distance)

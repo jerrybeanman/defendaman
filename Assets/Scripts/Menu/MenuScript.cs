@@ -75,7 +75,6 @@ public class MenuScript : MonoBehaviour {
     {
 		if (LobbyNetwork.connected)
         {
-			Debug.Log("[Debug] Menuscript()::Upate()");
             string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
             if (!String.Equals(tmp, "[]"))
             {
@@ -97,6 +96,7 @@ public class MenuScript : MonoBehaviour {
     {			
         string name = _GetInputText("NameInput");
         string ip = _GetInputText("IPInput");
+		GameData.IP = ip;
         // TODO: validate player name and IP addr
         if (!(name.Length == 0) && !(ip.Length == 0))
         {

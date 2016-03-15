@@ -43,10 +43,6 @@ public class NetworkingManager : MonoBehaviour
 {
     
     #region Variables
-    // Game object to send data of
-    public Transform playerType;
-	public Transform lightSource;
-    public GameObject player;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
@@ -60,25 +56,37 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr TCPClient { get; private set; }
     public static IntPtr UDPClient { get; private set; }
 
-    public static bool InGame = false;
+	public static NetworkingManager instance;
 
     #endregion
 
+	void Awake()
+	{
+		print ("[Debug] NetworkingManager::Awake()");
+		if (instance == null)				//Check if instance already exists
+			instance = this;				//if not, set instance to this
+		else if (instance != this)			//If instance already exists and it's not this:
+			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
+		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+	}
+
     void Start()
     {
-        Subscribe(StartGame, DataType.StartGame);
-        try {
-            TCPClient = TCP_CreateClient();
-        } catch (Exception)
-        {
-            //On Windows
-        }
+		if (!GameData.GameStart) 
+		{
+			try {
+				TCPClient = TCP_CreateClient();
+			} catch (Exception)
+			{
+				//On Windows
+			}
+		}
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (InGame)
+        if (GameData.GameStart)
         {
             foreach (var player in GameData.LobbyData)
                 update_data(receive_data());
@@ -140,7 +148,9 @@ public class NetworkingManager : MonoBehaviour
 
             if (dataType == (int)DataType.Environment)
             {
-                gameObject.GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
+				print("[Debug]" + GameObject.Find ("GameManager").name);
+				print("[Debug]" + GameObject.Find ("GameManager").GetComponent<MapManager>().name);
+				GameObject.Find ("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
             }
 
             if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
@@ -282,16 +292,16 @@ public class NetworkingManager : MonoBehaviour
 
         if (protocol == Protocol.UDP)
         {
-            if (player != null)
+            if (GameManager.instance.player != null)
             {
                 //Add player data
                 var memberItems = new List<Pair<string, string>>();
-                memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
-                memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-                memberItems.Add(new Pair<string, string>("rotationZ", player.transform.rotation.z.ToString()));
-                memberItems.Add(new Pair<string, string>("rotationW", player.transform.rotation.w.ToString()));
+                memberItems.Add(new Pair<string, string>("x", GameManager.instance.player.transform.position.x.ToString()));
+                memberItems.Add(new Pair<string, string>("y", GameManager.instance.player.transform.position.y.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationZ", GameManager.instance.player.transform.rotation.z.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationW", GameManager.instance.player.transform.rotation.w.ToString()));
                 
-                send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems, protocol);
+                send_next_packet(DataType.Player, GameManager.instance.player.GetComponent<BaseClass>().playerID, memberItems, protocol);
             }
         }
 
@@ -351,12 +361,12 @@ public class NetworkingManager : MonoBehaviour
     ////Game creation code
     #region StartOfGame
 
-    public static void StartGame(JSONClass data)
+    public static void StartGame()
     {
         try
         {
             UDPClient = UDP_CreateClient();
-            UDP_ConnectToServer("192.168.0.10", 7000);
+            UDP_ConnectToServer(GameData.IP, 8000);
             UDP_StartReadThread();
         }
         catch (Exception)
