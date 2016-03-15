@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GunnerClass : BaseClass
+public class GunnerClass : RangedClass
 {
     int[] distance = new int[2]{ 10, 20};
     int[] speed = new int[2] { 100, 200 };
