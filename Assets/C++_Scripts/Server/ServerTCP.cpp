@@ -461,7 +461,7 @@ int ServerTCP::getPlayerId(std::string ipString)
  * [    indicating that the game is over.                             ]
  * @author Tyler Trepanier-Bracken
  * @date   2016-03-14
- * @param  void 
+ * @param  void
  * @return void
  */
 void ServerTCP::ShutDownGameServer(void)
@@ -469,16 +469,17 @@ void ServerTCP::ShutDownGameServer(void)
   char sbuf[20];
   char rbuf[20];
   static int MESSAGE_SIZE = 20;
-  sprintf(msg, "%s", "GameEnd");
+  int nread = 0;
+  sprintf(sbuf, "%s", "GameEnd");
 
   if(_sockPair[0] == -1 && _sockPair[1] == -1) //check if the sockets aren't in error
   {
     // Critical error SIGTERM the UDP
-    // TODO 
-  } 
+    // TODO
+  }
 
-  write(_sockPair[0], sbuf, (strlen(msg)));
-  
+  write(_sockPair[0], sbuf, (strlen(sbuf)));
+
   for (;;) // Wait forever until a read has occured.
   {
     switch (nread = read(_sockPair[0], &rbuf, MESSAGE_SIZE)) // Polling, need to fix
@@ -488,7 +489,7 @@ void ServerTCP::ShutDownGameServer(void)
         break;
       default:
         // Assume that any message means that the UDP is shutting down
-        std::cerr << "UDP shutting down." std::endl;
+        std::cerr << "UDP shutting down." << std::endl;
     }
   }
 }
@@ -497,7 +498,7 @@ void ServerTCP::ShutDownGameServer(void)
  * [ServerTCP::RestartServer Restarts the Lobby after the game ends.]
  * @author Tyler Trepanier-Bracken
  * @date   2016-03-14
- * @param  void 
+ * @param  void
  * @return void
  */
 void ServerTCP::RestartServer(void)

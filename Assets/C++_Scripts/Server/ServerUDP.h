@@ -1,6 +1,7 @@
 #ifndef SERVER_UDP
 #define SERVER_UDP
 #include <sstream>      // std::istringstream
+#include <signal.h>
 #include "Server.h"
 
 namespace Networking
@@ -17,7 +18,7 @@ namespace Networking
             void * Receive() override;
 
             void Broadcast(const char* message, sockaddr_in * excpt = NULL) override;
-                    
+
             void SetPlayerList(std::map<int, Player> players);
 
             static void * CreateClientManager(void * server);
@@ -26,6 +27,7 @@ namespace Networking
 
             int SetSocketOpt() override;
 
+						void StopServer();
 	};
 }
 
