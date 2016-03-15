@@ -18,14 +18,18 @@ public class SettingScript : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (settings.activeSelf)
+            if (settings.activeSelf) {
                 settings.SetActive(false);
-            else
+                GameData.MouseBlocked = false;
+            } else {
                 settings.SetActive(true);
+                GameData.MouseBlocked = true;
+            }
         }
     }
     public void setttingClose()
     {
         settings.SetActive(false);
+        GameData.MouseBlocked = false;
     }
 }

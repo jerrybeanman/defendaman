@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /*-----------------------------------------------------------------------------
 -- WorldItemData.cs - Script attached to WorldItem game objects that store 
@@ -27,13 +28,15 @@ public class WorldItemData : MonoBehaviour
     public int world_item_id;
     bool trigger_entered = false;
     int _player_id;
- 
+    WorldItemManager _world_item_manager;
+
     /*
      * Retrieve the player id
      */
     void Start ()
     {
-        _player_id = GameData.MyPlayerID;
+        _player_id = GameData.MyPlayer.PlayerID;
+        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
     }
 	
 	/* 
@@ -49,20 +52,12 @@ public class WorldItemData : MonoBehaviour
 	void Update () {
         if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
         {
-            // data to send to server indicating that the player wants to pick up an item
-            // world_item_id
-            // _player_id    
-            // item.id
-            // amount
-
-            // Temporary call for testing
-
-            //var data = new List<Pair<string, string>>();
-            // data.Add(new Pair<string, string>("WorldItemID", world_item_id.ToString()));
-            // NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, data, Protocol.UDP);
-
-            WorldItemManager _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
-            _world_item_manager.ProcessPickUpEvent(world_item_id, _player_id, item.id, amount);
+            // Send Network message
+            List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
+            NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+            
+            // Prevent that a pickup event was received
+            _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
         }
     }
 

@@ -1,4 +1,4 @@
-CC = g++ -Wall -pedantic -W -ggdb
+CC = g++ -std=c++11 -Wall -pedantic -W -ggdb
 
 make:
 all: TCPClient UDPClient EchoServer
@@ -16,8 +16,8 @@ EchoServer:
 clean:
 	rm -f *.o core.* Game Lobby EchoServer
 
-Client.o: Client.cpp Client.h
-	$(CC) -c -g Client.cpp
+Client.o: Client.cpp Client.h CircularBuffer.cpp CircularBuffer.h
+	$(CC) -c -g Client.cpp CircularBuffer.cpp
 
 game.o:	game.cpp
 	$(CC) -c -g game.cpp

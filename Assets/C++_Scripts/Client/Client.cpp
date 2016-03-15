@@ -1,8 +1,12 @@
 /**********************************************************
 Project: Defendaman
+
+Progarmmer: Jerry Jia
+
 Source File: Client.cpp
+
 Revision History:
-Date        Author      Description
+    Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
     Description: The UDP client class for the in-game data transfers.
 **********************************************************/
@@ -11,7 +15,11 @@ using namespace Networking;
 
 /**********************************************************
 Description: Class constructor
+
+Progarmmer: Jerry Jia
+
 Parameters: none
+
 Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
@@ -29,9 +37,13 @@ Client::Client()
 /**********************************************************
 Description: Initialize the socket address structure by recieving the port number and
 either the hostname or an IPV4 address.
-Parameters: 
+
+Progarmmer: Jerry Jia
+
+Parameters:
     hostname - The host name of the server.
     hostport - The port number of the server.
+
 Returns: Socket file descriptor and the server address for future use.
 Revision History:
     Date        Author      Description
@@ -62,9 +74,14 @@ int Client::Init_SockAddr(const char* hostname, short hostport)
 
 /**********************************************************
 Description: Wrapper function to report errors.
-Parameters: 
+
+Programmer: Jerry jia
+
+Parameters:
     error - The error information to report.
+
 Returns: void
+
 Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
@@ -76,8 +93,13 @@ void Client::fatal(const char* error)
 
 /**********************************************************
 Description: Get data from the client's circular buffer.
+
+Programmer: Jerry jia, Dylan Blake
+
 Parameters: none
+
 Returns: Character pointer of the data removed from the circular buffer.
+
 Revision History:
     Date        Author      Description
     2016-03-09  Gabriel Lee Added function headers and comments.
@@ -88,7 +110,7 @@ char* Client::GetData()
     {
         memset(currentData, 0, PACKETLEN);
         CBPop(&CBPackets, currentData);
-    } 
+    }
     else
     {
         strcpy(currentData, "[]");
