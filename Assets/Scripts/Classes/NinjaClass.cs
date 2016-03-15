@@ -13,7 +13,7 @@
 --
 --  DESIGNERS:      Hank Lo
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Ninja Class.
@@ -48,11 +48,31 @@ public class NinjaClass : BaseClass
         return cooldowns[0];
     }
 
-    // hank
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: specialAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo
+    --
+    -- PROGRAMMER: Hank Lo
+    --
+    -- INTERFACE: float specialAttack(Vector2 dir)
+    --              dir: a vector2 object which shows the direction of the attack
+    --
+    -- RETURNS: a float representing the cooldown of the attack
+    --
+    -- NOTES:
+    -- Function that's called when the Ninja uses the right click special attack (Teleport)
+    ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
-        gameObject.GetComponent<Movement>().doBlink(15f);
+        if (gameObject.GetComponent<MagicDebuff>() == null) {
+            gameObject.GetComponent<Movement>().doBlink(15f);
+        }
         return cooldowns[1];
     }
 }

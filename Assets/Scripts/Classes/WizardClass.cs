@@ -28,7 +28,6 @@ public class WizardClass : BaseClass
     Rigidbody2D fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
     Rigidbody2D magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
 
-    //
 	public WizardClass()
 	{
         this._className = "Wizard";
@@ -46,7 +45,25 @@ public class WizardClass : BaseClass
         cooldowns = new float[2] { 0.5f, 6 };
 	}
 
-    //attacks return time it takes to execute
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: basicAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo
+    --
+    -- PROGRAMMER: Hank Lo
+    --
+    -- INTERFACE: float basicAttack(Vector2 dir)
+    --              dir: a vector2 object which shows the direction of the attack
+    --
+    -- RETURNS: a float representing the cooldown of the attack
+    --
+    -- NOTES:
+    -- Function that's called when the wizard uses the left click attack
+    ---------------------------------------------------------------------------------------------------------------------*/
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
@@ -60,13 +77,31 @@ public class WizardClass : BaseClass
         return cooldowns[0];
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: specialAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo
+    --
+    -- PROGRAMMER: Hank Lo
+    --
+    -- INTERFACE: float specialAttack(Vector2 dir)
+    --              dir: a vector2 object which shows the direction of the attack
+    --
+    -- RETURNS: a float representing the cooldown of the attack
+    --
+    -- NOTES:
+    -- Function that's called when the wizard uses the right click special attack (magic circle)
+    ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = 10.0f;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        // mousePos.y = 0.4f;
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, mousePos, Quaternion.identity);
         attack.GetComponent<MagicCircle>().teamID = team;
