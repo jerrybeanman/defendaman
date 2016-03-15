@@ -59,6 +59,15 @@ public class Attack : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D)) {
             gameObject.GetComponent<Animator>().SetBool("moving", false);
         }
+        if (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse1))
+        {
+            gameObject.GetComponent<Animator>().SetBool("attacking", true);
+        }
+        else
+        {
+            gameObject.GetComponent<Animator>().SetBool("attacking", false);
+        }
+        
 
     }
 	

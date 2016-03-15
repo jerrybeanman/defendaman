@@ -16,7 +16,7 @@ public class GunnerClass : BaseClass
         this._classStat.MaxHp = 150;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 5;
+        this._classStat.MoveSpeed = 15;
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
 

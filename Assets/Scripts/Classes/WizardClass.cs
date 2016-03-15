@@ -17,7 +17,7 @@ public class WizardClass : BaseClass
         this._classStat.MaxHp = 150;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 2;
+        this._classStat.MoveSpeed = 10;
         this._classStat.AtkPower = 3;
         this._classStat.Defense  = 5;
 
