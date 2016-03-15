@@ -108,6 +108,11 @@ namespace Networking
 
       std::string UpdateID(const Player& player);
 
+      /* Shuts down the game server */
+      void ShutDownGameServer(void);
+
+      void RestartServer(void); // PLACEHOLDER FOR RESTARTING THE TCP LOBBY
+
 		private:
 			Player newPlayer;
 
@@ -121,7 +126,8 @@ namespace Networking
         PlayerJoinedLobby   = 4,
         GameStart           = 5,
         UpdatePlayerList    = 6,
-        PlayerLeftLobby     = 7
+        PlayerLeftLobby     = 7,
+        GameEnd             = 8
 
       };
 	};

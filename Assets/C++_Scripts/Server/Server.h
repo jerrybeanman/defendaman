@@ -53,27 +53,27 @@ namespace Networking
 		/*
 		   Sends a message to all the clients
 
-		 */
+		*/
 		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
     
-    virtual void * Receive() = 0;
+        virtual void * Receive() = 0;
 
-    virtual void PrepareSelect() = 0;
+        virtual void PrepareSelect() = 0;
 
-    virtual int SetSocketOpt() = 0;
-
+        virtual int SetSocketOpt() = 0;
 
 		void fatal(const char* error);
 
         int isReadyToInt(Player player);
 
-		protected:
+	protected:
 		struct sockaddr_in     _ServerAddress;
-		int 				           _UDPReceivingSocket;
-		int                    _TCPAcceptingSocket;
-    fd_set                 _allset;              // File descriptor set for connected sockets
-    int                    _maxfd;               //Maximum amount of file descriptors
-    int                    _maxi;                // Current maximum connections
+		int 				   _UDPReceivingSocket;
+	    int                    _TCPAcceptingSocket;
+	    fd_set                 _allset;              // File descriptor set for connected sockets
+	    int                    _maxfd;               //Maximum amount of file descriptors
+	    int                    _maxi;                // Current maximum connections
+	    int                    _sockPair[2];         // Communication pipe between TCP and UDP servers.	
 
 
     /* List of players currently connected to the server */
