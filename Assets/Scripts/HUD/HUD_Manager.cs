@@ -61,6 +61,7 @@ public class HUD_Manager : MonoBehaviour {
 	}
 
 	bool InputSelected = false;
+
 	// For rechargin skills whenever they are used
 	void Update()
 	{
