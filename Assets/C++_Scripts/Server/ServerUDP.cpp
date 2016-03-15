@@ -112,48 +112,55 @@ void * ServerUDP::Receive()
     rset = _allset;
     nready = select(_maxfd + 1, &rset, NULL, NULL, NULL);
 
-    if(nready > 0 && FD_ISSET(_UDPReceivingSocket, &rset))
+    if(nready > 0)
     {
-      if((recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
+      if (FD_ISSET(_UDPReceivingSocket, &rset))
       {
+        if((recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen)) <= 0)
+        {
           fatal("UDP_Server_Recv: recvfrom() failed\n");
-      }
-      fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
-
-      for(int i = 0; i < 24; i++)
-      {
-        if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
-        {
-          found = true; //(numPlayers - 24)
-          break;
         }
-        else
-        {
-          found = false;
-        }
-      }
+        fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
 
-      if(!found)
-      {
-        it = _PlayerTable.find(numPlayers-24);
-        if(it == _PlayerTable.end())
+        for(int i = 0; i < 24; i++)
         {
-          fprintf(stderr, "ServerUDP::Receive: Playerlist full.\n");
-
-        }
-        else
-        {
-          memcpy(&it->second.connection, &Client, sizeof(Client));
-          sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
+          if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
+          {
+            found = true; //(numPlayers - 24)
+            break;
+          }
+          else
+          {
+            found = false;
+          }
         }
 
-      }
-      std::cout << buf << std::endl;
+        if(!found)
+        {
+          it = _PlayerTable.find(numPlayers-24);
+          if(it == _PlayerTable.end())
+          {
+            fprintf(stderr, "ServerUDP::Receive: Playerlist full.\n");
+
+          }
+          else
+          {
+            memcpy(&it->second.connection, &Client, sizeof(Client));
+            sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
+          }
+
+        }
+        std::cout << buf << std::endl;
 
       //TODO: Refactor when the TCP passes over the map to the UDP server,
       //      will need to place all connections already into the char** "con"
       //Issue: Accepts random players that haven't been pre-connected.
-      Broadcast(buf);
+        Broadcast(buf);
+      }
+      else if (FD_ISSET(_sockPair[1], &rset))
+      {
+        StopServer();
+      }
     }
     else
     {
@@ -240,5 +247,21 @@ void ServerUDP::PrepareSelect()
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);
+    FD_SET(_sockPair[1], &_allset);
 
+}
+
+/*
+Stops the UPD server. It closes the receiving socket, sends a confirmation
+message to the TCP server before killing the process itself.
+
+Programmer: Gabriella Cheung
+*/
+void ServerUDP::StopServer()
+{
+  char sbuf[20];
+  sprintf(sbuf, "UDP server stopped");
+  close(_UDPReceivingSocket);
+  write(_sockPair[1], sbuf, strlen(sbuf));
+  kill(getpid(), SIGTERM);
 }
