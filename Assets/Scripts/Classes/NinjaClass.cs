@@ -1,17 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NinjaClass : BaseClass
+public class NinjaClass : MeleeClass
 {
-    Rigidbody2D sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
-
-    void Start()
-    {
-        Debug.Log("test start");
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        attack.transform.parent = transform;
-    }
-
 	public NinjaClass()
 	{
         this._className = "Ninja";
@@ -27,23 +18,20 @@ public class NinjaClass : BaseClass
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
-        cooldowns = new float[2] { 0.5f, 2 };
+        cooldowns = new float[2] { 0.95f, 2 };
     }
 
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
-        return 0;
+        return cooldowns[0];
     }
 
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
-        if (gameObject.GetComponent<MagicDebuff>() == null) {
-            gameObject.GetComponent<Movement>().doBlink(20f);
-        }
-
-        return 2;
+        gameObject.GetComponent<Movement>().doBlink(15f);
+        return cooldowns[1];
     }
 }

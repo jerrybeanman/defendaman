@@ -35,7 +35,7 @@ public class WorldItemData : MonoBehaviour
      */
     void Start ()
     {
-        _player_id = GameData.MyPlayerID;
+        _player_id = GameData.MyPlayer.PlayerID;
         _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
     }
 	

@@ -36,7 +36,7 @@ public class PauseMenu : MonoBehaviour {
 
     public void SetMovementOption(int i)
     {
-        var player = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player;
+        var player = GameManager.instance.player;
         if (i == 1)
             player.GetComponent<Movement>().setAbs();
         else
@@ -62,7 +62,7 @@ public class PauseMenu : MonoBehaviour {
         MainMenuGrp.SetActive(false);
         SettingMenuGrp.SetActive(true);
 
-        var player = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player;
+        var player = GameManager.instance.player;
         movementType = player.GetComponent<Movement>().getInputType();
 
         print("move type " + movementType);

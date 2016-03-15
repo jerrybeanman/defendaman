@@ -2,9 +2,16 @@
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
 #include <arpa/inet.h>
+#include <signal.h>
 #include "Server.h"
 #include "../Unity_Plugin/json11.hpp"
 
+#define PlayerID    "PlayerID"
+#define TeamID      "TeamID"
+#define ClassID     "ClassID"
+#define Ready       "Ready"
+#define StartGame   "StartGame"
+#define UserName    "UserName"
 
 //TODO: Implement this instead of Networking enum
 #define TEAMCODE 6
@@ -74,7 +81,11 @@ namespace Networking
 
           @return: void
       */
-      void Broadcast(char * message) override;
+      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
+
+			void PrepareSelect() override;
+
+			int SetSocketOpt() override;
 
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
@@ -91,18 +102,28 @@ namespace Networking
 
 			std::map<int, Player> getPlayerTable();
 
-            std::string constructPlayerTable();
+      std::string constructPlayerTable();
 
-            void sendToClient(Player player, char * message);
+      void sendToClient(Player player, const char * message);
 
+      std::string UpdateID(const Player& player);
 
-            std::string UpdateID(const Player& player);
-    private:
+		private:
 			Player newPlayer;
 
 			//Enum for the networking team to determine the type of message requested.
-			enum teamCode {Networking = 6};
-			enum networkCode {TeamChangeRequest = 1, ClassChangeRequest = 2, ReadyRequest = 3, PlayerJoinedLobby = 4, GameStart = 5};
+			enum DataType { Networking = 6 };
+			enum LobbyCode
+      {
+        TeamChangeRequest   = 1,
+        ClassChangeRequest  = 2,
+        ReadyRequest        = 3,
+        PlayerJoinedLobby   = 4,
+        GameStart           = 5,
+        UpdatePlayerList    = 6,
+        PlayerLeftLobby     = 7
+
+      };
 	};
 }
 

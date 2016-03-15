@@ -7,9 +7,9 @@ namespace Networking
     class LobbyClient : public Client
     {
         public:
-          LobbyClient() {};
+          //LobbyClient() {};
 
-          ~LobbyClient() {};
+          //~LobbyClient() {};
 
           int Init_Client_Socket(const char* name, short port) override;
 

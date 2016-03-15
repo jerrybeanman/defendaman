@@ -11,7 +11,7 @@ using namespace Networking;
 
 /**********************************************************
 Description: Initialize socket, and server address to lookup to.
-Parameters: 
+Parameters:
     name - The host name of the server.
     port - The port number of the server.
 Returns: Socket file descriptor and the server address for future use.
@@ -35,8 +35,8 @@ int GameClient::Init_Client_Socket(const char* name, short port)
 }
 
 /**********************************************************
-Description: Function to receive data from the server. 
-             The data received from the server is put onto 
+Description: Function to receive data from the server.
+             The data received from the server is put onto
              the circular buffer.
 Parameters: none
 Returns: void
@@ -51,19 +51,22 @@ void * GameClient::Recv()
     while(1)
     {
         length = sizeof(serverAddr);
-        int bytesToRead = PACKETLEN;
-        char *message = (char *) malloc(PACKETLEN);
-        while((recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length)) < PACKETLEN)
+        char *message = (char *) malloc(PACKETLEN * sizeof(char));
+        bytesRead = recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length);
+        if (bytesRead < 0 && errno != 11)
         {
-            if(bytesRead < 0)
-            {
-                printf("recv() failed with errno: %d\n", errno);
-                return (void *)errno;
-            }
-            message += bytesRead;
-            bytesToRead -= bytesRead;
+          printf("recv() failed with errno: %d\n", errno);
+          free(message);
+          return (void *)errno; //Critical error
+        }
+
+        if (bytesRead <= 0)
+        {
+          free(message);
+          continue;
         }
         // push message to queue
+        printf("GameClient::Recv: %s\n", message);
         CBPushBack(&CBPackets, message);
         free(message);
     }
@@ -71,8 +74,8 @@ void * GameClient::Recv()
 }
 
 /**********************************************************
-Description: Wrapper function for UDP sendTo function. 
-             Failing to send prints an error message with 
+Description: Wrapper function for UDP sendTo function.
+             Failing to send prints an error message with
              the data intended to send.
 Parameters:
     message - The pointer to the data to be sent to the server
@@ -91,4 +94,19 @@ int GameClient::Send(char * message, int size)
         return errno;
     }
     return 0;
+}
+
+char* GameClient::GetData()
+{
+  if (CBPackets.Count != 0)
+  {
+    memset(currentData, 0, PACKETLEN);
+    CBPop(&CBPackets, currentData);
+    printf("GameClient::GetData: %s\n", currentData);
+  } else
+  {
+    strcpy(currentData, "[]");
+  }
+  //printf("GameClient::GetData(): Count:%d, Message:%s\n", CBPackets.Count, currentData);
+  return currentData;
 }

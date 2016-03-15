@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+//Carson
 public class GameStart_Testing : MonoBehaviour {
     int myID = -1;
     NetworkingManager networkingManager;
@@ -54,7 +55,7 @@ public class GameStart_Testing : MonoBehaviour {
 
     public void StartOfGame()
     {
-        NetworkingManager.InGame = true;
+		GameData.GameStart = true;
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
@@ -68,7 +69,7 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.LobbyData[7] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 7, TeamID = 1 });
         GameData.LobbyData[8] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 8, TeamID = 2 });
 
-        GameData.MyPlayerID = myID;
+        GameData.MyPlayer.PlayerID = myID;
 
         if (Application.platform != RuntimePlatform.LinuxPlayer)
         {
@@ -76,6 +77,10 @@ public class GameStart_Testing : MonoBehaviour {
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
         }
 
-        networkingManager.update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
+        GameData.Seed = 1000;
+
+        GameData.IP = "192.168.0.3";
+
+        GameManager.instance.StartGame(GameData.Seed);
     }
 }
