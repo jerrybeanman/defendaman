@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour {
             HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0)
                 PlayerDied();
+            else
+                ColourizeScreen.instance.PlayerHurt();
         }
 
         if (playerID == GameData.AllyKingID)
@@ -66,6 +68,7 @@ public class GameManager : MonoBehaviour {
 
     private static void PlayerDied()
     {
+        ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
     }
 
