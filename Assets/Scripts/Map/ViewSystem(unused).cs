@@ -50,7 +50,7 @@ public class ViewSystem : MonoBehaviour {
 	}
 	
 	void buildPointsAndMesh() {
-		player = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player;
+		player = GameManager.instance.player;
 		if (player == null) {
 			return;
 		}
