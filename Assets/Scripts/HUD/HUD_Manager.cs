@@ -52,6 +52,7 @@ public class HUD_Manager : MonoBehaviour {
 
 	void Start()
 	{
+		GameData.GameStart = true;
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
@@ -75,7 +76,7 @@ public class HUD_Manager : MonoBehaviour {
 				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
 				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
 
-				UpdateChat(1, "Jerry", chat.input.text);
+				UpdateChat(0, "Jerry", chat.input.text);
 				chat.input.text = "";
 				chat.input.interactable = false;
 			}
@@ -137,12 +138,7 @@ public class HUD_Manager : MonoBehaviour {
 			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
-
-	public void SwapTeam()
-	{
-		GameData.MyPlayer.TeamID = (GameData.MyPlayer.TeamID == 1) ? 2 : 1;
-		print ("Current team is: " + GameData.MyPlayer.TeamID);
-	}
+	
 	/*----------------------------------------------------------------------------
     --	Update player hp on the HUD, and triggers the "TakeDmg" animation
     --

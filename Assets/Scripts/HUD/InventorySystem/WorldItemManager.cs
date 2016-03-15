@@ -133,8 +133,7 @@ public class WorldItemManager : MonoBehaviour
     {
         List<Pair<string, string>> _drop_item_message = new List<Pair<string, string>>();
 
-        Vector3 position
-            = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player.transform.position;
+        Vector3 position = GameManager.instance.player.transform.position;
         int _world_item_id = GenerateWorldItemId();
         int _player_id = GameData.MyPlayer.PlayerID;
 

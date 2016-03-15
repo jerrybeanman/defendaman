@@ -115,6 +115,5 @@ char* Client::GetData()
     {
         strcpy(currentData, "[]");
     }
-    printf("[Debug] Client::GetData()\n");
     return currentData;
 }
