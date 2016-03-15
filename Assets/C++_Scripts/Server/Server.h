@@ -41,7 +41,11 @@ namespace Networking
 	class Server
 	{
 		public:
-			Server(){}
+			Server(int writeDes, int readDes)
+            {
+                _sockPair[0] = writeDes;
+                _sockPair[1] = readDes;
+            }
 			~Server(){}
     	/*
 		   Initialize socket, server address to lookup to, and connect to the server
@@ -74,7 +78,6 @@ namespace Networking
 	    int                    _maxfd;               //Maximum amount of file descriptors
 	    int                    _maxi;                // Current maximum connections
 	    int                    _sockPair[2];         // Communication pipe between TCP and UDP servers.	
-
 
     /* List of players currently connected to the server */
     std::map<int, Player>           _PlayerTable;

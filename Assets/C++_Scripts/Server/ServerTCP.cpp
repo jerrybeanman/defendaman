@@ -291,6 +291,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       std::cout << "Player: " << json[PlayerID].int_value() << " has left the lobby" << std::endl;
       _PlayerTable.erase(json[PlayerID].int_value());
       this->ServerTCP::Broadcast(buffer);
+      write(_sockPair[0], "2", PACKETLEN);
       break;
 
     case GameStart:
@@ -300,7 +301,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       {
         this->ServerTCP::Broadcast(buffer);
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
-        kill(getpid(), SIGTERM);
+        write(_sockPair[0], "1", PACKETLEN);
       }
       break;
 

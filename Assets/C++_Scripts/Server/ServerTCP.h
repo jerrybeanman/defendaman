@@ -22,66 +22,18 @@ namespace Networking
 	{
 		public:
 
-			ServerTCP(){}
+			ServerTCP(int writeDes, int readDes) : Server(writeDes, readDes) {}
 			~ServerTCP(){}
-	    	/*
-	            Initialize socket, server address to lookup to, and connect to the server
 
-                Interface:  int InitializeSocket(short port)
-                            [port] Port number
+            int InitializeSocket(short port) override;
 
-                programmer: Jerry Jia
+            int Accept(Player * player);
 
-                @return: socket file descriptor
-            */
-      int InitializeSocket(short port) override;
+            static void * CreateClientManager(void * server);
 
-            /*
-                Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
-                Add connected player to the list of players
+            void * Receive() override;
 
-                Interface:  int Accept(Player * player)
-                            [player] Pointer to a Player structure
-
-                programmer: Jerry Jia
-
-                return: socket file descriptor
-            */
-      int Accept(Player * player);
-
-            /*
-                Creates a child process to handle incoming messages from new player that has just connected to the lobby
-
-                Interface:  void * CreateClientManager(void * server)
-                            [server] Pointer to a void, which has to be a Server object
-
-                Programmer: Jerry Jia
-
-                return: child PDI (0 for child process)
-            */
-      static void * CreateClientManager(void * server);
-
-           /*
-                Recieves data from child process that is dedicated for each player's socket
-
-                Interface:  void * Receive()
-
-                Programmer: Jerry Jia
-
-                @return: Thread execution code
-            */
-      void * Receive() override;
-
-	    /*
-          Sends a message to all the clients
-
-          Interface:  void Broadcast(char * message)
-
-          Programmer: Jerry Jia
-
-          @return: void
-      */
-      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
+            void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
 
 			void PrepareSelect() override;
 
@@ -89,24 +41,21 @@ namespace Networking
 
 			void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
-			/*Parses incoming JSON and process request*/
 			void CheckServerRequest(Player player, char * buffer);
 
-			/* Check ready status on all connected players*/
 			bool AllPlayersReady();
 
 			std::string generateMapSeed();
 
-			/* Generates an int for player based on IP of player */
 			int getPlayerId(std::string ipString);
 
 			std::map<int, Player> getPlayerTable();
 
-      std::string constructPlayerTable();
+            std::string constructPlayerTable();
 
-      void sendToClient(Player player, const char * message);
+            void sendToClient(Player player, const char * message);
 
-      std::string UpdateID(const Player& player);
+            std::string UpdateID(const Player& player);
 
       /* Shuts down the game server */
       void ShutDownGameServer(void);
@@ -115,7 +64,7 @@ namespace Networking
 
 		private:
 			Player newPlayer;
-
+            int socketPair[2];
 			//Enum for the networking team to determine the type of message requested.
 			enum DataType { Networking = 6 };
 			enum LobbyCode
