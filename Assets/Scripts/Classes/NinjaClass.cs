@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NinjaClass : BaseClass
+public class NinjaClass : MeleeClass
 {
 	public NinjaClass()
 	{

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WizardClass : BaseClass
+public class WizardClass : RangedClass
 {
     // note that max distance for this special attack is meant to be the duration that the magic circle stays 
     int[] distance = new int[2]{ 20, 0 };
