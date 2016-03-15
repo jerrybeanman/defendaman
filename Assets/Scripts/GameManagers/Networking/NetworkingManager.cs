@@ -62,7 +62,6 @@ public class NetworkingManager : MonoBehaviour
 
 	void Awake()
 	{
-		print ("[Debug] NetworkingManager::Awake()");
 		if (instance == null)				//Check if instance already exists
 			instance = this;				//if not, set instance to this
 		else if (instance != this)			//If instance already exists and it's not this:
