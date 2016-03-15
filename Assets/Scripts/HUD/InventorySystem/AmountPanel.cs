@@ -22,6 +22,17 @@ public class AmountPanel : MonoBehaviour {
         _amount_panel.SetActive(false);
 	}
 
+    /*
+     * Deactivate amount panel when there is mouse click outside the panel
+     */
+    void Update()
+    {
+        if (!GameData.MouseBlocked && (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0)))
+        {
+            Deactivate();
+        }
+    }
+
     public void Activate(Item item, int amt, int inv_pos)
     {
         _item = item;

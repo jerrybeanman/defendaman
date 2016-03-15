@@ -52,6 +52,7 @@ public class WorldItemData : MonoBehaviour
 	void Update () {
         if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
         {
+            Debug.Log("pick up");
             // Send Network message
             List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
@@ -67,8 +68,9 @@ public class WorldItemData : MonoBehaviour
      */
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player" && 
-            other.gameObject.GetComponent<BaseClass>().playerID == _player_id)
+        if (other.gameObject.tag == "Player" &&
+            // other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
+            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayerID)
         {
             trigger_entered = true;
         }
@@ -81,7 +83,8 @@ public class WorldItemData : MonoBehaviour
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player" &&
-            other.gameObject.GetComponent<BaseClass>().playerID == _player_id)
+            //other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
+            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayerID)
         {
             trigger_entered = false;
         }

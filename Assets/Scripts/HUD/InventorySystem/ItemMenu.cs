@@ -46,6 +46,17 @@ public class ItemMenu : MonoBehaviour
     }
 
     /*
+     * Deactivate item menu when there is mouse click outside the item menu
+     */
+    void Update()
+    {
+        if (!GameData.MouseBlocked && (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0))) 
+        {
+            Deactivate();
+        }
+    }
+
+    /*
      * Sets the position of the ItemMenu to the position of the mouse cursor
      * and sets the item menu to active. Stores the item, amount and inventory
      * position of the inventory item.
