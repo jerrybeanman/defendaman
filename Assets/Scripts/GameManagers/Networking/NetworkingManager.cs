@@ -351,7 +351,7 @@ public class NetworkingManager : MonoBehaviour
     ////Game creation code
     #region StartOfGame
 
-    void StartGame(JSONClass data)
+    public static void StartGame(JSONClass data)
     {
         try
         {
@@ -362,73 +362,6 @@ public class NetworkingManager : MonoBehaviour
         catch (Exception)
         {
             //On Windows
-        }
-
-        int myPlayer = GameData.MyPlayer.PlayerID;
-        int myTeam = 0;
-        List<Pair<int, int>> kings = new List<Pair<int, int>>();
-
-        update_data(GenerateMapInJSON(data["Seed"].AsInt));
-        
-        //foreach (JSONClass playerData in data["playersData"].AsArray)
-        foreach (var playerData in GameData.LobbyData) {
-            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID-1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID-1].second, -10), Quaternion.identity)).gameObject;
-
-            switch(playerData.Value.ClassType)
-            {
-                case ClassType.Ninja:
-                    createdPlayer.AddComponent<NinjaClass>();
-                    break;
-                case ClassType.Gunner:
-                    createdPlayer.AddComponent<GunnerClass>();
-                    break;
-                case ClassType.Wizard:
-                    createdPlayer.AddComponent<WizardClass>();
-                    break;
-                default:
-                    Debug.Log("Player " + playerData.Value.PlayerID + " has not selected a valid class. Defaulting to Gunner");
-                    createdPlayer.AddComponent<GunnerClass>();
-                    break;
-            }
-
-            //TODO: Get Micah to re-hook this up. Current fails cause missing a prefab
-			/*if (myTeam == playerData.Value.TeamID) {
-				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lighting.transform.parent = createdPlayer.transform;
-				lighting.transform.Rotate (0,0,-90);
-				lighting.transform.Translate(0,0,9);
-			}*/
-
-            createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
-            createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
-
-            //if (playerData.King) //Uncomment this one line when kings are in place
-                kings.Add(new Pair<int, int>(playerData.Value.TeamID, playerData.Value.PlayerID));
-
-            if (myPlayer == playerData.Value.PlayerID)
-            {
-                myTeam = playerData.Value.TeamID;
-                player = createdPlayer;
-                GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
-                if (GameObject.Find("Minimap Camera") != null)
-                    GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
-                player.AddComponent<Movement>();
-                player.AddComponent<Attack>();
-                //Created our player
-            }
-            else {
-                createdPlayer.AddComponent<PlayerReceiveUpdates>();
-                createdPlayer.GetComponent<PlayerReceiveUpdates>().playerID = playerData.Value.PlayerID;
-                //Created another player
-            }
-        }
-
-        foreach (var king in kings)
-        {
-            if (king.first == myTeam)
-                GameData.AllyKingID = king.second;
-            else
-                GameData.EnemyKingID = king.second;
         }
     }
 
