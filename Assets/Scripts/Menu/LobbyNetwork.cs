@@ -8,6 +8,7 @@ using System.Collections.Generic;
 // Networking Code for lobby messages
 public enum NetworkCode
 {
+	Seed				= 0,
 	TeamChangeRequest 	= 1,
 	ClassChangeRequest 	= 2,
 	ReadyRequest 		= 3,
@@ -175,9 +176,14 @@ public class LobbyNetwork : MonoBehaviour {
             case NetworkCode.GameStart:
             {
 				RecievedData = "Player: " + PlayerPacketID + " has started the game!";
-				// start game stuff here
                 break;
             }
+			case NetworkCode.Seed:
+			{
+				GameData.Seed = packet["Seed"].AsInt;
+				break;
+			}	
+			
         }
 	}
 

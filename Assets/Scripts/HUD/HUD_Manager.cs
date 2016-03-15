@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System;
 using System.Globalization;
 using SimpleJSON;
+using System.Collections.Generic;
 
 public class HUD_Manager : MonoBehaviour {
 	#region Subclasses
@@ -51,9 +52,6 @@ public class HUD_Manager : MonoBehaviour {
 
 	void Start()
 	{
-		// NOTE:: For testing purposes
-		GameData.MyPlayer.TeamID = 1;
-
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
@@ -63,19 +61,23 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(Input.GetKeyDown(KeyCode.Return))
 		{
-
-			if(!InputSelected)
+			if(!chat.input.IsInteractable())
 			{
-				print ("selecting");
+				chat.input.interactable = true;
 				chat.input.Select();
-				InputSelected = true;
+				chat.input.ActivateInputField();
 			}
 			else
 			{
-				print ("seding");
-				UpdateChat(GameData.MyPlayer.TeamID);
-				InputSelected = false;
+				// Send the packet, with Team ID and username
+				/*List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
+				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
+
+				UpdateChat(1, "Jerry", chat.input.text);
 				chat.input.text = "";
+				chat.input.interactable = false;
 			}
 		}
 		if(mainSkill.ProgressBar.fillAmount  < 1)
@@ -91,19 +93,24 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
+	private static void Send(string packet)
+	{
+		if(NetworkingManager.TCP_Send(packet, 256) < 0)
+			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
+	}
+
 	void UpdateChatCallBack(JSONClass data)
 	{
-		int team = data[NetworkKeyString.TeamID].AsInt;
+		int team 		= data[NetworkKeyString.TeamID].AsInt;
 		string username = data[NetworkKeyString.UserName];
-		string message = data[NetworkKeyString.Message];
+		string message 	= data[NetworkKeyString.Message];
 		
-		UpdateChat(team);
+		UpdateChat(team, username, message);
 	}
 	
-	public void UpdateChat(int team)
+	public void UpdateChat(int team, string username, string message)
 	{
-		// NOTE:: For Testing purposes
-		string username= "[Dong]"; string message= "herro";
+		username = "[" + username + "]:";
 		GameObject childObject;
 		// Ally Message
 		if(team == GameData.MyPlayer.TeamID)
@@ -130,7 +137,12 @@ public class HUD_Manager : MonoBehaviour {
 			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
-	
+
+	public void SwapTeam()
+	{
+		GameData.MyPlayer.TeamID = (GameData.MyPlayer.TeamID == 1) ? 2 : 1;
+		print ("Current team is: " + GameData.MyPlayer.TeamID);
+	}
 	/*----------------------------------------------------------------------------
     --	Update player hp on the HUD, and triggers the "TakeDmg" animation
     --
