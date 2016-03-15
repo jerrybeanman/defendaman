@@ -181,6 +181,7 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
+				break;
 			}	
 			
         }
