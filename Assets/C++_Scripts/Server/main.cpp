@@ -35,18 +35,28 @@ int main()
             perror("reading stream message");
         else
         {
-            if((rc = serverUDP.InitializeSocket(8000)) != 0)
-		    {
-		    	std::cerr << "UDP Server initialization failed." << std::endl;
-		    	return 1;
-	    	}
-	    	std::cerr << "UDP Server initialized." << std::endl;
-            serverUDP.SetPlayerList(serverTCP.getPlayerTable());
-            if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &serverUDP) < 0)
-	    	{
-	    		std::cerr << "thread creation failed" << std::endl;
-	    	}
-         }
+            if(buf[0] == '1')
+            {
+
+                if((rc = serverUDP.InitializeSocket(8000)) != 0)
+                {
+                    std::cerr << "UDP Server initialization failed." << std::endl;
+                    return 1;
+                }
+                std::cerr << "UDP Server initialized." << std::endl;
+                serverUDP.SetPlayerList(serverTCP.getPlayerTable());
+                if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &serverUDP) < 0)
+                {
+                    std::cerr << "thread creation failed" << std::endl;
+                }
+            } else if(buf[0] == '2')
+            {
+                serverUDP.SetPlayerList(serverTCP.getPlayerTable());
+            } else if(buf[0] == '3')
+            {
+                //kill child process
+            }
+        }
     }
     
   if((rc = serverTCP.InitializeSocket(7000)) != 0)
