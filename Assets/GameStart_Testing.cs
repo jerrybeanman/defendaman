@@ -77,6 +77,7 @@ public class GameStart_Testing : MonoBehaviour {
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
         }
 
-        networkingManager.update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
+        GameManager.instance.StartGame(1000);
+        //networkingManager.update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }
 }

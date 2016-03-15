@@ -87,7 +87,7 @@ public abstract class BaseClass : MonoBehaviour {
 
         //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
 
-        GameManager.PlayerTookDamage(playerID, damage, ClassStat);
+        GameManager.instance.PlayerTookDamage(playerID, damage, ClassStat);
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
