@@ -93,22 +93,24 @@ public class MapManager : MonoBehaviour {
 	 * active. Else, set it to unactive.
 	 */
     private void check_object_pool() {
-        cameraPosition = mainCamera.GetComponent<Transform>().position;
-        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
-        frustumWidth = frustumHeight * mainCamera.aspect;
+		if (GameData.GameStart) {
+	        cameraPosition = mainCamera.GetComponent<Transform>().position;
+	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+	        frustumWidth = frustumHeight * mainCamera.aspect;
 
-        if (_pooledObjects != null) {
-            for (int i = 0; i < _pooledObjects.Length; i++) {
-                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
-                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
-                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
-                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
-                    _pooledObjects[i].SetActive(true);
-                } else {
-                    _pooledObjects[i].SetActive(false);
-                }
-            }
-        }
+	        if (_pooledObjects != null) {
+	            for (int i = 0; i < _pooledObjects.Length; i++) {
+	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
+	                    _pooledObjects[i].SetActive(true);
+	                } else {
+	                    _pooledObjects[i].SetActive(false);
+	                }
+	            }
+	        }
+		}
     }
 
     /**

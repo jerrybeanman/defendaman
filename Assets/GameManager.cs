@@ -7,6 +7,11 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour {
     public static GameManager instance;
 
+    public Transform playerType;
+    public Transform lightSource;
+    public GameObject player;
+    private bool testing = false;
+
     public enum LobbyData { GameEnd = 1, Disconnected = 2 }
 
     void Awake()
@@ -15,12 +20,21 @@ public class GameManager : MonoBehaviour {
             instance = this;                //if not, set instance to this
         else if (instance != this)          //If instance already exists and it's not this:
             Destroy(gameObject);            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
-        DontDestroyOnLoad(gameObject);
+
+        if (GameObject.Find("NetworkManager") == null) //If we didnt get here from the lobby, we are doing non-networking testing
+        {
+            testing = true;
+            gameObject.AddComponent<NetworkingManager>();
+        }
     }
 
     void Start()
     {
-        NetworkingManager.Subscribe(gameEnd, DataType.Lobby, (int)LobbyData.GameEnd);
+        if (!testing)
+        {
+            NetworkingManager.Subscribe(gameEnd, DataType.Lobby, (int)LobbyData.GameEnd);
+            StartGame(GameData.Seed);
+        }
     }
 
     public void PlayerTookDamage(int playerID, float damage, BaseClass.PlayerBaseStat ClassStat)
@@ -58,13 +72,12 @@ public class GameManager : MonoBehaviour {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
-        var manager = GetComponent<NetworkingManager>();
         
-        manager.update_data(NetworkingManager.GenerateMapInJSON(seed));
+        NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
         
         foreach (var playerData in GameData.LobbyData)
         {
-            var createdPlayer = ((Transform)Instantiate(manager.playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
+			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
             switch (playerData.Value.ClassType)
             {
@@ -100,12 +113,12 @@ public class GameManager : MonoBehaviour {
             if (myPlayer == playerData.Value.PlayerID)
             {
                 myTeam = playerData.Value.TeamID;
-                manager.player = createdPlayer;
-                GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = manager.player.transform;
+				player = createdPlayer;
+				GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
-                    GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = manager.player.transform;
-                manager.player.AddComponent<Movement>();
-                manager.player.AddComponent<Attack>();
+					GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
+				player.AddComponent<Movement>();
+				player.AddComponent<Attack>();
                 //Created our player
             }
             else {
@@ -122,6 +135,8 @@ public class GameManager : MonoBehaviour {
             else
                 GameData.EnemyKingID = king.second;
         }
+
+		NetworkingManager.StartGame();
     }
 
     private void gameEnd(JSONClass packet)
