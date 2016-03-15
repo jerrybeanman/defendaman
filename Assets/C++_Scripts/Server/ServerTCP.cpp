@@ -471,7 +471,7 @@ void ServerTCP::ShutDownGameServer(void)
   static int MESSAGE_SIZE = 20;
   sprintf(msg, "%s", "GameEnd");
 
-  if(_pipe[0] == -1 && _pipe[1] == -1) //check if the pipes aren't in error
+  if(_sockPair[0] == -1 && _sockPair[1] == -1) //check if the sockets aren't in error
   {
     // Critical error SIGTERM the UDP
     // TODO 
