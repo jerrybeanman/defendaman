@@ -1,8 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
 
 //Carson
 public class GameManager : MonoBehaviour {
+    public enum LobbyData { GameEnd = 1, Disconnected = 2 }
+
+    void Start()
+    {
+        NetworkingManager.Subscribe(gameEnd, DataType.Lobby, (int)LobbyData.GameEnd);
+    }
+
     public static void PlayerTookDamage(int playerID, float damage, BaseClass.PlayerBaseStat ClassStat)
     {
         if (GameData.MyPlayer.PlayerID == playerID)
@@ -33,6 +41,17 @@ public class GameManager : MonoBehaviour {
         Debug.Log("You have died");
 
         //GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = GameObject.Find
+    }
+
+    private void gameEnd(JSONClass packet)
+    {
+        if  (packet["TeamID"] == GameData.MyPlayer.TeamID)
+        {
+            GameWon();
+        } else
+        {
+            GameLost();
+        }
     }
 
     private static void GameWon()

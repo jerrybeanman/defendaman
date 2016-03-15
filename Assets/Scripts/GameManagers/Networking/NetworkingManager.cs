@@ -356,7 +356,7 @@ public class NetworkingManager : MonoBehaviour
         try
         {
             UDPClient = UDP_CreateClient();
-            UDP_ConnectToServer("192.168.0.3", 8000);
+            UDP_ConnectToServer("192.168.0.10", 7000);
             UDP_StartReadThread();
         }
         catch (Exception)
