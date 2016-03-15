@@ -43,10 +43,6 @@ public class NetworkingManager : MonoBehaviour
 {
     
     #region Variables
-    // Game object to send data of
-    public Transform playerType;
-	public Transform lightSource;
-    public GameObject player;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
@@ -296,16 +292,16 @@ public class NetworkingManager : MonoBehaviour
 
         if (protocol == Protocol.UDP)
         {
-            if (player != null)
+            if (GameManager.instance.player != null)
             {
                 //Add player data
                 var memberItems = new List<Pair<string, string>>();
-                memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
-                memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-                memberItems.Add(new Pair<string, string>("rotationZ", player.transform.rotation.z.ToString()));
-                memberItems.Add(new Pair<string, string>("rotationW", player.transform.rotation.w.ToString()));
+                memberItems.Add(new Pair<string, string>("x", GameManager.instance.player.transform.position.x.ToString()));
+                memberItems.Add(new Pair<string, string>("y", GameManager.instance.player.transform.position.y.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationZ", GameManager.instance.player.transform.rotation.z.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationW", GameManager.instance.player.transform.rotation.w.ToString()));
                 
-                send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems, protocol);
+                send_next_packet(DataType.Player, GameManager.instance.player.GetComponent<BaseClass>().playerID, memberItems, protocol);
             }
         }
 
