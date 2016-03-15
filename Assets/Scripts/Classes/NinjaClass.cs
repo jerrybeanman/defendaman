@@ -3,12 +3,12 @@ using System.Collections;
 
 public class NinjaClass : BaseClass
 {
-    Rigidbody2D sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
+    //Rigidbody2D sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
 
     void Start()
     {
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        attack.transform.parent = transform;
+        //Rigidbody2D attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        //attack.transform.parent = transform;
     }
 
 	public NinjaClass()
@@ -33,16 +33,14 @@ public class NinjaClass : BaseClass
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
-        return 0;
+        return cooldowns[0];
     }
 
     public override float specialAttack(Vector2 dir)
     {
+        // colins blink
         base.specialAttack(dir);
-        if (gameObject.GetComponent<MagicDebuff>() == null) {
-            gameObject.GetComponent<Movement>().doBlink(20f);
-        }
-
-        return 2;
+        gameObject.GetComponent<Movement>().doBlink(15f);
+        return cooldowns[1];
     }
 }
