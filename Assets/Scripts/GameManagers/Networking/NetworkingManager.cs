@@ -373,8 +373,10 @@ public class NetworkingManager : MonoBehaviour
 
 			if (myTeam == playerData.Value.TeamID) {
 				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lighting.transform.parent = createdPlayer.transform;
-				lighting.transform.Rotate (0,0,-90);
+				//lighting.transform.parent = createdPlayer.transform;
+				lighting.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
+				lighting.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
+				//lighting.transform.Rotate (0,0,-90);
 				lighting.transform.Translate(0,0,9);
 			}
 
@@ -389,6 +391,7 @@ public class NetworkingManager : MonoBehaviour
                 myTeam = playerData.Value.TeamID;
                 player = createdPlayer;
                 GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
+				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
                     GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
                 player.AddComponent<Movement>();
