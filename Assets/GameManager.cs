@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 
     public Transform playerType;
     public Transform lightSource;
+	public Transform shadowoverlay;
     public GameObject player;
     private bool testing = false;
 
@@ -107,9 +108,11 @@ public class GameManager : MonoBehaviour {
             switch (playerData.Value.ClassType)
             {
                 case ClassType.Ninja:
+					Debug.Log("Added ninja");
                     createdPlayer.AddComponent<NinjaClass>();
                     break;
-                case ClassType.Gunner:
+				case ClassType.Gunner:
+					Debug.Log("Added gunner");
                     createdPlayer.AddComponent<GunnerClass>();
                     break;
                 case ClassType.Wizard:
@@ -121,13 +124,25 @@ public class GameManager : MonoBehaviour {
                     break;
             }
 
-            //TODO: Get Micah to re-hook this up. Current fails cause missing a prefab
-            /*if (myTeam == playerData.Value.TeamID) {
+			Debug.Log(myTeam.ToString());
+            // Add FOV to all ally team members
+			if (myTeam == playerData.Value.TeamID || myTeam == 0) { // myTeam == 0 is a bugfix until player has teamID of 1
+				Debug.Log ("Team Member");
+				Transform hpFrame = createdPlayer.transform.GetChild(0);
+				Transform hpBar = hpFrame.transform.GetChild(0);
+				createdPlayer.layer = LayerMask.NameToLayer("Allies");
+				hpFrame.gameObject.layer = LayerMask.NameToLayer("Allies");
+				hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
 				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lighting.transform.parent = createdPlayer.transform;
-				lighting.transform.Rotate (0,0,-90);
+				lighting.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
+				lighting.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 				lighting.transform.Translate(0,0,9);
-			}*/
+				if (myPlayer == playerData.Value.PlayerID) {
+					var shadows = ((Transform)Instantiate(shadowoverlay, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+					shadows.transform.parent = lighting.transform;
+					shadows.transform.Translate(0,0,11);
+				}
+			}
 
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
@@ -140,6 +155,7 @@ public class GameManager : MonoBehaviour {
                 myTeam = playerData.Value.TeamID;
 				player = createdPlayer;
 				GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
+				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
                 if (GameObject.Find("Minimap Camera") != null)
 					GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
 				player.AddComponent<Movement>();
