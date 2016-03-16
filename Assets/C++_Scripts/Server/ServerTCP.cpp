@@ -2,6 +2,7 @@
 
 using namespace Networking;
 using namespace json11;
+extern std::map<int, Player>           _PlayerTable;
 
 /**
  * Initialize server socket and address
@@ -100,15 +101,20 @@ void * ServerTCP::Receive()
     char * buf;						          	/* buffer read from one recv call      	  */
 
   	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
+    memset(buf, 0, PACKETLEN);
     while (1)
     {
-      	BytesRead = recv (tmpPlayer.socket, buf, PACKETLEN, 0);
+      int bytesToRead = PACKETLEN;
+      char *bp = buf;
+       while((BytesRead = recv(tmpPlayer.socket, bp, bytesToRead, 0)) < PACKETLEN)
+       {
+         bytesToRead -= BytesRead;
+         bp += BytesRead;
+       }
 
         /* recv() failed */
       	if(BytesRead < 0)
       	{
-          if(errno == EINTR)
-              continue;
       		printf("recv() failed with errno: %d", errno);
       		return 0;
       	}
@@ -127,6 +133,7 @@ void * ServerTCP::Receive()
           return 0;
       	}
         //Handle Data Received
+        std::cout << "INSIDE RECV" << buf << std::endl;
         this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
     }
     free(buf);
@@ -147,7 +154,7 @@ void * ServerTCP::Receive()
 void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
-  std::cout << "In BroadCast(): " << message << std::endl;
+  std::cout << "Player size : " << _PlayerTable.size() << std::endl;
   for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
@@ -246,11 +253,17 @@ int ServerTCP::SetSocketOpt()
  */
 void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
+  std::cout << "Inside check server request" << std::endl;
   std::string error;
+  std::cout << "INSIDE CHECK SERVER REQUEST" << buffer << std::endl;
   Json json = Json::parse(buffer, error).array_items()[0];
 
-  if (json["DataType"].int_value() != Networking)
+  std::cout << "awefwaefwaefwaefweaf check server request" << std::endl;
+
+  if (json["DataType"].int_value() != Networking) {
+    this->ServerTCP::Broadcast(buffer);
     return;
+  }
 
   switch(json["ID"].int_value())
   {
@@ -389,11 +402,11 @@ std::string ServerTCP::constructPlayerTable()
 	{
 		std::string tempUserName((it->second).username);
 		packet += "{";
-    packet += "PlayerID: " + std::to_string(it->first);
-		packet += ",  UserName : \"" + tempUserName + "\"";
-		packet += ", TeamID : " +  std::to_string((it->second).team);
-		packet += ", ClassID : " + std::to_string((it->second).playerClass);
-		packet += ", Ready : " + std::to_string(Server::isReadyToInt(it->second));
+    packet += "\"PlayerID\" : " + std::to_string(it->first);
+		packet += ",  \"UserName\" : \"" + tempUserName + "\"";
+		packet += ", \"TeamID \": " +  std::to_string((it->second).team);
+		packet += ", \"ClassID\" : " + std::to_string((it->second).playerClass);
+		packet += ", \"Ready\" : " + std::to_string(Server::isReadyToInt(it->second));
 		packet += (++it == _PlayerTable.end() ? "}" : "},");
 	}
 	packet +=    "]";

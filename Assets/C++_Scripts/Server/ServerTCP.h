@@ -22,18 +22,18 @@ namespace Networking
 	{
 		public:
 
-			ServerTCP(int writeDes, int readDes) : Server(writeDes, readDes) {}
+			ServerTCP() {}
 			~ServerTCP(){}
 
-            int InitializeSocket(short port) override;
+      int InitializeSocket(short port) override;
 
-            int Accept(Player * player);
+      int Accept(Player * player);
 
-            static void * CreateClientManager(void * server);
+      static void * CreateClientManager(void * server);
 
-            void * Receive() override;
+      void * Receive() override;
 
-            void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
+      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
 
 			void PrepareSelect() override;
 
@@ -51,11 +51,11 @@ namespace Networking
 
 			std::map<int, Player> getPlayerTable();
 
-            std::string constructPlayerTable();
+      std::string constructPlayerTable();
 
-            void sendToClient(Player player, const char * message);
+      void sendToClient(Player player, const char * message);
 
-            std::string UpdateID(const Player& player);
+      std::string UpdateID(const Player& player);
 
       /* Shuts down the game server */
       void ShutDownGameServer(void);
@@ -64,7 +64,7 @@ namespace Networking
 
 		private:
 			Player newPlayer;
-            int socketPair[2];
+      int socketPair[2];
 			//Enum for the networking team to determine the type of message requested.
 			enum DataType { Networking = 6 };
 			enum LobbyCode

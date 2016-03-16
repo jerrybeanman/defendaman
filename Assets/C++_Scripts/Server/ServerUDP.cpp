@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 
 using namespace Networking;
-
+extern std::map<int, Player>           _PlayerTable;
 /*
 	Initialize socket, server address to lookup to, and connect to the server
 
@@ -107,6 +107,8 @@ void * ServerUDP::Receive()
 
   memset(con, 0, sizeof(con));
 
+  std::cout << "INSIDE RECV HEYOO" << std::endl;
+
   while (1)
   {
     rset = _allset;
@@ -157,10 +159,10 @@ void * ServerUDP::Receive()
       //Issue: Accepts random players that haven't been pre-connected.
         Broadcast(buf);
       }
-      else if (FD_ISSET(_sockPair[1], &rset))
+      /*else if (FD_ISSET(_sockPair[1], &rset))
       {
         StopServer();
-      }
+      }*/
     }
     else
     {
@@ -247,7 +249,7 @@ void ServerUDP::PrepareSelect()
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);
-    FD_SET(_sockPair[1], &_allset);
+    //FD_SET(_sockPair[1], &_allset);
 
 }
 
@@ -262,6 +264,6 @@ void ServerUDP::StopServer()
   char sbuf[20];
   sprintf(sbuf, "UDP server stopped");
   close(_UDPReceivingSocket);
-  write(_sockPair[1], sbuf, strlen(sbuf));
+  //write(_sockPair[1], sbuf, strlen(sbuf));
   kill(getpid(), SIGTERM);
 }

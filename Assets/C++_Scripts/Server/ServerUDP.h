@@ -10,24 +10,24 @@ namespace Networking
 	{
 		public:
 
-			ServerUDP(int writeDes, int readDes) : Server(writeDes, readDes) {}
+			ServerUDP() {}
 			~ServerUDP() {}
 
-            int InitializeSocket(short port) override;
+      int InitializeSocket(short port) override;
 
-            void * Receive() override;
+      void * Receive() override;
 
-            void Broadcast(const char* message, sockaddr_in * excpt = NULL) override;
+      void Broadcast(const char* message, sockaddr_in * excpt = NULL) override;
 
-            void SetPlayerList(std::map<int, Player> players);
+      void SetPlayerList(std::map<int, Player> players);
 
-            static void * CreateClientManager(void * server);
+      static void * CreateClientManager(void * server);
 
-            void PrepareSelect() override;
+      void PrepareSelect() override;
 
-            int SetSocketOpt() override;
+      int SetSocketOpt() override;
 
-						void StopServer();
+			void StopServer();
 	};
 }
 
