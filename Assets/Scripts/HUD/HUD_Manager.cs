@@ -84,12 +84,13 @@ public class HUD_Manager : MonoBehaviour {
 			else
 			{
 				// Send the packet, with Team ID and username
-				/*List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
-				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
-				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
+				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
+				packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
+				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
 				
-				UpdateChat(0, "Jerry", chat.input.text);
+				//UpdateChat(0, "Jerry", chat.input.text);
 				chat.input.text = "";
 				chat.input.interactable = false;
 			}
@@ -135,10 +136,12 @@ public class HUD_Manager : MonoBehaviour {
 
 	void UpdateChatCallBack(JSONClass data)
 	{
+
 		int team 		= data[NetworkKeyString.TeamID].AsInt;
 		string username = data[NetworkKeyString.UserName];
 		string message 	= data[NetworkKeyString.Message];
-		
+
+		Debug.Log("Team: " + team + ", Username: " + username + ", message: " + message);
 		UpdateChat(team, username, message);
 	}
 	
