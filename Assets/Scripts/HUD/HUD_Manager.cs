@@ -84,12 +84,13 @@ public class HUD_Manager : MonoBehaviour {
 			else
 			{
 				// Send the packet, with Team ID and username
-				/*List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
-				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
-				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
+				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
+				packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
+				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
 				
-				UpdateChat(0, "Jerry", chat.input.text);
+				//UpdateChat(0, "Jerry", chat.input.text);
 				chat.input.text = "";
 				chat.input.interactable = false;
 			}
@@ -100,7 +101,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
-			mainSkill.ProgressBar.fillAmount  += Time.deltaTime / mainSkill.CoolDown;
+			mainSkill.ProgressBar.fillAmount += Time.deltaTime / mainSkill.CoolDown;
 			mainSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
 		}
 		
@@ -112,10 +113,14 @@ public class HUD_Manager : MonoBehaviour {
 	}
 	void CheckShopOption()
 	{
-		if(Input.GetKeyDown(KeyCode.M))
+		if(!chat.input.IsInteractable())
 		{
-			DisplayShop();
+			if(Input.GetKeyDown(KeyCode.M))
+			{
+				DisplayShop();
+			}
 		}
+
 	}
 
 	public void DisplayShop()
@@ -131,10 +136,12 @@ public class HUD_Manager : MonoBehaviour {
 
 	void UpdateChatCallBack(JSONClass data)
 	{
+
 		int team 		= data[NetworkKeyString.TeamID].AsInt;
 		string username = data[NetworkKeyString.UserName];
 		string message 	= data[NetworkKeyString.Message];
-		
+
+		Debug.Log("Team: " + team + ", Username: " + username + ", message: " + message);
 		UpdateChat(team, username, message);
 	}
 	
@@ -163,7 +170,7 @@ public class HUD_Manager : MonoBehaviour {
 				else
 					child.GetComponent<Text>().text = message;
 			}
-			childObject = Instantiate (chat.EnemyMessage) as GameObject;								//Instantitate arrow
+			childObject = Instantiate (chat.EnemyMessage) as GameObject;					//Instantitate arrow
 			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
