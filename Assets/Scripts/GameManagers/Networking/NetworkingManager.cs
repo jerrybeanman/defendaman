@@ -372,11 +372,14 @@ public class NetworkingManager : MonoBehaviour
             }
 
 			if (myTeam == playerData.Value.TeamID) {
+				Transform hpFrame = createdPlayer.transform.GetChild(0);
+				Transform hpBar = hpFrame.transform.GetChild(0);
+				createdPlayer.layer = LayerMask.NameToLayer("Allies");
+				hpFrame.gameObject.layer = LayerMask.NameToLayer("Allies");
+				hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
 				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				//lighting.transform.parent = createdPlayer.transform;
 				lighting.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 				lighting.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
-				//lighting.transform.Rotate (0,0,-90);
 				lighting.transform.Translate(0,0,9);
 			}
 
