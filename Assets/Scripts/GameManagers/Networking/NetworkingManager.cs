@@ -18,7 +18,7 @@ for fail does not work
 */
 public enum DataType
 {
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7
+    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8
 }
 
 public enum Protocol
@@ -43,10 +43,6 @@ public class NetworkingManager : MonoBehaviour
 {
     
     #region Variables
-    // Game object to send data of
-    public Transform playerType;
-	public Transform lightSource;
-    public GameObject player;
 
     //Holds the subscriber data
     private static Dictionary<Pair<DataType, int>, List<Action<JSONClass>>> _subscribedActions = new Dictionary<Pair<DataType, int>, List<Action<JSONClass>>>();
@@ -60,29 +56,41 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr TCPClient { get; private set; }
     public static IntPtr UDPClient { get; private set; }
 
+	public static NetworkingManager instance;
+
     #endregion
+
+	void Awake()
+	{
+		if (instance == null)				//Check if instance already exists
+			instance = this;				//if not, set instance to this
+		else if (instance != this)			//If instance already exists and it's not this:
+			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
+		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+	}
 
     void Start()
     {
-        try {
-            TCPClient = TCP_CreateClient();
-            UDPClient = Game_CreateClient();
-            UDP_ConnectToServer("192.168.0.14", 7000);
-            UDP_StartReadThread();
-        } catch (Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
-        StartOfGame();
+		if (!GameData.GameStart) 
+		{
+			try {
+				TCPClient = TCP_CreateClient();
+			} catch (Exception)
+			{
+				//On Windows
+			}
+		}
     }
 
     // Update is called once per frame
     void Update()
     {
-        update_data(receive_data());
-        //send_data();
-        if (Input.GetKeyDown(KeyCode.Space))
-            StartOfGame();
+        if (GameData.GameStart)
+        {
+            foreach (var player in GameData.LobbyData)
+                update_data(receive_data());
+            send_data();
+        }
     }
     
     ////Code for subscribing to updates from client-server system////
@@ -113,7 +121,16 @@ public class NetworkingManager : MonoBehaviour
         }
     }
 
-    private void update_data(string JSONGameState)
+    public static void Unsubscribe(DataType dataType, int id = 0)
+    {
+        Pair<DataType, int> pair = new Pair<DataType, int>(dataType, id);
+        if (_subscribedActions.ContainsKey(pair))
+        {
+            _subscribedActions.Remove(pair);
+        }
+    }
+
+    public void update_data(string JSONGameState)
     {
         JSONArray gameObjects = null;
         try {
@@ -130,7 +147,9 @@ public class NetworkingManager : MonoBehaviour
 
             if (dataType == (int)DataType.Environment)
             {
-                gameObject.GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
+				print("[Debug]" + GameObject.Find ("GameManager").name);
+				print("[Debug]" + GameObject.Find ("GameManager").GetComponent<MapManager>().name);
+				GameObject.Find ("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
             }
 
             if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
@@ -184,36 +203,36 @@ public class NetworkingManager : MonoBehaviour
     }
 
     [DllImport("ClientLibrary.so")]
-    public static extern IntPtr Game_CreateClient();
+    public static extern IntPtr UDP_CreateClient();
 
     [DllImport("ClientLibrary.so")]
-    private static extern void Game_DisposeClient(IntPtr client);
+    private static extern void UDP_DisposeClient(IntPtr client);
     public static void UDP_DisposeClient() {
-        Game_DisposeClient(UDPClient);
+        UDP_DisposeClient(UDPClient);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern int Game_ConnectToServer(IntPtr client, string ipAddress, short port);
+    private static extern int UDP_ConnectToServer(IntPtr client, string ipAddress, short port);
     public static int UDP_ConnectToServer(string ipAddress, short port) {
-        return Game_ConnectToServer(UDPClient, ipAddress, port);
+        return UDP_ConnectToServer(UDPClient, ipAddress, port);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern int Game_Send(IntPtr client, string message, int size);
+    private static extern int UDP_Send(IntPtr client, string message, int size);
     public static int UDP_SendData(string message, int size) {
-        return Game_Send(UDPClient, message, 512);
+        return UDP_Send(UDPClient, message, 512);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern IntPtr Game_GetData(IntPtr client);
+    private static extern IntPtr UDP_GetData(IntPtr client);
     public static IntPtr UDP_GetData() {
-        return Game_GetData(UDPClient);
+        return UDP_GetData(UDPClient);
     }
 
     [DllImport("ClientLibrary.so")]
-    private static extern int Game_StartReadThread(IntPtr client);
+    private static extern int UDP_StartReadThread(IntPtr client);
     public static int UDP_StartReadThread() {
-        return Game_StartReadThread(UDPClient);
+        return UDP_StartReadThread(UDPClient);
     }
 
     [DllImport("MapGenerationLibrary.so")]
@@ -272,16 +291,16 @@ public class NetworkingManager : MonoBehaviour
 
         if (protocol == Protocol.UDP)
         {
-            if (player != null)
+            if (GameManager.instance.player != null)
             {
                 //Add player data
                 var memberItems = new List<Pair<string, string>>();
-                memberItems.Add(new Pair<string, string>("x", player.transform.position.x.ToString()));
-                memberItems.Add(new Pair<string, string>("y", player.transform.position.y.ToString()));
-                memberItems.Add(new Pair<string, string>("rotationZ", player.transform.rotation.z.ToString()));
-                memberItems.Add(new Pair<string, string>("rotationW", player.transform.rotation.w.ToString()));
+                memberItems.Add(new Pair<string, string>("x", GameManager.instance.player.transform.position.x.ToString()));
+                memberItems.Add(new Pair<string, string>("y", GameManager.instance.player.transform.position.y.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationZ", GameManager.instance.player.transform.rotation.z.ToString()));
+                memberItems.Add(new Pair<string, string>("rotationW", GameManager.instance.player.transform.rotation.w.ToString()));
                 
-                send_next_packet(DataType.Player, player.GetComponent<BaseClass>().playerID, memberItems, protocol);
+                send_next_packet(DataType.Player, GameManager.instance.player.GetComponent<BaseClass>().playerID, memberItems, protocol);
             }
         }
 
@@ -341,80 +360,17 @@ public class NetworkingManager : MonoBehaviour
     ////Game creation code
     #region StartOfGame
 
-    void StartGame(JSONClass data)
+    public static void StartGame()
     {
-        int myPlayer = GameData.MyPlayerID;
-        int myTeam = GameData.LobbyData[myPlayer].TeamID;
-        List<Pair<int, int>> kings = new List<Pair<int, int>>();
-
-        update_data(GenerateMapInJSON(data["Seed"].AsInt));
-
-        Debug.Log("Back to StartGame");
-        //foreach (JSONClass playerData in data["playersData"].AsArray)
-        foreach (var playerData in GameData.LobbyData) {
-            var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID-1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID-1].second, -10), Quaternion.identity)).gameObject;
-
-            switch(playerData.Value.ClassType)
-            {
-                case ClassType.Ninja:
-                    createdPlayer.AddComponent<NinjaClass>();
-                    break;
-                case ClassType.Gunner:
-                    createdPlayer.AddComponent<GunnerClass>();
-                    break;
-                case ClassType.Wizard:
-                    createdPlayer.AddComponent<WizardClass>();
-                    break;
-                default:
-                    Debug.Log("Player " + playerData.Value.PlayerID + " has not selected a valid class. Defaulting to Gunner");
-                    createdPlayer.AddComponent<GunnerClass>();
-                    break;
-            }
-
-			if (myTeam == playerData.Value.TeamID) {
-				Transform hpFrame = createdPlayer.transform.GetChild(0);
-				Transform hpBar = hpFrame.transform.GetChild(0);
-				createdPlayer.layer = LayerMask.NameToLayer("Allies");
-				hpFrame.gameObject.layer = LayerMask.NameToLayer("Allies");
-				hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
-				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lighting.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
-				lighting.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
-				lighting.transform.Translate(0,0,9);
-			}
-
-            createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
-            createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
-
-            //if (playerData.King) //Uncomment this one line when kings are in place
-                kings.Add(new Pair<int, int>(playerData.Value.TeamID, playerData.Value.PlayerID));
-
-            if (myPlayer == playerData.Value.PlayerID)
-            {
-                myTeam = playerData.Value.TeamID;
-                player = createdPlayer;
-                GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
-				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
-                if (GameObject.Find("Minimap Camera") != null)
-                    GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
-                player.AddComponent<Movement>();
-                //player.AddComponent<PlayerRotation>();
-                player.AddComponent<Attack>();
-                //Created our player
-            }
-            else {
-                createdPlayer.AddComponent<NetworkingManager_test1>();
-                createdPlayer.GetComponent<NetworkingManager_test1>().playerID = playerData.Value.PlayerID;
-                //Created another player
-            }
-        }
-
-        foreach (var king in kings)
+        try
         {
-            if (king.first == myTeam)
-                GameData.AllyKingID = king.second;
-            else
-                GameData.EnemyKingID = king.second;
+            UDPClient = UDP_CreateClient();
+            UDP_ConnectToServer(GameData.IP, 8000);
+            UDP_StartReadThread();
+        }
+        catch (Exception)
+        {
+            //On Windows
         }
     }
 
@@ -432,26 +388,6 @@ public class NetworkingManager : MonoBehaviour
         GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
         GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
         GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
-    }
-
-    public void StartOfGame()
-    {
-        Subscribe(StartGame, DataType.StartGame);
-
-        GameData.TeamSpawnPoints.Clear();
-        GameData.LobbyData.Clear();
-
-        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 2, TeamID = 2 });
-
-        GameData.MyPlayerID = 1;
-
-        if (Application.platform != RuntimePlatform.LinuxPlayer) {
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
-        }
-
-        update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
     }
 
     #endregion

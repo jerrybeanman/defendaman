@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GunnerClass : BaseClass
+public class GunnerClass : RangedClass
 {
     int[] distance = new int[2]{ 10, 20};
     int[] speed = new int[2] { 100, 200 };
@@ -16,7 +16,7 @@ public class GunnerClass : BaseClass
         this._classStat.MaxHp = 150;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 5;
+        this._classStat.MoveSpeed = 15;
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
 

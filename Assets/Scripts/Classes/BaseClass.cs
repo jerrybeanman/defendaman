@@ -24,19 +24,22 @@ public abstract class BaseClass : MonoBehaviour {
     void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
-        yourPlayerID = networkingManager.player.GetComponent<BaseClass>().playerID;
+        yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
 
         NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
 
-        HUD_Manager.instance.subSkill.CoolDown = cooldowns[0];
-        HUD_Manager.instance.mainSkill.CoolDown = cooldowns[1];
-        HUD_Manager.instance.playerProfile.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-        if (playerID == allyKingID)
-            HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-        if (playerID == enemyKingID)
-            HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+        if (playerID == yourPlayerID)
+        {
+            HUD_Manager.instance.subSkill.CoolDown = cooldowns[0];
+            HUD_Manager.instance.mainSkill.CoolDown = cooldowns[1];
+            HUD_Manager.instance.playerProfile.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            if (playerID == allyKingID)
+                HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            if (playerID == enemyKingID)
+                HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+        }
     }
 	
 	public string ClassName
@@ -82,25 +85,14 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.CurrentHp = ClassStat.MaxHp;
         }
 
-        Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
-        
-        if (yourPlayerID == playerID) {
-            HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
-        }
+        //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
 
-        if (playerID == allyKingID) {
-            HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
-        }
-
-        if (playerID == enemyKingID) {
-            HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / ClassStat.MaxHp));
-        }
-
-        //gameObject.GetComponentInChildren<Transform>().localScale = new Vector3(.5f, 1, 1);
+        GameManager.instance.PlayerTookDamage(playerID, damage, ClassStat);
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
             //death
+            NetworkingManager.Unsubscribe(DataType.Player, playerID);
             Destroy(gameObject);
         }
 
@@ -110,22 +102,27 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         var attack = other.gameObject.GetComponent<Trigger>();
-
+        Debug.Log("Projectile hit");
         if (attack != null)
         {
-           
+            Debug.Log("Attack was not null");
             if (attack.teamID == team)
             {
+                Debug.Log("Same team");
                 return;
             }
             doDamage(attack.damage);
+        }
+        else
+        {
+            Debug.Log("Attack was null");
         }
 
     }
 
     void receiveAttackFromServer(JSONClass playerData)
     {
-        if (playerData["ID"] == GameData.MyPlayerID)
+        if (playerData["ID"].AsInt == GameData.MyPlayer.PlayerID)
             return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
         switch (playerData["Attack"].AsInt)

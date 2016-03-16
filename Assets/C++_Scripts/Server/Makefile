@@ -1,6 +1,6 @@
 
 # Makefile
-# Jerry Jia
+# Jerry Jia, Tyler Trepanier-Bracken
 
 CC= g++
 NAME= Server
@@ -13,6 +13,9 @@ META_FILES=$(S_FILES:.cpp=.cpp.meta)
 
 all:
 		$(CC) $(FLAGS) $(LIBRARIES) -o $(NAME) $(S_FILES)
+
+udptest:
+	 $(CC) $(FLAGS) -DUDPTEST $(LIBRARIES) -o $(NAME) $(S_FILES)
 
 debug:
 		$(CC) $(FLAGS) -g -o $(NAME) $(OBJECT_FILES)

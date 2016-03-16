@@ -63,7 +63,7 @@ Revision History:
 **********************************************************/
 void CBPushBack(CircularBuffer * CBuff, const void *item)
 {
-    /* Comment this out if we want the head to overwirte the tail */
+    /* Comment this out if we want the head to overwrite the tail */
     if (CBuff->Count == CBuff->MaxSize)
     {
         return;

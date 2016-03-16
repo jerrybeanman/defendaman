@@ -8,23 +8,57 @@ public class Attack : MonoBehaviour {
     BaseClass player;
 
     bool attackReady = true, specialReady = true;
-    float LeftEdgeInventory;
-    float TopEdgeInventory;
+    float InvLeftEdge;
+    float InvTopEdge;
 
    //Start of scripts creation. Used to instantiate variables in our case.
     void Start() {
         player = gameObject.GetComponent<BaseClass>();
-        
+        InvLeftEdge = GameObject.Find("Inventory Panel").transform.position.x;
+        InvTopEdge = GameObject.Find("Title Panel").transform.position.y;
     }
     
     //Called every frame
     void Update() {
-        if (Input.GetKey(KeyCode.Mouse0) && attackReady && !GameData.MouseBlocked) {
-            //LeftEdgeInventory = GameObject.Find("Inventory Panel").transform.position.x;
-            //TopEdgeInventory = GameObject.Find("Title Panel").transform.position.y;
-            //Debug.Log("invpanelposX: " + LeftEdgeInventory + " titlePanelPosY: " + TopEdgeInventory);
-            //Debug.Log("nouse pos: " + Input.mousePosition);
 
+        // animation trigger test
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", false);
+        }
+        if (gameObject.GetComponent<MeleeClass>() != null)
+        {
+            if ((Input.GetKey(KeyCode.Mouse0) && attackReady) || (Input.GetKey(KeyCode.Mouse1) && specialReady))
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", true);
+            }
+            else
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", false);
+            }
+        }
+        else if (gameObject.GetComponent<RangedClass>() != null)
+        {
+            if (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse1))
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", true);
+            }
+            else
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", false);
+            }
+        }
+
+
+        if (Input.GetKey(KeyCode.Mouse0) && attackReady && !GameData.MouseBlocked
+            && (Input.mousePosition.x < InvLeftEdge || Input.mousePosition.y > InvTopEdge))
+        {
+            //if (Input.GetKey(KeyCode.Mouse0) && attackReady && !GameData.MouseBlocked) {
+            
             //left click attack
             attackReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
@@ -37,7 +71,9 @@ public class Attack : MonoBehaviour {
             }, Protocol.UDP);
         } 
 
-        if (Input.GetKey(KeyCode.Mouse1) && specialReady && !GameData.MouseBlocked) {
+        if (Input.GetKey(KeyCode.Mouse1) && specialReady && !GameData.MouseBlocked
+            && (Input.mousePosition.x < InvLeftEdge || Input.mousePosition.y > InvTopEdge))
+        {
             //right click attack
             specialReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
@@ -49,15 +85,6 @@ public class Attack : MonoBehaviour {
                 new Pair<string, string>("DirectionY", dir.y.ToString()),
             }, Protocol.UDP);
         }
-
-        // animation trigger test
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)) {
-            gameObject.GetComponent<Animator>().SetBool("moving", true);
-        }
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D)) {
-            gameObject.GetComponent<Animator>().SetBool("moving", false);
-        }
-
     }
 	
 

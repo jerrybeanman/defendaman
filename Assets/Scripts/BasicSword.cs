@@ -11,17 +11,14 @@ public class BasicSword : Melee
     {
         startPos = transform.position;
     }
-
     /*
     void Update()
     {
-        
 
         if (Vector2.Distance(startPos, transform.position) >= maxDistance)
         {
             Destroy(gameObject);
         }
-        
     }
     */
 }

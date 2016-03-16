@@ -74,6 +74,7 @@ public class MapManager : MonoBehaviour {
         // Find all objects with the tag "Tile" and add them to the arraylist.
         _pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
         print("pooledObjects size: " + _pooledObjects.Length);
+        
 
         // Deactivate all game objects on start.
         for (int i = 0; i < _pooledObjects.Length; i++) {
@@ -92,22 +93,24 @@ public class MapManager : MonoBehaviour {
 	 * active. Else, set it to unactive.
 	 */
     private void check_object_pool() {
-        cameraPosition = mainCamera.GetComponent<Transform>().position;
-        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
-        frustumWidth = frustumHeight * mainCamera.aspect;
+		if (GameData.GameStart) {
+	        cameraPosition = mainCamera.GetComponent<Transform>().position;
+	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+	        frustumWidth = frustumHeight * mainCamera.aspect;
 
-        if (_pooledObjects != null) {
-            for (int i = 0; i < _pooledObjects.Length; i++) {
-                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
-                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
-                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
-                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
-                    _pooledObjects[i].SetActive(true);
-                } else {
-                    _pooledObjects[i].SetActive(false);
-                }
-            }
-        }
+	        if (_pooledObjects != null) {
+	            for (int i = 0; i < _pooledObjects.Length; i++) {
+	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
+	                    _pooledObjects[i].SetActive(true);
+	                } else {
+	                    _pooledObjects[i].SetActive(false);
+	                }
+	            }
+	        }
+		}
     }
 
     /**
@@ -166,7 +169,6 @@ public class MapManager : MonoBehaviour {
         // Enums are not ints in C# :(
         switch ((EventType)id) {
             case EventType.CREATE_MAP:
-                Debug.Log("handle_event() : CREATE_MAP");
                 create_map(message);
                 draw_map();
                 instantiate_pool();
@@ -244,7 +246,5 @@ public class MapManager : MonoBehaviour {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
             }
-        Debug.Log("draw_map()");
     }
-
 }

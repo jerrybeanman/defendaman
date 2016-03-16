@@ -16,7 +16,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#define PACKETLEN       256
+#define PACKETLEN       512
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
@@ -54,19 +54,29 @@ namespace Networking
 		   Sends a message to all the clients
 
 		 */
-		virtual void Broadcast(char * message) = 0;
-
+		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
+    
     virtual void * Receive() = 0;
 
+    virtual void PrepareSelect() = 0;
+
+    virtual int SetSocketOpt() = 0;
+
+
 		void fatal(const char* error);
+
+        int isReadyToInt(Player player);
 
 		protected:
 		struct sockaddr_in     _ServerAddress;
 		int 				           _UDPReceivingSocket;
 		int                    _TCPAcceptingSocket;
+    fd_set                 _allset;              // File descriptor set for connected sockets
+    int                    _maxfd;               //Maximum amount of file descriptors
+    int                    _maxi;                // Current maximum connections
+
 
     /* List of players currently connected to the server */
-    std::vector<Player>             _PlayerList;
     std::map<int, Player>           _PlayerTable;
 
 	};
