@@ -12,13 +12,13 @@ public class GunnerClass : BaseClass
     public GunnerClass()
 	{
         this._className = "Gunner";
-        this._classDescription = "Test class Gunner";
+        this._classDescription = "Boom - Headshot.";
         this._classStat.CurrentHp = 100;
-        this._classStat.MaxHp = 150;
+        this._classStat.MaxHp = 100;
 
         //placeholder numbers
         this._classStat.MoveSpeed = 15;
-        this._classStat.AtkPower = 20;
+        this._classStat.AtkPower = 15;
         this._classStat.Defense = 5;
 
         var controller = Resources.Load("Controllers/gunboi") as RuntimeAnimatorController;

@@ -31,9 +31,9 @@ public class WizardClass : BaseClass
 	public WizardClass()
 	{
         this._className = "Wizard";
-        this._classDescription = "Test class Wizard";
-        this._classStat.CurrentHp = 50;
-        this._classStat.MaxHp = 150;
+        this._classDescription = "Wingardium Leviosa. No, not leviosAA, leviOsa.";
+        this._classStat.CurrentHp = 75;
+        this._classStat.MaxHp = 75;
 
         //placeholder numbers
         this._classStat.MoveSpeed = 10;

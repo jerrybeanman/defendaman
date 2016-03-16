@@ -26,13 +26,13 @@ public class NinjaClass : BaseClass
 	public NinjaClass()
 	{
         this._className = "Ninja";
-        this._classDescription = "Test class Ninja";
-        this._classStat.CurrentHp = 50;
+        this._classDescription = "You'll never see him coming.";
+        this._classStat.CurrentHp = 150;
         this._classStat.MaxHp = 150;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 25;
-        this._classStat.AtkPower = 15;
+        this._classStat.MoveSpeed = 20;
+        this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
@@ -65,7 +65,8 @@ public class NinjaClass : BaseClass
     -- RETURNS: a float representing the cooldown of the attack
     --
     -- NOTES:
-    -- Function that's called when the Ninja uses the right click special attack (Teleport)
+    -- Function that's called when the Ninja uses the right click special attack (Teleport). If the ninja is debuffed he
+    -- cannot teleport, but the cooldown will still be used since he tried to.
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir)
     {
