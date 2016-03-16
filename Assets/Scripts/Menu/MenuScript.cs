@@ -12,10 +12,6 @@ public class MenuScript : MonoBehaviour {
         Previous, Settings, Connect, Lobby
     };
 
-    // list to keep track of the player text items in the lobby
-    //private List<GameObject> _lobby_list = new List<GameObject>();
-    //private int _y_offset = 0;
-
     // list to keep track of which menu to go back to
     private List<GameObject> _menu_order = new List<GameObject>();
 
@@ -25,7 +21,7 @@ public class MenuScript : MonoBehaviour {
     public GameObject settings_menu;
     public GameObject connect_menu;
     public GameObject lobby_menu;
-	public Toggle	  ready_toogle;
+	public Toggle	  ready_toggle;
     public GameObject ready_count;
 
     public GameObject team1_list;
@@ -75,7 +71,7 @@ public class MenuScript : MonoBehaviour {
     }
     void Update()
     {
-		if (LobbyNetwork.connected)
+        if (LobbyNetwork.connected)
         {
             string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
             if (!String.Equals(tmp, "[]"))
@@ -103,13 +99,13 @@ public class MenuScript : MonoBehaviour {
         {
             GameData.MyPlayer.Username = name;
             Debug.Log("[Debug] IP: " + ip + "User Name:" + name);
-			if(!LobbyNetwork.Connect(ip))
+            if (!LobbyNetwork.Connect(ip))
             {
-				return;
+                return;
             }
-			StartCoroutine(DoSend());
-			LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
-			_SwitchMenu(MenuStates.Lobby);
+            StartCoroutine(DoSend());
+            LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
+            _SwitchMenu(MenuStates.Lobby);
         }
 	}
 
@@ -121,8 +117,9 @@ public class MenuScript : MonoBehaviour {
 
     public void UpdateLobbyList()
     {
-
-        ready_count.transform.GetComponent<Text>().text = "0/" + GameData.LobbyData.Count;
+        int t1_idx = 0;
+        int t2_idx = 0;
+        int ready = 0;
 
         foreach (Transform slot in team1_list.transform)
         {
@@ -134,14 +131,18 @@ public class MenuScript : MonoBehaviour {
             slot.gameObject.SetActive(false);
         }
 
-        int t1_idx = 0;
-        int t2_idx = 0;
         Debug.Log("lobby size = " + GameData.LobbyData.Count);
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
 			Debug.Log ("PlayerUsername: " + p.Username);
+
+            if (p.Ready)
+            {
+                ready++;
+            }
             AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++));
         }
+        ready_count.transform.GetComponent<Text>().text = ready.ToString() + "/" + GameData.LobbyData.Count;
     }
 
     private void AddToLobby(String name, int team, ClassType class_type, int index)
@@ -235,7 +236,7 @@ public class MenuScript : MonoBehaviour {
 	
 	public void SetReady()
 	{
-		GameData.MyPlayer.Ready = (ready_toogle.isOn ? true : false);
+		GameData.MyPlayer.Ready = (ready_toggle.isOn ? true : false);
 		LobbyNetwork.SendLobbyData(NetworkCode.ReadyRequest);
 	}
 
