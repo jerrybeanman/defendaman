@@ -20,7 +20,13 @@ public abstract class Projectile : Trigger
         {
             return;
         }
-        if(--pierce < 0) {
+
+        if (other.gameObject.GetComponent<AI>() != null && teamID == other.gameObject.GetComponent<AI>().team)
+        {
+            return;
+        }
+        if (--pierce < 0) {
+            Debug.Log("Projectile Collided with: " + other);
             Destroy(gameObject);
         }
     }

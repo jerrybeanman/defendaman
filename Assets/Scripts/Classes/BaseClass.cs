@@ -24,7 +24,7 @@ public abstract class BaseClass : MonoBehaviour {
     void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
-        yourPlayerID = networkingManager.player.GetComponent<BaseClass>().playerID;
+        yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
 
@@ -87,7 +87,7 @@ public abstract class BaseClass : MonoBehaviour {
 
         //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
 
-        GameManager.PlayerTookDamage(playerID, damage, ClassStat);
+        GameManager.instance.PlayerTookDamage(playerID, damage, ClassStat);
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
@@ -102,22 +102,27 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         var attack = other.gameObject.GetComponent<Trigger>();
-
+        Debug.Log("Projectile hit");
         if (attack != null)
         {
-           
+            Debug.Log("Attack was not null");
             if (attack.teamID == team)
             {
+                Debug.Log("Same team");
                 return;
             }
             doDamage(attack.damage);
+        }
+        else
+        {
+            Debug.Log("Attack was null");
         }
 
     }
 
     void receiveAttackFromServer(JSONClass playerData)
     {
-        if (playerData["ID"] == GameData.MyPlayer.PlayerID)
+        if (playerData["ID"].AsInt == GameData.MyPlayer.PlayerID)
             return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
         switch (playerData["Attack"].AsInt)

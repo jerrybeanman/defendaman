@@ -439,7 +439,8 @@ std::string ServerTCP::UpdateID(const Player& player)
  * @date   2016-03-11
  * @return [description]
  */
-std::string ServerTCP::generateMapSeed(){
+std::string ServerTCP::generateMapSeed()
+{
 	int mapSeed;
 	srand (time (NULL));
 	mapSeed = rand ();

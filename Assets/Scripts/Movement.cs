@@ -5,11 +5,10 @@ using System.Collections;
 public class Movement : MonoBehaviour
 {
     enum movestyle { absolute, relative };
-    public float moveSpeed = 5;
     Vector2 looking;
     private Rigidbody2D rb2d;
     string up, down, left, right;
-    public float speed = 5;
+    public float speed;
     movestyle movestyles;
     float midX, midY;
 
@@ -24,8 +23,8 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-
-
+        speed = gameObject.GetComponent<BaseClass>().ClassStat.MoveSpeed;
+        GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
     //Checks if the end teleport point is valid, or if it is in a wall
     bool checkEnd(Vector2 vec, double distance)
@@ -85,7 +84,7 @@ public class Movement : MonoBehaviour
         }
         //Will need to send some info to server every update
         sendToServer(rb2d.position.x, rb2d.position.y);
-
+        GameData.PlayerPosition[GameData.MyPlayer.PlayerID] = transform.position;
     }
     void sendToServer(double x, double y)
     {
@@ -102,7 +101,10 @@ public class Movement : MonoBehaviour
     //absolute movement, just rotate and move
     void absMove()
     {
-        rb2d.MovePosition(rb2d.position + new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed * Time.fixedDeltaTime);
+        Vector2 moving = getMovement(90);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.fixedDeltaTime);
+
+        //rb2d.MovePosition(rb2d.position + new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed * Time.fixedDeltaTime);
         double looking = getInfo();
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
     }
@@ -131,6 +133,17 @@ public class Movement : MonoBehaviour
         x = mousePos.x - midX;
         y = mousePos.y - midY;
         double modAngle;
+        if(x == 0)
+        {
+            if(y > 0)
+            {
+                return Mathf.PI / 2;
+            }
+            else
+            {
+                return 3 * Mathf.PI / 2;
+            }
+        }
         if (x > 0)
         {
             modAngle = (Mathf.PI * 2 + System.Math.Atan(y / x)) % (Mathf.PI * 2);

@@ -55,7 +55,7 @@ public class GameStart_Testing : MonoBehaviour {
 
     public void StartOfGame()
     {
-        NetworkingManager.InGame = true;
+		GameData.GameStart = true;
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
@@ -77,6 +77,10 @@ public class GameStart_Testing : MonoBehaviour {
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
         }
 
-        networkingManager.update_data("[{DataType : 4, ID : 0, Seed : 1000}]");
+        GameData.Seed = 1000;
+
+        GameData.IP = "192.168.0.3";
+
+        GameManager.instance.StartGame(GameData.Seed);
     }
 }
