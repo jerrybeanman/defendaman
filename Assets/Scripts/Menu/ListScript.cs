@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
+[ExecuteInEditMode]
 public class ListScript : MonoBehaviour {
 
     public GameObject player_slot;
