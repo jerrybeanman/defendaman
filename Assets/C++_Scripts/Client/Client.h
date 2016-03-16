@@ -14,7 +14,7 @@
 #include <pthread.h>
 #include "CircularBuffer.h"
 
-#define PACKETLEN    2000
+#define PACKETLEN    512
 #define MAXPACKETS   10
 
 namespace Networking
