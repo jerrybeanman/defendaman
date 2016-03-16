@@ -12,10 +12,6 @@ public class MenuScript : MonoBehaviour {
         Previous, Settings, Connect, Lobby
     };
 
-    // list to keep track of the player text items in the lobby
-    //private List<GameObject> _lobby_list = new List<GameObject>();
-    //private int _y_offset = 0;
-
     // list to keep track of which menu to go back to
     private List<GameObject> _menu_order = new List<GameObject>();
 
@@ -25,13 +21,15 @@ public class MenuScript : MonoBehaviour {
     public GameObject settings_menu;
     public GameObject connect_menu;
     public GameObject lobby_menu;
-	public Toggle	  ready_toogle;
+	public Toggle	  ready_toggle;
+    public GameObject ready_count;
 
     public GameObject team1_list;
     public GameObject team2_list;
     public GameObject soldier_panel;
     public GameObject mage_panel;
     public GameObject ninja_panel;
+    public GameObject aman_panel;
     public GameObject team_select_panel;
     public GameObject class_select_panel;
 
@@ -73,7 +71,7 @@ public class MenuScript : MonoBehaviour {
     }
     void Update()
     {
-		if (LobbyNetwork.connected)
+        if (LobbyNetwork.connected)
         {
             string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
             if (!String.Equals(tmp, "[]"))
@@ -81,7 +79,6 @@ public class MenuScript : MonoBehaviour {
                 LobbyNetwork.ParseLobbyData(tmp);
                 UpdateLobbyList();
             }
-            
         }
     }
 
@@ -101,15 +98,15 @@ public class MenuScript : MonoBehaviour {
         if (!(name.Length == 0) && !(ip.Length == 0))
         {
             GameData.MyPlayer.Username = name;
-			Debug.Log("[Debug] IP: " + ip + "User Name:" + name);
-			if(!LobbyNetwork.Connect(ip))
-				return;
-			StartCoroutine(DoSend());
-			LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
-			_SwitchMenu(MenuStates.Lobby);
+            Debug.Log("[Debug] IP: " + ip + "User Name:" + name);
+            if (!LobbyNetwork.Connect(ip))
+            {
+                return;
+            }
+            StartCoroutine(DoSend());
+            LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
+            _SwitchMenu(MenuStates.Lobby);
         }
-		
-		
 	}
 
 	IEnumerator DoSend()
@@ -120,9 +117,9 @@ public class MenuScript : MonoBehaviour {
 
     public void UpdateLobbyList()
     {
-        // scan lobby list
-        // add each player to respective team list
-        // on list change, remove and re add players from lists
+        int t1_idx = 0;
+        int t2_idx = 0;
+        int ready = 0;
 
         foreach (Transform slot in team1_list.transform)
         {
@@ -134,31 +131,50 @@ public class MenuScript : MonoBehaviour {
             slot.gameObject.SetActive(false);
         }
 
-        int t1_idx = 0;
-        int t2_idx = 0;
         Debug.Log("lobby size = " + GameData.LobbyData.Count);
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
 			Debug.Log ("PlayerUsername: " + p.Username);
+
+            if (p.Ready)
+            {
+                ready++;
+            }
             AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++));
         }
+        ready_count.transform.GetComponent<Text>().text = ready.ToString() + "/" + GameData.LobbyData.Count;
     }
 
     private void AddToLobby(String name, int team, ClassType class_type, int index)
     { 
         List<Transform> team_to_set = (team == 1 ? _team1_slots : _team2_slots);
         name = name.ToUpper();
-
-        team_to_set[index].transform.Find("Name").transform.GetComponent<Text>().text = name;
         
-        //team_to_set[index].GetComponent<Image>().sprite = "path/to/class/avatar";    // TODO: 
+        if (index <= 12)
+        {
+            team_to_set[index].transform.Find("Name").transform.GetComponent<Text>().text = name;
+        
+            //team_to_set[index].GetComponent<Image>().sprite = "path/to/class/avatar";    // TODO: 
 
-        team_to_set[0].gameObject.SetActive(true);
+            team_to_set[index].gameObject.SetActive(true);
+        }
     }
-
-    private void RemoveFromLobby(int team)
+    int t1id = 0;
+    int t2id = 0;
+    int idx = 0;
+    public void TestAddToLobby(int team)
     {
-        GameObject team_to_set = (team == 1 ? team1_list : team2_list);
+        if (idx <= 23)
+        {
+            PlayerData p = new PlayerData();
+            p.PlayerID = (team == 1 ? t1id++ : t2id++);
+            p.Username = (team == 1 ? t1id.ToString() : t2id.ToString());
+            p.TeamID = team;
+            p.ClassType = ClassType.Gunner;
+            p.Ready = false;
+
+            GameData.LobbyData.Add(idx++, p);
+        }
     }
 
     public void ChooseTeam()
@@ -183,16 +199,25 @@ public class MenuScript : MonoBehaviour {
                 soldier_panel.SetActive(true);
                 mage_panel.SetActive(false);
                 ninja_panel.SetActive(false);
+                aman_panel.SetActive(false);
                 break;
             case 1:
                 soldier_panel.SetActive(false);
                 mage_panel.SetActive(true);
                 ninja_panel.SetActive(false);
+                aman_panel.SetActive(false);
                 break;
             case 2:
                 soldier_panel.SetActive(false);
                 mage_panel.SetActive(false);
                 ninja_panel.SetActive(true);
+                aman_panel.SetActive(false);
+                break;
+            case 3:
+                soldier_panel.SetActive(false);
+                mage_panel.SetActive(false);
+                ninja_panel.SetActive(false);
+                aman_panel.SetActive(true);
                 break;
         }
 		GameData.MyPlayer.ClassType = (ClassType)value;
@@ -211,7 +236,7 @@ public class MenuScript : MonoBehaviour {
 	
 	public void SetReady()
 	{
-		GameData.MyPlayer.Ready = (ready_toogle.isOn ? true : false);
+		GameData.MyPlayer.Ready = (ready_toggle.isOn ? true : false);
 		LobbyNetwork.SendLobbyData(NetworkCode.ReadyRequest);
 	}
 
