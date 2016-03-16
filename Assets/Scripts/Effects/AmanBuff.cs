@@ -1,5 +1,5 @@
-/*---------------------------------------------------------------------------------------
---  SOURCE FILE:    MagicDebff.cs
+﻿/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    AmanBuff.cs
 --
 --  PROGRAM:        Linux Game
 --
@@ -16,18 +16,18 @@
 --  PROGRAMMER:     Hank Lo
 --
 --  NOTES:
---  This class contains the logic that relates to the Magic Debuff Class.
+--  This class contains the logic that relates to the Aman Buff Class.
 ---------------------------------------------------------------------------------------*/
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class MagicDebuff : Buff {
+public class AmanBuff : Buff {
 
-    int speeddebuff = 1;
-    int atkdebuff = 4;
-    int defdebuf = 6;
+    int speedbuff = 1;
+    int atkbuff = 5;
+    int defbuf = 5;
     int applyrate;
 
     bool appliedspeedbuff = false;
@@ -38,29 +38,27 @@ public class MagicDebuff : Buff {
         applyrate = 0;
     }
     
-    //Called every frame
+    // Called every physics update
     protected override void FixedUpdate() {
         applyrate++;
         if (!appliedspeedbuff) 
         {
-            player.ClassStat.MoveSpeed -= speeddebuff;
+            player.ClassStat.MoveSpeed += speedbuff;
             appliedspeedbuff = true;
         }
         if ((applyrate % 30) == 0) 
         {
             if (magnitude < 10) {
-                if ((player.ClassStat.AtkPower > 10) && (player.ClassStat.Defense > 10)) {
-                    player.ClassStat.AtkPower -= (atkdebuff);
-                    player.ClassStat.Defense -= (defdebuf);
-                    magnitude++;
-                }
+                player.ClassStat.AtkPower += (atkbuff);
+                player.ClassStat.Defense += (defbuf);
+                magnitude++;
             }
         }
         if(--duration < 0)
         {
-            player.ClassStat.AtkPower += (magnitude * atkdebuff);
-            player.ClassStat.Defense += (magnitude * defdebuf);
-            player.ClassStat.MoveSpeed += speeddebuff;
+            player.ClassStat.AtkPower -= (magnitude*atkbuff);
+            player.ClassStat.Defense -= (magnitude*defbuf);
+            player.ClassStat.MoveSpeed -= speedbuff;
             Destroy(this);
         }
     }

@@ -78,8 +78,11 @@ public abstract class BaseClass : MonoBehaviour {
 
     public float doDamage(float damage)
     {
-        //TODO: add defense to calculation
-        ClassStat.CurrentHp -= damage;
+        // hank: Added defensive calculation
+        float reduction = (30 / (ClassStat.Defense + 30));
+        float finaldamage = damage * reduction;
+        
+        ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
         {
             ClassStat.CurrentHp = ClassStat.MaxHp;
@@ -87,7 +90,7 @@ public abstract class BaseClass : MonoBehaviour {
 
         //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
 
-        GameManager.instance.PlayerTookDamage(playerID, damage, ClassStat);
+        GameManager.instance.PlayerTookDamage(playerID, finaldamage, ClassStat);
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
