@@ -81,6 +81,8 @@ public class GameStart_Testing : MonoBehaviour {
 
         GameData.IP = "192.168.0.3";
 
-        GameManager.instance.StartGame(GameData.Seed);
+        //GameManager.instance.StartGame(GameData.Seed);
+
+		Application.LoadLevel("EngineTeam_master");
     }
 }

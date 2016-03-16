@@ -8,14 +8,14 @@ public class AI : MonoBehaviour {
     private Rigidbody2D rb2d;
     private  int speed = 5;
     double reload = 2.0f;
-    Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+    Rigidbody2D bullet;
     public int team = -2;
     // Use this for initialization
+
     void Start ()
     {
         rb2d = GetComponent<Rigidbody2D>();
-
-
+        bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
     }
 
     // Update is called once per frame

@@ -84,10 +84,10 @@ public class HUD_Manager : MonoBehaviour {
 			else
 			{
 				// Send the packet, with Team ID and username
-				/*List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, GameData.MyPlayer.Username));
-				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));*/
+				NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.TCP);
 				
 				UpdateChat(0, "Jerry", chat.input.text);
 				chat.input.text = "";
