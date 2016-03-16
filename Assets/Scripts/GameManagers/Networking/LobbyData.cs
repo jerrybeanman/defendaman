@@ -22,7 +22,7 @@ public class PlayerData {
     public string Username { get; set; }
     public int TeamID { get; set; }
     public ClassType ClassType { get; set; }
-	public bool Ready { get; set; }
+	public bool Ready = false;
     //public bool King { get; set; }
 }
 

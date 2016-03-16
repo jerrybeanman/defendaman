@@ -31,7 +31,11 @@ public class NinjaClass : MeleeClass
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
-        gameObject.GetComponent<Movement>().doBlink(15f);
+
+		//If we are the player, do the blink. Otherwise, they will update their coordinates anyway.
+		var movement = gameObject.GetComponent<Movement>();
+		if (movement != null)
+        	movement.doBlink(15f);
         return cooldowns[1];
     }
 }
