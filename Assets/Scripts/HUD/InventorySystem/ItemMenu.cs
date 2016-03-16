@@ -103,8 +103,10 @@ public class ItemMenu : MonoBehaviour
      */
     public void DropItemOnClick()
     {
+        Debug.Log("Dropped");
         if (_amt > 1 && _item.stackable)
         {
+            Debug.Log("Dropped1");
             _amount_panel.Activate(_item, _amt, _inv_pos);
         }
         else

@@ -44,9 +44,10 @@ public class WorldItemManager : MonoBehaviour
         _my_player_id = GameData.MyPlayer.PlayerID;
 
         // Adding initial world items (testing)
-        CreateWorldItem(100, 0, 1, 30, 30);
         CreateWorldItem(101, 1, 1, 35, 25);
-        CreateWorldItem(102, 0, 1, 36, 30);
+        CreateWorldItem(102, 2, 1, 36, 30);
+        CreateWorldItem(103, 2, 100, 30, 20);
+        CreateWorldItem(104, 0, 1, 36, 20);
     }
 
     /*
@@ -59,6 +60,7 @@ public class WorldItemManager : MonoBehaviour
         _item.GetComponent<WorldItemData>().world_item_id = world_item_id;
         _item.GetComponent<WorldItemData>().item = item;
         _item.GetComponent<WorldItemData>().amount = amt;
+        _item.GetComponent<SpriteRenderer>().sprite = item.world_sprite;
         _item.transform.position = new Vector3(pos_x, pos_y, -5);
     }
 
@@ -121,6 +123,11 @@ public class WorldItemManager : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void UseItem()
+    {
+
     }
 
     public int GenerateWorldItemId()

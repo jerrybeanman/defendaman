@@ -23,6 +23,10 @@ public class PlayerData {
     public int TeamID { get; set; }
     public ClassType ClassType { get; set; }
 	public bool Ready { get; set; }
+    public Dictionary<string, int> Resources = new Dictionary<string, int>()
+    {
+        { "Gold Coins", 0 } 
+    }; 
     //public bool King { get; set; }
 }
 

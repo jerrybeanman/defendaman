@@ -2,46 +2,44 @@
   {
     "id": 0,
     "title": "Steel Gloves",
-    "value": 6,
     "stats": {
-      "weaponDamage": 1,
-      "defence": 4,
-      "strengthRatio": 1,
-      "penetration": 1
+      "damage": 1,
+      "armor": 4,
     },
     "description": "Gloves made from steel. Yea.",
     "stackable": false,
-    "rarity": 2,
-    "slug": "cursorGauntlet_blue"
+		"usable": false,
+    "resource": false,
+    "slug": "cursorGauntlet_blue",
+		"worldSlug": "blue_potion_2"
+		
   },
   {
     "id": 1,
     "title": "The Great Stick",
-    "value": 543,
     "stats": {
-      "weaponDamage": 56,
-      "defence": 0,
-      "strengthRatio": 2,
-      "penetration": 7
+      "damage": 56,
+      "armor": 0,
     },
     "description": "It's a stick and that's pretty great.",
     "stackable": true,
-    "rarity": 6,
-    "slug": "cursorSword_gold"
+		"usable": false,
+    "resource": false,
+    "slug": "cursorSword_gold",
+		"worldSlug": "blue_potion_2"
   },
   {
     "id": 2,
-    "title": "The Bigger Great Stick",
-    "value": 543,
+    "title": "Gold Coins",
     "stats": {
-      "weaponDamage": 76,
-      "defence": 0,
-      "strengthRatio": 3,
-      "penetration": 10
+      "damage": 0,
+      "armor": 0,
     },
-    "description": "It's a bigger stick and that's even more great.",
+    "description": "Use to buy stuff.",
     "stackable": true,
-    "rarity": 8,
-    "slug": "cursorSword_silver"
+		"usable": true,
+    "resource": false,
+    "slug": "coin_ic_1",
+		"worldSlug": "coins_ic"
   }
 ]

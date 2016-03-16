@@ -35,6 +35,7 @@ public class AmountPanel : MonoBehaviour {
 
     public void Activate(Item item, int amt, int inv_pos)
     {
+        Debug.Log("Activate");
         _item = item;
         _amt = amt;
         _inv_pos = inv_pos;
@@ -61,7 +62,7 @@ public class AmountPanel : MonoBehaviour {
 
             // Pretend that a drop message was received
             _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
-
+            GameData.MouseBlocked = false;
             Deactivate();
         }
         else
@@ -72,6 +73,7 @@ public class AmountPanel : MonoBehaviour {
 
     public void CancelDropButtonOnClick()
     {
+        GameData.MouseBlocked = false;
         Deactivate();
     }
 }

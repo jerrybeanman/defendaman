@@ -53,11 +53,16 @@ public class ItemManager : MonoBehaviour {
     {
         for (int i = 0; i < _item_data.Count; i++)
         {
-            _item_database.Add(new Item(_item_data[i]["id"].AsInt, 
-                                        _item_data[i]["title"], 
-                                        _item_data[i]["value"].AsInt,
+            _item_database.Add(new Item(_item_data[i]["id"].AsInt,
+                                        _item_data[i]["title"],
+                                        _item_data[i]["stats"]["damage"].AsInt,
+                                        _item_data[i]["stats"]["armor"].AsInt,
+                                        _item_data[i]["description"],
                                         bool.Parse(_item_data[i]["stackable"]),
-                                        _item_data[i]["slug"]));
+                                        bool.Parse(_item_data[i]["usable"]),
+                                        bool.Parse(_item_data[i]["usable"]),
+                                        _item_data[i]["slug"],
+                                        _item_data[i]["worldSlug"]));
         }
     }
 
@@ -80,22 +85,35 @@ public class Item
 {
     public int id { get; set; }
     public string title { get; set; }
-    public int value { get; set; }
+    public int damage { get; set; }
+    public int armor { get; set; }
+    public string description { get; set; }
     public bool stackable { get; set; }
+    public bool usable { get; set; }
+    public bool resource { get; set; }
     public string slug { get; set; }
+    public string world_slug { get; set; }
     public Sprite sprite { get; set; }
+    public Sprite world_sprite { get; set; }
 
     /* 
      * Constructor
      */
-    public Item(int id, string title, int value, bool stackable, string slug)
+    public Item(int id, string title, int damage, int armor, string description, 
+        bool stackable, bool usable, bool resource, string slug, string world_slug)
     {
         this.id = id;
         this.title = title;
-        this.value = value;
+        this.damage = damage;
+        this.armor = armor;
+        this.description = description;
         this.stackable = stackable;
+        this.usable = usable;
+        this.resource = resource;
         this.slug = slug;
+        this.world_slug = world_slug;
         this.sprite = Resources.Load<Sprite>("Sprites/Items/" + slug);
+        this.world_sprite = Resources.Load<Sprite>("Sprites/Items/" + world_slug);
     }
 
     /* 

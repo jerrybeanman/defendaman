@@ -69,6 +69,19 @@ public class Inventory : MonoBehaviour
     {
         Item _item_to_add = _item_manager.FetchItemById(id);
         int item_idx;
+
+        if (_item_to_add.resource)
+        {
+            if (GameData.MyPlayer.Resources.ContainsKey(_item_to_add.title))
+            {
+                GameData.MyPlayer.Resources[_item_to_add.title] += amt;
+            }
+            else
+            {
+                GameData.MyPlayer.Resources.Add(_item_to_add.title, amt);
+            }
+        }
+
         if (_item_to_add.stackable && (item_idx = check_if_item_in_inventory(_item_to_add)) != -1)
         {
             ItemData data = slot_list[item_idx].transform.GetChild(0).GetComponent<ItemData>();
