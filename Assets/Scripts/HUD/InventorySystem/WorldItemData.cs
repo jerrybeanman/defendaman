@@ -70,7 +70,7 @@ public class WorldItemData : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" &&
             // other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
-            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayerID)
+            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
         {
             trigger_entered = true;
         }
@@ -84,7 +84,7 @@ public class WorldItemData : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" &&
             //other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
-            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayerID)
+            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
         {
             trigger_entered = false;
         }

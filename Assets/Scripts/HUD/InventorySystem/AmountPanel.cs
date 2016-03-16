@@ -50,6 +50,7 @@ public class AmountPanel : MonoBehaviour {
 
    public void OkDropButtonOnClick()
     {
+        Debug.Log("ok drop clicked");
         _drop_amt = int.Parse(_amt_input_field.GetComponent<InputField>().text);
         if (_drop_amt > 0 && _drop_amt <= _amt)
         {
