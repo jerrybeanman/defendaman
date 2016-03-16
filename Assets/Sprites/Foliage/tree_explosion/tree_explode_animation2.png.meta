@@ -1,14 +1,15 @@
 fileFormatVersion: 2
-guid: ba595b5ec1fed414aac94e7811a4c9e2
-timeCreated: 1457059166
+guid: 3576fbab8c9a22d44bf5f4dd41df2a85
+timeCreated: 1458080926
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: defendaman_projectile_collision_animation_0
-    21300002: defendaman_projectile_collision_animation_1
-    21300004: defendaman_projectile_collision_animation_2
-    21300006: defendaman_projectile_collision_animation_3
-    21300008: defendaman_projectile_collision_animation_4
+    21300000: tree_explode_animation2_0
+    21300002: tree_explode_animation2_1
+    21300004: tree_explode_animation2_2
+    21300006: tree_explode_animation2_3
+    21300008: tree_explode_animation2_4
+    21300010: tree_explode_animation2_5
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -42,6 +43,7 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
+  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
@@ -54,53 +56,63 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: defendaman_projectile_collision_animation_0
+    - name: tree_explode_animation2_0
       rect:
         serializedVersion: 2
-        x: 55
-        y: 1800
-        width: 146
-        height: 135
+        x: 0
+        y: 433
+        width: 428.666656
+        height: 433
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: defendaman_projectile_collision_animation_1
+    - name: tree_explode_animation2_1
       rect:
         serializedVersion: 2
-        x: 506
-        y: 1804
-        width: 115
-        height: 120
+        x: 428
+        y: 433
+        width: 428.666656
+        height: 433
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: defendaman_projectile_collision_animation_2
+    - name: tree_explode_animation2_2
       rect:
         serializedVersion: 2
-        x: 944
-        y: 1817
-        width: 112
-        height: 105
+        x: 856
+        y: 433
+        width: 428.666656
+        height: 433
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: defendaman_projectile_collision_animation_3
+    - name: tree_explode_animation2_3
       rect:
         serializedVersion: 2
-        x: 1376
-        y: 1808
-        width: 120
-        height: 108
+        x: 0
+        y: 0
+        width: 428.666656
+        height: 433
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: defendaman_projectile_collision_animation_4
+    - name: tree_explode_animation2_4
       rect:
         serializedVersion: 2
-        x: 1822
-        y: 1807
-        width: 100
-        height: 105
+        x: 428
+        y: 0
+        width: 428.666656
+        height: 433
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: tree_explode_animation2_5
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 0
+        width: 428.666656
+        height: 433
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
