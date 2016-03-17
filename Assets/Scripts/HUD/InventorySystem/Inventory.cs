@@ -5,7 +5,15 @@ using System.Collections.Generic;
 
 static class Constants
 {
-    public const int SLOT_AMOUNT = 4;
+    public const int SLOT_AMOUNT        = 4;
+    public const string RESOURCE_TYPE   = "Resource";
+    public const string WEAPON_TYPE     = "Weapon";
+    public const string CONSUMABLE_TYPE = "Consumable";
+    public const int WEAPON_SLOT        = 0;
+    public const string GOLD_RES        = "Gold";
+    public const string DAMAGE_STAT     = "damage";
+    public const string ARMOR_STAT      = "armor";
+
 }
 
 /*-----------------------------------------------------------------------------
@@ -55,8 +63,9 @@ public class Inventory : MonoBehaviour
         }
         // Adding initial items to the inventory (testing)
         AddItem(0);
-        AddItem(1);
-        AddItem(1);
+        AddItem(2);
+        AddItem(2, 200);
+        AddItem(3);
     }
 
 
@@ -70,8 +79,10 @@ public class Inventory : MonoBehaviour
         Item _item_to_add = _item_manager.FetchItemById(id);
         int item_idx;
 
-        if (_item_to_add.resource)
+        if (_item_to_add.type == Constants.RESOURCE_TYPE)
         {
+            GameData.MyPlayer.Resources[_item_to_add.title] += amt;
+            /* // Uncessary since all the resources will be initialized in the dictionary to 0
             if (GameData.MyPlayer.Resources.ContainsKey(_item_to_add.title))
             {
                 GameData.MyPlayer.Resources[_item_to_add.title] += amt;
@@ -79,7 +90,7 @@ public class Inventory : MonoBehaviour
             else
             {
                 GameData.MyPlayer.Resources.Add(_item_to_add.title, amt);
-            }
+            }*/
         }
 
         if (_item_to_add.stackable && (item_idx = check_if_item_in_inventory(_item_to_add)) != -1)
@@ -109,40 +120,72 @@ public class Inventory : MonoBehaviour
                     _item_obj.transform.localPosition = Vector2.zero; //centers item relative to parent
                     _item_obj.GetComponent<Image>().sprite = _item_to_add.sprite;
                     _item_obj.name = _item_to_add.title; //name shown in the inspector
+
+                    if (i == Constants.WEAPON_SLOT)
+                    {
+                        UpdateWeaponStats();
+                    }
                     break;
                 }
             }
         }
     }
 
+    public void UseConsumable(int inv_pos, int amount = 1)
+    {
+        // Healing?
+        // int healing_amount = slot_list[inv_pos].transform.GetChild(0).GetComponent<ItemData>().health;
+        // do something with healing amount
+        DestroyInventoryItem(inv_pos, 1);
+    }
+
+    // Need to do a check before calling ie: make sure GameData.MyPlayer.Resources[resource_type] >= amount
+    public void UseResources(string resource_type, int amount)
+    {
+        GameObject[] _inventory_items = GameObject.FindGameObjectsWithTag("InventoryItem");
+        ItemData _data;
+        int _resource_slot_pos = -1;
+
+        foreach (GameObject _inventory_item in _inventory_items)
+        {
+            _data = _inventory_item.GetComponent<ItemData>();
+            if (_data.item.type == Constants.RESOURCE_TYPE && _data.item.title == resource_type)
+            {
+                _resource_slot_pos = _data.item_pos;
+                break;
+            }
+        }
+
+        DestroyInventoryItem(_resource_slot_pos, amount);
+    }
+
     /* 
      * Destroys the item in the specified inventory slot position
      */
-    public void DestroyInventoryItem(int inv_pos, int num_items)
+    public void DestroyInventoryItem(int inv_pos, int amount)
     {
-        GameObject[] _inventory_items = GameObject.FindGameObjectsWithTag("InventoryItem");
-        
-        ItemData _data;
-        //if ((data.amount - num_items) <= 0)
+        GameObject item_to_remove = slot_list[inv_pos].transform.GetChild(0).gameObject;
+        ItemData _data = item_to_remove.GetComponent<ItemData>();
+
+        if ((_data.amount -= amount) <= 0)
         {
-            foreach (GameObject _inventory_item in _inventory_items)
-            {
-                _data = _inventory_item.GetComponent<ItemData>();
-                if (_data.item_pos == inv_pos)
-                {
-                    if ((_data.amount -= num_items) <= 0)
-                    {
-                        Destroy(_inventory_item);
-                        inventory_item_list[inv_pos] = new Item();
-                    }
-                    else
-                    {
-                        _data.transform.GetChild(0).GetComponent<Text>().text = _data.amount.ToString();
-                    }
-                    break;
-                }
-            }
-        }   
+            Destroy(item_to_remove);
+            inventory_item_list[inv_pos] = new Item();
+        }
+        else
+        {
+            _data.transform.GetChild(0).GetComponent<Text>().text = _data.amount.ToString();
+        }
+
+        if (_data.item.type == Constants.RESOURCE_TYPE)
+        {
+            GameData.MyPlayer.Resources[_data.item.title] -= amount;
+        }
+
+        if (inv_pos == Constants.WEAPON_SLOT)
+        {
+            UpdateWeaponStats();
+        }
     }
 
     /* 
@@ -159,5 +202,26 @@ public class Inventory : MonoBehaviour
             }
         }
         return -1;
+    }
+
+    /*
+     * Updates the weapon stat bonus the player receives for equipping a weapon
+     */
+    public void UpdateWeaponStats()
+    {
+        int damage = 0;
+        int armor = 0;
+        if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
+        {
+            ItemData _data = slot_list[Constants.WEAPON_SLOT].transform.GetChild(0).GetComponent<ItemData>();
+            damage = _data.item.damage;
+            armor = _data.item.armor;
+        }
+
+        GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
+        GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
+        Debug.Log("damage: " + GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT]);
+        Debug.Log("armor: " + GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT]);
+        Debug.Log("gold: " + GameData.MyPlayer.Resources[Constants.GOLD_RES]);
     }
 }

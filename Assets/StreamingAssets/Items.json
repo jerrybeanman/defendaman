@@ -5,11 +5,11 @@
     "stats": {
       "damage": 1,
       "armor": 4,
+			"health": 0
     },
     "description": "Gloves made from steel. Yea.",
     "stackable": false,
-		"usable": false,
-    "resource": false,
+		"type": "Weapon",
     "slug": "cursorGauntlet_blue",
 		"worldSlug": "blue_potion_2"
 		
@@ -20,26 +20,40 @@
     "stats": {
       "damage": 56,
       "armor": 0,
+			"health": 0
     },
     "description": "It's a stick and that's pretty great.",
     "stackable": true,
-		"usable": false,
-    "resource": false,
+		"type": "Weapon",
     "slug": "cursorSword_gold",
 		"worldSlug": "blue_potion_2"
   },
   {
     "id": 2,
-    "title": "Gold Coins",
+    "title": "Gold",
     "stats": {
       "damage": 0,
       "armor": 0,
+			"health": 0
     },
     "description": "Use to buy stuff.",
     "stackable": true,
-		"usable": true,
-    "resource": false,
+		"type": "Resource",
     "slug": "coin_ic_1",
 		"worldSlug": "coins_ic"
+  },
+  {
+    "id": 3,
+    "title": "Potion",
+    "stats": {
+      "damage": 0,
+      "armor": 0,
+			"health": 5
+    },
+    "description": "Heals a little.",
+    "stackable": true,
+		"type": "Consumable",
+    "slug": "blue_potion_round",
+		"worldSlug": "blue_potion_round"
   }
 ]

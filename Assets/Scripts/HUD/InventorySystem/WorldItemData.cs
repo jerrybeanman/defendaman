@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using System;
 
 /*-----------------------------------------------------------------------------
 -- WorldItemData.cs - Script attached to WorldItem game objects that store 
@@ -29,6 +31,7 @@ public class WorldItemData : MonoBehaviour
     bool trigger_entered = false;
     int _player_id;
     WorldItemManager _world_item_manager;
+    private Tooltip _tooltip;
 
     /*
      * Retrieve the player id
@@ -37,6 +40,7 @@ public class WorldItemData : MonoBehaviour
     {
         _player_id = GameData.MyPlayer.PlayerID;
         _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
     }
 	
 	/* 
@@ -88,5 +92,15 @@ public class WorldItemData : MonoBehaviour
         {
             trigger_entered = false;
         }
+    }
+
+    public void OnMouseEnter()
+    {
+        _tooltip.Activate(item, amount);
+    }
+
+    public void OnMouseExit()
+    {
+        _tooltip.Deactivate();
     }
 }

@@ -18,15 +18,20 @@ public class NetworkKeyString
 }
 
 public class PlayerData {
-    public int PlayerID  = -1;
+    public int PlayerID = -1;
     public string Username { get; set; }
     public int TeamID { get; set; }
     public ClassType ClassType { get; set; }
-	public bool Ready { get; set; }
+    public bool Ready { get; set; }
     public Dictionary<string, int> Resources = new Dictionary<string, int>()
     {
-        { "Gold Coins", 0 } 
-    }; 
+        { Constants.GOLD_RES, 0 }
+    };
+    public Dictionary<string, int> WeaponStats = new Dictionary<string, int>()
+    {
+        { Constants.DAMAGE_STAT, 0},
+        { Constants.ARMOR_STAT, 0}
+    };
     //public bool King { get; set; }
 }
 

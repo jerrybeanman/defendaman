@@ -30,6 +30,20 @@ public class ItemManager : MonoBehaviour {
         _item_data = JSON.Parse(File.ReadAllText(Application.dataPath + 
             "/StreamingAssets/Items.json"));
         construct_item_list();
+        /*
+        foreach (Item item in _item_database)
+        {
+            Debug.Log(item.id);
+            Debug.Log(item.title);
+            Debug.Log(item.damage);
+            Debug.Log(item.armor);
+            Debug.Log(item.health);
+            Debug.Log(item.description);
+            Debug.Log(item.stackable);
+            Debug.Log(item.type);
+            Debug.Log(item.slug);
+            Debug.Log(item.world_slug);
+        }*/
     }
 
     /* 
@@ -57,10 +71,10 @@ public class ItemManager : MonoBehaviour {
                                         _item_data[i]["title"],
                                         _item_data[i]["stats"]["damage"].AsInt,
                                         _item_data[i]["stats"]["armor"].AsInt,
+                                        _item_data[i]["health"]["health"].AsInt,
                                         _item_data[i]["description"],
                                         bool.Parse(_item_data[i]["stackable"]),
-                                        bool.Parse(_item_data[i]["usable"]),
-                                        bool.Parse(_item_data[i]["usable"]),
+                                        _item_data[i]["type"],
                                         _item_data[i]["slug"],
                                         _item_data[i]["worldSlug"]));
         }
@@ -87,10 +101,10 @@ public class Item
     public string title { get; set; }
     public int damage { get; set; }
     public int armor { get; set; }
+    public int health { get; set; }
     public string description { get; set; }
     public bool stackable { get; set; }
-    public bool usable { get; set; }
-    public bool resource { get; set; }
+    public string type { get; set; }
     public string slug { get; set; }
     public string world_slug { get; set; }
     public Sprite sprite { get; set; }
@@ -99,17 +113,17 @@ public class Item
     /* 
      * Constructor
      */
-    public Item(int id, string title, int damage, int armor, string description, 
-        bool stackable, bool usable, bool resource, string slug, string world_slug)
+    public Item(int id, string title, int damage, int armor, int health, string description, 
+        bool stackable, string type, string slug, string world_slug)
     {
         this.id = id;
         this.title = title;
         this.damage = damage;
         this.armor = armor;
+        this.health = health;
         this.description = description;
         this.stackable = stackable;
-        this.usable = usable;
-        this.resource = resource;
+        this.type = type;
         this.slug = slug;
         this.world_slug = world_slug;
         this.sprite = Resources.Load<Sprite>("Sprites/Items/" + slug);

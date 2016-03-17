@@ -125,11 +125,6 @@ public class WorldItemManager : MonoBehaviour
         }
     }
 
-    public void UseItem()
-    {
-
-    }
-
     public int GenerateWorldItemId()
     {
         //return _my_player_id * 1000000 + _dropped_item_instance_id++; // Disabled for testing, the player ID is set later
