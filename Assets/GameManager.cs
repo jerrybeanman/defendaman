@@ -140,7 +140,6 @@ public class GameManager : MonoBehaviour {
 				lightingFOV.transform.Translate(0,0,9);
 				var lightingPeripheral = ((Transform)Instantiate(lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 				lightingPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
-				lightingPeripheral.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 				lightingPeripheral.transform.Translate(0,0,9);
 				if (myPlayer == playerData.Value.PlayerID) {
 					var shadows = ((Transform)Instantiate(shadowoverlay, createdPlayer.transform.position, Quaternion.identity)).gameObject;
