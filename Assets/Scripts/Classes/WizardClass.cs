@@ -102,11 +102,10 @@ public class WizardClass : RangedClass
     {
         base.specialAttack(dir);
 
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10.0f;
+        Vector2 mousePos = Input.mousePosition;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        var distance = mousePos - transform.position;
-        var endp = transform.position + (distance * dir);
+        var distance = (mousePos - (Vector2) transform.position).magnitude;
+        Vector2 endp = (Vector2) transform.position + (distance * dir);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, endp, Quaternion.identity);
         attack.GetComponent<MagicCircle>().playerID = playerID;
