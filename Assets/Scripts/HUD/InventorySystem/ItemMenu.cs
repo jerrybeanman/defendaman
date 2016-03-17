@@ -24,14 +24,15 @@ using System.Collections.Generic;
 -----------------------------------------------------------------------------*/
 public class ItemMenu : MonoBehaviour
 {
-    //private int _dropped_item_instance_id;
     private Item _item;
     private int _amt;
     private int _inv_pos;
     private GameObject _item_menu;
     private AmountPanel _amount_panel;
     private WorldItemManager _world_item_manager;
-
+    private GameObject _use_btn;
+    RectTransform _item_menu_rt;
+    private float _item_menu_height;
 
     /*
      * Retrieves the ItemMenu game object and sets it to inactive.
@@ -42,7 +43,21 @@ public class ItemMenu : MonoBehaviour
         _item_menu = GameObject.Find("Item Menu"); 
         _item_menu.SetActive(false);
         _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
-        _amount_panel = GameObject.Find("Inventory").GetComponent<AmountPanel>();    
+        _amount_panel = GameObject.Find("Inventory").GetComponent<AmountPanel>();
+        _use_btn = _item_menu.transform.FindChild("Use Button").gameObject;
+        _item_menu_rt = _item_menu.GetComponent<RectTransform>();
+        _item_menu_height = _item_menu_rt.rect.height;
+    }
+
+    /*
+     * Deactivate item menu when there is mouse click outside the item menu
+     */
+    void Update()
+    {
+        if (!GameData.MouseBlocked && (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0))) 
+        {
+            Deactivate();
+        }
     }
 
     /*
@@ -52,11 +67,22 @@ public class ItemMenu : MonoBehaviour
      */
     public void Activate(Item item, int amt, int inv_pos)
     {
+        GameObject _use_btn = _item_menu.transform.FindChild("Use Button").gameObject;
         _item_menu.transform.position = Input.mousePosition;
         _item_menu.SetActive(true);
         _item = item;
         _amt = amt;
         _inv_pos = inv_pos;
+        if (item.type == Constants.CONSUMABLE_TYPE)
+        {
+            _use_btn.SetActive(true);
+            _item_menu_rt.sizeDelta = new Vector2(_item_menu_rt.rect.width, _item_menu_height);
+        }
+        else
+        {
+            _use_btn.SetActive(false);
+            _item_menu_rt.sizeDelta =  new Vector2(_item_menu_rt.rect.width, _item_menu_height * 2 / 3);
+        }
     }
 
     /*
@@ -76,6 +102,9 @@ public class ItemMenu : MonoBehaviour
         Debug.Log("use item: " + _item.id);
         GameData.MouseBlocked = false;
         Deactivate();
+
+        Inventory _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
+        _inventory.UseConsumable(_inv_pos);
     }
 
     /* 
@@ -92,6 +121,7 @@ public class ItemMenu : MonoBehaviour
      */
     public void DropItemOnClick()
     {
+        Debug.Log("Dropped");
         if (_amt > 1 && _item.stackable)
         {
             _amount_panel.Activate(_item, _amt, _inv_pos);

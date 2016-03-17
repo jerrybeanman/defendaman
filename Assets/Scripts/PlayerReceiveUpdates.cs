@@ -11,6 +11,8 @@ public class PlayerReceiveUpdates : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         NetworkingManager.Subscribe(update_position, DataType.Player, playerID);
+        NetworkingManager.Subscribe(took_damage, DataType.Hit, playerID);
+        NetworkingManager.Subscribe(died, DataType.Killed, playerID);
         GameData.PlayerPosition.Add(playerID, transform.position);
 	}
 
@@ -20,5 +22,16 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat) * Quaternion.Euler(0, 0, 90);
         transform.rotation = rotation;
         GameData.PlayerPosition[playerID] = position;
+    }
+
+    void took_damage(JSONClass packet)
+    {
+        GetComponent<BaseClass>().doDamage(packet["Damage"].AsFloat, true);
+    }
+
+    void died(JSONClass packet)
+    {
+        NetworkingManager.Unsubscribe(DataType.Player, playerID);
+        Destroy(gameObject);
     }
 }

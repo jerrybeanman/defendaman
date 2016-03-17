@@ -207,7 +207,7 @@ public class MapManager : MonoBehaviour {
         // Thomas/Jaegar's map generation function goes here
         // draw(map);
     }
-
+   
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: placeSprites
     --

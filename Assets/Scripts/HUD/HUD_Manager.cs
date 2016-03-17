@@ -141,7 +141,6 @@ public class HUD_Manager : MonoBehaviour {
 		string username = data[NetworkKeyString.UserName];
 		string message 	= data[NetworkKeyString.Message];
 
-		Debug.Log("Team: " + team + ", Username: " + username + ", message: " + message);
 		UpdateChat(team, username, message);
 	}
 	
