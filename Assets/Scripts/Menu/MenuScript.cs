@@ -14,6 +14,10 @@ public class MenuScript : MonoBehaviour {
 
     // list to keep track of which menu to go back to
     private List<GameObject> _menu_order = new List<GameObject>();
+    private Sprite _default_avatar;
+    private Sprite _gunner_avatar;
+    private Sprite _ninja_avatar;
+    private Sprite _mage_avatar;
 
     public Canvas menu_canvas;
 
@@ -42,6 +46,12 @@ public class MenuScript : MonoBehaviour {
 
 	void Awake()
     {
+        _default_avatar = Resources.Load("Sprites/UI/default_avatar", typeof(Sprite)) as Sprite;
+        _gunner_avatar = Resources.Load("Sprites/UI/gun_avatar", typeof(Sprite)) as Sprite;
+        _ninja_avatar = Resources.Load("Sprites/UI/ninja_avatar", typeof(Sprite)) as Sprite;
+        _mage_avatar = Resources.Load("Sprites/UI/mage_avatar", typeof(Sprite)) as Sprite;
+
+
         menu_canvas = menu_canvas.GetComponent<Canvas>();
 
         // set Main menu by default and disable other states & panels
@@ -131,7 +141,6 @@ public class MenuScript : MonoBehaviour {
             slot.gameObject.SetActive(false);
         }
 
-        Debug.Log("lobby size = " + GameData.LobbyData.Count);
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
 			Debug.Log ("PlayerUsername: " + p.Username);
@@ -149,13 +158,20 @@ public class MenuScript : MonoBehaviour {
     { 
         List<Transform> team_to_set = (team == 1 ? _team1_slots : _team2_slots);
         name = name.ToUpper();
+        Sprite avatar = _default_avatar;
         
         if (index <= 12)
         {
             team_to_set[index].transform.Find("Name").transform.GetComponent<Text>().text = name;
-        
-            //team_to_set[index].GetComponent<Image>().sprite = "path/to/class/avatar";    // TODO: 
+            
+            switch (class_type)
+            {
+                case ClassType.Gunner: avatar = _gunner_avatar; break;
+                case ClassType.Ninja: avatar = _ninja_avatar; break;
+                case ClassType.Wizard: avatar = _mage_avatar; break;
+            }
 
+            team_to_set[index].transform.Find("Profile").transform.GetComponent<Image>().sprite = avatar;
             team_to_set[index].gameObject.SetActive(true);
         }
     }
@@ -185,7 +201,7 @@ public class MenuScript : MonoBehaviour {
     {
         team_select_panel.SetActive(false); // should do this after networking call
 		GameData.MyPlayer.TeamID = team;
-		LobbyNetwork.SendLobbyData(NetworkCode.TeamChangeRequest);
+        LobbyNetwork.SendLobbyData(NetworkCode.TeamChangeRequest);
 
     }
 	public void SelectClass(int value)
