@@ -23,9 +23,16 @@ using System.Collections;
 
 public class NinjaClass : MeleeClass
 {
-	public NinjaClass()
+    Rigidbody2D sword;
+    Rigidbody2D attack;
+
+    public NinjaClass()
 	{
-        this._className = "Ninja";
+        sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
+        //attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        //attack.transform.parent = transform;
+
+               this._className = "Ninja";
         this._classDescription = "You'll never see him coming.";
         this._classStat.CurrentHp = 150;
         this._classStat.MaxHp = 150;
