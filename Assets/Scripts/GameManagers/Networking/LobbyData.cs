@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
+public enum GameState { Playing, Dead, Won, Lost}
 // Lobby message key fields 
 public class NetworkKeyString
 {
@@ -22,7 +23,7 @@ public class PlayerData {
     public string Username { get; set; }
     public int TeamID { get; set; }
     public ClassType ClassType { get; set; }
-	public bool Ready { get; set; }
+	public bool Ready = false;
     //public bool King { get; set; }
 }
 
@@ -37,6 +38,7 @@ public class GameData
 	public static int 			Seed			{ get; set; }
 	public static bool			GameStart		= false;
 	public static string 		IP;
+    public static GameState     GameState       = GameState.Playing;
     //Pair of x/y spawn points where index+1 is teamid
     public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();
     public static Pair<int, int> aiSpawn = new Pair<int, int>(10, 10);
