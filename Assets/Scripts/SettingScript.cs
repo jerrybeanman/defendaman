@@ -9,7 +9,7 @@ public class SettingScript : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        settings = GameObject.Find("Settings");
+        settings = GameObject.Find("Canvas");
         settings.SetActive(false);
     }
 

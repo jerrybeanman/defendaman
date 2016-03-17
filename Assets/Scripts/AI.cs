@@ -96,7 +96,7 @@ public class AI : MonoBehaviour {
             attack.Normalize();
             Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position + (Vector3)attack * 0.3f, transform.rotation);
             attack2.AddForce(attack * 25);
-            Debug.Log(attack);
+            //Debug.Log(attack);
             attack2.GetComponent<BasicRanged>().teamID = team;
             attack2.GetComponent<BasicRanged>().damage = 10;
             attack2.GetComponent<BasicRanged>().maxDistance = 10;

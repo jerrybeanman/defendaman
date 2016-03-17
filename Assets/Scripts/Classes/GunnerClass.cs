@@ -35,6 +35,7 @@ public class GunnerClass : RangedClass
         //var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
         attack.AddForce(dir * speed[0]);
+        attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
         attack.GetComponent<BasicRanged>().maxDistance = distance[0];
@@ -50,6 +51,7 @@ public class GunnerClass : RangedClass
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, transform.position, transform.rotation);
         attack.AddForce(dir * speed[1]);
+        attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
         attack.GetComponent<BasicRanged>().maxDistance = distance[1];

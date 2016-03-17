@@ -18,7 +18,8 @@ for fail does not work
 */
 public enum DataType
 {
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8
+    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
+    Hit = 9, Killed = 10, TriggerKilled = 11
 }
 
 public enum Protocol

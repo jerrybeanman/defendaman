@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour {
     private static void PlayerDied()
     {
         ColourizeScreen.instance.PlayerDied();
+        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         Debug.Log("You have died");
     }
 
