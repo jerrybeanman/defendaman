@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour {
 
     private static void PlayerDied()
     {
+        GameData.GameState = GameState.Dead;
         ColourizeScreen.instance.PlayerDied();
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         Debug.Log("You have died");
@@ -169,11 +170,13 @@ public class GameManager : MonoBehaviour {
 
     private void GameWon()
     {
+        GameData.GameState = GameState.Won;
         Debug.Log("You have won");
     }
 
     private void GameLost()
     {
+        GameData.GameState = GameState.Lost;
         Debug.Log("You have lost");
     }
     

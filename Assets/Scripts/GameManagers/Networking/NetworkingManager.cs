@@ -94,6 +94,7 @@ public class NetworkingManager : MonoBehaviour
             while ((packet = receive_data_udp()) != "[]")
                 update_data(packet);
 
+
             send_data();
         }
     }
@@ -257,7 +258,8 @@ public class NetworkingManager : MonoBehaviour
 			//Cant send empty packets to server, inefficient and may crash
 			if (tcp != "[]")
             	TCP_Send(tcp, tcp.Length);
-            UDP_SendData(udp, udp.Length);
+            if (GameData.GameState == GameState.Playing)
+                UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
             lastTCP = tcp;
