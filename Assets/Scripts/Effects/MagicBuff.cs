@@ -1,3 +1,24 @@
+/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    MagicBuff.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      override void FixedUpdate()
+--      void start()
+--
+--  DATE:           March 9, 2016
+--
+--  REVISIONS:      (Date and Description)
+--
+--  DESIGNERS:      Hank Lo
+--
+--  PROGRAMMER:     Hank Lo
+--
+--  NOTES:
+--  This class contains the logic that relates to the Magic Buff Class.
+---------------------------------------------------------------------------------------*/
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

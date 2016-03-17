@@ -163,9 +163,6 @@ public class NetworkingManager : MonoBehaviour
                     {
                         callback(obj);
                     }
-                } else
-                {
-                    Debug.Log("[DEBUG] Failed to subscribe for DataType " + dataType + " and ID " + id);
                 }
             }
         }
@@ -256,7 +253,9 @@ public class NetworkingManager : MonoBehaviour
         var udp = create_sending_json(Protocol.UDP);
         if (Application.platform == RuntimePlatform.LinuxPlayer)
         {
-            TCP_Send(tcp, tcp.Length);
+			//Cant send empty packets to server, inefficient and may crash
+			if (tcp != "[]")
+            	TCP_Send(tcp, tcp.Length);
             UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
@@ -271,6 +270,7 @@ public class NetworkingManager : MonoBehaviour
         //On Linux, get a proper packet
         if (Application.platform == RuntimePlatform.LinuxPlayer) {
             result = Marshal.PtrToStringAnsi(UDP_GetData());
+			print ("[DEBUG] Received UDP Data: " + result);
         } else {
             //On Windows, return whatever JSON data we want to generate/test for
             result = "[]";
@@ -286,6 +286,7 @@ public class NetworkingManager : MonoBehaviour
         if (Application.platform == RuntimePlatform.LinuxPlayer)
         {
             result = Marshal.PtrToStringAnsi(TCP_GetData());
+			print ("[DEBUG] Received TCP Data: " + result);
         }
         else {
             //On Windows, return whatever JSON data we want to generate/test for
