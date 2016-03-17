@@ -52,7 +52,7 @@ public class MapManager : MonoBehaviour {
     private GameObject[] _pooledObjects;
     public Camera mainCamera;
     public Vector3 cameraPosition;
-    public float cameraDistance;
+    public static float cameraDistance;
     public float frustumHeight, frustumWidth;
 
     //

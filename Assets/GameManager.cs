@@ -70,9 +70,9 @@ public class GameManager : MonoBehaviour {
 
     private static void PlayerDied()
     {
-        GameData.GameState = GameState.Dead;
+        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.UDP);
+        GameData.GameState = GameState.Dying;
         ColourizeScreen.instance.PlayerDied();
-        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         Debug.Log("You have died");
     }
 
@@ -81,17 +81,13 @@ public class GameManager : MonoBehaviour {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
-        
-        int x = 0;
-        Vector2 check = new Vector2();
-
-       /*
+       
         var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
         var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
         var createdAI3 = ((Transform)Instantiate(AI, new Vector3(85, 10, -10), Quaternion.identity)).gameObject;
         var createdAI4 = ((Transform)Instantiate(AI, new Vector3(75, 55, -10), Quaternion.identity)).gameObject;
         var createdAI5 = ((Transform)Instantiate(AI, new Vector3(70, 40, -10), Quaternion.identity)).gameObject;
-        */
+
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
         
@@ -118,29 +114,6 @@ public class GameManager : MonoBehaviour {
                     break;
             }
 
-			Debug.Log(myTeam.ToString());
-            // Add FOV to all ally team members
-			if (myTeam == playerData.Value.TeamID || myTeam == 0) { // myTeam == 0 is a bugfix until player has teamID of 1
-				Debug.Log ("Team Member");
-				Transform hpFrame = createdPlayer.transform.GetChild(0);
-				Transform hpBar = hpFrame.transform.GetChild(0);
-				createdPlayer.layer = LayerMask.NameToLayer("Allies");
-				hpFrame.gameObject.layer = LayerMask.NameToLayer("Allies");
-				hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
-				var lightingFOV = ((Transform)Instantiate(lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lightingFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
-				lightingFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
-				lightingFOV.transform.Translate(0,0,9);
-				var lightingPeripheral = ((Transform)Instantiate(lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lightingPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
-				lightingPeripheral.transform.Translate(0,0,9);
-				if (myPlayer == playerData.Value.PlayerID) {
-					var shadows = ((Transform)Instantiate(shadowoverlay, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					shadows.transform.parent = lightingFOV.transform;
-					shadows.transform.Translate(0,0,11);
-				}
-			}
-
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
 
@@ -163,6 +136,29 @@ public class GameManager : MonoBehaviour {
                 createdPlayer.AddComponent<PlayerReceiveUpdates>();
                 createdPlayer.GetComponent<PlayerReceiveUpdates>().playerID = playerData.Value.PlayerID;
                 //Created another player
+            }
+
+            if (myTeam == playerData.Value.TeamID)
+            {
+                Debug.Log("Team Member");
+                Transform hpFrame = createdPlayer.transform.GetChild(0);
+                Transform hpBar = hpFrame.transform.GetChild(0);
+                createdPlayer.layer = LayerMask.NameToLayer("Allies");
+                hpFrame.gameObject.layer = LayerMask.NameToLayer("Allies");
+                hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
+                var lightingFOV = ((Transform)Instantiate(lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+                lightingFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
+                lightingFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
+                lightingFOV.transform.Translate(0, 0, 9);
+                var lightingPeripheral = ((Transform)Instantiate(lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+                lightingPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
+                lightingPeripheral.transform.Translate(0, 0, 9);
+                if (myPlayer == playerData.Value.PlayerID)
+                {
+                    var shadows = ((Transform)Instantiate(shadowoverlay, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+                    shadows.transform.parent = lightingFOV.transform;
+                    shadows.transform.Translate(0, 0, 11);
+                }
             }
         }
 
