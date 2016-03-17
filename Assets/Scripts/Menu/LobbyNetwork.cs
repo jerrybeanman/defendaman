@@ -104,7 +104,7 @@ public class LobbyNetwork : MonoBehaviour {
             {
                 Debug.Log("[Debug]: Team chagne request");
                 Debug.Log("[Debug]: Content--" + raw);
-				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;;
+				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;
 
 				PrintData();
                 break;
@@ -113,7 +113,7 @@ public class LobbyNetwork : MonoBehaviour {
             {
                 Debug.Log("[Debug]: Class change request");
                 Debug.Log("[Debug]: Content--" + raw);
-				GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)packet[NetworkKeyString.ClassID].AsInt;;
+				GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)packet[NetworkKeyString.ClassID].AsInt;
 
 				PrintData();
 				break;
@@ -122,7 +122,7 @@ public class LobbyNetwork : MonoBehaviour {
             {
                 Debug.Log("[Debug]: Ready request");
                 Debug.Log("[Debug]: Content--" + raw);
-				GameData.LobbyData[PlayerPacketID].Ready = packet[NetworkKeyString.Ready].AsBool;;
+				GameData.LobbyData[PlayerPacketID].Ready = Convert.ToBoolean(packet[NetworkKeyString.Ready].AsInt);
 
 				PrintData();
                 break;
