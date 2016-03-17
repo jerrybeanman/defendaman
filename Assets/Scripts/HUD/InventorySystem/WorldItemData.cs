@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using System;
 
 /*-----------------------------------------------------------------------------
 -- WorldItemData.cs - Script attached to WorldItem game objects that store 
@@ -29,6 +31,7 @@ public class WorldItemData : MonoBehaviour
     bool trigger_entered = false;
     int _player_id;
     WorldItemManager _world_item_manager;
+    private Tooltip _tooltip;
 
     /*
      * Retrieve the player id
@@ -37,6 +40,7 @@ public class WorldItemData : MonoBehaviour
     {
         _player_id = GameData.MyPlayer.PlayerID;
         _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
     }
 	
 	/* 
@@ -55,9 +59,12 @@ public class WorldItemData : MonoBehaviour
             // Send Network message
             List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
-            
+
+            _tooltip.Deactivate();
+
             // Prevent that a pickup event was received
             _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+            Debug.Log(GameData.MyPlayer.Resources["Gold Coins"]);
         }
     }
 
@@ -67,8 +74,9 @@ public class WorldItemData : MonoBehaviour
      */
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player" && 
-            other.gameObject.GetComponent<BaseClass>().playerID == _player_id)
+        if (other.gameObject.tag == "Player" &&
+            // other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
+            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
         {
             trigger_entered = true;
         }
@@ -81,9 +89,20 @@ public class WorldItemData : MonoBehaviour
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player" &&
-            other.gameObject.GetComponent<BaseClass>().playerID == _player_id)
+            //other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
+            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
         {
             trigger_entered = false;
         }
+    }
+
+    public void OnMouseEnter()
+    {
+        _tooltip.Activate(item, amount);
+    }
+
+    public void OnMouseExit()
+    {
+        _tooltip.Deactivate();
     }
 }
