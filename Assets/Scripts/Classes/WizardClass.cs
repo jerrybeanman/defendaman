@@ -70,6 +70,7 @@ public class WizardClass : RangedClass
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
         attack.AddForce(dir * speed[0]);
+        attack.GetComponent<Fireball>().playerID = playerID;
         attack.GetComponent<Fireball>().teamID = team;
         attack.GetComponent<Fireball>().damage = ClassStat.AtkPower;
         attack.GetComponent<Fireball>().maxDistance = distance[0];
@@ -104,6 +105,7 @@ public class WizardClass : RangedClass
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, mousePos, Quaternion.identity);
+        attack.GetComponent<MagicCircle>().playerID = playerID;
         attack.GetComponent<MagicCircle>().teamID = team;
         attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
         attack.GetComponent<MagicCircle>().duration = 200;

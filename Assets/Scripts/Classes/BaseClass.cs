@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SimpleJSON;
+using System.Collections.Generic;
 
 public abstract class BaseClass : MonoBehaviour {
     //Cooldowns
@@ -76,11 +77,16 @@ public abstract class BaseClass : MonoBehaviour {
 		}
 	}
 
-    public float doDamage(float damage)
+    public float doDamage(float damage, bool trueDamage = false)
     {
         // hank: Added defensive calculation
-        float reduction = (30 / (ClassStat.Defense + 30));
-        float finaldamage = damage * reduction;
+        float finaldamage = damage;
+
+        if (!trueDamage)
+        {
+            float reduction = (30 / (ClassStat.Defense + 30));
+            finaldamage = damage * reduction;
+        }
         
         ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
@@ -99,25 +105,32 @@ public abstract class BaseClass : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        return ClassStat.CurrentHp;
+        return finaldamage;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        var attack = other.gameObject.GetComponent<Trigger>();
-        Debug.Log("Projectile hit");
-        if (attack != null)
-        {
-            Debug.Log("Attack was not null");
-            if (attack.teamID == team)
-            {
-                Debug.Log("Same team");
+    void OnTriggerEnter2D(Collider2D other) {
+        if (playerID != GameData.MyPlayer.PlayerID)
+            return;
+
+        Trigger attack;
+        if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
+            if (attack.teamID == team) {
                 return;
             }
-            doDamage(attack.damage);
-        }
-        else
-        {
+
+            var damageTaken = doDamage(attack.damage);
+
+            if (attack.IsDestroyable)
+                Destroy(other.gameObject);
+
+            var memersToSend = new List<Pair<string, string>>();
+            memersToSend.Add(new Pair<string, string>("EnemyID", attack.playerID.ToString()));
+            memersToSend.Add(new Pair<string, string>("Damage", damageTaken.ToString()));
+            NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.TCP);
+            NetworkingManager.send_next_packet(DataType.TriggerKilled, attack.triggerID, new List<Pair<string, string>>(), Protocol.TCP);
+
+            return;
+        } else {
             Debug.Log("Attack was null");
         }
 

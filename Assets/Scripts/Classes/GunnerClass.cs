@@ -5,12 +5,14 @@ public class GunnerClass : RangedClass
 {
     int[] distance = new int[2]{ 10, 20};
     int[] speed = new int[2] { 100, 200 };
-    Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
-    Rigidbody2D bullet2 = (Rigidbody2D)Resources.Load("Prefabs/Bullet2", typeof(Rigidbody2D));
+    Rigidbody2D bullet;
+    Rigidbody2D bullet2;
 
     //(add hank to revisions for whoever wrote this class)
     public GunnerClass()
 	{
+        bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+        bullet2 = (Rigidbody2D)Resources.Load("Prefabs/Bullet2", typeof(Rigidbody2D));
         this._className = "Gunner";
         this._classDescription = "Boom - Headshot.";
         this._classStat.CurrentHp = 100;
@@ -35,6 +37,7 @@ public class GunnerClass : RangedClass
         //var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
         attack.AddForce(dir * speed[0]);
+        attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
         attack.GetComponent<BasicRanged>().maxDistance = distance[0];
@@ -50,6 +53,7 @@ public class GunnerClass : RangedClass
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, transform.position, transform.rotation);
         attack.AddForce(dir * speed[1]);
+        attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
         attack.GetComponent<BasicRanged>().maxDistance = distance[1];
