@@ -64,7 +64,7 @@ public class WorldItemData : MonoBehaviour
 
             // Prevent that a pickup event was received
             _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-            Debug.Log(GameData.MyPlayer.Resources["Gold Coins"]);
+            Debug.Log(GameData.MyPlayer.Resources[Constants.GOLD_RES]);
         }
     }
 
