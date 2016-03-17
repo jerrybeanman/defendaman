@@ -83,13 +83,13 @@ public class GameManager : MonoBehaviour {
         int x = 0;
         Vector2 check = new Vector2();
 
-       
+       /*
         var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
         var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
         var createdAI3 = ((Transform)Instantiate(AI, new Vector3(85, 10, -10), Quaternion.identity)).gameObject;
         var createdAI4 = ((Transform)Instantiate(AI, new Vector3(75, 55, -10), Quaternion.identity)).gameObject;
         var createdAI5 = ((Transform)Instantiate(AI, new Vector3(70, 40, -10), Quaternion.identity)).gameObject;
-
+        */
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
         
