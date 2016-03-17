@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GunnerClass : BaseClass
 {
-    int[] distance = new int[2] { 15, 60 };
+    int[] distance = new int[2] { 12, 12 };
     int[] speed = new int[2] { 800, 1200 };
     Rigidbody2D bullet;
     Rigidbody2D bullet2;
@@ -116,7 +116,8 @@ public class GunnerClass : BaseClass
         attack.AddForce(newdir * speed[0]);
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower / 5;
-        attack.GetComponent<BasicRanged>().maxDistance = distance[1];
+        var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
+        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
+        attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
     }
 }
