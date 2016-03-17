@@ -13,12 +13,13 @@ public class AI : MonoBehaviour {
     private Rigidbody2D rb2d;
     private int speed = 5;
     public double reload = 2.0f;
-    Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+    Rigidbody2D bullet;
     public int team = -2;
     public int aiID = 0;
     // Use this for initialization
     void Start()
     {
+        bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
         NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
         NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
         rb2d = GetComponent<Rigidbody2D>();
@@ -117,8 +118,10 @@ public class AI : MonoBehaviour {
             attack.x = x;
             attack.y = y;
             //attack.Normalize();
+            /*
             System.Random rnd = new System.Random();
             float offset;
+            
             offset = (float)(rnd.NextDouble() * accuracy - accuracy / 2);
             //offsetY = (float)(rnd.NextDouble() * 3.0 - 1.5);
             if (attack.x > attack.y)
@@ -130,6 +133,7 @@ public class AI : MonoBehaviour {
             {
                 attack.y += attack.y * offset;
             }
+            */
             attack.Normalize();
             Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position + (Vector3)attack * 0.3f, transform.rotation);
             attack2.AddForce(attack * 25);
