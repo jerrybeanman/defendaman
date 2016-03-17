@@ -25,8 +25,18 @@ public class WizardClass : RangedClass
 {
     int[] distance = new int[2]{ 20, 0 };
     int[] speed = new int[2] { 80, 0 };
-    Rigidbody2D fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
-    Rigidbody2D magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
+    Rigidbody2D fireball;
+    Rigidbody2D magicCircle;
+
+    new void Start()
+    {
+        base.Start();
+        fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
+        magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
+
+        var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+    }
 
 	public WizardClass()
 	{
@@ -39,9 +49,7 @@ public class WizardClass : RangedClass
         this._classStat.MoveSpeed = 10;
         this._classStat.AtkPower = 3;
         this._classStat.Defense  = 5;
-
-        var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
-        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+        
         cooldowns = new float[2] { 0.5f, 6 };
 	}
 
