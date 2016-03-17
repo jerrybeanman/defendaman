@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour {
     public Transform AI;
 
     public Transform playerType;
-    public Transform lightSource;
+    public Transform lightSourceFOV;
+	public Transform lightSourcePeripheral;
 	public Transform shadowoverlay;
     public GameObject player;
     private bool testing = false;
@@ -133,13 +134,17 @@ public class GameManager : MonoBehaviour {
 				createdPlayer.layer = LayerMask.NameToLayer("Allies");
 				hpFrame.gameObject.layer = LayerMask.NameToLayer("Allies");
 				hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
-				var lighting = ((Transform)Instantiate(lightSource, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-				lighting.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
-				lighting.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
-				lighting.transform.Translate(0,0,9);
+				var lightingFOV = ((Transform)Instantiate(lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lightingFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
+				lightingFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
+				lightingFOV.transform.Translate(0,0,9);
+				var lightingPeripheral = ((Transform)Instantiate(lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lightingPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
+				lightingPeripheral.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
+				lightingPeripheral.transform.Translate(0,0,9);
 				if (myPlayer == playerData.Value.PlayerID) {
 					var shadows = ((Transform)Instantiate(shadowoverlay, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					shadows.transform.parent = lighting.transform;
+					shadows.transform.parent = lightingFOV.transform;
 					shadows.transform.Translate(0,0,11);
 				}
 			}
