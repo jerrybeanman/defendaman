@@ -30,13 +30,27 @@ public class Attack : MonoBehaviour {
         {
             gameObject.GetComponent<Animator>().SetBool("moving", false);
         }
-        if ((Input.GetKey(KeyCode.Mouse0) && attackReady) || (Input.GetKey(KeyCode.Mouse1) && specialReady))
+        if (gameObject.GetComponent<MeleeClass>() != null)
         {
-            gameObject.GetComponent<Animator>().SetBool("attacking", true);
+            if ((Input.GetKey(KeyCode.Mouse0) && attackReady) || (Input.GetKey(KeyCode.Mouse1) && specialReady))
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", true);
+            }
+            else
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", false);
+            }
         }
-        else
+        else if (gameObject.GetComponent<RangedClass>() != null)
         {
-            gameObject.GetComponent<Animator>().SetBool("attacking", false);
+            if (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse1))
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", true);
+            }
+            else
+            {
+                gameObject.GetComponent<Animator>().SetBool("attacking", false);
+            }
         }
 
 

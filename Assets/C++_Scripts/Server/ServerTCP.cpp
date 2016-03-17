@@ -2,6 +2,7 @@
 
 using namespace Networking;
 using namespace json11;
+extern std::map<int, Player>           _PlayerTable;
 
 /**
  * Initialize server socket and address
@@ -100,15 +101,20 @@ void * ServerTCP::Receive()
     char * buf;						          	/* buffer read from one recv call      	  */
 
   	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
+    memset(buf, 0, PACKETLEN);
     while (1)
     {
-      	BytesRead = recv (tmpPlayer.socket, buf, PACKETLEN, 0);
+      int bytesToRead = PACKETLEN;
+      char *bp = buf;
+       while((BytesRead = recv(tmpPlayer.socket, bp, bytesToRead, 0)) < PACKETLEN)
+       {
+         bytesToRead -= BytesRead;
+         bp += BytesRead;
+       }
 
         /* recv() failed */
       	if(BytesRead < 0)
       	{
-          if(errno == EINTR)
-              continue;
       		printf("recv() failed with errno: %d", errno);
       		return 0;
       	}
@@ -127,6 +133,7 @@ void * ServerTCP::Receive()
           return 0;
       	}
         //Handle Data Received
+        std::cout << "INSIDE RECV" << buf << std::endl;
         this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
     }
     free(buf);
@@ -147,7 +154,7 @@ void * ServerTCP::Receive()
 void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
-  std::cout << "In BroadCast(): " << message << std::endl;
+  std::cout << "Player size : " << _PlayerTable.size() << std::endl;
   for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
@@ -240,14 +247,23 @@ int ServerTCP::SetSocketOpt()
  * @date   2016-03-11
  * @param  player     Player that recives the message
  * @param  buffer     json message
+ *
+ * Revisions: Tyler Trepanier-Bracken  2016/03/14
+ *            Added in a GameEnd case with a restart server placeholder.
  */
 void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
+  std::cout << "Inside check server request" << std::endl;
   std::string error;
+  std::cout << "INSIDE CHECK SERVER REQUEST" << buffer << std::endl;
   Json json = Json::parse(buffer, error).array_items()[0];
 
-  if (json["DataType"].int_value() != Networking)
+  std::cout << "awefwaefwaefwaefweaf check server request" << std::endl;
+
+  if (json["DataType"].int_value() != Networking) {
+    this->ServerTCP::Broadcast(buffer);
     return;
+  }
 
   switch(json["ID"].int_value())
   {
@@ -270,7 +286,6 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       std::cout << "Ready change: " << (json[Ready].int_value() ? "ready" : "not ready") << std::endl;
       _PlayerTable[player.id].isReady = (json[Ready].int_value() ? true : false);
       this->ServerTCP::Broadcast(buffer);
-
       break;
 
     //New Player has joined lobby
@@ -284,11 +299,14 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       //Create packet and send to everyone
       this->ServerTCP::Broadcast(UpdateID(_PlayerTable[player.id]).c_str());
       break;
+
     case PlayerLeftLobby:
       std::cout << "Player: " << json[PlayerID].int_value() << " has left the lobby" << std::endl;
       _PlayerTable.erase(json[PlayerID].int_value());
       this->ServerTCP::Broadcast(buffer);
+      write(_sockPair[0], "2", PACKETLEN);
       break;
+
     case GameStart:
       std::cout << "Player: " << json[PlayerID].int_value() << " has started the game" << std::endl;
       //All players in lobby are ready
@@ -296,10 +314,19 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
       {
         this->ServerTCP::Broadcast(buffer);
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
-        kill(getpid(), SIGTERM);
+        write(_sockPair[0], "1", PACKETLEN);
       }
       break;
 
+    case GameEnd: //Currently allows any player to annouce the end of the game.
+      std::cout << "Player: " << json[PlayerID].int_value() << " has ended the game" << std::endl;
+
+      this->ServerTCP::Broadcast(buffer);     // Inform all clients that the game has ended.
+      this->ServerTCP::ShutDownGameServer();  // Send a message to the UDP to kill itself.
+      /**/
+      this->ServerTCP::RestartServer(); // Placeholder function, does nothing at the moment.
+      /**/
+      break;
   }
 }
 
@@ -375,11 +402,11 @@ std::string ServerTCP::constructPlayerTable()
 	{
 		std::string tempUserName((it->second).username);
 		packet += "{";
-    packet += "PlayerID: " + std::to_string(it->first);
-		packet += ",  UserName : \"" + tempUserName + "\"";
-		packet += ", TeamID : " +  std::to_string((it->second).team);
-		packet += ", ClassID : " + std::to_string((it->second).playerClass);
-		packet += ", Ready : " + std::to_string(Server::isReadyToInt(it->second));
+    packet += "\"PlayerID\" : " + std::to_string(it->first);
+		packet += ",  \"UserName\" : \"" + tempUserName + "\"";
+		packet += ", \"TeamID \": " +  std::to_string((it->second).team);
+		packet += ", \"ClassID\" : " + std::to_string((it->second).playerClass);
+		packet += ", \"Ready\" : " + std::to_string(Server::isReadyToInt(it->second));
 		packet += (++it == _PlayerTable.end() ? "}" : "},");
 	}
 	packet +=    "]";
@@ -440,4 +467,55 @@ int ServerTCP::getPlayerId(std::string ipString)
 {
   std::size_t index = ipString.find_last_of(".");
   return stoi(ipString.substr(index+1));
+}
+
+/**
+ * [ServerTCP::ShutDownGameServer                                     ]
+ * [    Sends a message to the UDP Server via the already created pipe]
+ * [    indicating that the game is over.                             ]
+ * @author Tyler Trepanier-Bracken
+ * @date   2016-03-14
+ * @param  void
+ * @return void
+ */
+void ServerTCP::ShutDownGameServer(void)
+{
+  char sbuf[20];
+  char rbuf[20];
+  static int MESSAGE_SIZE = 20;
+  int nread = 0;
+  sprintf(sbuf, "%s", "GameEnd");
+
+  if(_sockPair[0] == -1 && _sockPair[1] == -1) //check if the sockets aren't in error
+  {
+    // Critical error SIGTERM the UDP
+    // TODO
+  }
+
+  write(_sockPair[0], sbuf, (strlen(sbuf)));
+
+  for (;;) // Wait forever until a read has occured.
+  {
+    switch (nread = read(_sockPair[0], &rbuf, MESSAGE_SIZE)) // Polling, need to fix
+    {
+      case -1:
+      case 0:
+        break;
+      default:
+        // Assume that any message means that the UDP is shutting down
+        std::cerr << "UDP shutting down." << std::endl;
+    }
+  }
+}
+
+/**
+ * [ServerTCP::RestartServer Restarts the Lobby after the game ends.]
+ * @author Tyler Trepanier-Bracken
+ * @date   2016-03-14
+ * @param  void
+ * @return void
+ */
+void ServerTCP::RestartServer(void)
+{
+  //PLACEHOLDER
 }
