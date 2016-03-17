@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
+using System.Collections.Generic;
+
+public enum SpecialCase { GunnerSpecial = 1 }
 
 public class GunnerClass : BaseClass
 {
     int[] distance = new int[2] { 12, 12 };
-    int[] speed = new int[2] { 800, 1200 };
+    int[] speed = new int[2] { 200, 300 };
     Rigidbody2D bullet;
     Rigidbody2D bullet2;
     int inaccuracy = 40;
@@ -39,21 +43,22 @@ public class GunnerClass : BaseClass
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         zoomIn = mainCamera.orthographicSize;
+        NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
     }
 
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
-        var innacX = Random.value * inaccuracy - (inaccuracy / 2);
+        /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
         var innacY = Random.value * inaccuracy - (inaccuracy / 2);
         var newMouse = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x + innacX, Input.mousePosition.y + innacY, 0));
         var newdir = (Vector2)((newMouse - transform.position).normalized);
-
+        */
         var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
-        attack.AddForce(newdir * speed[0]);
+        attack.AddForce(dir * speed[0]);//was newdir
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower / 5;
@@ -75,49 +80,66 @@ public class GunnerClass : BaseClass
     Vector2 dir;
     void Update()
     {
-        if (inSpecial && Input.GetMouseButton(1))
+        if (playerID == GameData.MyPlayer.PlayerID)
         {
-            var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
+            if (inSpecial && Input.GetMouseButton(1))
+            {
+                //var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
 
-            /*Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, startPosition, transform.rotation);
-            attack.AddForce(dir * speed[1]);
-            attack.GetComponent<BasicRanged>().playerID = playerID;
-            attack.GetComponent<BasicRanged>().teamID = team;
-            attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
-            attack.GetComponent<BasicRanged>().maxDistance = distance[1];*/
-            if (mainCamera.orthographicSize < zoomOut)
-                mainCamera.orthographicSize += .1f;
-            MapManager.cameraDistance = -mainCamera.orthographicSize;
-        }
+                /*Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, startPosition, transform.rotation);
+                attack.AddForce(dir * speed[1]);
+                attack.GetComponent<BasicRanged>().playerID = playerID;
+                attack.GetComponent<BasicRanged>().teamID = team;
+                attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
+                attack.GetComponent<BasicRanged>().maxDistance = distance[1];*/
+                if (mainCamera.orthographicSize < zoomOut)
+                    mainCamera.orthographicSize += .1f;
+                MapManager.cameraDistance = -mainCamera.orthographicSize;
+            }
 
-        if (inSpecial && !Input.GetMouseButton(1))
-        {
-            inSpecial = false;
-            fire();
-        }
-        if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
-        {
-            mainCamera.orthographicSize -= .2f;
-            MapManager.cameraDistance = -mainCamera.orthographicSize;
+            if (inSpecial && !Input.GetMouseButton(1))
+            {
+                inSpecial = false;
+                fire();
+            }
+            if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
+            {
+                mainCamera.orthographicSize -= .2f;
+                MapManager.cameraDistance = -mainCamera.orthographicSize;
+            }
         }
     }
 
     void fire()
     {
         //Replace with lazer beammmm
-        var innacX = Random.value * inaccuracy - (inaccuracy / 2);
+        /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
         var innacY = Random.value * inaccuracy - (inaccuracy / 2);
         var newMouse = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x + innacX, Input.mousePosition.y + innacY, 0));
         var newdir = (Vector2)((newMouse - transform.position).normalized);
+        */
 
-        var startPosition = new Vector3(transform.position.x + (newdir.x * 2.5f), transform.position.y + (newdir.y * 2.5f), -5);
+        //dir's were newdir
+        var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
-        attack.AddForce(newdir * speed[0]);
+        attack.AddForce(dir * speed[0]);
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
         attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
+
+        var member = new List<Pair<string, string>>();
+        member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+        NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
+    }
+
+    void fireFromServer(JSONClass packet)
+    {
+        if (packet["playerID"].AsInt == playerID)
+        {
+            fire();
+        }
     }
 }

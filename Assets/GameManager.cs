@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour {
     {
         GameData.GameState = GameState.Dead;
         ColourizeScreen.instance.PlayerDied();
-        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
+        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.UDP);
         Debug.Log("You have died");
     }
 
@@ -79,10 +79,6 @@ public class GameManager : MonoBehaviour {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = 0;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
-        
-        int x = 0;
-        Vector2 check = new Vector2();
-
        
         var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
         var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
