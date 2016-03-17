@@ -78,22 +78,13 @@ public class GameManager : MonoBehaviour {
         int x = 0;
         Vector2 check = new Vector2();
 
-        /*while (x < 20)
-        {
-            System.Random rnd = new System.Random();
-            int xCoord = rnd.Next(1,99);
-            int yCoord = rnd.Next(1,99);
-            check.x = xCoord;
-            check.y = yCoord;
-            RaycastHit2D hit = Physics2D.Raycast(check, Vector2.up, 0.0001f);
-            if (hit.collider != null)
-            {
-                continue;
-            }
-            x++;
-            var createdAI = ((Transform)Instantiate(AI, new Vector3(xCoord,yCoord, -10), Quaternion.identity)).gameObject;
-        }*/
-        var createdAI = ((Transform)Instantiate(AI, new Vector3(40, 40, -10), Quaternion.identity)).gameObject;
+       
+        var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
+        var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
+        var createdAI3 = ((Transform)Instantiate(AI, new Vector3(85, 10, -10), Quaternion.identity)).gameObject;
+        var createdAI4 = ((Transform)Instantiate(AI, new Vector3(75, 55, -10), Quaternion.identity)).gameObject;
+        var createdAI5 = ((Transform)Instantiate(AI, new Vector3(70, 40, -10), Quaternion.identity)).gameObject;
+
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
         

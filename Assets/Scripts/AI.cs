@@ -1,26 +1,67 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SimpleJSON;
+
 public class AI : MonoBehaviour {
     bool route = false;
     float facing;
     float accuracy = 3.5f;
+    public float angleFacing;
+    
     Vector2 curMove;
+    public float xCoord, yCoord;
     private Rigidbody2D rb2d;
-    private  int speed = 5;
-    double reload = 2.0f;
+    private int speed = 5;
+    public double reload = 2.0f;
     Rigidbody2D bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
     public int team = -2;
+    public int aiID = 0;
     // Use this for initialization
-    void Start ()
+    void Start()
     {
+        NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
+        NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
         rb2d = GetComponent<Rigidbody2D>();
 
+        
+
+    }
+
+    void CreateProjectile(JSONClass packet)
+    {
+        //I created a projectile
+        Vector2 attack;
+        attack.x = packet["vecX"].AsFloat;
+        attack.y = packet["vecY"].AsFloat;
+       
+        
+       
+
+        Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
+
+        attack2.AddForce(attack * 100);
+        Debug.Log(attack);
+        attack2.GetComponent<BasicRanged>().teamID = team;
+        attack2.GetComponent<BasicRanged>().damage = 10;
+        attack2.GetComponent<BasicRanged>().maxDistance = 10;
+        reload = 1;
+    }
+
+    void UpdateAI(JSONClass packet)
+    {
+        Debug.Log("Received packet: " + packet.ToString());
+        xCoord = packet["x"].AsFloat;
+        yCoord = packet["y"].AsFloat;
+        angleFacing = packet["facing"].AsFloat;
+        Vector2 newPos = new Vector2(xCoord, yCoord);
+
+        transform.rotation = Quaternion.AngleAxis((float)angleFacing, Vector3.forward);
 
     }
 
     // Update is called once per frame
     void Update () {
-        Vector3 vec = new Vector3();
+       Vector3 vec = new Vector3();
         Vector3 face = new Vector3();
         float closest = 999;
         float facing;
@@ -108,6 +149,7 @@ public class AI : MonoBehaviour {
         }
         //rb2d.MovePosition(rb2d.position + curMove * speed  * Time.fixedDeltaTime);
         transform.rotation = Quaternion.AngleAxis((float)facing, Vector3.forward);
+        
     }
     Vector2 getRoute()
     {
