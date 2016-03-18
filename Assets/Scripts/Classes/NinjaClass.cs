@@ -30,9 +30,6 @@ public class NinjaClass : MeleeClass
     {
         base.Start();
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
-        swing = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        swing.GetComponent<BasicSword>().teamID = team;
-        swing.transform.parent = transform;
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -57,6 +54,13 @@ public class NinjaClass : MeleeClass
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
+
+        swing = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        swing.GetComponent<BasicSword>().teamID = team;
+        swing.transform.parent = transform;
+
+        Invoke("finishAttack", cooldowns[0]);
+
         return cooldowns[0];
     }
 
@@ -91,5 +95,10 @@ public class NinjaClass : MeleeClass
         }
 
         return cooldowns[1];
+    }
+
+    private void finishAttack()
+    {
+        Destroy(swing.gameObject);
     }
 }
