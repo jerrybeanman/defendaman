@@ -106,7 +106,7 @@ public class Movement : MonoBehaviour
     void absMove()
     {
         Vector2 moving = getMovement(90);
-        rb2d.MovePosition(rb2d.position + moving * speed * Time.fixedDeltaTime);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
 
         //rb2d.MovePosition(rb2d.position + new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed * Time.fixedDeltaTime);
         double looking = getInfo();
@@ -117,7 +117,7 @@ public class Movement : MonoBehaviour
     {
         double looking = getInfo();
         Vector2 moving = getMovement(looking);
-        rb2d.MovePosition(rb2d.position + moving * speed * Time.fixedDeltaTime);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
 
     }
