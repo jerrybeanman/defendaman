@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SimpleJSON;
+using System;
 
 public abstract class Trigger : MonoBehaviour
 {
@@ -15,13 +16,6 @@ public abstract class Trigger : MonoBehaviour
     public Trigger()
     {
         triggerID = currentTriggerID++;
-        NetworkingManager.Subscribe(killed, DataType.TriggerKilled, triggerID);
-    }
-
-    void killed(JSONClass packet)
-    {
-        NetworkingManager.Unsubscribe(DataType.TriggerKilled, triggerID);
-        Destroy(gameObject);
     }
 
     protected abstract void OnTriggerEnter2D(Collider2D other);

@@ -22,7 +22,7 @@ public abstract class BaseClass : MonoBehaviour {
     private int allyKingID;
     private int enemyKingID;
 
-    void Start ()
+    protected void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
         yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
@@ -109,31 +109,31 @@ public abstract class BaseClass : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (playerID != GameData.MyPlayer.PlayerID)
-            return;
-
         Trigger attack;
         if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
             if (attack.teamID == team) {
                 return;
             }
 
-            var damageTaken = doDamage(attack.damage);
+            var damageTaken = 0f;
+            if (playerID == GameData.MyPlayer.PlayerID)
+                damageTaken = doDamage(attack.damage);
 
             if (attack.IsDestroyable)
                 Destroy(other.gameObject);
 
+            if (playerID != GameData.MyPlayer.PlayerID)
+                return;
+
             var memersToSend = new List<Pair<string, string>>();
             memersToSend.Add(new Pair<string, string>("EnemyID", attack.playerID.ToString()));
             memersToSend.Add(new Pair<string, string>("Damage", damageTaken.ToString()));
-            NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.TCP);
-            NetworkingManager.send_next_packet(DataType.TriggerKilled, attack.triggerID, new List<Pair<string, string>>(), Protocol.TCP);
+            NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP);
 
             return;
         } else {
             Debug.Log("Attack was null");
         }
-
     }
 
     void receiveAttackFromServer(JSONClass playerData)

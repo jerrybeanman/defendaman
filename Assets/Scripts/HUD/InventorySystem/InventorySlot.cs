@@ -38,13 +38,8 @@ public class InventorySlot : MonoBehaviour, IDropHandler
      */
     public void OnDrop(PointerEventData eventData)
     {
-        bool _update_weapon_stats = false;
         ItemData _dropped_item = eventData.pointerDrag.GetComponent<ItemData>();
 
-        if (_dropped_item.item_pos == Constants.WEAPON_SLOT || slot_pos == Constants.WEAPON_SLOT)
-        {
-            _update_weapon_stats = true;
-        }
         if (_inventory.inventory_item_list[slot_pos].id == -1)
         {
             _inventory.inventory_item_list[_dropped_item.item_pos] = new Item();
@@ -64,11 +59,5 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
             _inventory.inventory_item_list[slot_pos] = _dropped_item.item; 
         }
-
-        if (_update_weapon_stats)
-        {
-            _inventory.UpdateWeaponStats();
-        }
-
     }
 }

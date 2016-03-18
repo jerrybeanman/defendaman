@@ -43,6 +43,16 @@ public class Inventory : MonoBehaviour
     public List<Item> inventory_item_list = new List<Item>();
     public List<GameObject> slot_list = new List<GameObject>();
 
+    public static Inventory instance;
+
+    void Awake()
+    {
+        if (instance == null)         
+            instance = this;              
+        else if (instance != this)         
+            Destroy(gameObject);          
+    }
+
     /*
      * Initializes empty inventory slot containing empty item objects
      */
@@ -209,6 +219,7 @@ public class Inventory : MonoBehaviour
      */
     public void UpdateWeaponStats()
     {
+        Debug.Log("Weapon slot id: " + inventory_item_list[Constants.WEAPON_SLOT].id);
         int damage = 0;
         int armor = 0;
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
