@@ -52,7 +52,7 @@ public class MagicCircle : Area
     void Start()
     {
         startPos = transform.position;
-        Invoke(removeCircle, duration);
+        Invoke("removeCircle", duration);
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
