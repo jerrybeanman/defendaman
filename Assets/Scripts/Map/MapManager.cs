@@ -130,9 +130,9 @@ public class MapManager : MonoBehaviour {
 	 */
     void Update() {
         check_object_pool();
-		if(overlayFlag==1){
+		if(overlayFlag==1)
+		{
 			buildOverlay.SetActive(false);
-
 		}
 		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		currFramePosition.z=0;

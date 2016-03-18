@@ -17,17 +17,17 @@ public class HUD_Manager : MonoBehaviour {
 	[System.Serializable]
 	public class Currency 		{ public Text  Amount;						public Animator CurrencyAnimator; 	}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
+	public class MainSkill 		{ public Image ProgressBar;					public float 	CoolDown; 			}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
+	public class SubSkill 		{ public Image ProgressBar;					public float 	CoolDown; 			}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;					public float CoolDown; 				}
+	public class PassiveSkill 	{ public Image ProgressBar;					public float 	CoolDown; 			}
 	[System.Serializable]
 	public class Chat			{ public InputField input;					public GameObject Container; 	
 								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
 	[System.Serializable]
 	public class Shop			{ public GameObject MainPanel;				public List<GameObject> StructuresList;
-								  public List<GameObject> ConsumablesList;										}
+								  public List<GameObject> ConsumablesList;	public GameObject Selected;			}										}
 	#endregion
 
 	// Singleton object
