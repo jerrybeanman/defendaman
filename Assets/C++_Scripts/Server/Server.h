@@ -20,6 +20,7 @@
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
+
 /*
    Structure of a PlayerNetworkEntity
  ** Will move to a more appropriate location later
@@ -36,48 +37,34 @@ typedef struct Player
     bool           isReady;
 } Player;
 
+/* List of players currently connected to the server */
+static std::map<int, Player>           _PlayerTable;
+
 namespace Networking
 {
 	class Server
 	{
 		public:
-			Server(){}
+			Server() {}
 			~Server(){}
-    	/*
-		   Initialize socket, server address to lookup to, and connect to the server
-
-		   @return: socket file descriptor
-		 */
 		virtual int InitializeSocket(short port) = 0;
 
-		/*
-		   Sends a message to all the clients
-
-		 */
 		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
-    
-    virtual void * Receive() = 0;
 
-    virtual void PrepareSelect() = 0;
-
-    virtual int SetSocketOpt() = 0;
-
+        virtual void * Receive() = 0;
 
 		void fatal(const char* error);
 
-        int isReadyToInt(Player player);
+    int isReadyToInt(Player player);
 
-		protected:
+	protected:
 		struct sockaddr_in     _ServerAddress;
 		int 				           _UDPReceivingSocket;
-		int                    _TCPAcceptingSocket;
+    int                    _TCPAcceptingSocket;
     fd_set                 _allset;              // File descriptor set for connected sockets
     int                    _maxfd;               //Maximum amount of file descriptors
     int                    _maxi;                // Current maximum connections
-
-
-    /* List of players currently connected to the server */
-    std::map<int, Player>           _PlayerTable;
+    int                    _sockPair[2];         // Communication pipe between TCP and UDP servers.
 
 	};
 }

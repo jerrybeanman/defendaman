@@ -39,6 +39,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         ItemData _dropped_item = eventData.pointerDrag.GetComponent<ItemData>();
+
         if (_inventory.inventory_item_list[slot_pos].id == -1)
         {
             _inventory.inventory_item_list[_dropped_item.item_pos] = new Item();

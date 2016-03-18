@@ -69,7 +69,7 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.LobbyData[7] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 7, TeamID = 1 });
         GameData.LobbyData[8] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 8, TeamID = 2 });
 
-        GameData.MyPlayer.PlayerID = myID;
+        GameData.MyPlayer = GameData.LobbyData[myID];
 
         if (Application.platform != RuntimePlatform.LinuxPlayer)
         {
@@ -81,6 +81,9 @@ public class GameStart_Testing : MonoBehaviour {
 
         GameData.IP = "192.168.0.3";
 
-        GameManager.instance.StartGame(GameData.Seed);
+        if (GameObject.Find("NetworkManager") == null)
+            GameManager.instance.StartGame(GameData.Seed);
+        else
+		    Application.LoadLevel("EngineTeam_master");
     }
 }

@@ -1,0 +1,342 @@
+fileFormatVersion: 2
+guid: 7b1a167826d315849bfc7721971d6636
+timeCreated: 1458161994
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: magegirl_standing_attack_0
+    21300002: magegirl_standing_attack_1
+    21300004: magegirl_standing_attack_2
+    21300006: magegirl_standing_attack_3
+    21300008: magegirl_standing_attack_4
+    21300010: magegirl_standing_attack_5
+    21300012: magegirl_standing_attack_6
+    21300014: magegirl_standing_attack_7
+    21300016: magegirl_standing_attack_8
+    21300018: magegirl_standing_attack_9
+    21300020: magegirl_standing_attack_10
+    21300022: magegirl_standing_attack_11
+    21300024: magegirl_standing_attack_12
+    21300026: magegirl_standing_attack_13
+    21300028: magegirl_standing_attack_14
+    21300030: magegirl_standing_attack_15
+    21300032: magegirl_standing_attack_16
+    21300034: magegirl_standing_attack_17
+    21300036: magegirl_standing_attack_18
+    21300038: magegirl_standing_attack_19
+    21300040: magegirl_standing_attack_20
+    21300042: magegirl_standing_attack_21
+    21300044: magegirl_standing_attack_22
+    21300046: magegirl_standing_attack_23
+    21300048: magegirl_standing_attack_24
+    21300050: magegirl_standing_attack_25
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: magegirl_standing_attack_0
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 1782
+        width: 277
+        height: 319
+      alignment: 9
+      pivot: {x: .319458276, y: .638052702}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_1
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 1783
+        width: 278
+        height: 318
+      alignment: 9
+      pivot: {x: .322792768, y: .638052702}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_2
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 1783
+        width: 278
+        height: 319
+      alignment: 9
+      pivot: {x: .322792977, y: .638052702}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_3
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 1783
+        width: 277
+        height: 318
+      alignment: 9
+      pivot: {x: .327542424, y: .638052702}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_4
+      rect:
+        serializedVersion: 2
+        x: 1882
+        y: 1783
+        width: 280
+        height: 318
+      alignment: 9
+      pivot: {x: .329390168, y: .638052702}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_5
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 1345
+        width: 275
+        height: 321
+      alignment: 9
+      pivot: {x: .321653545, y: .646356225}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_6
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 1345
+        width: 276
+        height: 322
+      alignment: 9
+      pivot: {x: .314573646, y: .646356225}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_7
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 1345
+        width: 277
+        height: 319
+      alignment: 9
+      pivot: {x: .321016729, y: .646356225}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_8
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 1345
+        width: 275
+        height: 319
+      alignment: 9
+      pivot: {x: .319714576, y: .650404036}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_9
+      rect:
+        serializedVersion: 2
+        x: 1884
+        y: 1345
+        width: 276
+        height: 319
+      alignment: 9
+      pivot: {x: .32036823, y: .652075112}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_10
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 910
+        width: 277
+        height: 320
+      alignment: 9
+      pivot: {x: .322712809, y: .635757089}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_11
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 911
+        width: 275
+        height: 319
+      alignment: 9
+      pivot: {x: .328291684, y: .642103612}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_12
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 911
+        width: 275
+        height: 319
+      alignment: 9
+      pivot: {x: .328291893, y: .642103612}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_13
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 911
+        width: 275
+        height: 319
+      alignment: 9
+      pivot: {x: .314555228, y: .636182606}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_14
+      rect:
+        serializedVersion: 2
+        x: 1882
+        y: 911
+        width: 277
+        height: 319
+      alignment: 9
+      pivot: {x: .335760355, y: .638420463}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_15
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 474
+        width: 277
+        height: 321
+      alignment: 9
+      pivot: {x: .309466213, y: .643538713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_16
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 475
+        width: 277
+        height: 320
+      alignment: 9
+      pivot: {x: .32458806, y: .643987298}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_17
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 475
+        width: 279
+        height: 318
+      alignment: 9
+      pivot: {x: .319839984, y: .650161862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_18
+      rect:
+        serializedVersion: 2
+        x: 1447
+        y: 475
+        width: 278
+        height: 320
+      alignment: 9
+      pivot: {x: .313165247, y: .643987298}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_19
+      rect:
+        serializedVersion: 2
+        x: 1880
+        y: 475
+        width: 282
+        height: 320
+      alignment: 9
+      pivot: {x: .318785757, y: .646605313}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_20
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 39
+        width: 280
+        height: 318
+      alignment: 9
+      pivot: {x: .32717225, y: .638696134}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_21
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 39
+        width: 276
+        height: 319
+      alignment: 9
+      pivot: {x: .320057303, y: .645533264}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_22
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 39
+        width: 279
+        height: 319
+      alignment: 9
+      pivot: {x: .321992159, y: .645533264}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_23
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 39
+        width: 276
+        height: 319
+      alignment: 9
+      pivot: {x: .320057303, y: .642148793}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_24
+      rect:
+        serializedVersion: 2
+        x: 1882
+        y: 39
+        width: 278
+        height: 319
+      alignment: 9
+      pivot: {x: .325235277, y: .652302206}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_standing_attack_25
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 1288
+        width: 129
+        height: 4
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
