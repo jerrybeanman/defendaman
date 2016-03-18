@@ -43,6 +43,16 @@ public class Inventory : MonoBehaviour
     public List<Item> inventory_item_list = new List<Item>();
     public List<GameObject> slot_list = new List<GameObject>();
 
+    public static Inventory instance;
+
+    void Awake()
+    {
+        if (instance == null)         
+            instance = this;              
+        else if (instance != this)         
+            Destroy(gameObject);          
+    }
+
     /*
      * Initializes empty inventory slot containing empty item objects
      */

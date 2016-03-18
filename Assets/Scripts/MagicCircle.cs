@@ -46,17 +46,19 @@ public class MagicCircle : Area
     -- RETURNS: void
     --
     -- NOTES:
-    -- Function that's called when the circle is created - this function initializes the start position of the circle
+    -- Function that's called when the circle is created - this function initializes the start position of the circle, and 
+    -- removes the circle after 3 seconds
     ---------------------------------------------------------------------------------------------------------------------*/
     void Start()
     {
         startPos = transform.position;
+        Invoke("removeCircle", duration);
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: FixedUpdate
+    -- FUNCTION: removeCircle
     --
-    -- DATE: March 9, 2016
+    -- DATE: March 16, 2016
     --
     -- REVISIONS: None
     --
@@ -64,19 +66,15 @@ public class MagicCircle : Area
     --
     -- PROGRAMMER: Hank Lo
     --
-    -- INTERFACE: void FixedUpdate(void)
+    -- INTERFACE: void removeCircle(void)
     --
     -- RETURNS: void
     --
     -- NOTES:
-    -- Function that's called every physics update - this function checks the lifetime and destroys the object when it expires
+    -- Function that's called when the object needs to be removed - this function removes the magic circle.
     ---------------------------------------------------------------------------------------------------------------------*/
-    void FixedUpdate()
-    {
-        if (--duration < 0)
-        {
-            Destroy(gameObject);
-        }
+    void removeCircle() {
+        Destroy(gameObject);
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
