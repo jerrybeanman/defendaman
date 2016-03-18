@@ -46,7 +46,7 @@ public class NinjaClass : MeleeClass
         this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 20;
+        this._classStat.MoveSpeed = 12;
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
 
