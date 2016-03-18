@@ -30,7 +30,8 @@ public class Attack : MonoBehaviour {
         {
             gameObject.GetComponent<Animator>().SetBool("moving", false);
         }
-        if (gameObject.GetComponent<MeleeClass>() != null)
+        if (gameObject.GetComponent<MeleeClass>() != null && !GameData.MouseBlocked
+            && (Input.mousePosition.x < InvLeftEdge || Input.mousePosition.y > InvTopEdge))
         {
             if ((Input.GetKey(KeyCode.Mouse0) && attackReady) || (Input.GetKey(KeyCode.Mouse1) && specialReady))
             {
@@ -41,7 +42,8 @@ public class Attack : MonoBehaviour {
                 gameObject.GetComponent<Animator>().SetBool("attacking", false);
             }
         }
-        else if (gameObject.GetComponent<RangedClass>() != null)
+        else if (gameObject.GetComponent<RangedClass>() != null && !GameData.MouseBlocked
+            && (Input.mousePosition.x < InvLeftEdge || Input.mousePosition.y > InvTopEdge))
         {
             if (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse1))
             {

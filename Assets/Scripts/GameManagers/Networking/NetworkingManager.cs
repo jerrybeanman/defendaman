@@ -18,7 +18,8 @@ for fail does not work
 */
 public enum DataType
 {
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8
+    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
+    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14
 }
 
 public enum Protocol
@@ -92,6 +93,7 @@ public class NetworkingManager : MonoBehaviour
 
             while ((packet = receive_data_udp()) != "[]")
                 update_data(packet);
+
 
             send_data();
         }
@@ -256,7 +258,8 @@ public class NetworkingManager : MonoBehaviour
 			//Cant send empty packets to server, inefficient and may crash
 			if (tcp != "[]")
             	TCP_Send(tcp, tcp.Length);
-            UDP_SendData(udp, udp.Length);
+            if (GameData.GameState == GameState.Playing)
+                UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
             lastTCP = tcp;

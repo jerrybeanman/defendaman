@@ -38,6 +38,7 @@ public class LobbyNetwork : MonoBehaviour {
 			RecievedData = "Cant connect to server";
 			return false;
 		}
+
 		// Thread creation
 		if (NetworkingManager.TCP_StartReadThread() < 0)
 		{
@@ -181,7 +182,7 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("HUDScene");
+				Application.LoadLevel("EngineTeam_master");
 				break;
 			}	
 			
