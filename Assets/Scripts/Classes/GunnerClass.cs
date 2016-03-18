@@ -143,7 +143,7 @@ public class GunnerClass : RangedClass
 
     void fireFromServer(JSONClass packet)
     {
-        if (packet["playerID"].AsInt == playerID)
+        if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
         {
             fire();
         }
