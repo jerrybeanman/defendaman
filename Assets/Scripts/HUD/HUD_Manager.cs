@@ -7,7 +7,7 @@ using SimpleJSON;
 using System.Collections.Generic;
 
 public class HUD_Manager : MonoBehaviour {
-	#region Subclasses
+	#region Classes
 	[System.Serializable]
 	public class PlayerProfile 	{ public Image Health;						public Animator HealthAnimator; 	}
 	[System.Serializable]	
@@ -26,8 +26,8 @@ public class HUD_Manager : MonoBehaviour {
 	public class Chat			{ public InputField input;					public GameObject Container; 	
 								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
 	[System.Serializable]
-	public class Shop			{ public GameObject MainPanel;				public List<GameObject> StructuresList;
-								  public List<GameObject> ConsumablesList;	public GameObject Selected;			}										
+	public class Shop			{ public GameObject MainPanel;				public List<Button> Items;
+								  public Button Selected;													}										
 	#endregion
 
 	// Singleton object
@@ -123,9 +123,25 @@ public class HUD_Manager : MonoBehaviour {
 
 	}
 
-	public void SelectItem(GameObject item)
+	public void SelectItem(int i)
 	{
-		shop.Selected = item;
+		if(shop.Selected == shop.Items[i])
+		{
+			shop.Selected.image.color = Color.white;
+			shop.Selected = null;
+		}else
+		if(shop.Selected == null)
+		{
+			shop.Selected = shop.Items[i];
+			shop.Selected.image.color = Color.green;
+		}else
+		{
+			shop.Selected.image.color = Color.white;
+			shop.Selected = shop.Items[i];
+			shop.Selected.image.color = Color.green;
+		}
+
+
 	}
 
 	public void DisplayShop()
