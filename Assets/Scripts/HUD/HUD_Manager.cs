@@ -17,62 +17,95 @@ public class HUD_Manager : MonoBehaviour {
 		public Image 	Health;						
 		public Animator HealthAnimator; 	
 	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
 	[System.Serializable]	
 	public class AllyKing 		
 	{ 
 		public Image 	Health;						
 		public Animator HealthAnimator; 	
 	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
 	[System.Serializable]
 	public class EnemyKing 		
 	{ 
 		public Image 	Health;						
 		public Animator HealthAnimator; 	
 	}
+
+	/**
+	 *  Indicates current currency amount
+	 */
 	[System.Serializable]
 	public class Currency 		
 	{ 
 		public Text  	Amount;						
 		public Animator CurrencyAnimator; 	
 	}
+
+	/**
+	 *  Indicates main skill bar
+	 */
 	[System.Serializable]
 	public class MainSkill 		
 	{ 
 		public Image 	ProgressBar;					
 		public float 	CoolDown; 			
 	}
+	/**
+	 *  Indicates sub skill bar
+	 */
 	[System.Serializable]
 	public class SubSkill 		
 	{ 
 		public Image 	ProgressBar;					
 		public float 	CoolDown; 			
 	}
+	/**
+	 *  Indicates passive skill bar
+	 */
 	[System.Serializable]
 	public class PassiveSkill 	
 	{ 
 		public Image 	ProgressBar;					
 		public float 	CoolDown; 			
 	}
+	/**
+	 *  Indicates the chat panel
+	 */
 	[System.Serializable]
 	public class Chat			
 	{ 
-		public InputField input;					
+		// Input field 
+		public InputField input;
+		// Container box for chat messages
 		public GameObject Container; 	
 		public GameObject AllyMessage;			
 		public GameObject EnemyMessage; 	
 	}
+	/**
+	 * Items that can be built in the shop
+	 */
 	[System.Serializable]
 	public class Buildable		
 	{ 
 		public Button Option;						
 		public GameObject Building;			
 	}
+	/**
+	 *  Shop panel
+	 */
 	[System.Serializable]
 	public class Shop			
 	{ 
-		public GameObject MainPanel;				
+		public GameObject 		MainPanel;
+		// Purchasable items
 		public List<Buildable>	Items;	
-		public Buildable	Selected = null;										
+		// Currently selected item
+		public Buildable		Selected = null;										
 	}										
 	#endregion
 
@@ -90,43 +123,67 @@ public class HUD_Manager : MonoBehaviour {
 	public Chat					chat;
 	public Shop					shop;	
 
+	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
 
+	// Where the mouse is currently at
 	private Vector3 			currFramePosition;
+
+	// Indicates wheter or not chat is currently selected 
+	private bool InputSelected = false;
 
 	// Singleton pattern
 	void Awake()
 	{
-		if (instance == null)				//Check if instance already exists
-			instance = this;				//if not, set instance to this
-		else if (instance != this)			//If instance already exists and it's not this:
-			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
-		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+		//Check if instance already exists
+		if (instance == null)				
+			//if not, set instance to this
+			instance = this;				
+		//If instance already exists and it's not this:
+		else if (instance != this)			
+			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+			Destroy(gameObject);   			
+		//Sets this to not be destroyed when reloading scene
+		DontDestroyOnLoad(gameObject);		
 	}
 
+	// Called on start of game
 	void Start()
 	{
 		GameData.GameStart = true;
+
+		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
-	bool InputSelected = false;
 
-	// For rechargin skills whenever they are used
+
+	// Called once per frame
 	void Update()
 	{
+		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
-			currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			// Have the item hover over our mouse 
 			CheckBuildingPlacement(shop.Selected.Building);
+
+			// If the left mouse button is clicked while we have the item hovering
 			if(Input.GetKeyDown(KeyCode.Mouse0))
 			{
+				// Attempt to place the building onto of where our mouse is at
 				if(PlaceBuilding(shop.Selected.Building))
+					// If success, we deselect the item in our shop
 					UnHighlightItem();
 			}
 		}
+
+		// Check for any inputs for chat
 		CheckChatAction();
+
+		// Check if skills are used or not
 		CheckSkillStatus();
+
+		// Check for events to open the shop menu
 		CheckShopOption();
 	}
 
@@ -213,7 +270,7 @@ public class HUD_Manager : MonoBehaviour {
 
 	private void CheckBuildingPlacement(GameObject buildings)
 	{
-		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		int tempx=(int)currFramePosition.x;
 		int tempy=(int)currFramePosition.y;
 		currFramePosition.z=0;		
