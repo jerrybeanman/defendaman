@@ -37,7 +37,7 @@ public abstract class Projectile : Trigger
 
         //Otherwise, its a wall or some solid
         if (--pierce < 0) {
-            Debug.Log("Projectile Collided with: " + other);
+            //Debug.Log("Projectile Collided with: " + other);
             Destroy(gameObject);
         }
     }

@@ -22,8 +22,20 @@ public class AmountPanel : MonoBehaviour {
         _amount_panel.SetActive(false);
 	}
 
+    /*
+     * Deactivate amount panel when there is mouse click outside the panel
+     */
+    void Update()
+    {
+        if (!GameData.MouseBlocked && (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0)))
+        {
+            Deactivate();
+        }
+    }
+
     public void Activate(Item item, int amt, int inv_pos)
     {
+        Debug.Log("Activate");
         _item = item;
         _amt = amt;
         _inv_pos = inv_pos;
@@ -39,6 +51,7 @@ public class AmountPanel : MonoBehaviour {
 
    public void OkDropButtonOnClick()
     {
+        Debug.Log("ok drop clicked");
         _drop_amt = int.Parse(_amt_input_field.GetComponent<InputField>().text);
         if (_drop_amt > 0 && _drop_amt <= _amt)
         {
@@ -48,8 +61,8 @@ public class AmountPanel : MonoBehaviour {
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
             // Pretend that a drop message was received
-            _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
-
+            //_world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+            GameData.MouseBlocked = false;
             Deactivate();
         }
         else
@@ -60,6 +73,7 @@ public class AmountPanel : MonoBehaviour {
 
     public void CancelDropButtonOnClick()
     {
+        GameData.MouseBlocked = false;
         Deactivate();
     }
 }

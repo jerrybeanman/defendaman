@@ -79,6 +79,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         this.transform.SetParent(_inventory.slot_list[item_pos].transform);
         this.transform.position = _inventory.slot_list[item_pos].transform.position;
         GetComponent<CanvasGroup>().blocksRaycasts = true;
+        _inventory.UpdateWeaponStats();
     }
     
     /*

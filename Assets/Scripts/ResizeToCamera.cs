@@ -22,7 +22,7 @@ public class ResizeToCamera : MonoBehaviour {
 		//transform.localScale.x = worldScreenWidth / width;
 		Vector3 yHeight = transform.localScale;
 		yHeight.y=worldScreenHeight / height;
-		transform.localScale=yHeight * 3;
+		transform.localScale=yHeight * 6;
 		//transform.localScale.y = worldScreenHeight / height;
 	}
 }
