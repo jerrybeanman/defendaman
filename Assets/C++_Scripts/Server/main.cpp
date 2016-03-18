@@ -5,11 +5,9 @@ using namespace Networking;
 
 int rc;
 
-void TestUDP(void); //Only called when UDPTEST is defined from the terminal
-
 int main()
 {
-	pthread_t udpThread;
+  pthread_t udpThread;
   ServerTCP serverTCP;
   ServerUDP serverUDP;
 
