@@ -111,7 +111,7 @@ public class WizardClass : RangedClass
         attack.GetComponent<MagicCircle>().playerID = playerID;
         attack.GetComponent<MagicCircle>().teamID = team;
         attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
-        attack.GetComponent<MagicCircle>().duration = 200;
+        attack.GetComponent<MagicCircle>().duration = 3;
 
         return cooldowns[1];
     }
