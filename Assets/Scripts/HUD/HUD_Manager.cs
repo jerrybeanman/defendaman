@@ -132,6 +132,7 @@ public class HUD_Manager : MonoBehaviour {
 		}else
 		if(shop.Selected == null)
 		{
+			print("heero");
 			shop.Selected = shop.Items[i];
 			shop.Selected.image.color = Color.green;
 		}else
