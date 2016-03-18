@@ -23,20 +23,29 @@ using System.Collections;
 
 public class NinjaClass : MeleeClass
 {
-	public NinjaClass()
-	{
+    Rigidbody2D sword;
+    Rigidbody2D attack;
+
+    new void Start()
+    {
+        base.Start();
+        sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
+
+        var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+    }
+
+    public NinjaClass()
+    {
         this._className = "Ninja";
         this._classDescription = "You'll never see him coming.";
         this._classStat.MaxHp = 150;
         this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 20;
+        this._classStat.MoveSpeed = 12;
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
-
-        var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
-        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
         cooldowns = new float[2] { 0.95f, 2 };
     }
@@ -45,6 +54,15 @@ public class NinjaClass : MeleeClass
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
+
+        attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        attack.GetComponent<BasicSword>().playerID = playerID;
+        attack.GetComponent<BasicSword>().teamID = team;
+        attack.GetComponent<BasicSword>().damage = ClassStat.AtkPower;
+        attack.transform.parent = transform;
+
+        Invoke("finishAttack", cooldowns[0]);
+
         return cooldowns[0];
     }
 
@@ -79,5 +97,10 @@ public class NinjaClass : MeleeClass
         }
 
         return cooldowns[1];
+    }
+
+    private void finishAttack()
+    {
+        Destroy(attack.gameObject);
     }
 }

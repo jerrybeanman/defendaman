@@ -80,6 +80,14 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         this.transform.position = _inventory.slot_list[item_pos].transform.position;
         GetComponent<CanvasGroup>().blocksRaycasts = true;
         _inventory.UpdateWeaponStats();
+        /*
+        String s = "item pos: ";
+        foreach (Item item in Inventory.instance.inventory_item_list)
+        {
+            s += item.id + " ";
+        }
+        Debug.Log(s);
+        */
     }
     
     /*

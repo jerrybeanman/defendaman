@@ -71,6 +71,9 @@ public class GameStart_Testing : MonoBehaviour {
 
         GameData.MyPlayer = GameData.LobbyData[myID];
 
+        // Update the stat boost a player gets from a compatible equipped weapon
+        Inventory.instance.UpdateWeaponStats();
+
         if (Application.platform != RuntimePlatform.LinuxPlayer)
         {
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(30, 30));
