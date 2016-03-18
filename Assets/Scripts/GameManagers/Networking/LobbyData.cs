@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
-public enum GameState { Playing, Dead, Won, Lost}
+public enum GameState { Playing, Dying, Dead, Won, Lost}
 // Lobby message key fields 
 public class NetworkKeyString
 {

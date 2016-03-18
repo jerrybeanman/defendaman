@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public enum SpecialCase { GunnerSpecial = 1 }
 
-public class GunnerClass : BaseClass
+public class GunnerClass : RangedClass
 {
     int[] distance = new int[2] { 12, 12 };
     int[] speed = new int[2] { 200, 300 };
@@ -20,7 +20,7 @@ public class GunnerClass : BaseClass
 
     GunnerClass() {
         this._className = "Gunner";
-        this._classDescription = "Test class Gunner";
+        this._classDescription = "Boom - Headshot";
         this._classStat.CurrentHp = 100;
         this._classStat.MaxHp = 150;
 
