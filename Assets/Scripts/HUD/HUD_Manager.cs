@@ -46,6 +46,8 @@ public class HUD_Manager : MonoBehaviour {
 	public Chat					chat;
 	public Shop					shop;	
 
+	public MapManager			mapManager;
+
 	private Vector3 			currFramePosition;
 
 	// Singleton pattern
@@ -188,7 +190,10 @@ public class HUD_Manager : MonoBehaviour {
 		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
 		shop.Selected.Building.GetComponent<Building>().X = (int)currFramePosition.x;
 		shop.Selected.Building.GetComponent<Building>().Y = (int)currFramePosition.y;
-		MapManager.buildingsCreated.Add(shop.Selected.Building);
+		mapManager.buildingsCreated.Add(shop.Selected.Building);
+		shop.Selected.Option.image.color = Color.white;
+		shop.Selected.Building = null;
+		shop.Selected.Option = null;
 	}
 
 	public void DisplayShop()
