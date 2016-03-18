@@ -24,7 +24,7 @@ using System.Collections;
 public class NinjaClass : MeleeClass
 {
     Rigidbody2D sword;
-    Rigidbody2D swing;
+    Rigidbody2D attack;
 
     new void Start()
     {
@@ -55,9 +55,11 @@ public class NinjaClass : MeleeClass
     {
         base.basicAttack(dir);
 
-        swing = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        swing.GetComponent<BasicSword>().teamID = team;
-        swing.transform.parent = transform;
+        attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        attack.GetComponent<BasicSword>().playerID = playerID;
+        attack.GetComponent<BasicSword>().teamID = team;
+        attack.GetComponent<BasicSword>().damage = ClassStat.AtkPower;
+        attack.transform.parent = transform;
 
         Invoke("finishAttack", cooldowns[0]);
 
@@ -99,6 +101,6 @@ public class NinjaClass : MeleeClass
 
     private void finishAttack()
     {
-        Destroy(swing.gameObject);
+        Destroy(attack.gameObject);
     }
 }

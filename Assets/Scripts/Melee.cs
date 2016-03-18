@@ -16,6 +16,5 @@ public abstract class Melee : Trigger
     void Update()
     {
         transform.position = transform.parent.position;
-        Debug.Log(transform.position);
     }
 }
