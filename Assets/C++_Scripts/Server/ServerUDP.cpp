@@ -107,8 +107,6 @@ void * ServerUDP::Receive()
 
   memset(con, 0, sizeof(con));
 
-  std::cout << "INSIDE RECV HEYOO" << std::endl;
-
   while (1)
   {
     rset = _allset;
@@ -122,7 +120,7 @@ void * ServerUDP::Receive()
         {
           fatal("UDP_Server_Recv: recvfrom() failed\n");
         }
-        fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
+        //fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
 
         for(int i = 0; i < 24; i++)
         {
@@ -152,17 +150,13 @@ void * ServerUDP::Receive()
           }
 
         }
-        std::cout << buf << std::endl;
+        //std::cout << buf << std::endl;
 
       //TODO: Refactor when the TCP passes over the map to the UDP server,
       //      will need to place all connections already into the char** "con"
       //Issue: Accepts random players that haven't been pre-connected.
         Broadcast(buf);
       }
-      /*else if (FD_ISSET(_sockPair[1], &rset))
-      {
-        StopServer();
-      }*/
     }
     else
     {
@@ -249,8 +243,6 @@ void ServerUDP::PrepareSelect()
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);
-    //FD_SET(_sockPair[1], &_allset);
-
 }
 
 /*
