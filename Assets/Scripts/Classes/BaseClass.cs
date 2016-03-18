@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SimpleJSON;
+using System.Collections.Generic;
 
 public abstract class BaseClass : MonoBehaviour {
     //Cooldowns
@@ -21,7 +22,7 @@ public abstract class BaseClass : MonoBehaviour {
     private int allyKingID;
     private int enemyKingID;
 
-    void Start ()
+    protected void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
         yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
@@ -76,10 +77,18 @@ public abstract class BaseClass : MonoBehaviour {
 		}
 	}
 
-    public float doDamage(float damage)
+    public float doDamage(float damage, bool trueDamage = false)
     {
-        //TODO: add defense to calculation
-        ClassStat.CurrentHp -= damage;
+        // hank: Added defensive calculation
+        float finaldamage = damage;
+
+        if (!trueDamage)
+        {
+            float reduction = (30 / (ClassStat.Defense + 30));
+            finaldamage = damage * reduction;
+        }
+        
+        ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
         {
             ClassStat.CurrentHp = ClassStat.MaxHp;
@@ -87,7 +96,7 @@ public abstract class BaseClass : MonoBehaviour {
 
         //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
 
-        GameManager.instance.PlayerTookDamage(playerID, damage, ClassStat);
+        GameManager.instance.PlayerTookDamage(playerID, finaldamage, ClassStat);
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
@@ -96,28 +105,35 @@ public abstract class BaseClass : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        return ClassStat.CurrentHp;
+        return finaldamage;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        var attack = other.gameObject.GetComponent<Trigger>();
-        Debug.Log("Projectile hit");
-        if (attack != null)
-        {
-            Debug.Log("Attack was not null");
-            if (attack.teamID == team)
-            {
-                Debug.Log("Same team");
+    void OnTriggerEnter2D(Collider2D other) {
+        Trigger attack;
+        if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
+            if (attack.teamID == team) {
                 return;
             }
-            doDamage(attack.damage);
-        }
-        else
-        {
+
+            var damageTaken = 0f;
+            if (playerID == GameData.MyPlayer.PlayerID)
+                damageTaken = doDamage(attack.damage);
+
+            if (attack.IsDestroyable)
+                Destroy(other.gameObject);
+
+            if (playerID != GameData.MyPlayer.PlayerID)
+                return;
+
+            var memersToSend = new List<Pair<string, string>>();
+            memersToSend.Add(new Pair<string, string>("EnemyID", attack.playerID.ToString()));
+            memersToSend.Add(new Pair<string, string>("Damage", damageTaken.ToString()));
+            NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP);
+
+            return;
+        } else {
             Debug.Log("Attack was null");
         }
-
     }
 
     void receiveAttackFromServer(JSONClass playerData)
