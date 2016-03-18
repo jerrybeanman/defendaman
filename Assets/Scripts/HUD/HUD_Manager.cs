@@ -26,8 +26,10 @@ public class HUD_Manager : MonoBehaviour {
 	public class Chat			{ public InputField input;					public GameObject Container; 	
 								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
 	[System.Serializable]
-	public class Shop			{ public GameObject MainPanel;				public List<Button> Items;
-								  public Button Selected;													}										
+	public class Buildable		{ public Button Option;						public GameObject Building;			}
+	[System.Serializable]
+	public class Shop			{ public GameObject MainPanel;				public List<Buildable>	Items;	
+								  public Buildable	Selected = null;												}										
 	#endregion
 
 	// Singleton object
@@ -42,7 +44,7 @@ public class HUD_Manager : MonoBehaviour {
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
-	public Shop					shop;		
+	public Shop					shop;	
 
 	// Singleton pattern
 	void Awake()
@@ -65,6 +67,10 @@ public class HUD_Manager : MonoBehaviour {
 	// For rechargin skills whenever they are used
 	void Update()
 	{
+		if(placing)
+		{
+			CheckBuildingPlacement();
+		}
 		CheckChatAction();
 		CheckSkillStatus();
 		CheckShopOption();
@@ -122,29 +128,51 @@ public class HUD_Manager : MonoBehaviour {
 		}
 
 	}
-
+	
 	public void SelectItem(int i)
 	{
+		if(shop.Selected.Option == null)
+		{
+			shop.Selected = shop.Items[i];
+			shop.Selected.Option.image.color = Color.green;
+		}else
 		if(shop.Selected == shop.Items[i])
 		{
-			shop.Selected.image.color = Color.white;
+			shop.Selected.Option.image.color = Color.white;
 			shop.Selected = null;
-		}else
-		if(shop.Selected == null)
-		{
-			print("heero");
-			shop.Selected = shop.Items[i];
-			shop.Selected.image.color = Color.green;
-		}else
-		{
-			shop.Selected.image.color = Color.white;
-			shop.Selected = shop.Items[i];
-			shop.Selected.image.color = Color.green;
 		}
-
-
+		else
+		{
+			shop.Selected.Option.image.color = Color.white;
+			shop.Selected = shop.Items[i];
+			shop.Selected.Option.image.color = Color.green;
+		}
 	}
 
+	bool placing = false;
+	public void Buy()
+	{
+		if(shop.Selected.Option != null)
+		{
+			placing = true;
+			Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			int tempx=(int)currFramePosition.x;
+			int tempy=(int)currFramePosition.y;
+			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+		}
+	
+	}
+
+	private void CheckBuildingPlacement()
+	{
+		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		int tempx=(int)currFramePosition.x;
+		int tempy=(int)currFramePosition.y;
+		currFramePosition.z=0;		
+		Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+		shop.Selected.Building.transform.position = cursorPosition;
+	}
 	public void DisplayShop()
 	{
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
