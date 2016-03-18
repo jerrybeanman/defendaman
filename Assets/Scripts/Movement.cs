@@ -52,8 +52,10 @@ public class Movement : MonoBehaviour
         Vector2 vec = updateCoordinates(angle);
         if(checkEnd(vec, distance))
         {
-            rb2d.MovePosition(rb2d.position + vec * distance);
-
+            //rb2d.MovePosition(rb2d.position + vec * distance);
+            rb2d.position = rb2d.position + vec * distance;
+              //  (rb2d.position + vec * distance);
+            
         }
         //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
         else
@@ -62,7 +64,9 @@ public class Movement : MonoBehaviour
             //return false;
             var layerMask = (1 << 8);
             RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
-            rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+            //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+            rb2d.position = rb2d.position + vec * distance;
+
             Debug.Log("Vector Distance: " + hit.distance);
 
         }

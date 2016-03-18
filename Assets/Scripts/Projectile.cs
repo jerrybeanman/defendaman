@@ -9,7 +9,11 @@ public abstract class Projectile : Trigger
     {
 
     }
+    void update()
+    {
+        Debug.Log("Projectile Velocity:  " + gameObject.GetComponent<Rigidbody2D>().velocity);
 
+    }
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         //If its a player or an AI, ignore it, otherwise destroy itself
