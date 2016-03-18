@@ -22,6 +22,7 @@ using UnityEngine.UI;
 public class Tooltip : MonoBehaviour
 { 
     private Item _item;
+    private int _amount;
     private string _data;
     private GameObject _tooltip;
 
@@ -49,9 +50,10 @@ public class Tooltip : MonoBehaviour
      * Creates a string to display on the tooltip specific to the item passed 
      * and sets the Tooltip to active
      */
-    public void Activate(Item item)
+    public void Activate(Item item, int amount = -1)
     {
         this._item = item;
+        this._amount = amount;
         ConstructDataString();
         _tooltip.SetActive(true);
     }
@@ -70,7 +72,21 @@ public class Tooltip : MonoBehaviour
      */
     public void ConstructDataString()
     {
-        _data = "<color=#ffffff>" + _item.title + "</color>";
+        _data = "<color=#ffffff>" + _item.title + "</color>\n" + _item.description;
+        if (_item.type == Constants.WEAPON_TYPE)
+        {
+            _data += "\n<color=#ffffff>Damage: </color>" + _item.damage +
+                "\n<color=#ffffff>Armor: </color>" + _item.armor;
+        }
+        else if (_item.type == Constants.CONSUMABLE_TYPE)
+        {
+            _data += "\n<color=#ffffff>Recover: </color>" + _item.health + " hp";
+        }
+        if (_amount >= 0)
+        {
+            _data += "\n<color=#ffffff>Amount: </color>" + _amount;
+        }
+
         _tooltip.transform.GetChild(0).GetComponent<Text>().text = _data;
     }
 }

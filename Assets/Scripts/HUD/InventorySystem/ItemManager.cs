@@ -30,6 +30,20 @@ public class ItemManager : MonoBehaviour {
         _item_data = JSON.Parse(File.ReadAllText(Application.dataPath + 
             "/StreamingAssets/Items.json"));
         construct_item_list();
+        /*
+        foreach (Item item in _item_database)
+        {
+            Debug.Log(item.id);
+            Debug.Log(item.title);
+            Debug.Log(item.damage);
+            Debug.Log(item.armor);
+            Debug.Log(item.health);
+            Debug.Log(item.description);
+            Debug.Log(item.stackable);
+            Debug.Log(item.type);
+            Debug.Log(item.slug);
+            Debug.Log(item.world_slug);
+        }*/
     }
 
     /* 
@@ -53,11 +67,16 @@ public class ItemManager : MonoBehaviour {
     {
         for (int i = 0; i < _item_data.Count; i++)
         {
-            _item_database.Add(new Item(_item_data[i]["id"].AsInt, 
-                                        _item_data[i]["title"], 
-                                        _item_data[i]["value"].AsInt,
+            _item_database.Add(new Item(_item_data[i]["id"].AsInt,
+                                        _item_data[i]["title"],
+                                        _item_data[i]["stats"]["damage"].AsInt,
+                                        _item_data[i]["stats"]["armor"].AsInt,
+                                        _item_data[i]["health"]["health"].AsInt,
+                                        _item_data[i]["description"],
                                         bool.Parse(_item_data[i]["stackable"]),
-                                        _item_data[i]["slug"]));
+                                        _item_data[i]["type"],
+                                        _item_data[i]["slug"],
+                                        _item_data[i]["worldSlug"]));
         }
     }
 
@@ -80,22 +99,35 @@ public class Item
 {
     public int id { get; set; }
     public string title { get; set; }
-    public int value { get; set; }
+    public int damage { get; set; }
+    public int armor { get; set; }
+    public int health { get; set; }
+    public string description { get; set; }
     public bool stackable { get; set; }
+    public string type { get; set; }
     public string slug { get; set; }
+    public string world_slug { get; set; }
     public Sprite sprite { get; set; }
+    public Sprite world_sprite { get; set; }
 
     /* 
      * Constructor
      */
-    public Item(int id, string title, int value, bool stackable, string slug)
+    public Item(int id, string title, int damage, int armor, int health, string description, 
+        bool stackable, string type, string slug, string world_slug)
     {
         this.id = id;
         this.title = title;
-        this.value = value;
+        this.damage = damage;
+        this.armor = armor;
+        this.health = health;
+        this.description = description;
         this.stackable = stackable;
+        this.type = type;
         this.slug = slug;
+        this.world_slug = world_slug;
         this.sprite = Resources.Load<Sprite>("Sprites/Items/" + slug);
+        this.world_sprite = Resources.Load<Sprite>("Sprites/Items/" + world_slug);
     }
 
     /* 
