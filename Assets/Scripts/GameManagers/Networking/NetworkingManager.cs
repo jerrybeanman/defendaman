@@ -258,7 +258,7 @@ public class NetworkingManager : MonoBehaviour
 			//Cant send empty packets to server, inefficient and may crash
 			if (tcp != "[]")
             	TCP_Send(tcp, tcp.Length);
-            if (GameData.GameState == GameState.Playing)
+            // (GameData.GameState == GameState.Playing)
                 UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
@@ -316,7 +316,7 @@ public class NetworkingManager : MonoBehaviour
                 memberItems.Add(new Pair<string, string>("rotationZ", GameManager.instance.player.transform.rotation.z.ToString()));
                 memberItems.Add(new Pair<string, string>("rotationW", GameManager.instance.player.transform.rotation.w.ToString()));
                 
-                send_next_packet(DataType.Player, GameManager.instance.player.GetComponent<BaseClass>().playerID, memberItems, protocol);
+                send_next_packet(DataType.Player, GameData.MyPlayer.PlayerID, memberItems, protocol);
             }
         }
 

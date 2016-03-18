@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour {
     public void StartGame(int seed)
     {
         int myPlayer = GameData.MyPlayer.PlayerID;
-        int myTeam = 0;
+        int myTeam = GameData.MyPlayer.TeamID;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
        
         var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
@@ -138,6 +138,7 @@ public class GameManager : MonoBehaviour {
                 //Created another player
             }
 
+            //If they are on my team, add a light
             if (myTeam == playerData.Value.TeamID)
             {
                 Debug.Log("Team Member");
@@ -159,6 +160,8 @@ public class GameManager : MonoBehaviour {
                     shadows.transform.parent = lightingFOV.transform;
                     shadows.transform.Translate(0, 0, 11);
                 }
+            } else { //Otherwise if they are not make them hide
+                //TODO: Attach "Hide" script to "createdPlayer"
             }
         }
 

@@ -42,8 +42,8 @@ public class NinjaClass : MeleeClass
     {
         this._className = "Ninja";
         this._classDescription = "You'll never see him coming.";
-        this._classStat.CurrentHp = 150;
         this._classStat.MaxHp = 150;
+        this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
         this._classStat.MoveSpeed = 20;
