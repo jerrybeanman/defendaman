@@ -12,27 +12,68 @@ public class HUD_Manager : MonoBehaviour {
 	 *  Indicates the player health on bottom left corner of HUD
 	 */
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;						public Animator HealthAnimator; 	}
+	public class PlayerProfile 	
+	{
+		public Image 	Health;						
+		public Animator HealthAnimator; 	
+	}
 	[System.Serializable]	
-	public class AllyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
+	public class AllyKing 		
+	{ 
+		public Image 	Health;						
+		public Animator HealthAnimator; 	
+	}
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
+	public class EnemyKing 		
+	{ 
+		public Image 	Health;						
+		public Animator HealthAnimator; 	
+	}
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;						public Animator CurrencyAnimator; 	}
+	public class Currency 		
+	{ 
+		public Text  	Amount;						
+		public Animator CurrencyAnimator; 	
+	}
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;					public float 	CoolDown; 			}
+	public class MainSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;					public float 	CoolDown; 			}
+	public class SubSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;					public float 	CoolDown; 			}
+	public class PassiveSkill 	
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
 	[System.Serializable]
-	public class Chat			{ public InputField input;					public GameObject Container; 	
-								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
+	public class Chat			
+	{ 
+		public InputField input;					
+		public GameObject Container; 	
+		public GameObject AllyMessage;			
+		public GameObject EnemyMessage; 	
+	}
 	[System.Serializable]
-	public class Buildable		{ public Button Option;						public GameObject Building;			}
+	public class Buildable		
+	{ 
+		public Button Option;						
+		public GameObject Building;			
+	}
 	[System.Serializable]
-	public class Shop			{ public GameObject MainPanel;				public List<Buildable>	Items;	
-								  public Buildable	Selected = null;												}										
+	public class Shop			
+	{ 
+		public GameObject MainPanel;				
+		public List<Buildable>	Items;	
+		public Buildable	Selected = null;										
+	}										
 	#endregion
 
 	// Singleton object
@@ -74,13 +115,14 @@ public class HUD_Manager : MonoBehaviour {
 	// For rechargin skills whenever they are used
 	void Update()
 	{
-		if(placing)
+		if(ItemBought)
 		{
 			currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			CheckBuildingPlacement();
+			CheckBuildingPlacement(shop.Selected.Building);
 			if(Input.GetKeyDown(KeyCode.Mouse0))
 			{
-				PlaceBuilding();
+				if(PlaceBuilding(shop.Selected.Building))
+					UnHighlightItem();
 			}
 		}
 		CheckChatAction();
@@ -144,58 +186,101 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(shop.Selected.Option == null)
 		{
-			shop.Selected.Option = shop.Items[i].Option;
-			shop.Selected.Building = shop.Items[i].Building;
-			shop.Selected.Option.image.color = Color.green;
+			HighlightItem(i);
 		}else
 		if(shop.Selected.Option == shop.Items[i].Option)
 		{
-			shop.Selected.Option.image.color = Color.white;
-			shop.Selected.Option = null;
-			shop.Selected.Building = null;
+			UnHighlightItem();
 		}
 		else
 		{
-			shop.Selected.Option.image.color = Color.white;
-			shop.Selected.Option = shop.Items[i].Option;
-			shop.Selected.Building = shop.Items[i].Building;
-			shop.Selected.Option.image.color = Color.green;
+			UnHighlightItem();
+			HighlightItem(i);
 		}
 	}
 
-	bool placing = false;
+	bool ItemBought = false;
 	public void Buy()
 	{
 		if(shop.Selected.Option != null)
 		{
-			placing = true;
+			ItemBought = true;
 			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
-			shop.Selected.Building.AddComponent<Building>();
 		}
 	
 	}
 
-	private void CheckBuildingPlacement()
+	private void CheckBuildingPlacement(GameObject buildings)
 	{
 		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		int tempx=(int)currFramePosition.x;
 		int tempy=(int)currFramePosition.y;
 		currFramePosition.z=0;		
 		Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
-		shop.Selected.Building.transform.position = cursorPosition;
+		buildings.transform.position = cursorPosition;
 	}
 
-	private void PlaceBuilding()
+	private bool PlaceBuilding(GameObject building)
 	{
-		placing = false;
+		Building bComponent = building.GetComponent<Building>();
 		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
-		shop.Selected.Building.GetComponent<Building>().X = (int)currFramePosition.x;
-		shop.Selected.Building.GetComponent<Building>().Y = (int)currFramePosition.y;
-		mapManager.buildingsCreated.Add(shop.Selected.Building);
+		if(!CheckValidLocation(buildingLocation))
+			return false;
+		ItemBought = false;
+		bComponent.team=GameManager.instance.player.GetComponent<BaseClass>().team;
+		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
+		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
+
+		// Add selected building to the list of created buildings
+		mapManager.buildingsCreated.Add(building);
+
+		// Add selected building to either wallList or Armory list depending the tag
+		if(bComponent.type == Building.BuildingType.Wall)
+			mapManager.wallList.Add(buildingLocation); 
+		else
+			mapManager.ArmoryList.Add(buildingLocation);
+		return true;
+	}
+
+	void HighlightItem(int i)
+	{
+		shop.Selected.Option = shop.Items[i].Option;
+		shop.Selected.Building = shop.Items[i].Building;
+		shop.Selected.Option.image.color = Color.green;
+	}
+
+	void UnHighlightItem()
+	{
+		// Unselect the current selected item
 		shop.Selected.Option.image.color = Color.white;
 		shop.Selected.Building = null;
 		shop.Selected.Option = null;
+	}
+	//Check if the building cana be placed based on distance from player and existing buildings
+	private bool CheckValidLocation(Vector2 building){
+		//Check if existing armory object is in the way
+		foreach(var armory in mapManager.ArmoryList)
+		{
+			float distance=Vector2.Distance (building,armory);
+			if(Mathf.Abs (distance) < 8)
+				return false;
+		}
+		//Check if any walls are conflicting with desired placing
+		foreach(var wall in mapManager.wallList)
+		{
+			float distance=Vector2.Distance (building,wall);
+			if(Mathf.Abs (distance)< 4)
+				return false;
+		}
+		
+		//Check if player isn't too far to place building
+		Vector2 player = GameManager.instance.player.transform.position;
+		float distance_from_player = Vector3.Distance(player, building);
+		if(distance_from_player > 10)
+			return false;
+
+		return true;
 	}
 
 	public void DisplayShop()
