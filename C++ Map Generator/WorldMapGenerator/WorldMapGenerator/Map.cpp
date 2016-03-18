@@ -169,7 +169,15 @@ void Map::createTopScenery (int sceneryChance) {
 		for (int y = 0; y < mapHeight; y++) {
 			if (mapBase[x][y] > baseWallMax)
 				if (rand () % sceneryChance == 0)
-					mapScenery[x][y] = rand () % (sceneryMax - sceneryDefault);
+					if (x - 1 >= 0 && x + 1 < mapWidth && y - 1 >= 0 && y + 1 < mapHeight)
+						for (int tX = x - 1; tX <= x + 1; tX++) {
+							for (int tY = y - 1; tY <= y + 1; tY++) {
+								if (mapScenery[tX][tY] != -1)
+									break;
+								if (tX == x + 1 && tY == y + 1)
+									mapScenery[x][y] = rand () % (sceneryMax - sceneryDefault);
+							}
+						}
 		}
 	drawMap (mapScenery);
 }
@@ -225,7 +233,7 @@ void Map::joinMaps (int ** baseMap, int ** topMap) {
 //... requests a list of 0 or more parameters of pairs, which contain <string, void*>
 std::string Map::ConvertToJSONString () {
 	std::string JSONString ("[");
-	std::string JSONString ("{ ");
+	JSONString.append ("{ ");
 	JSONString.append ("DataType : 3, ");
 	JSONString.append ("ID : 0, ");
 	JSONString.append ("\"mapWidth\" : " + intToString (mapWidth) + ", ");

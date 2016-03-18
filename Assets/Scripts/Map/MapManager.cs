@@ -200,6 +200,7 @@ public class MapManager : MonoBehaviour {
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
         _map = new int[_mapWidth, _mapHeight];
+        _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message["mapIDs"].AsArray;
 
@@ -210,12 +211,13 @@ public class MapManager : MonoBehaviour {
         }
 
 
-        JSONArray mapArrays = message["mapSceneryIDs"].AsArray;
+        JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
+        
 
         for (int x = 0; x < _mapWidth; x++) {
-            JSONArray mapX = mapArrays[x].AsArray;
+            JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
             for (int y = 0; y < _mapHeight; y++)
-                _mapScenery[x, y] = mapX[y].AsInt;
+                _mapScenery[x, y] = mapSceneryX[y].AsInt;
         }
     }
 
@@ -258,6 +260,7 @@ public class MapManager : MonoBehaviour {
                 }
                 if (_mapScenery[x, y] != -1) {
                     _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x, y]) % _mapSceneryObjects.Count];
+                    Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
                 }
             }
     }
