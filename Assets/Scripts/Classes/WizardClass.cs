@@ -91,7 +91,8 @@ public class WizardClass : RangedClass
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS: None
+    -- REVISIONS:
+    --      - March 17, 2016: Fixed instantiation to work through networking
     --
     -- DESIGNER: Hank Lo
     --
@@ -108,15 +109,17 @@ public class WizardClass : RangedClass
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10.0f;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, mousePos, Quaternion.identity);
+        Vector2 mousePos = Input.mousePosition;
+        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        var distance = (mousePos - (Vector2) transform.position).magnitude;
+        Vector2 endp = (Vector2) transform.position + (distance * dir);
+
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, endp, Quaternion.identity);
         attack.GetComponent<MagicCircle>().playerID = playerID;
         attack.GetComponent<MagicCircle>().teamID = team;
         attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
-        attack.GetComponent<MagicCircle>().duration = 200;
+        attack.GetComponent<MagicCircle>().duration = 3;
 
         return cooldowns[1];
     }
