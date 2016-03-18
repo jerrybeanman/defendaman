@@ -8,6 +8,9 @@ using System.Collections.Generic;
 
 public class HUD_Manager : MonoBehaviour {
 	#region Classes
+	/**
+	 *  Indicates the player health on bottom left corner of HUD
+	 */
 	[System.Serializable]
 	public class PlayerProfile 	{ public Image Health;						public Animator HealthAnimator; 	}
 	[System.Serializable]	
@@ -98,14 +101,13 @@ public class HUD_Manager : MonoBehaviour {
 			}
 			else
 			{
-				// Send the packet, with Team ID and username
+				// Send the packet, with Team ID, user name, and the message input
 				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 				packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
 				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
-				
-				//UpdateChat(0, "Jerry", chat.input.text);
+
 				chat.input.text = "";
 				chat.input.interactable = false;
 			}
