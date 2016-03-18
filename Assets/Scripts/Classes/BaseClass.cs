@@ -119,7 +119,7 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == GameData.MyPlayer.PlayerID)
                 damageTaken = doDamage(attack.damage);
 
-            if (attack.IsDestroyable)
+            if (attack is Projectile)
                 Destroy(other.gameObject);
 
             if (playerID != GameData.MyPlayer.PlayerID)

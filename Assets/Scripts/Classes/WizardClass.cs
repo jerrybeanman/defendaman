@@ -42,11 +42,11 @@ public class WizardClass : RangedClass
 	{
         this._className = "Wizard";
         this._classDescription = "Wingardium Leviosa. No, not leviosAA, leviOsa.";
-        this._classStat.MaxHp = 75;
+        this._classStat.MaxHp = 100;
         this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 10;
+        this._classStat.MoveSpeed = 8;
         this._classStat.AtkPower = 3;
         this._classStat.Defense  = 5;
         
