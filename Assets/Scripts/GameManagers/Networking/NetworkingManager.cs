@@ -258,7 +258,7 @@ public class NetworkingManager : MonoBehaviour
 			//Cant send empty packets to server, inefficient and may crash
 			if (tcp != "[]")
             	TCP_Send(tcp, tcp.Length);
-            if (GameData.GameState == GameState.Playing)
+            // (GameData.GameState == GameState.Playing)
                 UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
