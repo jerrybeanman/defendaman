@@ -27,7 +27,7 @@ public class HUD_Manager : MonoBehaviour {
 								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
 	[System.Serializable]
 	public class Shop			{ public GameObject MainPanel;				public List<GameObject> StructuresList;
-								  public List<GameObject> ConsumablesList;	public GameObject Selected;			}										}
+								  public List<GameObject> ConsumablesList;	public GameObject Selected;			}										
 	#endregion
 
 	// Singleton object
