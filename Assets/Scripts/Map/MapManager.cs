@@ -49,13 +49,13 @@ public class MapManager : MonoBehaviour {
     public List<Sprite> _mapWalkable;
 
 	//variables used for buildings
-	public List<GameObject> buildingsCreated;
+	public static List<GameObject> buildingsCreated;
 	public GameObject buildObject;
 	public GameObject buildWall;
 	public GameObject buildOverlay;
-	public List<Sprite> overlayTemp;
-	public List<Vector2>  wallList;
-	public List<Vector2>  ArmoryList;
+	public static List<Sprite> overlayTemp;
+	public static List<Vector2>  wallList;
+	public static List<Vector2>  ArmoryList;
 	Vector3 lastFramePosition;
 	Vector3 dragStartPosition;
 	int overlayFlag = 1;

@@ -46,6 +46,8 @@ public class HUD_Manager : MonoBehaviour {
 	public Chat					chat;
 	public Shop					shop;	
 
+	private Vector3 			currFramePosition;
+
 	// Singleton pattern
 	void Awake()
 	{
@@ -69,7 +71,12 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(placing)
 		{
+			currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			CheckBuildingPlacement();
+			if(Input.GetKeyDown(KeyCode.Mouse0))
+			{
+				PlaceBuilding();
+			}
 		}
 		CheckChatAction();
 		CheckSkillStatus();
@@ -133,18 +140,21 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(shop.Selected.Option == null)
 		{
-			shop.Selected = shop.Items[i];
+			shop.Selected.Option = shop.Items[i].Option;
+			shop.Selected.Building = shop.Items[i].Building;
 			shop.Selected.Option.image.color = Color.green;
 		}else
-		if(shop.Selected == shop.Items[i])
+		if(shop.Selected.Option == shop.Items[i].Option)
 		{
 			shop.Selected.Option.image.color = Color.white;
-			shop.Selected = null;
+			shop.Selected.Option = null;
+			shop.Selected.Building = null;
 		}
 		else
 		{
 			shop.Selected.Option.image.color = Color.white;
-			shop.Selected = shop.Items[i];
+			shop.Selected.Option = shop.Items[i].Option;
+			shop.Selected.Building = shop.Items[i].Building;
 			shop.Selected.Option.image.color = Color.green;
 		}
 	}
@@ -155,11 +165,9 @@ public class HUD_Manager : MonoBehaviour {
 		if(shop.Selected.Option != null)
 		{
 			placing = true;
-			Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+			shop.Selected.Building.AddComponent<Building>();
 		}
 	
 	}
@@ -173,6 +181,16 @@ public class HUD_Manager : MonoBehaviour {
 		Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
 		shop.Selected.Building.transform.position = cursorPosition;
 	}
+
+	private void PlaceBuilding()
+	{
+		placing = false;
+		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
+		shop.Selected.Building.GetComponent<Building>().X = (int)currFramePosition.x;
+		shop.Selected.Building.GetComponent<Building>().Y = (int)currFramePosition.y;
+		MapManager.buildingsCreated.Add(shop.Selected.Building);
+	}
+
 	public void DisplayShop()
 	{
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
