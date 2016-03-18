@@ -101,10 +101,10 @@ public class ItemMenu : MonoBehaviour
     {
         Debug.Log("use item: " + _item.id);
         GameData.MouseBlocked = false;
+        Inventory.instance.UseConsumable(_inv_pos);
         Deactivate();
 
-        Inventory _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
-        _inventory.UseConsumable(_inv_pos);
+        
     }
 
     /* 
@@ -147,6 +147,7 @@ public class ItemMenu : MonoBehaviour
     {
         Debug.Log("cancel: " + _item.id);
         GameData.MouseBlocked = false;
+        Inventory.instance.UseResources(Constants.GOLD_RES, 1);
         Deactivate();
     }
 }
