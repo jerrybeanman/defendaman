@@ -22,8 +22,8 @@ public class GunnerClass : RangedClass
     GunnerClass() {
         this._className = "Gunner";
         this._classDescription = "Boom - Headshot";
-        this._classStat.CurrentHp = 100;
         this._classStat.MaxHp = 150;
+        this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
         this._classStat.MoveSpeed = 15;
@@ -106,6 +106,9 @@ public class GunnerClass : RangedClass
             {
                 inSpecial = false;
                 fire();
+                var member = new List<Pair<string, string>>();
+                member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+                NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
             }
             if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
             {
@@ -135,15 +138,11 @@ public class GunnerClass : RangedClass
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
         attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
-
-        var member = new List<Pair<string, string>>();
-        member.Add(new Pair<string, string>("playerID", playerID.ToString()));
-        NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
     }
 
     void fireFromServer(JSONClass packet)
     {
-        if (packet["playerID"].AsInt == playerID)
+        if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
         {
             fire();
         }
