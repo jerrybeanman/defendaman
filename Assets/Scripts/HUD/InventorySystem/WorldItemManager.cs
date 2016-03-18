@@ -121,6 +121,7 @@ public class WorldItemManager : MonoBehaviour
             if (_world_item.GetComponent<WorldItemData>().world_item_id == world_item_id)
             {
                 Destroy(_world_item);
+                GameObject.Find("Inventory").GetComponent<Tooltip>().Deactivate();
                 break;
             }
         }

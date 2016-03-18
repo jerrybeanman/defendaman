@@ -92,15 +92,6 @@ public class Inventory : MonoBehaviour
         if (_item_to_add.type == Constants.RESOURCE_TYPE)
         {
             GameData.MyPlayer.Resources[_item_to_add.title] += amt;
-            /* // Uncessary since all the resources will be initialized in the dictionary to 0
-            if (GameData.MyPlayer.Resources.ContainsKey(_item_to_add.title))
-            {
-                GameData.MyPlayer.Resources[_item_to_add.title] += amt;
-            }
-            else
-            {
-                GameData.MyPlayer.Resources.Add(_item_to_add.title, amt);
-            }*/
         }
 
         if (_item_to_add.stackable && (item_idx = check_if_item_in_inventory(_item_to_add)) != -1)

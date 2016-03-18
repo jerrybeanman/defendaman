@@ -121,7 +121,6 @@ public class ItemMenu : MonoBehaviour
      */
     public void DropItemOnClick()
     {
-        Debug.Log("Dropped");
         if (_amt > 1 && _item.stackable)
         {
             _amount_panel.Activate(_item, _amt, _inv_pos);
@@ -134,7 +133,7 @@ public class ItemMenu : MonoBehaviour
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
             // Pretend that a drop message was received
-            //_world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+            _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
         }
         GameData.MouseBlocked = false;
         Deactivate();

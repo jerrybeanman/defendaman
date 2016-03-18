@@ -61,10 +61,8 @@ public class WorldItemData : MonoBehaviour
             List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 
-            _tooltip.Deactivate();
-
-            // Prevent that a pickup event was received
-            //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+            // Pretend that a pickup event was received
+            _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
         }
     }
 
