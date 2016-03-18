@@ -24,15 +24,23 @@ using System.Collections;
 public class NinjaClass : MeleeClass
 {
     Rigidbody2D sword;
-    Rigidbody2D attack;
+    Rigidbody2D swing;
+
+    new void Start()
+    {
+        base.Start();
+        sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
+        swing = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        swing.GetComponent<BasicSword>().teamID = team;
+        swing.transform.parent = transform;
+
+        var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
+        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+    }
 
     public NinjaClass()
-	{
-        sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
-        //attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        //attack.transform.parent = transform;
-
-               this._className = "Ninja";
+    {
+        this._className = "Ninja";
         this._classDescription = "You'll never see him coming.";
         this._classStat.CurrentHp = 150;
         this._classStat.MaxHp = 150;
@@ -41,9 +49,6 @@ public class NinjaClass : MeleeClass
         this._classStat.MoveSpeed = 20;
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
-
-        var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
-        gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
         cooldowns = new float[2] { 0.95f, 2 };
     }
