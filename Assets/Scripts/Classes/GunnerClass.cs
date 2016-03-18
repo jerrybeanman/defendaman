@@ -13,6 +13,7 @@ public class GunnerClass : RangedClass
     Rigidbody2D bullet2;
     int inaccuracy = 40;
     Camera mainCamera;
+    Camera visionCamera;
     float zoomOut = 20;
     float zoomIn;
     bool inSpecial;
@@ -43,6 +44,7 @@ public class GunnerClass : RangedClass
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         zoomIn = mainCamera.orthographicSize;
+        visionCamera = GameObject.Find("Camera FOV").GetComponent<Camera>();
         NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
     }
 
@@ -93,7 +95,10 @@ public class GunnerClass : RangedClass
                 attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
                 attack.GetComponent<BasicRanged>().maxDistance = distance[1];*/
                 if (mainCamera.orthographicSize < zoomOut)
+                {
                     mainCamera.orthographicSize += .1f;
+                    visionCamera.orthographicSize += .1f;
+                }
                 MapManager.cameraDistance = -mainCamera.orthographicSize;
             }
 
@@ -105,6 +110,7 @@ public class GunnerClass : RangedClass
             if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
             {
                 mainCamera.orthographicSize -= .2f;
+                visionCamera.orthographicSize -= .2f;
                 MapManager.cameraDistance = -mainCamera.orthographicSize;
             }
         }

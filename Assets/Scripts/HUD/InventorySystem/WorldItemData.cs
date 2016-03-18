@@ -56,6 +56,7 @@ public class WorldItemData : MonoBehaviour
 	void Update () {
         if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
         {
+            Debug.Log("F key");
             // Send Network message
             List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
@@ -64,7 +65,6 @@ public class WorldItemData : MonoBehaviour
 
             // Prevent that a pickup event was received
             _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-            Debug.Log(GameData.MyPlayer.Resources[Constants.GOLD_RES]);
         }
     }
 
