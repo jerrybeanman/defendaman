@@ -123,6 +123,11 @@ public class HUD_Manager : MonoBehaviour {
 
 	}
 
+	public void SelectItem(GameObject item)
+	{
+		shop.Selected = item;
+	}
+
 	public void DisplayShop()
 	{
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
@@ -143,7 +148,7 @@ public class HUD_Manager : MonoBehaviour {
 
 		UpdateChat(team, username, message);
 	}
-	
+
 	public void UpdateChat(int team, string username, string message)
 	{
 		username = "[" + username + "]:";
