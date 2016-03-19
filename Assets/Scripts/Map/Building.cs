@@ -7,57 +7,57 @@ public class Building:MonoBehaviour {
 	public enum BuildingType{Empty,Armory, Wall};
 
 	public BuildingType type;
+
 	public int X {get; set;}
 	public int Y {get;  set;}
 	public float health = 100;
 	GameObject building;
+
 	public int team;
-	
-	public Building(int x, int y){
+
+	public GameObject progress_bar;
+	public Sprite ally_completion_progress_bar;
+	public Sprite enemy_completion_progress_bar;
+
+	private SpriteRenderer spriteRenderer;
+
+	public Building(int x, int y)
+	{
 		this.X=x;
 		this.Y=y;
 	}
-	// Use this for initialization
-	void Start () {
-		this.health=100;
-		notifycreation();
-		Debug.Log ("X Position is:" + X + "Y position is : " + Y );
 
+	// Use this for initialization
+	void Start () 
+	{
+		if(team == GameManager.instance.player.GetComponent<BaseClass>().team)
+			progress_bar.GetComponent<SpriteRenderer>().sprite = ally_completion_progress_bar;
+		else
+			progress_bar.GetComponent<SpriteRenderer>().sprite = enemy_completion_progress_bar;
+		notifycreation();
 	}
-	void OnTriggerEnter2D(Collider2D other) {
-		//		if (coll.gameObject.tag == "Enemy")
-		//			coll.gameObject.SendMessage("ApplyDamage", 10);
-		Debug.Log (this.health);
-		if(health<=0){
+
+
+	void OnTriggerEnter2D(Collider2D other) 
+	{
+		if(health<=0)
 			Destroy(gameObject);
-		}
 		var attack = other.gameObject.GetComponent<Trigger>();
-		Debug.Log("Projectile hit");
 		if (attack != null)
 		{
-			Debug.Log("Attack was not null");
 			if (attack.teamID == team)
-			{
-				//health-=10;
-				Debug.Log("Test health" + health);
-				Debug.Log("Same team");
 				return;
-			}
 			health-=10;
 		}
-		else
-		{
-			Debug.Log("Attack was null");
-		}
-
-
 		notifydeath();
 	}
-	public void notifycreation(){
+	public void notifycreation()
+	{
 		//????
 		
 	}
-	public void	notifydeath(){
+	public void	notifydeath()
+	{
 		//?
 	}
 	

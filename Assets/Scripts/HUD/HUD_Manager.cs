@@ -145,9 +145,7 @@ public class HUD_Manager : MonoBehaviour {
 		//If instance already exists and it's not this:
 		else if (instance != this)			
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-			Destroy(gameObject);   			
-		//Sets this to not be destroyed when reloading scene
-		DontDestroyOnLoad(gameObject);		
+			Destroy(gameObject);   				
 	}
 
 	// Called on start of game
@@ -325,6 +323,9 @@ public class HUD_Manager : MonoBehaviour {
 			// Find where the mouse position is
 			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
 
+			// Assign team attribute so ally cannot damage the building 
+			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
+
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
 
@@ -404,8 +405,6 @@ public class HUD_Manager : MonoBehaviour {
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
-		// Assign team attribute so ally cannot damage the building 
-		bComponent.team=GameManager.instance.player.GetComponent<BaseClass>().team;
 		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
 		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
 
