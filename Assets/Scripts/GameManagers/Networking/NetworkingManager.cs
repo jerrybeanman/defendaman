@@ -136,6 +136,11 @@ public class NetworkingManager : MonoBehaviour
         }
     }
 
+    public static void ClearSubscriptions()
+    {
+        _subscribedActions.Clear();
+    }
+
     public void update_data(string JSONGameState)
     {
         JSONArray gameObjects = null;
