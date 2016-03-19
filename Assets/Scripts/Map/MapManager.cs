@@ -129,69 +129,69 @@ public class MapManager : MonoBehaviour {
 	 * Check the object pool in camera view and update their activation every second. Check if user wants to place a building
 	 */
     void Update() {
-        check_object_pool();
-		if(overlayFlag==1){
-			buildOverlay.SetActive(false);
+		check_object_pool ();
+		if (overlayFlag == 1) {
+			buildOverlay.SetActive (false);
 
-		if(overlayFlag==1)
-		{
-			buildOverlay.SetActive(false);
-		}
-		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		currFramePosition.z=0;
+			if (overlayFlag == 1) {
+				buildOverlay.SetActive (false);
+			}
+			Vector3 currFramePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+			currFramePosition.z = 0;
 		
-		if(Input.GetMouseButton(2)){
-			buildOverlay.GetComponent<SpriteRenderer>().sprite =overlayTemp[0];
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Debug.Log("X: "  + tempx +"Y:" + tempy);
-			overlayFlag =0 ;
-			buildOverlay.SetActive(true);
-			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
-			buildOverlay.transform.position = cursorPosition;
+			if (Input.GetMouseButton (2)) {
+				buildOverlay.GetComponent<SpriteRenderer> ().sprite = overlayTemp [0];
+				int tempx = (int)currFramePosition.x;
+				int tempy = (int)currFramePosition.y;
+				Debug.Log ("X: " + tempx + "Y:" + tempy);
+				overlayFlag = 0;
+				buildOverlay.SetActive (true);
+				Vector3 cursorPosition = new Vector3 (tempx, tempy, -10);
+				buildOverlay.transform.position = cursorPosition;
 			
-		}
-		if(Input.GetMouseButtonUp(2)){
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Vector3 buildingLocation = new Vector3(tempx,tempy,-10);
-			if(validBuilding(buildingLocation)){
-				GameObject building = (GameObject)Instantiate(buildObject, buildingLocation, Quaternion.identity);
-				building.GetComponent<Building>().team=GameManager.instance.player.GetComponent<BaseClass>().team;
-				building.GetComponent<Building>().X=tempx;
-				building.GetComponent<Building>().Y=tempy;
-				ArmoryList.Add (buildingLocation);
-				buildingsCreated.Add(building);
 			}
-			overlayFlag =1 ;
-		}
-		if(Input.GetKey(KeyCode.T)){
-			buildOverlay.GetComponent<SpriteRenderer>().sprite =overlayTemp[2];
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Debug.Log("X: "  + tempx +"Y:" + tempy);
-			overlayFlag =0 ;
-			buildOverlay.SetActive(true);
-			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
-			buildOverlay.transform.position = cursorPosition;
+			if (Input.GetMouseButtonUp (2)) {
+				int tempx = (int)currFramePosition.x;
+				int tempy = (int)currFramePosition.y;
+				Vector3 buildingLocation = new Vector3 (tempx, tempy, -10);
+				if (validBuilding (buildingLocation)) {
+					GameObject building = (GameObject)Instantiate (buildObject, buildingLocation, Quaternion.identity);
+					building.GetComponent<Building> ().team = GameManager.instance.player.GetComponent<BaseClass> ().team;
+					building.GetComponent<Building> ().X = tempx;
+					building.GetComponent<Building> ().Y = tempy;
+					ArmoryList.Add (buildingLocation);
+					buildingsCreated.Add (building);
+				}
+				overlayFlag = 1;
+			}
+			if (Input.GetKey (KeyCode.T)) {
+				buildOverlay.GetComponent<SpriteRenderer> ().sprite = overlayTemp [2];
+				int tempx = (int)currFramePosition.x;
+				int tempy = (int)currFramePosition.y;
+				Debug.Log ("X: " + tempx + "Y:" + tempy);
+				overlayFlag = 0;
+				buildOverlay.SetActive (true);
+				Vector3 cursorPosition = new Vector3 (tempx, tempy, -10);
+				buildOverlay.transform.position = cursorPosition;
 			
-		}
+			}
 
-		if(Input.GetKeyUp(KeyCode.T)){
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Vector3 buildingLocation = new Vector3(tempx,tempy,-10);
-			if(validWall(buildingLocation)){
-				GameObject building = (GameObject)Instantiate(buildWall, buildingLocation, Quaternion.identity);
-				building.GetComponent<Building>().team=GameManager.instance.player.GetComponent<BaseClass>().team;
-				building.GetComponent<Building>().X=tempx;
-				building.GetComponent<Building>().Y=tempy;
-				wallList.Add (buildingLocation);
-				buildingsCreated.Add(building);
+			if (Input.GetKeyUp (KeyCode.T)) {
+				int tempx = (int)currFramePosition.x;
+				int tempy = (int)currFramePosition.y;
+				Vector3 buildingLocation = new Vector3 (tempx, tempy, -10);
+				if (validWall (buildingLocation)) {
+					GameObject building = (GameObject)Instantiate (buildWall, buildingLocation, Quaternion.identity);
+					building.GetComponent<Building> ().team = GameManager.instance.player.GetComponent<BaseClass> ().team;
+					building.GetComponent<Building> ().X = tempx;
+					building.GetComponent<Building> ().Y = tempy;
+					wallList.Add (buildingLocation);
+					buildingsCreated.Add (building);
+				}
+				overlayFlag = 1;
 			}
-			overlayFlag =1 ;
 		}
-    }
+	}
 
     /**
 	 * Decode the received message and handle its event.

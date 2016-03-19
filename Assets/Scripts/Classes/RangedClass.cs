@@ -3,8 +3,6 @@ using System.Collections;
 
 public abstract class RangedClass : BaseClass
 {
-<<<<<<< HEAD
-=======
     public override float basicAttack(Vector2 dir)
     {
         base.basicAttack(dir);
@@ -23,5 +21,4 @@ public abstract class RangedClass : BaseClass
         Invoke("EndAttackAnimation", cooldowns[1] * 1.1f);
         return cooldowns[1];
     }
->>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
 }

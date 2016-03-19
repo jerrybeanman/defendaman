@@ -58,14 +58,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             item.transform.position = _inventory.slot_list[_dropped_item.item_pos].transform.position;
             _dropped_item.item_pos = slot_pos;
             _dropped_item.transform.SetParent(this.transform);
-<<<<<<< HEAD
             _dropped_item.transform.position = this.transform.position;
-
             _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
             _inventory.inventory_item_list[slot_pos] = _dropped_item.item; 
-=======
-            _dropped_item.transform.position = this.transform.position;            
->>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
         }
     }
 }

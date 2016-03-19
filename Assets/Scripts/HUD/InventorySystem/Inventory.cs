@@ -247,11 +247,7 @@ public class Inventory : MonoBehaviour
      */
     public void UpdateWeaponStats()
     {
-<<<<<<< HEAD
-        Debug.Log("Weapon slot id: " + inventory_item_list[Constants.WEAPON_SLOT].id);
-=======
         string _weapon_error_msg = Constants.NO_EQUIPPED;
->>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
         int damage = 0;
         int armor = 0;
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
