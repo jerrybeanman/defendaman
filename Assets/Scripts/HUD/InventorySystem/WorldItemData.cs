@@ -63,7 +63,7 @@ public class WorldItemData : MonoBehaviour
                 NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 
                 // Pretend that a pickup event was received
-                _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+                //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
             }
             else
             {

@@ -19,7 +19,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
     void update_position(JSONClass player) {
         Vector3 position = new Vector3(player["x"].AsFloat, player["y"].AsFloat, -10f);
         transform.position = position;
-        Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat) * Quaternion.Euler(0, 0, 90);
+        Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat);
         transform.rotation = rotation;
         GameData.PlayerPosition[playerID] = position;
     }
