@@ -138,6 +138,8 @@ public class GunnerClass : RangedClass
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
         attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
+        EndAttackAnimation();
+        CancelInvoke("EndAttackAnimation");
     }
 
     void fireFromServer(JSONClass packet)

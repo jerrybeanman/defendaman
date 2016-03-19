@@ -89,6 +89,16 @@ public class Movement : MonoBehaviour
         //Will need to send some info to server every update
         sendToServer(rb2d.position.x, rb2d.position.y);
         GameData.PlayerPosition[GameData.MyPlayer.PlayerID] = transform.position;
+
+        // animation trigger test
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", false);
+        }
     }
     void sendToServer(double x, double y)
     {
