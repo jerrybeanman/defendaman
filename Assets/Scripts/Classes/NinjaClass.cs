@@ -61,7 +61,9 @@ public class NinjaClass : MeleeClass
         attack.GetComponent<BasicSword>().damage = ClassStat.AtkPower;
         attack.transform.parent = transform;
 
+        StartAttackAnimation();
         Invoke("finishAttack", cooldowns[0]);
+        Invoke("EndAttackAnimation", cooldowns[0] / 2);
 
         return cooldowns[0];
     }

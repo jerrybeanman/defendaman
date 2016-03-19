@@ -183,4 +183,14 @@ public abstract class BaseClass : MonoBehaviour {
         public float Defense;
         //TODO: defensive stats, etc.
 	}
+
+    public void StartAttackAnimation()
+    {
+        gameObject.GetComponent<Animator>().SetBool("attacking", true);
+    }
+
+    public void EndAttackAnimation()
+    {
+        gameObject.GetComponent<Animator>().SetBool("attacking", false);
+    }
 }
