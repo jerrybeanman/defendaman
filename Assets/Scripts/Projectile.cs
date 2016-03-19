@@ -3,17 +3,23 @@ using System.Collections;
 
 public abstract class Projectile : Trigger
 {
+    private Vector2 startPos;
+    public int maxDistance;
     public int pierce = 0;
 
-    public Projectile()
+    void Start()
     {
-
+        startPos = transform.position;
     }
-    void update()
+
+    void Update()
     {
-        Debug.Log("Projectile Velocity:  " + gameObject.GetComponent<Rigidbody2D>().velocity);
-
+        if (Vector2.Distance(startPos, transform.position) >= maxDistance)
+        {
+            Destroy(gameObject);
+        }
     }
+
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         //If its a player or an AI, ignore it, otherwise destroy itself

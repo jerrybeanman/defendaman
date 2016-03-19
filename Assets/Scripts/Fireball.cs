@@ -4,17 +4,16 @@
 --  PROGRAM:        Linux Game
 --
 --  FUNCTIONS:
---      void Start()
---      void Update()
 --      protected override void OnTriggerStay2D(Collider2D other)
 --
 --  DATE:           March 9, 2016
 --
---  REVISIONS:      (Date and Description)
+--  REVISIONS:      March 18, 2016
+--                      Refactored out duplicate code, edited burn script
 --
 --  DESIGNERS:      Hank Lo
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Fireball projectile that the 
@@ -26,71 +25,19 @@ using System;
 
 public class Fireball : Projectile
 {
-    private Vector2 startPos;
-    public int maxDistance;
-
     /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: Start
+    -- FUNCTION:        OnTriggerEnter2D
     --
-    -- DATE: March 9, 2016
+    -- DATE:            March 9, 2016
     --
-    -- REVISIONS: None
+    -- REVISIONS:       March 18, 2016
+    --                      Edited burn script
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER:        Hank Lo
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER:      Hank Lo, Allen Tsang
     --
-    -- INTERFACE: void Start(void)
-    --
-    -- RETURNS: void
-    --
-    -- NOTES:
-    -- Function that's called when the projectile is created - this function initializes the start position of the projectile
-    ---------------------------------------------------------------------------------------------------------------------*/
-    void Start()
-    {
-        startPos = transform.position;
-    }
-
-    /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: Update
-    --
-    -- DATE: March 9, 2016
-    --
-    -- REVISIONS: None
-    --
-    -- DESIGNER: Hank Lo
-    --
-    -- PROGRAMMER: Hank Lo
-    --
-    -- INTERFACE: void Update(void)
-    --
-    -- RETURNS: void
-    --
-    -- NOTES:
-    -- Function that's called every frame - it checks if the projectile has traveled the max distance before removing it
-    -- from the scene
-    ---------------------------------------------------------------------------------------------------------------------*/
-    void Update()
-    {
-        if (Vector2.Distance(startPos, transform.position) >= maxDistance)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: OnTriggerEnter2D
-    --
-    -- DATE: March 9, 2016
-    --
-    -- REVISIONS: None
-    --
-    -- DESIGNER: Hank Lo
-    --
-    -- PROGRAMMER: Hank Lo
-    --
-    -- INTERFACE: protected override void OnTriggerEnter2D(Collider2D other)
+    -- INTERFACE:       protected override void OnTriggerEnter2D(Collider2D other)
     --                  Collider2D other: The collider of the object that we hit
     --
     -- RETURNS: void
@@ -102,7 +49,8 @@ public class Fireball : Projectile
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         base.OnTriggerEnter2D(other);
-        if (other.gameObject.GetComponent<BaseClass>() != null && teamID != other.gameObject.GetComponent<BaseClass>().team)
+        var target = other.gameObject.GetComponent<BaseClass>();
+        if (target != null && teamID != target.team)
         {
             var burn = other.gameObject.GetComponent<Burn>();
             if (burn == null)
@@ -111,7 +59,7 @@ public class Fireball : Projectile
             }
             else
             {
-                burn.duration = 600;
+                burn.duration = 150;
             }
         }
     }
