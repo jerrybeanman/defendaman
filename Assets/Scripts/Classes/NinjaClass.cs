@@ -31,6 +31,13 @@ public class NinjaClass : MeleeClass
         base.Start();
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
 
+        attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
+        attack.GetComponent<BoxCollider2D>().enabled = false;
+        attack.GetComponent<BasicSword>().playerID = playerID;
+        attack.GetComponent<BasicSword>().teamID = team;
+        attack.GetComponent<BasicSword>().damage = ClassStat.AtkPower;
+        attack.transform.parent = transform;
+
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
     }
@@ -55,14 +62,8 @@ public class NinjaClass : MeleeClass
     {
         base.basicAttack(dir);
 
-        attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
-        attack.GetComponent<BasicSword>().playerID = playerID;
-        attack.GetComponent<BasicSword>().teamID = team;
-        attack.GetComponent<BasicSword>().damage = ClassStat.AtkPower;
-        attack.transform.parent = transform;
-
         StartAttackAnimation();
-        Invoke("finishAttack", cooldowns[0]);
+        //Invoke("finishAttack", cooldowns[0]);
         Invoke("EndAttackAnimation", cooldowns[0] / 2);
 
         return cooldowns[0];
@@ -99,10 +100,5 @@ public class NinjaClass : MeleeClass
         }
 
         return cooldowns[1];
-    }
-
-    private void finishAttack()
-    {
-        Destroy(attack.gameObject);
     }
 }
