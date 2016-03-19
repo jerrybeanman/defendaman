@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour {
         GameData.GameState = GameState.Dying;
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
+        GameData.MyPlayer = null;
     }
 
     public void StartGame(int seed)
@@ -226,5 +227,32 @@ public class GameManager : MonoBehaviour {
         GameData.GameState = GameState.Lost;
         Debug.Log("You have lost");
     }
-    
+
+    void OnGUI()
+    {
+        switch (GameData.GameState)
+        {
+            case GameState.Won:
+                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!");
+                Invoke("ReturnToMenu", 2f);
+                break;
+            case GameState.Lost:
+                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!");
+                Invoke("ReturnToMenu", 2f);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void ReturnToMenu()
+    {
+        NetworkingManager.ClearSubscriptions();
+        GameData.LobbyData.Clear();
+        GameData.PlayerPosition.Clear();
+        GameData.GameStart = false;
+        GameData.TeamSpawnPoints.Clear();
+        Destroy(instance);
+        Application.LoadLevel("MenuScene");
+    }
 }

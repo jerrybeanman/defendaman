@@ -28,6 +28,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat);
         transform.rotation = rotation;
         GameData.PlayerPosition[playerID] = position;
+        lastPosition = transform.position;
     }
 
     bool pos_changed(float newX, float newY)
