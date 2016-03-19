@@ -11,15 +11,10 @@ public class Building:MonoBehaviour {
 	public int X {get; set;}
 	public int Y {get;  set;}
 	public float health = 100;
-	GameObject building;
 
 	public int team;
+	
 
-	public GameObject progress_bar;
-	public Sprite ally_completion_progress_bar;
-	public Sprite enemy_completion_progress_bar;
-
-	private SpriteRenderer spriteRenderer;
 
 	public Building(int x, int y)
 	{
@@ -30,10 +25,10 @@ public class Building:MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		if(team == GameManager.instance.player.GetComponent<BaseClass>().team)
-			progress_bar.GetComponent<SpriteRenderer>().sprite = ally_completion_progress_bar;
+		/*if(team == GameManager.instance.player.GetComponent<BaseClass>().team)
+			gameObject.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
 		else
-			progress_bar.GetComponent<SpriteRenderer>().sprite = enemy_completion_progress_bar;
+			gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);*/
 		notifycreation();
 	}
 

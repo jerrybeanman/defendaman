@@ -329,8 +329,9 @@ public class HUD_Manager : MonoBehaviour {
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
 
+
 			// Set the color transparency 
-			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.3f);
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
