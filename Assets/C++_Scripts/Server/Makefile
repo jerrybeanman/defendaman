@@ -1,24 +1,28 @@
 
-# Makefile 
-# Jerry Jia
+# Makefile
+# Jerry Jia, Tyler Trepanier-Bracken
 
-CC=g++
-NAME=Server		
-FLAGS=-Wall
-S_FILES= Server.cpp ServerTCP.cpp main.cpp
+CC= g++
+NAME= Server
+FLAGS= -std=c++11 -Wall -ggdb
+LIBRARIES = -pthread
+S_FILES= Server.cpp ServerTCP.cpp ServerUDP.cpp main.cpp ../Unity_Plugin/json11.cpp
 OBJECT_FILES=$(S_FILES:.cpp=.o)
 META_FILES=$(S_FILES:.cpp=.cpp.meta)
 
 
-$(NAME): 	$(OBJECT_FILES)
-		$(CC) $(FLAGS) -o $(NAME) $(OBJECT_FILES) 
+all:
+		$(CC) $(FLAGS) $(LIBRARIES) -o $(NAME) $(S_FILES)
+
+udptest:
+	 $(CC) $(FLAGS) -DUDPTEST $(LIBRARIES) -o $(NAME) $(S_FILES)
 
 debug:
-		$(CC) $(FLAGS) -g -o $(NAME) $(OBJECT_FILES) 
+		$(CC) $(FLAGS) -g -o $(NAME) $(OBJECT_FILES)
 clean:
 		rm $(OBJECT_FILES) $(NAME) $(META_FILES) Makefile.meta
 
 remake:
-		make cleanclera
+		make clean
 		clear
 		make

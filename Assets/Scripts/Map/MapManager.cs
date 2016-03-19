@@ -48,6 +48,25 @@ public class MapManager : MonoBehaviour {
     public List<Sprite> _mapSolids;
     public List<Sprite> _mapWalkable;
 
+	//variables used for buildings
+	public List<GameObject> buildingsCreated;
+	public GameObject buildObject;
+	public GameObject buildWall;
+	public GameObject buildOverlay;
+	public List<Sprite> overlayTemp;
+	public List<Vector2>  wallList;
+	public List<Vector2>  ArmoryList;
+	Vector3 lastFramePosition;
+	Vector3 dragStartPosition;
+	int overlayFlag = 1;
+
+    // Object Pooling
+    private GameObject[] _pooledObjects;
+    public Camera mainCamera;
+    public Vector3 cameraPosition;
+    public static float cameraDistance;
+    public float frustumHeight, frustumWidth;
+
     //
     // METHOD DEFINITIONS
     //
@@ -58,9 +77,117 @@ public class MapManager : MonoBehaviour {
     }
 
     /**
-	 * Update is called once per frame.
+     * Find the camera distance used to calculate the camera view frustum.
+     * Create the list of pooled objects and deactivate them.
+     * Perform initial object pool check.
+     */
+    private void instantiate_pool() {
+        cameraDistance = -mainCamera.orthographicSize;
+        // Find all objects with the tag "Tile" and add them to the arraylist.
+        _pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
+        print("pooledObjects size: " + _pooledObjects.Length);
+        
+
+        // Deactivate all game objects on start.
+        for (int i = 0; i < _pooledObjects.Length; i++) {
+            _pooledObjects[i].SetActive(false);
+        }
+
+        // Initial check to see which game objects are in camera view.
+        check_object_pool();
+    }
+
+    /**
+	 * Utilizes object pooling to only render map tiles which are within the camera's
+	 * view frustum.
+	 * 
+	 * Iterate through the list of pooled objects. If the object is in the camera, set it to 
+	 * active. Else, set it to unactive.
+	 */
+    private void check_object_pool() {
+		if (GameData.GameStart) {
+	        cameraPosition = mainCamera.GetComponent<Transform>().position;
+	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+	        frustumWidth = frustumHeight * mainCamera.aspect;
+
+	        if (_pooledObjects != null) {
+	            for (int i = 0; i < _pooledObjects.Length; i++) {
+	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
+	                    _pooledObjects[i].SetActive(true);
+	                } else {
+	                    _pooledObjects[i].SetActive(false);
+	                }
+	            }
+	        }
+		}
+    }
+
+    /**
+	 * Check the object pool in camera view and update their activation every second. Check if user wants to place a building
 	 */
     void Update() {
+        check_object_pool();
+		if(overlayFlag==1)
+		{
+			buildOverlay.SetActive(false);
+		}
+		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		currFramePosition.z=0;
+		
+		if(Input.GetMouseButton(2)){
+			buildOverlay.GetComponent<SpriteRenderer>().sprite =overlayTemp[0];
+			int tempx=(int)currFramePosition.x;
+			int tempy=(int)currFramePosition.y;
+			Debug.Log("X: "  + tempx +"Y:" + tempy);
+			overlayFlag =0 ;
+			buildOverlay.SetActive(true);
+			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+			buildOverlay.transform.position = cursorPosition;
+			
+		}
+		if(Input.GetMouseButtonUp(2)){
+			int tempx=(int)currFramePosition.x;
+			int tempy=(int)currFramePosition.y;
+			Vector3 buildingLocation = new Vector3(tempx,tempy,-10);
+			if(validBuilding(buildingLocation)){
+				GameObject building = (GameObject)Instantiate(buildObject, buildingLocation, Quaternion.identity);
+				building.GetComponent<Building>().team=GameManager.instance.player.GetComponent<BaseClass>().team;
+				building.GetComponent<Building>().X=tempx;
+				building.GetComponent<Building>().Y=tempy;
+				ArmoryList.Add (buildingLocation);
+				buildingsCreated.Add(building);
+			}
+			overlayFlag =1 ;
+		}
+		if(Input.GetKey(KeyCode.T)){
+			buildOverlay.GetComponent<SpriteRenderer>().sprite =overlayTemp[2];
+			int tempx=(int)currFramePosition.x;
+			int tempy=(int)currFramePosition.y;
+			Debug.Log("X: "  + tempx +"Y:" + tempy);
+			overlayFlag =0 ;
+			buildOverlay.SetActive(true);
+			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+			buildOverlay.transform.position = cursorPosition;
+			
+		}
+
+		if(Input.GetKeyUp(KeyCode.T)){
+			int tempx=(int)currFramePosition.x;
+			int tempy=(int)currFramePosition.y;
+			Vector3 buildingLocation = new Vector3(tempx,tempy,-10);
+			if(validWall(buildingLocation)){
+				GameObject building = (GameObject)Instantiate(buildWall, buildingLocation, Quaternion.identity);
+				building.GetComponent<Building>().team=GameManager.instance.player.GetComponent<BaseClass>().team;
+				building.GetComponent<Building>().X=tempx;
+				building.GetComponent<Building>().Y=tempy;
+				wallList.Add (buildingLocation);
+				buildingsCreated.Add(building);
+			}
+			overlayFlag =1 ;
+		}
     }
 
     /**
@@ -96,6 +223,56 @@ public class MapManager : MonoBehaviour {
         return _map;
     }
 
+	//Check if the building cana be placed based on distance from player and existing buildings
+	private bool validBuilding(Vector2 building){
+		//Check if existing armory object is in the way
+		foreach(var armory in ArmoryList){
+			float distance=Vector2.Distance (building,armory);
+			if(Mathf.Abs (distance)< 8)
+				return false;
+		}
+		//Check if any walls are conflicting with desired placing
+		foreach(var wall in wallList){
+			float distance=Vector2.Distance (building,wall);
+			if(Mathf.Abs (distance)< 4)
+				return false;
+		}
+
+		//Check if player isn't too far to place building
+		Vector2 player = GameManager.instance.player.transform.position;
+		float distance2=Vector3.Distance(player, building);
+		if(distance2>10){
+			return false;
+		}
+		return true;
+	}
+	private bool validWall(Vector2 building){
+
+		//Check if any walls are conflicting with desired placing
+		foreach(var wall in wallList){
+			float distance=Vector2.Distance (building,wall);
+			if(Mathf.Abs (distance)< 4)
+				return false;
+		}
+		//Check if existing armory object is in the way
+		foreach(var armory in ArmoryList){
+			float distance=Vector2.Distance (building,armory);
+			if(Mathf.Abs (distance)< 6)
+				return false;
+		}
+
+
+		Vector2 player = GameManager.instance.player.transform.position;
+		float distance2=Vector3.Distance(player, building);
+		if(distance2>5){
+			return false;
+		}
+		return true;
+	}
+
+
+
+
     /* Serialize 2D int array into JSON string. */
     private string parse_int_map(int[][] map) {
         return _string_map;
@@ -113,6 +290,7 @@ public class MapManager : MonoBehaviour {
             case EventType.CREATE_MAP:
                 create_map(message);
                 draw_map();
+                instantiate_pool();
                 break;
             case EventType.RESOUCE_TAKEN:
                 break;
@@ -148,7 +326,7 @@ public class MapManager : MonoBehaviour {
         // Thomas/Jaegar's map generation function goes here
         // draw(map);
     }
-
+   
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: placeSprites
     --
@@ -177,14 +355,15 @@ public class MapManager : MonoBehaviour {
             for (int y = 0; y < _mapHeight; y++) {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
-                    _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[ _map[x, y] % _mapSolids.Count];
-                    Instantiate(_obstacle, new Vector3(x, y), Quaternion.identity);
+                    _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[_map[x, y] % _mapSolids.Count];
+                    Instantiate(_obstacle, new Vector3(x, y, -1), Quaternion.identity);
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
+                if (_map[x, y] >= 200 && _map[x, y] <= 201) {
+                    GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
+                }
             }
     }
-
-
 }

@@ -1,0 +1,287 @@
+fileFormatVersion: 2
+guid: d8e0e8bc7828f704e95e590704268db8
+timeCreated: 1457513340
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: magegirl_magicbeam_0
+    21300002: magegirl_magicbeam_1
+    21300004: magegirl_magicbeam_2
+    21300006: magegirl_magicbeam_3
+    21300008: magegirl_magicbeam_4
+    21300010: magegirl_magicbeam_5
+    21300012: magegirl_magicbeam_6
+    21300014: magegirl_magicbeam_7
+    21300016: magegirl_magicbeam_8
+    21300018: magegirl_magicbeam_9
+    21300020: magegirl_magicbeam_10
+    21300022: magegirl_magicbeam_11
+    21300024: magegirl_magicbeam_12
+    21300026: magegirl_magicbeam_13
+    21300028: magegirl_magicbeam_14
+    21300030: magegirl_magicbeam_15
+    21300032: magegirl_magicbeam_16
+    21300034: magegirl_magicbeam_17
+    21300036: magegirl_magicbeam_18
+    21300038: magegirl_magicbeam_19
+    21300040: magegirl_magicbeam_20
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: magegirl_magicbeam_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 900
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_1
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 900
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_2
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 900
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 750
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_4
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 750
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_5
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 750
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 600
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_7
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 600
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_8
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 600
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 450
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_10
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 450
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_11
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 450
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 300
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_13
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 300
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_14
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 300
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 150
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_16
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 150
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_17
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 150
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_19
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 0
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: magegirl_magicbeam_20
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 0
+        width: 471.666656
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
