@@ -22,11 +22,19 @@ public class GunnerClass : RangedClass
     GunnerClass() {
         this._className = "Gunner";
         this._classDescription = "Boom - Headshot";
+<<<<<<< HEAD
         this._classStat.MaxHp = 150;
         this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
         this._classStat.MoveSpeed = 15;
+=======
+        this._classStat.MaxHp = 125;
+        this._classStat.CurrentHp = this._classStat.MaxHp;
+
+        //placeholder numbers
+        this._classStat.MoveSpeed = 10;
+>>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
         inSpecial = false;
@@ -106,6 +114,12 @@ public class GunnerClass : RangedClass
             {
                 inSpecial = false;
                 fire();
+<<<<<<< HEAD
+=======
+                var member = new List<Pair<string, string>>();
+                member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+                NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
+>>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
             }
             if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
             {
@@ -135,12 +149,19 @@ public class GunnerClass : RangedClass
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
         attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
+<<<<<<< HEAD
 
         var member = new List<Pair<string, string>>();
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));
         NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
     }
 
+=======
+        EndAttackAnimation();
+        CancelInvoke("EndAttackAnimation");
+    }
+
+>>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
     void fireFromServer(JSONClass packet)
     {
         if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)

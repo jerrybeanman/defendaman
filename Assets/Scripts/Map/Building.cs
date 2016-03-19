@@ -6,6 +6,9 @@ public class Building:MonoBehaviour {
 	
 	public enum BuildingType{Empty,Armory };
 	
+	public enum BuildingType{Empty,Armory, Wall};
+
+	public BuildingType type;
 	public int X {get; set;}
 	public int Y {get;  set;}
 	public float health = 100;

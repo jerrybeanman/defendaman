@@ -7,27 +7,106 @@ using SimpleJSON;
 using System.Collections.Generic;
 
 public class HUD_Manager : MonoBehaviour {
-	#region Subclasses
+	#region Classes
+	/**
+	 *  Indicates the player health on bottom left corner of HUD
+	 */
 	[System.Serializable]
-	public class PlayerProfile 	{ public Image Health;						public Animator HealthAnimator; 	}
+	public class PlayerProfile 	
+	{
+		public Image 	Health;						
+		public Animator HealthAnimator; 	
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
 	[System.Serializable]	
-	public class AllyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
+	public class AllyKing 		
+	{ 
+		public Image 	Health;						
+		public Animator HealthAnimator; 	
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
 	[System.Serializable]
-	public class EnemyKing 		{ public Image Health;						public Animator HealthAnimator; 	}
+	public class EnemyKing 		
+	{ 
+		public Image 	Health;						
+		public Animator HealthAnimator; 	
+	}
+
+	/**
+	 *  Indicates current currency amount
+	 */
 	[System.Serializable]
-	public class Currency 		{ public Text  Amount;						public Animator CurrencyAnimator; 	}
+	public class Currency 		
+	{ 
+		public Text  	Amount;						
+		public Animator CurrencyAnimator; 	
+	}
+
+	/**
+	 *  Indicates main skill bar
+	 */
 	[System.Serializable]
-	public class MainSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
+	public class MainSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates sub skill bar
+	 */
 	[System.Serializable]
-	public class SubSkill 		{ public Image ProgressBar;					public float CoolDown; 				}
+	public class SubSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates passive skill bar
+	 */
 	[System.Serializable]
-	public class PassiveSkill 	{ public Image ProgressBar;					public float CoolDown; 				}
+	public class PassiveSkill 	
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates the chat panel
+	 */
 	[System.Serializable]
-	public class Chat			{ public InputField input;					public GameObject Container; 	
-								  public GameObject AllyMessage;			public GameObject EnemyMessage; 	}
+	public class Chat			
+	{ 
+		// Input field 
+		public InputField input;
+		// Container box for chat messages
+		public GameObject Container; 	
+		public GameObject AllyMessage;			
+		public GameObject EnemyMessage; 	
+	}
+	/**
+	 * Items that can be built in the shop
+	 */
 	[System.Serializable]
-	public class Shop			{ public GameObject MainPanel;				public List<GameObject> StructuresList;
-								  public List<GameObject> ConsumablesList;										}
+	public class Buildable		
+	{ 
+		public Button Option;						
+		public GameObject Building;			
+	}
+	/**
+	 *  Shop panel
+	 */
+	[System.Serializable]
+	public class Shop			
+	{ 
+		public GameObject 		MainPanel;
+		// Purchasable items
+		public List<Buildable>	Items;	
+		// Currently selected item
+		public Buildable		Selected = null;										
+	}										
 	#endregion
 
 	// Singleton object
@@ -42,98 +121,375 @@ public class HUD_Manager : MonoBehaviour {
 	public SubSkill				subSkill;
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
-	public Shop					shop;		
+	public Shop					shop;	
+
+	// Need to reference MapManager to manipulate its building lists
+	public MapManager			mapManager;
+
+	// Where the mouse is currently at
+	private Vector3 			currFramePosition;
+
+	// Indicates wheter or not chat is currently selected 
+	private bool InputSelected = false;
+
+	// Indicates if an item has been bought or not
+	bool ItemBought = false;
 
 	// Singleton pattern
 	void Awake()
 	{
-		if (instance == null)				//Check if instance already exists
-			instance = this;				//if not, set instance to this
-		else if (instance != this)			//If instance already exists and it's not this:
-			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
-		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+		//Check if instance already exists
+		if (instance == null)				
+			//if not, set instance to this
+			instance = this;				
+		//If instance already exists and it's not this:
+		else if (instance != this)			
+			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+			Destroy(gameObject);   			
+		//Sets this to not be destroyed when reloading scene
+		DontDestroyOnLoad(gameObject);		
 	}
 
+	// Called on start of game
 	void Start()
 	{
 		GameData.GameStart = true;
+
+		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
 	}
 
-	bool InputSelected = false;
 
-	// For rechargin skills whenever they are used
+
+	// Called once per frame
 	void Update()
 	{
+		// If an item has been bought in the shop menu
+		if(ItemBought)
+		{
+			// Have the item hover over our mouse 
+			CheckBuildingPlacement(shop.Selected.Building);
+
+			// If the left mouse button is clicked while we have the item hovering
+			if(Input.GetKeyDown(KeyCode.Mouse0))
+			{
+				// Attempt to place the building onto of where our mouse is at
+				if(PlaceBuilding(shop.Selected.Building))
+					// If success, we deselect the item in our shop
+					UnHighlightItem();
+			}
+		}
+
+		// Check for any inputs for chat
 		CheckChatAction();
+
+		// Check if skills are used or not
 		CheckSkillStatus();
+
+		// Check for events to open the shop menu
 		CheckShopOption();
 	}
 
-
+	/*----------------------------------------------------------------------------
+    --	Check for any events triggered in the chat box
+    --
+    --	Interface:  void CheckChatAction()
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void CheckChatAction()
 	{
+		// If return key has been pressed
 		if(Input.GetKeyDown(KeyCode.Return))
 		{
+
+			// See if the chat window is currently open
 			if(!chat.input.IsInteractable())
 			{
+				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
 				chat.input.ActivateInputField();
 			}
 			else
 			{
-				// Send the packet, with Team ID and username
+				// Send the packet, with Team ID, user name, and the message input
 				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 				packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
 				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
-				
-				//UpdateChat(0, "Jerry", chat.input.text);
+
+				// Clear out the chat window
 				chat.input.text = "";
+
+				// Close the window
 				chat.input.interactable = false;
 			}
 		}
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Check if main and sub skills need to be recharged
+    --
+    --	Interface:  void CheckSkillStatus()
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void CheckSkillStatus()
 	{
+		// If main skill bar is below full
 		if(mainSkill.ProgressBar.fillAmount  < 1)
 		{
+			// Char it up slowly corresponding to the cool down timer
 			mainSkill.ProgressBar.fillAmount += Time.deltaTime / mainSkill.CoolDown;
 			mainSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
 		}
-		
+
+		// If sub skill bar is below full
 		if(subSkill.ProgressBar.fillAmount < 1)
 		{
+			// Char it up slowly corresponding to the cool down timer
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
 		}
 	}
+
+	/*----------------------------------------------------------------------------
+    --	Check for keyboard event on key "m" to open shop menu
+    --
+    --	Interface:  void CheckShopOption()
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void CheckShopOption()
 	{
-		if(!chat.input.IsInteractable())
+		if(Input.GetKeyDown(KeyCode.M))
 		{
-			if(Input.GetKeyDown(KeyCode.M))
-			{
-				DisplayShop();
-			}
+			DisplayShop();
 		}
-
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Called by the OnClick function of the panle items in the shop menu,
+    --	highlight and indicates the currently selected item
+    --
+    --	Interface:  public void SelectItem(int i)
+    --				[i] The item to select
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	public void SelectItem(int i)
+	{
+		// If nothing is currently selected
+		if(shop.Selected.Option == null)
+		{
+			// Highlight and select that item
+			HighlightItem(i);
+		}else
+		// If an selected item has been selected
+		if(shop.Selected.Option == shop.Items[i].Option)
+		{
+			// Unselect and take off the highlight
+			UnHighlightItem();
+		}
+		// If selecting another item
+		else
+		{
+			// Unselect the previous item
+			UnHighlightItem();
+			// Hightlight and select that item
+			HighlightItem(i);
+		}
+	}
+
+	/*----------------------------------------------------------------------------
+    --	Called by the OnClick function on the buy button in the shop menu
+    --	Interface:  public void Buy()
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	public void Buy()
+	{
+		// If nothing is currently selected, do nothing 
+		if(shop.Selected.Option != null)
+		{
+			// Indicates that an item has been bought
+			ItemBought = true;
+
+			// Find where the mouse position is
+			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
+
+			// Instantitate the selected building at where the mouse is 
+			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+		}
+	
+	}
+
+	
+	/*----------------------------------------------------------------------------
+    --	Called when ItemBought is set to true, have the instantiated building follow
+    --  where the mouse cursor
+	--	Interface:  private void CheckBuildingPlacement(GameObject buildings)
+	--					[building] building that will follow the mouse 
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	private void CheckBuildingPlacement(GameObject buildings)
+	{
+		// Get our mouse position
+		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		int tempx=(int)currFramePosition.x;
+		int tempy=(int)currFramePosition.y;
+		currFramePosition.z=0;		
+		Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+
+		// have the building hover with the mouse by changing its transform 
+		buildings.transform.position = cursorPosition;
+	}
+
+	/*----------------------------------------------------------------------------
+    --	Attempt to place a building to where the mouse is at when an left click 
+    --  event is triggered. Assigns the corresponding attributes to the Building
+    --  component.
+	--	Interface:  private bool PlaceBuilding(GameObject building)
+    --					[building] Building that will be placed 
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	private bool PlaceBuilding(GameObject building)
+	{
+		// Retrieve the Building component attached with the game object
+		Building bComponent = building.GetComponent<Building>();
+
+		// Construct a vector of where the Gameobject will be placed 
+		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
+
+		// Check if it is a valid location to place the building 
+		if(!CheckValidLocation(buildingLocation))
+			return false;
+
+		// Indicate that the item has been successfully bought and placed 
+		ItemBought = false;
+
+		// Assign team attribute so ally cannot damage the building 
+		bComponent.team=GameManager.instance.player.GetComponent<BaseClass>().team;
+		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
+		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
+
+		// Add selected building to the list of created buildings
+		mapManager.buildingsCreated.Add(building);
+
+		// Add selected building to either wallList or Armory list depending the tag
+		if(bComponent.type == Building.BuildingType.Wall)
+			mapManager.wallList.Add(buildingLocation); 
+		else
+			mapManager.ArmoryList.Add(buildingLocation);
+		return true;
+	}
+
+	/*----------------------------------------------------------------------------
+    --	Highlight and select an item in the shop menu
+	--	Interface:  void HighlightItem(int i)
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	void HighlightItem(int i)
+	{
+		shop.Selected.Option = shop.Items[i].Option;
+		shop.Selected.Building = shop.Items[i].Building;
+		shop.Selected.Option.image.color = Color.green;
+	}
+
+	
+	/*----------------------------------------------------------------------------
+    --	UnHighlight and deselect an item in the shop menu
+	--	Interface:  void HighlightItem(int i)
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	void UnHighlightItem()
+	{
+		// Unselect the current selected item
+		shop.Selected.Option.image.color = Color.white;
+		shop.Selected.Building = null;
+		shop.Selected.Option = null;
+	}
+
+	/*----------------------------------------------------------------------------
+    --	Check if the building cana be placed based on distance from player and 
+    --	existing building
+	--	Interface:  void HighlightItem(int i)
+    --	
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	private bool CheckValidLocation(Vector2 building){
+		//Check if existing armory object is in the way
+		foreach(var armory in mapManager.ArmoryList)
+		{
+			float distance=Vector2.Distance (building,armory);
+			if(Mathf.Abs (distance) < 8)
+				return false;
+		}
+		//Check if any walls are conflicting with desired placing
+		foreach(var wall in mapManager.wallList)
+		{
+			float distance=Vector2.Distance (building,wall);
+			if(Mathf.Abs (distance)< 4)
+				return false;
+		}
+		
+		//Check if player isn't too far to place building
+		Vector2 player = GameManager.instance.player.transform.position;
+		float distance_from_player = Vector3.Distance(player, building);
+		if(distance_from_player > 10)
+			return false;
+
+		return true;
+	}
+
+	/*----------------------------------------------------------------------------
+    --	Display the shop menu
+	--	Interface:  public void DisplayShop()
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	public void DisplayShop()
 	{
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
 	}
-
+	
+	/*----------------------------------------------------------------------------
+    --  Wrapper for NetworkingManager.TCP_Send to use for chat system
+	--	Interface: private static void Send(string packet)
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	private static void Send(string packet)
 	{
 		if(NetworkingManager.TCP_Send(packet, 256) < 0)
 			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
 	}
 
+	/*----------------------------------------------------------------------------
+    --  CallBack function that will subscribe to NetworkingManager to recieve
+    --  TCP chat messages
+	--	Interface: void UpdateChatCallBack(JSONClass data)
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void UpdateChatCallBack(JSONClass data)
 	{
 
@@ -143,14 +499,27 @@ public class HUD_Manager : MonoBehaviour {
 
 		UpdateChat(team, username, message);
 	}
-	
+
+	/*----------------------------------------------------------------------------
+    --  Update the chat panel with messages from NetworkingManger. Display will be 
+    --  shown differently depending on the team that sends the message
+	--	Interface: public void UpdateChat(int team, string username, string message)
+	--					[team] 		The team that sent the message
+	--					[username] 	User name of the player
+	--					[message]	Content of the message
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	public void UpdateChat(int team, string username, string message)
 	{
+		// For styling
 		username = "[" + username + "]:";
 		GameObject childObject;
 		// Ally Message
 		if(team == GameData.MyPlayer.TeamID)
 		{
+			// Assign corresponding values 
 			foreach(Transform child in chat.AllyMessage.transform)
 			{
 				if(child.name == "Name")
@@ -160,8 +529,11 @@ public class HUD_Manager : MonoBehaviour {
 			}
 			childObject = Instantiate (chat.AllyMessage) as GameObject;								//Instantitate arrow
 			childObject.transform.SetParent (chat.Container.transform, false);						//Make arrow a child object of InputHistory
-		}else
+		}
+		// Enemy Message
+		else
 		{
+			// Assign corresponding values 
 			foreach(Transform child in chat.EnemyMessage.transform)
 			{
 				if(child.name == "Name")

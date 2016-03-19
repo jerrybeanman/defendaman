@@ -9,7 +9,6 @@ public abstract class Trigger : MonoBehaviour
     public int playerID;
     public int teamID;
     public float damage;
-    public bool IsDestroyable = true;
     public static int currentTriggerID = 1;
     public int triggerID;
 

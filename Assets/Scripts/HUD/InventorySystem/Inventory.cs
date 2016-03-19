@@ -5,15 +5,21 @@ using System.Collections.Generic;
 
 static class Constants
 {
-    public const int SLOT_AMOUNT        = 4;
-    public const string RESOURCE_TYPE   = "Resource";
-    public const string WEAPON_TYPE     = "Weapon";
-    public const string CONSUMABLE_TYPE = "Consumable";
-    public const int WEAPON_SLOT        = 0;
-    public const string GOLD_RES        = "Gold";
-    public const string DAMAGE_STAT     = "damage";
-    public const string ARMOR_STAT      = "armor";
-
+    public const int SLOT_AMOUNT            = 4;
+    public const string WORLD_ITEM_TAG      = "WorldItem";
+    public const string INV_ITEM_TAG        = "InventoryItem";
+    public const string PLAYER_TAG          = "Player";
+    public const string RESOURCE_TYPE       = "Resource";
+    public const string WEAPON_TYPE         = "Weapon";
+    public const string CONSUMABLE_TYPE     = "Consumable";
+    public const int WEAPON_SLOT            = 0;
+    public const string GOLD_RES            = "Gold";
+    public const string DAMAGE_STAT         = "damage";
+    public const string ARMOR_STAT          = "armor";
+    public const int NOT_APPLICABLE         = -1;
+    public const string INCOMPATIBLE_MSG    = "Incompatible weapon";
+    public const string NO_EQUIPPED         = "No weapon equipped";
+    public const string INV_FULL            = "Inventory is full";
 }
 
 /*-----------------------------------------------------------------------------
@@ -36,6 +42,8 @@ public class Inventory : MonoBehaviour
 {
     GameObject _inventory_panel;
     GameObject _slot_panel;
+    GameObject _inv_full_text;
+
     ItemManager _item_manager;
     public GameObject inventory_slot;
     public GameObject inventory_item;
@@ -61,6 +69,9 @@ public class Inventory : MonoBehaviour
         _item_manager = GetComponent<ItemManager>();
         _inventory_panel = GameObject.Find("Inventory Panel");
         _slot_panel = _inventory_panel.transform.FindChild("Slot Panel").gameObject;
+        _inv_full_text = _inventory_panel.transform.FindChild("Inventory Full").gameObject;
+        _inv_full_text.SetActive(false);
+
         for (int i = 0; i < Constants.SLOT_AMOUNT; i++)
         {
             inventory_item_list.Add(new Item());
@@ -72,12 +83,12 @@ public class Inventory : MonoBehaviour
             slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
         // Adding initial items to the inventory (testing)
-        AddItem(0);
+        AddItem(1);
         AddItem(2);
         AddItem(2, 200);
-        AddItem(3);
+        AddItem(3, 10);
+        AddItem(0);
     }
-
 
     /* 
      * Takes an item id and the amount and adds an Item object into an open slot in the inventory or stacks 
@@ -92,15 +103,6 @@ public class Inventory : MonoBehaviour
         if (_item_to_add.type == Constants.RESOURCE_TYPE)
         {
             GameData.MyPlayer.Resources[_item_to_add.title] += amt;
-            /* // Uncessary since all the resources will be initialized in the dictionary to 0
-            if (GameData.MyPlayer.Resources.ContainsKey(_item_to_add.title))
-            {
-                GameData.MyPlayer.Resources[_item_to_add.title] += amt;
-            }
-            else
-            {
-                GameData.MyPlayer.Resources.Add(_item_to_add.title, amt);
-            }*/
         }
 
         if (_item_to_add.stackable && (item_idx = check_if_item_in_inventory(_item_to_add)) != -1)
@@ -143,30 +145,39 @@ public class Inventory : MonoBehaviour
 
     public void UseConsumable(int inv_pos, int amount = 1)
     {
-        // Healing?
-        // int healing_amount = slot_list[inv_pos].transform.GetChild(0).GetComponent<ItemData>().health;
-        // do something with healing amount
+        Item _item = inventory_item_list[inv_pos];
+        int _damage_buff = _item.damage;
+        int _armor_buff = _item.armor;
+        int _healing_amt = _item.health; // Assuming healing and not an increase in max health
+        int _speed_buff = _item.speed;
+        int _duration_of_buff = _item.duration;
+        if (_duration_of_buff == Constants.NOT_APPLICABLE)
+        {
+            // Permament stats boost
+        }
+
+        Debug.Log("item id: " + _item.id);
+        Debug.Log("damage buff: " + _item.damage);
+        Debug.Log("armor buff: " + _item.armor);
+        Debug.Log("healing amt: " + _item.health);
+        Debug.Log("speed buff: " + _item.speed);
+        Debug.Log("duration of buff" + _item.duration);
+
         DestroyInventoryItem(inv_pos, 1);
     }
 
     // Need to do a check before calling ie: make sure GameData.MyPlayer.Resources[resource_type] >= amount
     public void UseResources(string resource_type, int amount)
     {
-        GameObject[] _inventory_items = GameObject.FindGameObjectsWithTag("InventoryItem");
-        ItemData _data;
-        int _resource_slot_pos = -1;
-
-        foreach (GameObject _inventory_item in _inventory_items)
+        for (int i = 0; i < Constants.SLOT_AMOUNT; i++)
         {
-            _data = _inventory_item.GetComponent<ItemData>();
-            if (_data.item.type == Constants.RESOURCE_TYPE && _data.item.title == resource_type)
+            Item _item = inventory_item_list[i];
+            if (_item.type == Constants.RESOURCE_TYPE && _item.title == resource_type)
             {
-                _resource_slot_pos = _data.item_pos;
+                DestroyInventoryItem(i, amount);
                 break;
             }
         }
-
-        DestroyInventoryItem(_resource_slot_pos, amount);
     }
 
     /* 
@@ -198,6 +209,23 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public bool CheckIfItemCanBeAdded(bool stackable, int item_id)
+    {
+        foreach (Item item in inventory_item_list)
+        {
+            if (item.id == -1)
+            {
+                return true;
+            }
+            if (stackable && item.id == item_id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /* 
      * Checks whether the item being added is already present in the inventory.
      * Used to see if an item should be stacked or placed on a new slot when being added
@@ -219,20 +247,51 @@ public class Inventory : MonoBehaviour
      */
     public void UpdateWeaponStats()
     {
+<<<<<<< HEAD
         Debug.Log("Weapon slot id: " + inventory_item_list[Constants.WEAPON_SLOT].id);
+=======
+        string _weapon_error_msg = Constants.NO_EQUIPPED;
+>>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
         int damage = 0;
         int armor = 0;
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
         {
             ItemData _data = slot_list[Constants.WEAPON_SLOT].transform.GetChild(0).GetComponent<ItemData>();
-            damage = _data.item.damage;
-            armor = _data.item.armor;
+            if (_data.item.type != Constants.WEAPON_TYPE)
+            {
+                _weapon_error_msg = Constants.NO_EQUIPPED;
+            } else if (_data.item.classType == (int)GameData.MyPlayer.ClassType ||
+                _data.item.classType == Constants.NOT_APPLICABLE)
+            {
+                _weapon_error_msg = "";
+                damage = _data.item.damage;
+                armor = _data.item.armor;
+            }
+            else
+            {
+                _weapon_error_msg = Constants.INCOMPATIBLE_MSG;
+            }
         }
+        DisplayWeaponError(_weapon_error_msg);
 
         GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
         GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
         Debug.Log("damage: " + GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT]);
         Debug.Log("armor: " + GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT]);
         Debug.Log("gold: " + GameData.MyPlayer.Resources[Constants.GOLD_RES]);
+    }
+
+    public void DisplayWeaponError(string msg)
+    {
+        _inventory_panel.transform.FindChild("Weapon Error").GetComponent<Text>().text = msg;
+    }
+
+    public IEnumerator DisplayInventoryFullError()
+    {
+        Debug.Log("display inv full error called");
+        _inv_full_text.SetActive(true);
+        yield return new WaitForSeconds(3);
+        _inv_full_text.SetActive(false);
+
     }
 }

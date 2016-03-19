@@ -70,6 +70,12 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.LobbyData[8] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 8, TeamID = 2 });
 
         GameData.MyPlayer = GameData.LobbyData[myID];
+<<<<<<< HEAD
+=======
+
+        // Update the stat boost a player gets from a compatible equipped weapon
+        Inventory.instance.UpdateWeaponStats();
+>>>>>>> 5c9116a3271214381adc7902352d853fba2041c4
 
         if (Application.platform != RuntimePlatform.LinuxPlayer)
         {
