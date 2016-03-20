@@ -7,8 +7,8 @@ public abstract class Trigger : MonoBehaviour
 {
     //player ID
     public int playerID;
-    public int teamID;
     public float damage;
+    public int teamID = 0;
     public static int currentTriggerID = 1;
     public int triggerID;
 

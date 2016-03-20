@@ -48,10 +48,17 @@ public class GameManager : MonoBehaviour {
         if (GameData.MyPlayer.PlayerID == playerID)
         {
             HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
-            if (ClassStat.CurrentHp <= 0)
+            if (ClassStat.CurrentHp <= 0) {
                 PlayerDied();
-            else
-                ColourizeScreen.instance.PlayerHurt();
+            } else {
+                if (damage > 0)
+                {
+                    ColourizeScreen.instance.PlayerHurt();
+                } else if (damage < 0)
+                {
+                    ColourizeScreen.instance.PlayerHealed();
+                }
+            }
         }
 
         if (playerID == GameData.AllyKingID)

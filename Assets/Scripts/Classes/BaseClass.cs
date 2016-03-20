@@ -2,6 +2,7 @@
 using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
+using System;
 
 public abstract class BaseClass : MonoBehaviour {
     //Cooldowns
@@ -176,7 +177,16 @@ public abstract class BaseClass : MonoBehaviour {
     [System.Serializable]
 	public class PlayerBaseStat
 	{
-		public float CurrentHp;
+        private float _currentHp;
+		public float CurrentHp {
+            get
+            {
+                return _currentHp;
+            }
+            set {
+                _currentHp = (value > MaxHp) ? MaxHp : value;
+            }
+        }
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
@@ -192,5 +202,33 @@ public abstract class BaseClass : MonoBehaviour {
     public void EndAttackAnimation()
     {
         gameObject.GetComponent<Animator>().SetBool("attacking", false);
+    }
+
+    public void UsePotion(int damage, int armour, int health, int speed, int duration)
+    {
+        if (duration == 0)
+        {
+            ClassStat.AtkPower += damage;
+            ClassStat.Defense += armour;
+            doDamage(-health);
+            ClassStat.CurrentHp += health;
+            ClassStat.MoveSpeed += speed;
+        } else
+        {
+            ClassStat.AtkPower += damage;
+            ClassStat.Defense += armour;
+            doDamage(-health);
+            ClassStat.CurrentHp += health;
+            ClassStat.MoveSpeed += speed;
+            StartCoroutine(Debuff(damage, armour, speed, duration));
+        }
+    }
+
+    IEnumerator Debuff(int damage, int armour, int speed, int duration)
+    {
+        yield return new WaitForSeconds(duration);
+        ClassStat.AtkPower -= damage;
+        ClassStat.Defense -= armour;
+        ClassStat.MoveSpeed -= speed;
     }
 }
