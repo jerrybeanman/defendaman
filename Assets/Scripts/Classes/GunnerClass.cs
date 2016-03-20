@@ -14,6 +14,7 @@ public class GunnerClass : RangedClass
     int inaccuracy = 40;
     Camera mainCamera;
     Camera visionCamera;
+    Camera hiddenCamera;
     float zoomOut = 20;
     float zoomIn;
     bool inSpecial;
@@ -26,7 +27,7 @@ public class GunnerClass : RangedClass
         this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 15;
+        this._classStat.MoveSpeed = 10;
         this._classStat.AtkPower = 20;
         this._classStat.Defense = 5;
         inSpecial = false;
@@ -45,12 +46,15 @@ public class GunnerClass : RangedClass
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         zoomIn = mainCamera.orthographicSize;
         visionCamera = GameObject.Find("Camera FOV").GetComponent<Camera>();
+        hiddenCamera = GameObject.Find("Camera Enemies").GetComponent<Camera>();
         NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
     }
 
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
+        if (inSpecial)
+            return 0f;
         base.basicAttack(dir);
         /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
         var innacY = Random.value * inaccuracy - (inaccuracy / 2);
@@ -98,12 +102,14 @@ public class GunnerClass : RangedClass
                 {
                     mainCamera.orthographicSize += .1f;
                     visionCamera.orthographicSize += .1f;
+                    hiddenCamera.orthographicSize += .1f;
                 }
                 MapManager.cameraDistance = -mainCamera.orthographicSize;
             }
 
             if (inSpecial && !Input.GetMouseButton(1))
             {
+                dir = (gameObject.transform.rotation * Vector3.forward).normalized;
                 inSpecial = false;
                 fire();
                 var member = new List<Pair<string, string>>();
@@ -114,6 +120,7 @@ public class GunnerClass : RangedClass
             {
                 mainCamera.orthographicSize -= .2f;
                 visionCamera.orthographicSize -= .2f;
+                hiddenCamera.orthographicSize -= .2f;
                 MapManager.cameraDistance = -mainCamera.orthographicSize;
             }
         }
@@ -138,8 +145,13 @@ public class GunnerClass : RangedClass
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
         attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
-    }
 
+        var member = new List<Pair<string, string>>();
+        member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+        NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
+        EndAttackAnimation();
+        CancelInvoke("EndAttackAnimation");
+    }
     void fireFromServer(JSONClass packet)
     {
         if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)

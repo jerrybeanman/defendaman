@@ -12,6 +12,9 @@ public class GameStart_Testing : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        //if (GameData.GameStart)
+        //    return;
+
         if (Input.GetKeyDown(KeyCode.Z))
         {
             myID = 1;
@@ -27,7 +30,7 @@ public class GameStart_Testing : MonoBehaviour {
             myID = 3;
             StartOfGame();
         }
-        if (Input.GetKeyDown(KeyCode.V))
+        /*if (Input.GetKeyDown(KeyCode.V))
         {
             myID = 4;
             StartOfGame();
@@ -50,7 +53,7 @@ public class GameStart_Testing : MonoBehaviour {
         {
             myID = 8;
             StartOfGame();
-        }
+        }*/
     }
 
     public void StartOfGame()
@@ -63,13 +66,16 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = 1, TeamID = 1 });
         GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Wizard, PlayerID = 2, TeamID = 2 });
         GameData.LobbyData[3] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 3, TeamID = 1 });
-        GameData.LobbyData[4] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 4, TeamID = 2 });
+        /*GameData.LobbyData[4] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 4, TeamID = 2 });
         GameData.LobbyData[5] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 5, TeamID = 1 });
         GameData.LobbyData[6] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 6, TeamID = 2 });
         GameData.LobbyData[7] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 7, TeamID = 1 });
-        GameData.LobbyData[8] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 8, TeamID = 2 });
+        GameData.LobbyData[8] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 8, TeamID = 2 });*/
 
         GameData.MyPlayer = GameData.LobbyData[myID];
+
+        // Update the stat boost a player gets from a compatible equipped weapon
+        Inventory.instance.UpdateWeaponStats();
 
         if (Application.platform != RuntimePlatform.LinuxPlayer)
         {

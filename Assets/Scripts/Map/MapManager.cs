@@ -126,9 +126,8 @@ public class MapManager : MonoBehaviour {
 	 * Check the object pool in camera view and update their activation every second. Check if user wants to place a building
 	 */
     void Update() {
-        check_object_pool();
-
-    }
+		check_object_pool ();
+	}
 
     /**
 	 * Decode the received message and handle its event.
@@ -249,7 +248,7 @@ public class MapManager : MonoBehaviour {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
                     _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[_map[x, y] % _mapSolids.Count];
-                    Instantiate(_obstacle, new Vector3(x, y, -1), Quaternion.identity);
+                    Instantiate(_obstacle, new Vector3(x, y, -2), Quaternion.identity);
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
