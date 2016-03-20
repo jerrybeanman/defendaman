@@ -323,13 +323,38 @@ public class HUD_Manager : MonoBehaviour {
 			// Find where the mouse position is
 			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
 
+			// Assign team attribute so ally cannot damage the building 
+			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
+
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+
+
+			// Set the color transparency 
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
+
+			// Set the collider to false so it cannot collide with player 
+			SetAllCollidersStatus(shop.Selected.Building, false);
 		}
-	
 	}
 
-	
+
+	/*----------------------------------------------------------------------------
+    --	Called by the OnClick function on the buy button in the shop menu
+    --	Interface:  public void Buy()
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	public void SetAllCollidersStatus (GameObject go, bool active) 
+	{
+		foreach(BoxCollider2D c in go.GetComponents<BoxCollider2D> ())
+		{
+			c.enabled = active;
+		}
+	}
+
+
 	/*----------------------------------------------------------------------------
     --	Called when ItemBought is set to true, have the instantiated building follow
     --  where the mouse cursor
@@ -373,11 +398,14 @@ public class HUD_Manager : MonoBehaviour {
 		if(!CheckValidLocation(buildingLocation))
 			return false;
 
+		// Set the color transparency 
+		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+		
+		SetAllCollidersStatus(shop.Selected.Building, true);
+
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
-		// Assign team attribute so ally cannot damage the building 
-		bComponent.team=GameManager.instance.player.GetComponent<BaseClass>().team;
 		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
 		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
 
