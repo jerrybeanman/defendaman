@@ -63,7 +63,6 @@ public class NinjaClass : MeleeClass
         base.basicAttack(dir);
 
         StartAttackAnimation();
-        //Invoke("finishAttack", cooldowns[0]);
         Invoke("EndAttackAnimation", cooldowns[0] / 2);
 
         return cooldowns[0];

@@ -3,10 +3,13 @@ using System.Collections;
 
 public abstract class Projectile : Trigger
 {
+    private Vector2 startPos;
+    public int maxDistance;
     public int pierce = 0;
-
+    
     protected void Start()
     {
+        startPos = transform.position;
         if (teamID != GameData.MyPlayer.TeamID)
         {
             Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
@@ -15,11 +18,14 @@ public abstract class Projectile : Trigger
         }
     }
 
-    void update()
+    void Update()
     {
-        Debug.Log("Projectile Velocity:  " + gameObject.GetComponent<Rigidbody2D>().velocity);
-
+        if (Vector2.Distance(startPos, transform.position) >= maxDistance)
+        {
+            Destroy(gameObject);
+        }
     }
+
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         //If its a player or an AI, ignore it, otherwise destroy itself
@@ -29,7 +35,8 @@ public abstract class Projectile : Trigger
             return;
         }
 
-        if (other.gameObject.GetComponent<Trigger>() != null && teamID == other.gameObject.GetComponent<Trigger>().teamID)
+        var trigger = other.gameObject.GetComponent<Trigger>();
+        if (trigger != null && (teamID == trigger.teamID || trigger is Area))
         {
             //If it collided with another projectile or a sword
             return;
