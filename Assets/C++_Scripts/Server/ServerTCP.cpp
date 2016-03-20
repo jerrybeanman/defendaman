@@ -262,47 +262,6 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
   }
 }
 
-/**
-*   Takes in a buffer holding the JSON string received from the client and formats the data into
- *   the variables that are passed in to be used in other function
- * @author Martin Minkov
- * @date   2016-03-11
- * @param  buffer     [description]
- * @param  DataType   [description]
- * @param  ID         [description]
- * @param  IDValue    [description]
- * @param  username   [description]
- */
-void ServerTCP::parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username)
-{
-  std::string packet(buffer);
-  std::string error;
-
-  //Check for empty packet
-  if (packet == "[]")
-  {
-      perror("Empty JSON Packet Received");
-  }
-
-  //Parse buffer as JSON array
-  Json json = Json::parse(packet, error).array_items()[0];
-
-  //Parse failed
-  if (!error.empty())
-  {
-    printf("Failed: %s\n", error.c_str());
-    return;
-  }
-  //Parsing data in JSON object
-  DataType  = json["DataType"].int_value();
-  ID        = json["ID"].int_value();
-  IDValue   = json["TeamID"].int_value();         //Check if player is making a team request
-  if (IDValue == 0)
-    IDValue = json["ClassID"].int_value();      //Check if player is making a class request
-
-  username = json["UserName"].string_value();
-
-}
 
 /**
  * Check if all the players within _ClientTable are ready

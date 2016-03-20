@@ -52,8 +52,10 @@ public class Movement : MonoBehaviour
         Vector2 vec = updateCoordinates(angle);
         if(checkEnd(vec, distance))
         {
-            rb2d.MovePosition(rb2d.position + vec * distance);
-
+            //rb2d.MovePosition(rb2d.position + vec * distance);
+            rb2d.position = rb2d.position + vec * distance;
+              //  (rb2d.position + vec * distance);
+            
         }
         //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
         else
@@ -62,7 +64,9 @@ public class Movement : MonoBehaviour
             //return false;
             var layerMask = (1 << 8);
             RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
-            rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+            //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
+
             Debug.Log("Vector Distance: " + hit.distance);
 
         }
@@ -85,6 +89,16 @@ public class Movement : MonoBehaviour
         //Will need to send some info to server every update
         sendToServer(rb2d.position.x, rb2d.position.y);
         GameData.PlayerPosition[GameData.MyPlayer.PlayerID] = transform.position;
+
+        // animation trigger test
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", false);
+        }
     }
     void sendToServer(double x, double y)
     {
@@ -102,7 +116,7 @@ public class Movement : MonoBehaviour
     void absMove()
     {
         Vector2 moving = getMovement(90);
-        rb2d.MovePosition(rb2d.position + moving * speed * Time.fixedDeltaTime);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
 
         //rb2d.MovePosition(rb2d.position + new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed * Time.fixedDeltaTime);
         double looking = getInfo();
@@ -113,7 +127,7 @@ public class Movement : MonoBehaviour
     {
         double looking = getInfo();
         Vector2 moving = getMovement(looking);
-        rb2d.MovePosition(rb2d.position + moving * speed * Time.fixedDeltaTime);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
 
     }

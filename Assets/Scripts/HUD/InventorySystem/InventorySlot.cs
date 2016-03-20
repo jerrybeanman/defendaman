@@ -49,13 +49,16 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         else if (_dropped_item.item_pos != slot_pos)
         {
             Transform item = this.transform.GetChild(0);
+
+            _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
+            _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
+
             item.GetComponent<ItemData>().item_pos = _dropped_item.item_pos;
             item.transform.SetParent(_inventory.slot_list[_dropped_item.item_pos].transform);
             item.transform.position = _inventory.slot_list[_dropped_item.item_pos].transform.position;
             _dropped_item.item_pos = slot_pos;
             _dropped_item.transform.SetParent(this.transform);
             _dropped_item.transform.position = this.transform.position;
-
             _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
             _inventory.inventory_item_list[slot_pos] = _dropped_item.item; 
         }

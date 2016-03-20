@@ -104,9 +104,9 @@ public class WorldItemManager : MonoBehaviour
         // if (_my_player_id == player_id) // Disabled for testing, the player ID is set later
         if (GameData.MyPlayer.PlayerID == player_id)
         {
-            CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
+            _inventory.DestroyInventoryItem(inv_pos, amt);
         }
-        _inventory.DestroyInventoryItem(inv_pos, amt);
+        CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
     }
 
     /*
@@ -115,11 +115,13 @@ public class WorldItemManager : MonoBehaviour
     public void DestroyWorldItem(int world_item_id)
     {
         GameObject[] _world_items = GameObject.FindGameObjectsWithTag("WorldItem");
+        Debug.Log("num world items: " + _world_items.Length);
         foreach (GameObject _world_item in _world_items)
         {
             if (_world_item.GetComponent<WorldItemData>().world_item_id == world_item_id)
             {
                 Destroy(_world_item);
+                GameObject.Find("Inventory").GetComponent<Tooltip>().Deactivate();
                 break;
             }
         }
