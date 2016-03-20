@@ -15,6 +15,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         NetworkingManager.Subscribe(update_position, DataType.Player, playerID);
         NetworkingManager.Subscribe(took_damage, DataType.Hit, playerID);
         NetworkingManager.Subscribe(died, DataType.Killed, playerID);
+        NetworkingManager.Subscribe(use_potion, DataType.Potion, playerID);
         GameData.PlayerPosition.Add(playerID, transform.position);
 	}
 
@@ -47,5 +48,18 @@ public class PlayerReceiveUpdates : MonoBehaviour {
     {
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
         Destroy(gameObject);
+    }
+
+    void use_potion(JSONClass packet)
+    {
+        var baseClass = gameObject.GetComponent<BaseClass>();
+
+        var damage = packet["Damage"].AsInt;
+        var armour = packet["Armour"].AsInt;
+        var health = packet["Health"].AsInt;
+        var speed = packet["Speed"].AsInt;
+        var duration = packet["Duration"].AsInt;
+
+        baseClass.UsePotion(damage, armour, health, speed, duration);
     }
 }

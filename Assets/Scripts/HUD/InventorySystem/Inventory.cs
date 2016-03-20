@@ -163,13 +163,18 @@ public class Inventory : MonoBehaviour
         Debug.Log("speed buff: " + _item.speed);
         Debug.Log("duration of buff" + _item.duration);
 
-        GameManager.instance.player.GetComponent<BaseClass>().doDamage(-_item.health);
+        GameManager.instance.player.GetComponent<BaseClass>().UsePotion(
+            _item.damage, _item.armor, _item.health, _item.speed, _item.duration);
+
         NetworkingManager.send_next_packet(
-            DataType.Hit, 
+            DataType.Potion, 
             GameData.MyPlayer.PlayerID, 
             new List<Pair<string, string>> {
-                new Pair<string, string>("EnemyID", (-1).ToString()),
-                new Pair<string, string>("Damage", (-_item.health).ToString())
+                new Pair<string, string>("Damage", _item.damage.ToString()),
+                new Pair<string, string>("Armour", _item.armor.ToString()),
+                new Pair<string, string>("Health", _item.health.ToString()),
+                new Pair<string, string>("Speed", _item.speed.ToString()),
+                new Pair<string, string>("Duration", _item.duration.ToString())
             }, 
             Protocol.UDP);
 
