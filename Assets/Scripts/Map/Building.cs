@@ -46,10 +46,8 @@ public class Building:MonoBehaviour {
 		}
 		notifydeath();
 	}
-	public void notifycreation()
-	{
+	public void notifycreation(){
 		//????
-		
 	}
 	public void	notifydeath()
 	{

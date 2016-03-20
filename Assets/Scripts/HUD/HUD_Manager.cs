@@ -145,7 +145,7 @@ public class HUD_Manager : MonoBehaviour {
 		//If instance already exists and it's not this:
 		else if (instance != this)			
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-			Destroy(gameObject);   				
+			Destroy(gameObject);   			
 	}
 
 	// Called on start of game

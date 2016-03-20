@@ -19,7 +19,7 @@ for fail does not work
 public enum DataType
 {
     Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
-    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14
+    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15
 }
 
 public enum Protocol
@@ -134,6 +134,11 @@ public class NetworkingManager : MonoBehaviour
         {
             _subscribedActions.Remove(pair);
         }
+    }
+
+    public static void ClearSubscriptions()
+    {
+        _subscribedActions.Clear();
     }
 
     public void update_data(string JSONGameState)

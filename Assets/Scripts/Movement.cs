@@ -65,7 +65,7 @@ public class Movement : MonoBehaviour
             var layerMask = (1 << 8);
             RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
             //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
-            rb2d.position = rb2d.position + vec * distance;
+            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
 
             Debug.Log("Vector Distance: " + hit.distance);
 
@@ -89,6 +89,16 @@ public class Movement : MonoBehaviour
         //Will need to send some info to server every update
         sendToServer(rb2d.position.x, rb2d.position.y);
         GameData.PlayerPosition[GameData.MyPlayer.PlayerID] = transform.position;
+
+        // animation trigger test
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            gameObject.GetComponent<Animator>().SetBool("moving", false);
+        }
     }
     void sendToServer(double x, double y)
     {

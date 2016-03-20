@@ -18,9 +18,9 @@ public class PauseMenu : MonoBehaviour {
 
     void Start()
     {
-        // MainMenuGrp = GameObject.Find("Canvas").g;
-        //  SettingMenuGrp = GameObject.Find("SettingMenuGrp");
-       // volumeSlide = GameObject.Find("SettingMenuGrp").GetComponent<Slider>();
+        MainMenuGrp = GameObject.Find("Settings/MainMenu");
+        SettingMenuGrp = GameObject.Find("Settings/SettingMenuGrp");
+        volumeSlide = SettingMenuGrp.GetComponent<Slider>();
         MainMenu(); 
 
     }
@@ -77,9 +77,12 @@ public class PauseMenu : MonoBehaviour {
             absolutToggle.isOn = false;
             relativeToggle.isOn = true;
         }
-        
-       volumeSlide.value = GameObject.Find("GameManager").GetComponent<AudioSource>().volume;
-        
+/*
+        GameObject gM = GameObject.Find("GameManager");
+        volval = gM.GetComponent<AudioSource>().volume;
+        print("volume val: " + volval);
+        volumeSlide.value = volval;
+       */
     }
 
     public void SetMovement(int i)
