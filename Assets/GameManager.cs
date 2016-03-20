@@ -204,10 +204,15 @@ public class GameManager : MonoBehaviour {
         foreach (var king in kings)
         {
             if (king.first == myTeam)
+            {
                 GameData.AllyKingID = king.second;
-            else
+            }
+            else {
                 GameData.EnemyKingID = king.second;
+            }
         }
+
+        
 
 		NetworkingManager.StartGame();
     }
