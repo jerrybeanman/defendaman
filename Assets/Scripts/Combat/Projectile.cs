@@ -29,7 +29,8 @@ public abstract class Projectile : Trigger
             return;
         }
 
-        if (other.gameObject.GetComponent<Trigger>() != null && teamID == other.gameObject.GetComponent<Trigger>().teamID)
+        var trigger = other.gameObject.GetComponent<Trigger>();
+        if (trigger != null && (teamID == trigger.teamID || trigger is Area))
         {
             //If it collided with another projectile or a sword
             return;

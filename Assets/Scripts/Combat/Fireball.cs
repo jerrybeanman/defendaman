@@ -11,7 +11,7 @@
 --  REVISIONS:      March 18, 2016
 --                      Refactored out duplicate code, edited burn script
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
 --  PROGRAMMER:     Hank Lo, Allen Tsang
 --
@@ -33,7 +33,7 @@ public class Fireball : Projectile
     -- REVISIONS:       March 18, 2016
     --                      Edited burn script
     --
-    -- DESIGNER:        Hank Lo
+    -- DESIGNER:        Hank Lo, Allen Tsang
     --
     -- PROGRAMMER:      Hank Lo, Allen Tsang
     --
