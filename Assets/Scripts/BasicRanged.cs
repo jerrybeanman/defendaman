@@ -9,8 +9,9 @@ public class BasicRanged : Projectile
 
     //projectile speed
 
-    void Start()
+    new void Start()
     {
+        base.Start();
         startPos = transform.position;
     }
 

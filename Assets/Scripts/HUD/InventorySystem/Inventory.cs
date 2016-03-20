@@ -82,7 +82,7 @@ public class Inventory : MonoBehaviour
             // the unity "Scale With Screen Size" ui scale mode
             slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
-        // Adding initial items to the inventory (testing)
+        // TODO: Remove this. Adding initial items to the inventory (testing)
         AddItem(1);
         AddItem(2);
         AddItem(2, 200);
@@ -162,6 +162,16 @@ public class Inventory : MonoBehaviour
         Debug.Log("healing amt: " + _item.health);
         Debug.Log("speed buff: " + _item.speed);
         Debug.Log("duration of buff" + _item.duration);
+
+        GameManager.instance.player.GetComponent<BaseClass>().doDamage(-_item.health);
+        NetworkingManager.send_next_packet(
+            DataType.Hit, 
+            GameData.MyPlayer.PlayerID, 
+            new List<Pair<string, string>> {
+                new Pair<string, string>("EnemyID", (-1).ToString()),
+                new Pair<string, string>("Damage", (-_item.health).ToString())
+            }, 
+            Protocol.UDP);
 
         DestroyInventoryItem(inv_pos, 1);
     }
