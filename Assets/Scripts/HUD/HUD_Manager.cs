@@ -123,7 +123,7 @@ public class HUD_Manager : MonoBehaviour {
 	public Chat					chat;
 	public Shop					shop;	
 	public Text					timer;
-
+	public GameObject			placementRange;
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
 
@@ -341,6 +341,8 @@ public class HUD_Manager : MonoBehaviour {
 			SetAllCollidersStatus(shop.Selected.Building, false);
 
 			curRot = 0;
+
+			placementRange.SetActive(true);
 		}
 	}
 
@@ -460,6 +462,8 @@ public class HUD_Manager : MonoBehaviour {
 			mapManager.wallList.Add(buildingLocation); 
 		else
 			mapManager.ArmoryList.Add(buildingLocation);
+
+		placementRange.SetActive(false);
 		return true;
 	}
 
@@ -520,7 +524,7 @@ public class HUD_Manager : MonoBehaviour {
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
 		float distance_from_player = Vector3.Distance(player, building);
-		if(distance_from_player > 10)
+		if(distance_from_player > 6)
 			return false;
 
 		return true;
