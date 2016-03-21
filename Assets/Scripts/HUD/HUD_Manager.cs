@@ -339,6 +339,8 @@ public class HUD_Manager : MonoBehaviour {
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
+
+			curRot = 0;
 		}
 	}
 
@@ -358,7 +360,7 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
-
+	private float speed = 0.1f;
 	/*----------------------------------------------------------------------------
     --	Called when ItemBought is set to true, have the instantiated building follow
     --  where the mouse cursor
@@ -388,8 +390,35 @@ public class HUD_Manager : MonoBehaviour {
 		}else
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
 
+		if(Input.GetAxis("Mouse ScrollWheel") > 0)
+		{
+			object[] parms = new object[3]{90, shop.Selected.Building, 1f};
+			StartCoroutine(Rotate(parms));
+		}else
+		if(Input.GetAxis("Mouse ScrollWheel") < 0)
+		{
+			object[] parms = new object[3]{-90, shop.Selected.Building, 1f};
+			StartCoroutine(Rotate(parms));
+		}
 	}
 
+	float curRot = 0;
+	IEnumerator Rotate(object[] parms)
+	{
+		float elapsedTime = 0.0f;
+		Quaternion startingRotation = ((GameObject)parms[1]).transform.rotation; // have a startingRotation as well
+		Quaternion targetRotation =  Quaternion.Euler (0f, 0f, curRot + (int)parms[0]);
+		curRot += (int)parms[0];
+		if(curRot >= 360)
+			curRot = 0;
+		while (elapsedTime < (float)parms[2]) 
+		{
+			elapsedTime += Time.deltaTime; // <- move elapsedTime increment here
+			// Rotations
+			((GameObject)parms[1]).transform.rotation = Quaternion.Slerp(startingRotation, targetRotation,  (elapsedTime / (float)parms[2]));
+			yield return new WaitForEndOfFrame ();
+		}
+	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
