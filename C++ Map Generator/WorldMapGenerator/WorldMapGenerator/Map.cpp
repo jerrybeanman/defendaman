@@ -179,7 +179,6 @@ void Map::createTopScenery (int sceneryChance) {
 							}
 						}
 		}
-	drawMap (mapScenery);
 }
 
 int Map::surroundingHeightsCount (int neighXPos, int neighYPos, int myXPos, int myYPos) {
@@ -213,8 +212,9 @@ void Map::drawMap (int ** mapArray) {
 	printf ("\n\n -------------------------------------------------------------- \n\n");
 	for (size_t x = 0; x < getMapWidth (); x++) {
 		printf ("\n ");
-		for (size_t y = 0; y < getMapHeight (); y++)
-			printf ("%d ", mapArray[x][y]);
+		for (size_t y = 0; y < getMapHeight (); y++) {
+			printf ("%-4d ", mapArray[x][y]);
+		}
 		/*if (map.isBaseWall(x,y))
 		printf ("W ");
 		else
@@ -273,31 +273,29 @@ void Map::createSpawnPoints (int ** map, int teams) {
 	int ** spawnPoints = new int*[2];
 	spawnPoints[0] = new int[teams];
 	spawnPoints[1] = new int[teams];
-	for (int i = 0; i < teams; i++) {
-		//pick a place to place the generation spawn
-		int x = rand () % mapWidth;
-		int y = rand () % mapHeight;
-		if (map[x][y] >= baseSceneryDefault && map[x][y] <= baseSceneryMax) {
-			map[x][y] = spawnPointID;
-			spawnPoints[0][i] = x;
-			spawnPoints[1][i] = y;
-		} else {
-			//placing a spot has failed, retry
-			i--;
-			continue;
+	do {
+		for (int i = 0; i < teams; i++) {
+			//pick a place to place the generation spawn
+			int x = rand () % mapWidth;
+			int y = rand () % mapHeight;
+			if (map[x][y] >= baseSceneryDefault && map[x][y] <= baseSceneryMax) {
+				spawnPoints[0][i] = x;
+				spawnPoints[1][i] = y;
+			} else {
+				//placing a spot has failed, retry
+				i--;
+				continue;
+			}
 		}
+	} while (!validateSpawns (map, spawnPoints, teams));
+	for (int i = 0; i < teams; i++) {
+		map[spawnPoints[0][i]][spawnPoints[1][i]] = spawnPointID;
 	}
-	//validateSpawns (map, spawnPoints, teams);
 }
 
-void Map::validateSpawns (int ** map, int ** spawnPoints, int teams) {
+bool Map::validateSpawns (int ** map, int ** spawnPoints, int teams) {
 	const int moveCost = 10;
 	const int diagonalMoveCost = 14;
-	// create the hValues map for finding distance to the goal.
-	int ** hValues;
-	hValues = new int*[mapWidth];
-	for (int i = 0; i < mapWidth; i++)
-		hValues[i] = new int[mapHeight];
 
 	//for each team that exists
 	for (int i = 0; i < teams; i++) {
@@ -305,29 +303,20 @@ void Map::validateSpawns (int ** map, int ** spawnPoints, int teams) {
 		int thisTeamX = spawnPoints[0][i];
 		int thisTeamY = spawnPoints[1][i];
 		//for the team that is testing, find a path to all of the other teams
-		for (int j = 0; j < teams; j++) {
-			//skip pathfinding for ourselves
-			if (j == i)
-				continue;
+		for (int j = i + 1; j < teams; j++) {
 			//the x and y position of the team currently path finding to
 			int goalTeamX = spawnPoints[0][j];
 			int goalTeamY = spawnPoints[1][j];
 
 			//find the heuristic values for all points on the map to the goal
-			aStarPath (thisTeamX, thisTeamY, goalTeamX, goalTeamY);
-			/*for (int x = 0; x < mapWidth; x++) {
-				for (int y = 0; y < mapHeight; y++) {
-					hValues[x][y] = std::abs (x - goalTeamX) + std::abs(y - goalTeamY);
-				}
-			}*/
-
-
-			//drawMap (hValues);
+			if (aStarPath (thisTeamX, thisTeamY, goalTeamX, goalTeamY).size () == 0)
+				return false;
 		}
 	}
+	return true;
 }
 
-void Map::aStarPath(int startX, int startY, int endX, int endY) {
+std::deque<AStarPoint> Map::aStarPath(int startX, int startY, int endX, int endY) {
 	const int vertical = 10;
 	const int diagonal = 14;
 	// The set of nodes already evaluated.
@@ -335,7 +324,9 @@ void Map::aStarPath(int startX, int startY, int endX, int endY) {
 	// The set of currently discovered nodes still to be evaluated.
 	// Initially, only the start node is known.
 	std::deque<AStarPoint> openSet;
-	//AStarPoint start (startX, startY);
+
+	//this set is returned if the path is impossible
+	std::deque<AStarPoint> wrongSet;
 
 	int tmpF, tmpG, tmpH;
 	int totalLength = std::abs (startX - startX) + std::abs (startY - startY);
@@ -346,12 +337,19 @@ void Map::aStarPath(int startX, int startY, int endX, int endY) {
 	tmpH = (lengths * vertical) + (((totalLength - lengths) / 2) * diagonal);
 	tmpF = tmpG + tmpH;
 
+	//if the distance from one point to another is 25% of the shortest
+	//of width or height of the map, it is regarded as too close and is 
+	//returned as a bad path
+	if (tmpF < vertical * std::fmin (mapWidth, mapHeight) / 3)
+		return wrongSet;
+
 	openSet.push_back (AStarPoint(startX, startY, tmpF, tmpG, tmpH));
 
-	int lowestF = mapHeight * mapWidth * diagonal;
 	AStarPoint *inOperation = new AStarPoint(0,0);
+	AStarPoint *tmpPoints[9];// = (AStarPoint*)malloc (sizeof (AStarPoint) * 8);
 
 	while (openSet.size () > 0) {
+		int lowestF = mapHeight * mapWidth * diagonal;
 		int index = 0, smallest = -1;
 		for (auto it = openSet.begin (); it != openSet.end (); it++) {
 			if (it->F < lowestF) {
@@ -364,12 +362,17 @@ void Map::aStarPath(int startX, int startY, int endX, int endY) {
 		if (smallest != -1) {
 			closedSet.push_back (openSet[smallest]);
 			*inOperation = closedSet.back ();
+			openSet.erase (openSet.begin () + smallest);
 		}
 
-		AStarPoint *tmpPoints[8];
+		int tmpIndex = 0;
+		for (int locX = inOperation->X - 1; locX <= inOperation->X + 1; locX++) {
+			for (int locY = inOperation->Y - 1; locY <= inOperation->Y + 1; locY++) {
+				if (locX == inOperation->X && locY == inOperation->Y || (mapBase[locX][locY] >= baseWallDefault && mapBase[locX][locY] <= baseWallMax)) {
+					tmpPoints[tmpIndex++] = new AStarPoint (-1, -1);
+					continue;
+				}
 
-		for (int locX = inOperation->X - 1; locX < inOperation->X + 1; locX++) {
-			for (int locY = inOperation->Y - 1; locY < inOperation->Y + 1; locY++) {
 				if (locX >= 0 && locX < mapWidth && locY >= 0 && locY < mapHeight) {
 					int totalLength = std::abs (startX - locX) + std::abs (startY - locY);
 					int lengths = std::abs (std::abs (startX - locX) - std::abs (startY - locY));
@@ -378,21 +381,55 @@ void Map::aStarPath(int startX, int startY, int endX, int endY) {
 					lengths = std::abs (std::abs (locX - endX) - std::abs (locY - endY));
 					tmpH = (lengths * vertical) + (((totalLength - lengths) / 2) * diagonal);
 					tmpF = tmpG + tmpH;
-					tmpPoints[locX * 3 + locY] = new AStarPoint (locX, locY, tmpF, tmpG, tmpH, inOperation);
-					for (auto it = openSet.begin (); it != openSet.end (); it++) {
-						if (it->X == tmpPoints[locX * 3 + locY]->X && it->Y == tmpPoints[locX * 3 + locY]->Y && it->F > tmpPoints[locX * 3 + locY]->F) {
-							for (auto itt = closedSet.begin (); itt != closedSet.end (); itt++) {
-								if (itt->X == tmpPoints[locX * 3 + locY]->X && itt->Y == tmpPoints[locX * 3 + locY]->Y && itt->F > tmpPoints[locX * 3 + locY]->F) {
-									closedSet.push_back (*tmpPoints[locX * 3 + locY]);
-								}
-							}
-						}
+					tmpPoints[tmpIndex++] = new AStarPoint (locX, locY, tmpF, tmpG, tmpH, inOperation);
+					if (locX == endX && locY == endY) {
+						closedSet.push_back (*tmpPoints[--tmpIndex]);
+						//delete[] tmpPoints;
+						return closedSet;
 					}
+				} else {
+					tmpPoints[tmpIndex++] = new AStarPoint (-1, -1);
 				}
 			}
 		}
-		openSet.erase (openSet.begin () + smallest);
+		tmpIndex = 0;
+		for (int i = 0; i < 8; i++) {
+				if (tmpPoints[i]->X >= 0 && tmpPoints[i]->X < mapWidth && tmpPoints[i]->Y >= 0 && tmpPoints[i]->Y < mapHeight) {
+
+					for (auto it = openSet.begin (); it != openSet.end (); it++) {
+						if (it->X == tmpPoints[tmpIndex]->X && it->Y == tmpPoints[tmpIndex]->Y) {
+							if (it->F <= tmpPoints[tmpIndex]->F) {
+								goto END;
+							} else {
+								it->F = tmpPoints[tmpIndex]->F;
+								it->X = tmpPoints[tmpIndex]->X;
+								it->Y = tmpPoints[tmpIndex]->Y;
+								it->parent = tmpPoints[tmpIndex]->parent;
+								goto END;
+							}
+						}
+					}
+					for (auto itt = closedSet.begin (); itt != closedSet.end (); itt++) {
+						if (itt->X == tmpPoints[tmpIndex]->X && itt->Y == tmpPoints[tmpIndex]->Y) {
+							if (itt->F <= tmpPoints[tmpIndex]->F) {
+								goto END;
+							} else {
+								itt->F = tmpPoints[tmpIndex]->F;
+								itt->X = tmpPoints[tmpIndex]->X;
+								itt->Y = tmpPoints[tmpIndex]->Y;
+								itt->parent = tmpPoints[tmpIndex]->parent;
+								goto END;
+							}
+						}
+					}
+					openSet.push_back (*tmpPoints[tmpIndex]);
+					
+				}
+				END:tmpIndex++;
+		}
 	}
+	//delete[] tmpPoints;
+	return wrongSet;
 }
 			/*find the node with the least f on the open list, call it "q"
 			pop q off the open list
