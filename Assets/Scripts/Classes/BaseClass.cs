@@ -164,15 +164,11 @@ public abstract class BaseClass : MonoBehaviour {
 
     public virtual float basicAttack(Vector2 dir)
     {
-        if (GameData.MyPlayer.PlayerID == playerID)
-            HUD_Manager.instance.UseMainSkill(cooldowns[0]);
         return cooldowns[0];
     }
 
     public virtual float specialAttack(Vector2 dir)
     {
-        if (GameData.MyPlayer.PlayerID == playerID)
-            HUD_Manager.instance.UseSubSkill(cooldowns[1]);
         return cooldowns[1];
     }
 

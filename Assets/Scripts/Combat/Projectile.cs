@@ -48,6 +48,12 @@ public abstract class Projectile : Trigger
             return;
         }
 
+        if (other.gameObject.GetComponent<WorldItemData>() != null)
+        {
+            //If it collided with items
+            return;
+        }
+
         //Otherwise, its a wall or some solid
         if (--pierce < 0) {
             //Debug.Log("Projectile Collided with: " + other);
