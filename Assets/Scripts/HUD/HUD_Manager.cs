@@ -413,7 +413,8 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
-		
+		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
+
 		SetAllCollidersStatus(shop.Selected.Building, true);
 
 		// Indicate that the item has been successfully bought and placed 
