@@ -124,6 +124,8 @@ public class HUD_Manager : MonoBehaviour {
 	public Shop					shop;	
 	public Text					timer;
 	public GameObject			placementRange;
+	public GameObject			statsPanel;
+
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
 
@@ -209,6 +211,9 @@ public class HUD_Manager : MonoBehaviour {
 			// See if the chat window is currently open
 			if(!chat.input.IsInteractable())
 			{
+				// Block all other keyboard inputs
+				GameData.KeyBlocked = true;
+
 				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
@@ -216,6 +221,9 @@ public class HUD_Manager : MonoBehaviour {
 			}
 			else
 			{
+				// Unblocck keyboard inputs 
+				GameData.KeyBlocked = false;
+
 				// Send the packet, with Team ID, user name, and the message input
 				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -325,7 +333,7 @@ public class HUD_Manager : MonoBehaviour {
 			ItemBought = true;
 
 			// Find where the mouse position is
-			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
+			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y, -2);
 
 			// Assign team attribute so ally cannot damage the building 
 			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
@@ -379,7 +387,7 @@ public class HUD_Manager : MonoBehaviour {
 		int tempx=(int)currFramePosition.x;
 		int tempy=(int)currFramePosition.y;
 		currFramePosition.z=0;		
-		Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+		Vector3 cursorPosition = new Vector3(tempx,tempy,-2);
 
 		// have the building hover with the mouse by changing its transform 
 		buildings.transform.position = cursorPosition;
@@ -627,6 +635,20 @@ public class HUD_Manager : MonoBehaviour {
 		int seconds = (int)(t % 60);
 		int minutes = (int)(t / 60); // calculate the minutes
 		timer.text = String.Format("{0:00}:{1:00}", minutes, seconds);
+	}
+
+	bool slideStat = false;
+	public void StatAnimation()
+	{
+		if(!slideStat)
+		{
+			statsPanel.GetComponent<Animator>().SetTrigger("Slide_in");
+		}
+		else
+		{
+			statsPanel.GetComponent<Animator>().SetTrigger("Slide_out");
+		}
+		slideStat = !slideStat;
 	}
 
 	/*----------------------------------------------------------------------------

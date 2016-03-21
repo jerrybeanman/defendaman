@@ -43,6 +43,7 @@ public class GameData
     public static int 			EnemyKingID 	{ get; set; }
     public static int 			AllyKingID 		{ get; set; }
     public static bool 			MouseBlocked 	{ get; set; }
+	public static bool 			KeyBlocked 		 = false;
     public static Dictionary<int, Vector3> PlayerPosition = new Dictionary<int, Vector3>();    
 	public static int 			Seed			{ get; set; }
 	public static bool			GameStart		= false;
