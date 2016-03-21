@@ -34,6 +34,8 @@ public class MapManager : MonoBehaviour {
     private string _string_map;
     /* 2D int array containing map values. */
     private int[,] _map;
+    /* 2D int array containing map scenery values. */
+    private int[,] _mapScenery;
     /*Map width*/
     private int _mapWidth;
     /*Map height*/
@@ -44,9 +46,11 @@ public class MapManager : MonoBehaviour {
     //MapSprites mp = GameObject.AddComponent<MapSprites> as MapSprites;
     //public MapSprites mp;
     public GameObject _tile;
+    public GameObject _scenery;
     public GameObject _obstacle;
     public List<Sprite> _mapSolids;
     public List<Sprite> _mapWalkable;
+    public List<Sprite> _mapSceneryObjects;
 
 	//variables used for buildings
 	public List<GameObject> buildingsCreated;
@@ -207,6 +211,7 @@ public class MapManager : MonoBehaviour {
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
         _map = new int[_mapWidth, _mapHeight];
+        _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message["mapIDs"].AsArray;
 
@@ -215,8 +220,16 @@ public class MapManager : MonoBehaviour {
             for (int y = 0; y < _mapHeight; y++)
                 _map[x, y] = mapX[y].AsInt;
         }
-        // Thomas/Jaegar's map generation function goes here
-        // draw(map);
+
+
+        JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
+        
+
+        for (int x = 0; x < _mapWidth; x++) {
+            JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
+            for (int y = 0; y < _mapHeight; y++)
+                _mapScenery[x, y] = mapSceneryX[y].AsInt;
+        }
     }
    
     /*------------------------------------------------------------------------------------------------------------------
@@ -253,8 +266,12 @@ public class MapManager : MonoBehaviour {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
-                if (_map[x, y] >= 200 && _map[x, y] <= 201) {
+                if (_mapScenery[x, y] >= 200 && _map[x, y] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
+                }
+                if (_mapScenery[x, y] != -1) {
+                    _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x, y]) % _mapSceneryObjects.Count];
+                    Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
                 }
             }
     }

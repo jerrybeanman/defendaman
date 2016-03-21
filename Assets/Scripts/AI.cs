@@ -157,7 +157,6 @@ public class AI : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Doing same spot shot");
                 attack.x = x;
                 attack.y = y;
             }
@@ -181,10 +180,8 @@ public class AI : MonoBehaviour {
             }
             */
             attack.Normalize();
-            Debug.Log(attack);
             Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
             attack2.AddForce(attack * speed * 2.5f);
-            //Debug.Log(attack);
             attack2.GetComponent<BasicRanged>().teamID = team;
             attack2.GetComponent<BasicRanged>().damage = 10;
             attack2.GetComponent<BasicRanged>().maxDistance = 30;

@@ -13,53 +13,6 @@ Revision History:
 #include "Client.h"
 using namespace Networking;
 
-
-int main()
-{
-
-}
-
-Knight GetKnightOfLife()
-{
-    // Asks small knight who the fat knight is
-    // which he responds with knight of life
-    if(AskSmallKnight(FatKnight) == KnightOfLife)
-    {
-        // Then we ask the fat knight who he is
-        // He responds that he is the knight of dungeon
-        if(AskFatKnight(FatKnight) == KnightOfDungeon || AskFatKnight(FatKnight) == KnightOfDeath)
-        {
-            //  We know for sure that the fat knight is definitely not 
-            //  the Knight of Life, because if he was the knight of life
-            //  Indicated by the small knight he would've said he is the
-            //  knight of life. (Always told the truth)
-
-            //  We can also determine that small knight is definitely not
-            //  the Knight of life because he would've told the truth when 
-            //  asked who the fat knight is.
-
-            //  Therefore, by the process of elimination, the tall knight is 
-            //  the knight of life
-            return TallKnight;
-
-        }
-    }
-}
-
-Knight GetKnightOfDeath()
-{
-    // First we determine who the Knight of Life is
-    Knight KnightOfLife = GetKnightOfLife();
-
-    // Since the knight of life always tell the truth
-    // He will tell us who one of the remaining two knight 
-    // is.
-    if(KnightOfLife.Ask(FatKnight) == KnightOfDeath)
-        return FatKnight;
-    if(KnightOfLife.Ask(SmallKnight) == KnightOfDeath)
-        return SmallKnight;
-}
-
 /**********************************************************
 Description: Class constructor
 
