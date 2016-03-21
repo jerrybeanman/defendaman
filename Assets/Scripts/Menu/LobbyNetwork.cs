@@ -92,6 +92,9 @@ public class LobbyNetwork : MonoBehaviour {
 		if(NetworkingManager.TCP_Send(packet, 256) < 0)
 			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
 	}
+
+	public static bool Start = false;
+
 	public static void ParseLobbyData(string raw)
 	{
         int PlayerPacketID;
@@ -162,14 +165,12 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("EngineTeam_master");
+				Start = true;
 				break;
 			}	
 			
         }
 	}
-
-
 
 	public static void PrintData()
 	{
