@@ -122,6 +122,7 @@ public class HUD_Manager : MonoBehaviour {
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
 	public Shop					shop;	
+	public Text					timer;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -131,6 +132,7 @@ public class HUD_Manager : MonoBehaviour {
 
 	// Indicates wheter or not chat is currently selected 
 	private bool InputSelected = false;
+	
 
 	// Indicates if an item has been bought or not
 	bool ItemBought = false;
@@ -186,6 +188,8 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Check for events to open the shop menu
 		CheckShopOption();
+		
+		UpdateTimer();
 	}
 
 	/*----------------------------------------------------------------------------
@@ -571,7 +575,17 @@ public class HUD_Manager : MonoBehaviour {
 			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
-	
+
+	float time = 0;
+	private void UpdateTimer()
+	{
+		time += Time.deltaTime;
+		float t = Math.Abs(time);
+		int seconds = (int)(t % 60);
+		int minutes = (int)(t / 60); // calculate the minutes
+		timer.text = String.Format("{0:00}:{1:00}", minutes, seconds);
+	}
+
 	/*----------------------------------------------------------------------------
     --	Update player hp on the HUD, and triggers the "TakeDmg" animation
     --
