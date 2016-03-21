@@ -69,6 +69,9 @@ public class AI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (GameData.GameState == GameState.Won || GameData.GameState == GameState.Lost)
+            return;
+
         Vector3 vec = new Vector3();
         Vector3 face = new Vector3();
         float closest = 999;
