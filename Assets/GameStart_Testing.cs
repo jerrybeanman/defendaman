@@ -63,9 +63,20 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
 
-        GameData.LobbyData[1] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = 1, TeamID = 1 });
-        GameData.LobbyData[2] = (new PlayerData { ClassType = ClassType.Wizard, PlayerID = 2, TeamID = 2 });
-        GameData.LobbyData[3] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = 3, TeamID = 2 });
+        int i = 0;
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Wizard, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
 
         GameData.MyPlayer = GameData.LobbyData[myID];
 

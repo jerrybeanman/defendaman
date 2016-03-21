@@ -43,7 +43,7 @@ public class Attack : MonoBehaviour {
             && (Input.mousePosition.x < InvLeftEdge || Input.mousePosition.y > InvTopEdge))
         {
             //right click attack
-            HUD_Manager.instance.UseMainSkill(player.cooldowns[1]);
+            HUD_Manager.instance.UseSubSkill(player.cooldowns[1]);
             specialReady = false;
             var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             float delay = player.specialAttack(dir);
