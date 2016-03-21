@@ -293,6 +293,7 @@ public class MenuScript : MonoBehaviour {
 
 	public void LeaveLobby()
 	{
+		GameData.LobbyData.Remove(GameData.MyPlayer.PlayerID);
 		LobbyNetwork.SendLobbyData(NetworkCode.PlayerLeftLobby);
 		if(LobbyNetwork.connected)
 		{

@@ -121,8 +121,6 @@ public class LobbyNetwork : MonoBehaviour {
             }
             case NetworkCode.ReadyRequest:
             {
-                Debug.Log("[Debug]: Ready request");
-                Debug.Log("[Debug]: Content--" + raw);
 				GameData.LobbyData[PlayerPacketID].Ready = Convert.ToBoolean(packet[NetworkKeyString.Ready].AsInt);
 
 				PrintData();
@@ -130,9 +128,6 @@ public class LobbyNetwork : MonoBehaviour {
             }
             case NetworkCode.PlayerJoinedLobby:
             {
-                Debug.Log("[Debug]: Player has joined lobby");
-                Debug.Log("[Debug]: Content--" + raw);
-
                 PlayerData tmpPlayer = new PlayerData();
                 tmpPlayer.PlayerID = PlayerPacketID;
                 tmpPlayer.Username = packet[NetworkKeyString.UserName];
