@@ -379,6 +379,15 @@ public class HUD_Manager : MonoBehaviour {
 
 		// have the building hover with the mouse by changing its transform 
 		buildings.transform.position = cursorPosition;
+
+		// Check if it is a valid location to place the building 
+		if(!CheckValidLocation(cursorPosition))
+		{
+			// Set the color transparency 
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0.3f);
+		}else
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
+
 	}
 
 	/*----------------------------------------------------------------------------
