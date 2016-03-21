@@ -266,7 +266,8 @@ public class MapManager : MonoBehaviour {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
-                if (_mapScenery[x, y] >= 200 && _map[x, y] <= 201) {
+                //TODO: _map should be _mapScenery
+                if (_map[x, y] >= 200 && _map[x, y] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
                 if (_mapScenery[x, y] != -1) {

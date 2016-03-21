@@ -11,11 +11,10 @@ public class GunnerClass : RangedClass
     int[] speed = new int[2] { 200, 300 };
     Rigidbody2D bullet;
     Rigidbody2D bullet2;
-    int inaccuracy = 40;
     Camera mainCamera;
     Camera visionCamera;
     Camera hiddenCamera;
-    float zoomOut = 20;
+    float zoomOut = 14;
     float zoomIn;
     bool inSpecial;
     bool fired;
@@ -109,7 +108,7 @@ public class GunnerClass : RangedClass
 
             if (inSpecial && !Input.GetMouseButton(1))
             {
-                dir = (gameObject.transform.rotation * Vector3.forward).normalized;
+                dir = (gameObject.transform.rotation * Vector3.right);
                 inSpecial = false;
                 fire();
                 var member = new List<Pair<string, string>>();

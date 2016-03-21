@@ -25,10 +25,6 @@ public class Building:MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		/*if(team == GameManager.instance.player.GetComponent<BaseClass>().team)
-			gameObject.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 1f);
-		else
-			gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);*/
 		notifycreation();
 	}
 
