@@ -74,9 +74,9 @@ class Map {
 
 	void createSpawnPoints (int ** map, int teams);
 
-	void validateSpawns (int ** map, int ** spawnPoints, int teams);
+	bool validateSpawns (int ** map, int ** spawnPoints, int teams);
 
-	void aStarPath (int startX, int startY, int endX, int endY);
+	std::deque<AStarPoint> aStarPath (int startX, int startY, int endX, int endY);
 
 	~Map () {
 		delete[] mapBase;

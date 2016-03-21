@@ -10,5 +10,7 @@ class AStarPoint {
 
 	AStarPoint *parent;
 
-	private:
+	~AStarPoint () {
+
+	}
 };
