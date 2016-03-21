@@ -463,14 +463,14 @@ public class HUD_Manager : MonoBehaviour {
 		foreach(var armory in mapManager.ArmoryList)
 		{
 			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance) < 8)
+			if(Mathf.Abs (distance) < 3)
 				return false;
 		}
 		//Check if any walls are conflicting with desired placing
 		foreach(var wall in mapManager.wallList)
 		{
 			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 4)
+			if(Mathf.Abs (distance)< 2)
 				return false;
 		}
 		
