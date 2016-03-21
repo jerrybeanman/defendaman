@@ -103,20 +103,13 @@ public class LobbyNetwork : MonoBehaviour {
         {
             case NetworkCode.TeamChangeRequest:
             {
-                Debug.Log("[Debug]: Team chagne request");
-                Debug.Log("[Debug]: Content--" + raw);
 				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;
 
-				PrintData();
                 break;
             }
             case NetworkCode.ClassChangeRequest:
             {
-                Debug.Log("[Debug]: Class change request");
-                Debug.Log("[Debug]: Content--" + raw);
 				GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)packet[NetworkKeyString.ClassID].AsInt;
-
-				PrintData();
 				break;
             }
             case NetworkCode.ReadyRequest:
@@ -133,7 +126,6 @@ public class LobbyNetwork : MonoBehaviour {
                 tmpPlayer.Username = packet[NetworkKeyString.UserName];
                 if (GameData.MyPlayer.PlayerID == -1)
                 {
-                	Debug.Log("[Debug]: Got our own ID!");
                     GameData.MyPlayer.PlayerID = PlayerPacketID;
                 }
                 else
@@ -143,14 +135,10 @@ public class LobbyNetwork : MonoBehaviour {
             }
             case NetworkCode.UpdatePlayerList:
             {
-                Debug.Log("[Debug]: Got update table message");
-                Debug.Log("[Debug]: Content--" + raw);
-
                 // fills in existing player data
                 foreach (JSONNode playerData in packet["LobbyData"].AsArray)
                 {
 					int id = playerData[NetworkKeyString.PlayerID].AsInt;
-					Debug.Log("[Debug]: IN UPDATEPLAYERLIST");
 					PlayerData tempPlayer 	= new PlayerData();
 					tempPlayer.PlayerID  	= id;
 					tempPlayer.ClassType 	= (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
@@ -158,9 +146,6 @@ public class LobbyNetwork : MonoBehaviour {
 					tempPlayer.Ready 		= playerData[NetworkKeyString.Ready].AsBool;
 					tempPlayer.Username		= playerData[NetworkKeyString.UserName];
                     GameData.LobbyData.Add(id, tempPlayer);
-
-                    Debug.Log("[Debug]: Player ID: " + GameData.LobbyData[id].PlayerID.ToString() + "ClassID: " +
-                              GameData.LobbyData[id].ClassType.ToString() + "TeamID: " + GameData.LobbyData[id].TeamID.ToString() + "Username: " + GameData.LobbyData[id].Username);
                 }
                 break;
             }
