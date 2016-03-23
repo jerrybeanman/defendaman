@@ -20,16 +20,14 @@ public class AI : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
-        gameObject.layer = LayerMask.NameToLayer("HiddenThings");
-        gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
+        gameObject.layer = LayerMask.NameToLayer("Default");
         bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
-        NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
+		NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
         NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    void instantTurret(float reload, int speed, int teamToIgnore, int range)
+    public void instantTurret(float reload, int speed, int teamToIgnore, int range)
     {
         this.reload = reload;
         this.speed = speed;
