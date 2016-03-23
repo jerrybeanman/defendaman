@@ -34,6 +34,8 @@ public class MapManager : MonoBehaviour {
     private string _string_map;
     /* 2D int array containing map values. */
     private int[,] _map;
+    /* 2D int array containing map scenery values. */
+    private int[,] _mapScenery;
     /*Map width*/
     private int _mapWidth;
     /*Map height*/
@@ -44,16 +46,14 @@ public class MapManager : MonoBehaviour {
     //MapSprites mp = GameObject.AddComponent<MapSprites> as MapSprites;
     //public MapSprites mp;
     public GameObject _tile;
+    public GameObject _scenery;
     public GameObject _obstacle;
     public List<Sprite> _mapSolids;
     public List<Sprite> _mapWalkable;
+    public List<Sprite> _mapSceneryObjects;
 
 	//variables used for buildings
 	public List<GameObject> buildingsCreated;
-	public GameObject buildObject;
-	public GameObject buildWall;
-	public GameObject buildOverlay;
-	public List<Sprite> overlayTemp;
 	public List<Vector2>  wallList;
 	public List<Vector2>  ArmoryList;
 	Vector3 lastFramePosition;
@@ -110,7 +110,8 @@ public class MapManager : MonoBehaviour {
 	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 	        frustumWidth = frustumHeight * mainCamera.aspect;
 
-	        if (_pooledObjects != null) {
+	        if (_pooledObjects != null) 
+			{
 	            for (int i = 0; i < _pooledObjects.Length; i++) {
 	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
 	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
@@ -129,66 +130,8 @@ public class MapManager : MonoBehaviour {
 	 * Check the object pool in camera view and update their activation every second. Check if user wants to place a building
 	 */
     void Update() {
-        check_object_pool();
-		if(overlayFlag==1)
-		{
-			buildOverlay.SetActive(false);
-		}
-		Vector3 currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		currFramePosition.z=0;
-		
-		if(Input.GetMouseButton(2)){
-			buildOverlay.GetComponent<SpriteRenderer>().sprite =overlayTemp[0];
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Debug.Log("X: "  + tempx +"Y:" + tempy);
-			overlayFlag =0 ;
-			buildOverlay.SetActive(true);
-			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
-			buildOverlay.transform.position = cursorPosition;
-			
-		}
-		if(Input.GetMouseButtonUp(2)){
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Vector3 buildingLocation = new Vector3(tempx,tempy,-10);
-			if(validBuilding(buildingLocation)){
-				GameObject building = (GameObject)Instantiate(buildObject, buildingLocation, Quaternion.identity);
-				building.GetComponent<Building>().team=GameManager.instance.player.GetComponent<BaseClass>().team;
-				building.GetComponent<Building>().X=tempx;
-				building.GetComponent<Building>().Y=tempy;
-				ArmoryList.Add (buildingLocation);
-				buildingsCreated.Add(building);
-			}
-			overlayFlag =1 ;
-		}
-		if(Input.GetKey(KeyCode.T)){
-			buildOverlay.GetComponent<SpriteRenderer>().sprite =overlayTemp[2];
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Debug.Log("X: "  + tempx +"Y:" + tempy);
-			overlayFlag =0 ;
-			buildOverlay.SetActive(true);
-			Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
-			buildOverlay.transform.position = cursorPosition;
-			
-		}
-
-		if(Input.GetKeyUp(KeyCode.T)){
-			int tempx=(int)currFramePosition.x;
-			int tempy=(int)currFramePosition.y;
-			Vector3 buildingLocation = new Vector3(tempx,tempy,-10);
-			if(validWall(buildingLocation)){
-				GameObject building = (GameObject)Instantiate(buildWall, buildingLocation, Quaternion.identity);
-				building.GetComponent<Building>().team=GameManager.instance.player.GetComponent<BaseClass>().team;
-				building.GetComponent<Building>().X=tempx;
-				building.GetComponent<Building>().Y=tempy;
-				wallList.Add (buildingLocation);
-				buildingsCreated.Add(building);
-			}
-			overlayFlag =1 ;
-		}
-    }
+		check_object_pool ();
+	}
 
     /**
 	 * Decode the received message and handle its event.
@@ -222,53 +165,6 @@ public class MapManager : MonoBehaviour {
         // _map = json.deserialization<int>(map)
         return _map;
     }
-
-	//Check if the building cana be placed based on distance from player and existing buildings
-	private bool validBuilding(Vector2 building){
-		//Check if existing armory object is in the way
-		foreach(var armory in ArmoryList){
-			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance)< 8)
-				return false;
-		}
-		//Check if any walls are conflicting with desired placing
-		foreach(var wall in wallList){
-			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 4)
-				return false;
-		}
-
-		//Check if player isn't too far to place building
-		Vector2 player = GameManager.instance.player.transform.position;
-		float distance2=Vector3.Distance(player, building);
-		if(distance2>10){
-			return false;
-		}
-		return true;
-	}
-	private bool validWall(Vector2 building){
-
-		//Check if any walls are conflicting with desired placing
-		foreach(var wall in wallList){
-			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 4)
-				return false;
-		}
-		//Check if existing armory object is in the way
-		foreach(var armory in ArmoryList){
-			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance)< 6)
-				return false;
-		}
-
-
-		Vector2 player = GameManager.instance.player.transform.position;
-		float distance2=Vector3.Distance(player, building);
-		if(distance2>5){
-			return false;
-		}
-		return true;
-	}
 
 
 
@@ -315,6 +211,7 @@ public class MapManager : MonoBehaviour {
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
         _map = new int[_mapWidth, _mapHeight];
+        _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message["mapIDs"].AsArray;
 
@@ -323,8 +220,16 @@ public class MapManager : MonoBehaviour {
             for (int y = 0; y < _mapHeight; y++)
                 _map[x, y] = mapX[y].AsInt;
         }
-        // Thomas/Jaegar's map generation function goes here
-        // draw(map);
+
+
+        JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
+        
+
+        for (int x = 0; x < _mapWidth; x++) {
+            JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
+            for (int y = 0; y < _mapHeight; y++)
+                _mapScenery[x, y] = mapSceneryX[y].AsInt;
+        }
     }
    
     /*------------------------------------------------------------------------------------------------------------------
@@ -356,13 +261,18 @@ public class MapManager : MonoBehaviour {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
                     _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[_map[x, y] % _mapSolids.Count];
-                    Instantiate(_obstacle, new Vector3(x, y, -1), Quaternion.identity);
+                    Instantiate(_obstacle, new Vector3(x, y, -2), Quaternion.identity);
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
+                //TODO: _map should be _mapScenery
                 if (_map[x, y] >= 200 && _map[x, y] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
+                }
+                if (_mapScenery[x, y] != -1) {
+                    _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x, y]) % _mapSceneryObjects.Count];
+                    Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
                 }
             }
     }

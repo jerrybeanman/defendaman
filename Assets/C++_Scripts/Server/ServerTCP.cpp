@@ -108,6 +108,9 @@ void * ServerTCP::Receive()
       char *bp = buf;
        while((BytesRead = recv(tmpPlayer.socket, bp, bytesToRead, 0)) < PACKETLEN)
        {
+         if (BytesRead == 0)
+          break;
+          
          bytesToRead -= BytesRead;
          bp += BytesRead;
        }
@@ -262,6 +265,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
   }
 }
 
+
 /**
  * Check if all the players within _ClientTable are ready
  * @author ???
@@ -400,4 +404,3 @@ void ServerTCP::ShutDownGameServer(void)
     }
   }
 }
-

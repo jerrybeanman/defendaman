@@ -122,6 +122,9 @@ public class HUD_Manager : MonoBehaviour {
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
 	public Shop					shop;	
+	public Text					timer;
+	public GameObject			placementRange;
+	public GameObject			statsPanel;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -131,6 +134,7 @@ public class HUD_Manager : MonoBehaviour {
 
 	// Indicates wheter or not chat is currently selected 
 	private bool InputSelected = false;
+	
 
 	// Indicates if an item has been bought or not
 	bool ItemBought = false;
@@ -146,8 +150,6 @@ public class HUD_Manager : MonoBehaviour {
 		else if (instance != this)			
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
 			Destroy(gameObject);   			
-		//Sets this to not be destroyed when reloading scene
-		DontDestroyOnLoad(gameObject);		
 	}
 
 	// Called on start of game
@@ -188,6 +190,8 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Check for events to open the shop menu
 		CheckShopOption();
+		
+		UpdateTimer();
 	}
 
 	/*----------------------------------------------------------------------------
@@ -207,6 +211,9 @@ public class HUD_Manager : MonoBehaviour {
 			// See if the chat window is currently open
 			if(!chat.input.IsInteractable())
 			{
+				// Block all other keyboard inputs
+				GameData.KeyBlocked = true;
+
 				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
@@ -214,6 +221,9 @@ public class HUD_Manager : MonoBehaviour {
 			}
 			else
 			{
+				// Unblocck keyboard inputs 
+				GameData.KeyBlocked = false;
+
 				// Send the packet, with Team ID, user name, and the message input
 				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -323,15 +333,44 @@ public class HUD_Manager : MonoBehaviour {
 			ItemBought = true;
 
 			// Find where the mouse position is
-			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y,-10);
+			Vector3 cursorPosition = new Vector3((int)currFramePosition.x,(int)currFramePosition.y, -2);
+
+			// Assign team attribute so ally cannot damage the building 
+			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
 
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+
+
+			// Set the color transparency 
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
+
+			// Set the collider to false so it cannot collide with player 
+			SetAllCollidersStatus(shop.Selected.Building, false);
+
+			curRot = 0;
+
+			placementRange.SetActive(true);
 		}
-	
 	}
 
-	
+
+	/*----------------------------------------------------------------------------
+    --	Called by the OnClick function on the buy button in the shop menu
+    --	Interface:  public void Buy()
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	public void SetAllCollidersStatus (GameObject go, bool active) 
+	{
+		foreach(BoxCollider2D c in go.GetComponents<BoxCollider2D> ())
+		{
+			c.enabled = active;
+		}
+	}
+
+	private float speed = 0.1f;
 	/*----------------------------------------------------------------------------
     --	Called when ItemBought is set to true, have the instantiated building follow
     --  where the mouse cursor
@@ -348,12 +387,48 @@ public class HUD_Manager : MonoBehaviour {
 		int tempx=(int)currFramePosition.x;
 		int tempy=(int)currFramePosition.y;
 		currFramePosition.z=0;		
-		Vector3 cursorPosition = new Vector3(tempx,tempy,-10);
+		Vector3 cursorPosition = new Vector3(tempx,tempy,-2);
 
 		// have the building hover with the mouse by changing its transform 
 		buildings.transform.position = cursorPosition;
+
+		// Check if it is a valid location to place the building 
+		if(!CheckValidLocation(cursorPosition))
+		{
+			// Set the color transparency 
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0.3f);
+		}else
+			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
+
+		if(Input.GetAxis("Mouse ScrollWheel") > 0)
+		{
+			object[] parms = new object[3]{90, shop.Selected.Building, 1f};
+			StartCoroutine(Rotate(parms));
+		}else
+		if(Input.GetAxis("Mouse ScrollWheel") < 0)
+		{
+			object[] parms = new object[3]{-90, shop.Selected.Building, 1f};
+			StartCoroutine(Rotate(parms));
+		}
 	}
 
+	float curRot = 0;
+	IEnumerator Rotate(object[] parms)
+	{
+		float elapsedTime = 0.0f;
+		Quaternion startingRotation = ((GameObject)parms[1]).transform.rotation; // have a startingRotation as well
+		Quaternion targetRotation =  Quaternion.Euler (0f, 0f, curRot + (int)parms[0]);
+		curRot += (int)parms[0];
+		if(curRot >= 360)
+			curRot = 0;
+		while (elapsedTime < (float)parms[2]) 
+		{
+			elapsedTime += Time.deltaTime; // <- move elapsedTime increment here
+			// Rotations
+			((GameObject)parms[1]).transform.rotation = Quaternion.Slerp(startingRotation, targetRotation,  (elapsedTime / (float)parms[2]));
+			yield return new WaitForEndOfFrame ();
+		}
+	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
@@ -375,11 +450,15 @@ public class HUD_Manager : MonoBehaviour {
 		if(!CheckValidLocation(buildingLocation))
 			return false;
 
+		// Set the color transparency 
+		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
+
+		SetAllCollidersStatus(shop.Selected.Building, true);
+
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
-		// Assign team attribute so ally cannot damage the building 
-		bComponent.team=GameManager.instance.player.GetComponent<BaseClass>().team;
 		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
 		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
 
@@ -391,6 +470,8 @@ public class HUD_Manager : MonoBehaviour {
 			mapManager.wallList.Add(buildingLocation); 
 		else
 			mapManager.ArmoryList.Add(buildingLocation);
+
+		placementRange.SetActive(false);
 		return true;
 	}
 
@@ -437,21 +518,21 @@ public class HUD_Manager : MonoBehaviour {
 		foreach(var armory in mapManager.ArmoryList)
 		{
 			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance) < 8)
+			if(Mathf.Abs (distance) < 3)
 				return false;
 		}
 		//Check if any walls are conflicting with desired placing
 		foreach(var wall in mapManager.wallList)
 		{
 			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 4)
+			if(Mathf.Abs (distance)< 2)
 				return false;
 		}
 		
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
 		float distance_from_player = Vector3.Distance(player, building);
-		if(distance_from_player > 10)
+		if(distance_from_player > 6)
 			return false;
 
 		return true;
@@ -545,7 +626,31 @@ public class HUD_Manager : MonoBehaviour {
 			childObject.transform.SetParent (chat.Container.transform, false);				//Make arrow a child object of InputHistory
 		}
 	}
-	
+
+	float time = 0;
+	private void UpdateTimer()
+	{
+		time += Time.deltaTime;
+		float t = Math.Abs(time);
+		int seconds = (int)(t % 60);
+		int minutes = (int)(t / 60); // calculate the minutes
+		timer.text = String.Format("{0:00}:{1:00}", minutes, seconds);
+	}
+
+	bool slideStat = false;
+	public void StatAnimation()
+	{
+		if(!slideStat)
+		{
+			statsPanel.GetComponent<Animator>().SetTrigger("Slide_in");
+		}
+		else
+		{
+			statsPanel.GetComponent<Animator>().SetTrigger("Slide_out");
+		}
+		slideStat = !slideStat;
+	}
+
 	/*----------------------------------------------------------------------------
     --	Update player hp on the HUD, and triggers the "TakeDmg" animation
     --
