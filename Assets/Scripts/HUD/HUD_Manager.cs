@@ -472,6 +472,7 @@ public class HUD_Manager : MonoBehaviour {
 			mapManager.ArmoryList.Add(buildingLocation);
 
 		placementRange.SetActive(false);
+
 		return true;
 	}
 
