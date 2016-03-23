@@ -34,6 +34,8 @@ public class MapManager : MonoBehaviour {
     private string _string_map;
     /* 2D int array containing map values. */
     private int[,] _map;
+    /* 2D int array containing map scenery values. */
+    private int[,] _mapScenery;
     /*Map width*/
     private int _mapWidth;
     /*Map height*/
@@ -44,9 +46,26 @@ public class MapManager : MonoBehaviour {
     //MapSprites mp = GameObject.AddComponent<MapSprites> as MapSprites;
     //public MapSprites mp;
     public GameObject _tile;
+    public GameObject _scenery;
     public GameObject _obstacle;
     public List<Sprite> _mapSolids;
     public List<Sprite> _mapWalkable;
+    public List<Sprite> _mapSceneryObjects;
+
+	//variables used for buildings
+	public List<GameObject> buildingsCreated;
+	public List<Vector2>  wallList;
+	public List<Vector2>  ArmoryList;
+	Vector3 lastFramePosition;
+	Vector3 dragStartPosition;
+	int overlayFlag = 1;
+
+    // Object Pooling
+    private GameObject[] _pooledObjects;
+    public Camera mainCamera;
+    public Vector3 cameraPosition;
+    public static float cameraDistance;
+    public float frustumHeight, frustumWidth;
 
     //
     // METHOD DEFINITIONS
@@ -58,10 +77,61 @@ public class MapManager : MonoBehaviour {
     }
 
     /**
-	 * Update is called once per frame.
+     * Find the camera distance used to calculate the camera view frustum.
+     * Create the list of pooled objects and deactivate them.
+     * Perform initial object pool check.
+     */
+    private void instantiate_pool() {
+        cameraDistance = -mainCamera.orthographicSize;
+        // Find all objects with the tag "Tile" and add them to the arraylist.
+        _pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
+        print("pooledObjects size: " + _pooledObjects.Length);
+        
+
+        // Deactivate all game objects on start.
+        for (int i = 0; i < _pooledObjects.Length; i++) {
+            _pooledObjects[i].SetActive(false);
+        }
+
+        // Initial check to see which game objects are in camera view.
+        check_object_pool();
+    }
+
+    /**
+	 * Utilizes object pooling to only render map tiles which are within the camera's
+	 * view frustum.
+	 * 
+	 * Iterate through the list of pooled objects. If the object is in the camera, set it to 
+	 * active. Else, set it to unactive.
+	 */
+    private void check_object_pool() {
+		if (GameData.GameStart) {
+	        cameraPosition = mainCamera.GetComponent<Transform>().position;
+	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+	        frustumWidth = frustumHeight * mainCamera.aspect;
+
+	        if (_pooledObjects != null) 
+			{
+	            for (int i = 0; i < _pooledObjects.Length; i++) {
+	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
+	                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
+	                    _pooledObjects[i].SetActive(true);
+	                } else {
+	                    _pooledObjects[i].SetActive(false);
+	                }
+	            }
+	        }
+		}
+    }
+
+    /**
+	 * Check the object pool in camera view and update their activation every second. Check if user wants to place a building
 	 */
     void Update() {
-    }
+		check_object_pool ();
+	}
 
     /**
 	 * Decode the received message and handle its event.
@@ -96,6 +166,9 @@ public class MapManager : MonoBehaviour {
         return _map;
     }
 
+
+
+
     /* Serialize 2D int array into JSON string. */
     private string parse_int_map(int[][] map) {
         return _string_map;
@@ -113,6 +186,7 @@ public class MapManager : MonoBehaviour {
             case EventType.CREATE_MAP:
                 create_map(message);
                 draw_map();
+                instantiate_pool();
                 break;
             case EventType.RESOUCE_TAKEN:
                 break;
@@ -137,6 +211,7 @@ public class MapManager : MonoBehaviour {
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
         _map = new int[_mapWidth, _mapHeight];
+        _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message["mapIDs"].AsArray;
 
@@ -145,10 +220,18 @@ public class MapManager : MonoBehaviour {
             for (int y = 0; y < _mapHeight; y++)
                 _map[x, y] = mapX[y].AsInt;
         }
-        // Thomas/Jaegar's map generation function goes here
-        // draw(map);
-    }
 
+
+        JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
+        
+
+        for (int x = 0; x < _mapWidth; x++) {
+            JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
+            for (int y = 0; y < _mapHeight; y++)
+                _mapScenery[x, y] = mapSceneryX[y].AsInt;
+        }
+    }
+   
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: placeSprites
     --
@@ -177,15 +260,20 @@ public class MapManager : MonoBehaviour {
             for (int y = 0; y < _mapHeight; y++) {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
-                    _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[ _map[x, y] % _mapSolids.Count];
-					_obstacle.layer = LayerMask.NameToLayer("Water");
-                    Instantiate(_obstacle, new Vector3(x, y), Quaternion.identity);
+                    _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[_map[x, y] % _mapSolids.Count];
+                    Instantiate(_obstacle, new Vector3(x, y, -2), Quaternion.identity);
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
+                //TODO: _map should be _mapScenery
+                if (_map[x, y] >= 200 && _map[x, y] <= 201) {
+                    GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
+                }
+                if (_mapScenery[x, y] != -1) {
+                    _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x, y]) % _mapSceneryObjects.Count];
+                    Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
+                }
             }
     }
-
-
 }

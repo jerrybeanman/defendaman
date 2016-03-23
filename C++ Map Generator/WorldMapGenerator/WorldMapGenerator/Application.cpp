@@ -2,6 +2,8 @@
 #include "Application.h"
 #include <stdio.h>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 
 void drawMap (int ** mapArray, Map map) {
@@ -17,18 +19,23 @@ void drawMap (int ** mapArray, Map map) {
 
 int main () {
 	char c;
-	Map *map = new Map (10, 10, 24);
+	Map *map = new Map (100, 100, 44);
 	do {
-		map->randomizeSeed ();
+		map->randomizeSeed();
 		map->buildMapBase ();
 		map->createBaseScenery ();
 		map->joinMaps (map->getMapBase (), map->getMapTemp ());
-		map->createSpawnPoints (map->getMapBase (), 4);
-		//printf("%s", map->ConvertToJSONString (map->getMapBase ()).c_str());
-		//drawMap (map->getMapBase (), *map);
+		map->createTopScenery (12);
+		map->createSpawnPoints (map->getMapBase (), 3);
+		//printf("%s", map->ConvertToJSONString ().c_str());
+		std::ofstream myfile;
+		myfile.open ("output.txt");
+		myfile << map->ConvertToJSONString ().c_str ();
+		myfile.close ();
+		drawMap (map->getMapBase (), *map);
 		printf ("\n\nEnter 'q' to quit, any other key will regernate.\n\n");
 		c = getchar ();
-		Map* map2 = new Map (100, 100, 44);
+		Map* map2 = new Map (10, 10, 24);
 		map = map2;
 	} while (c != 'q');
 	return 0;

@@ -9,8 +9,8 @@ public class FollowPlayer : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		var target = GameObject.Find("GameManager").GetComponent<NetworkingManager>().player;
+	void FixedUpdate () {
+		var target = GameManager.instance.player;
         if (target != null) {
             transform.position = new Vector3(target.transform.position.x,
                                             target.transform.position.y,
