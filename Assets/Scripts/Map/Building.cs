@@ -4,7 +4,7 @@ using System;
 
 public class Building:MonoBehaviour {
 	
-	public enum BuildingType{Empty,Armory, Wall};
+	public enum BuildingType{Empty,Armory,Wall,Watchtower};
 
 	public BuildingType type;
 
@@ -25,7 +25,7 @@ public class Building:MonoBehaviour {
 	void Start () 
 	{
 		notifycreation();
-	}
+    }
 
 
 	void OnTriggerEnter2D(Collider2D other) 
