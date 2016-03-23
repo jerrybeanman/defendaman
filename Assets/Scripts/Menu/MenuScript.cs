@@ -89,12 +89,12 @@ public class MenuScript : MonoBehaviour {
                 LobbyNetwork.ParseLobbyData(tmp);
                 UpdateLobbyList();
 				if(LobbyNetwork.Start)
-					StartCoroutine(Start());
+					StartCoroutine(start_level());
             }
         }
     }
 
-	IEnumerator Start()
+	IEnumerator start_level()
 	{
 		yield return new WaitForSeconds(2f);
 		Application.LoadLevel("EngineTeam_master");
