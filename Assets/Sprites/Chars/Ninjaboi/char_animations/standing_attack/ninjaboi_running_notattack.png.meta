@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 3b0c41eb4ee60464f90cd2a9ea75610e
-timeCreated: 1458706705
+guid: 58602067be0d81549ab53478c6f38c2e
+timeCreated: 1458751387
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -62,6 +62,7 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
+  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
@@ -82,17 +83,17 @@ TextureImporter:
         width: 260
         height: 405
       alignment: 9
-      pivot: {x: .454898775, y: .30311355}
+      pivot: {x: .450116783, y: .315863103}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_1
       rect:
         serializedVersion: 2
-        x: 685
-        y: 1992
-        width: 258
-        height: 406
+        x: 679
+        y: 2029
+        width: 259
+        height: 408
       alignment: 9
-      pivot: {x: .44545871, y: .309374869}
+      pivot: {x: .462443352, y: .309269935}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_2
       rect:
@@ -102,167 +103,167 @@ TextureImporter:
         width: 257
         height: 405
       alignment: 9
-      pivot: {x: .445246488, y: .303112954}
+      pivot: {x: .46215108, y: .315863103}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_3
       rect:
         serializedVersion: 2
-        x: 1541
+        x: 1538
         y: 1996
-        width: 256
+        width: 259
         height: 406
       alignment: 9
-      pivot: {x: .435871601, y: .303597897}
+      pivot: {x: .462442875, y: .30034408}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_4
       rect:
         serializedVersion: 2
-        x: 1995
+        x: 1992
         y: 1992
-        width: 256
+        width: 259
         height: 408
       alignment: 9
-      pivot: {x: .445033073, y: .310309321}
+      pivot: {x: .449923843, y: .309269935}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_5
       rect:
         serializedVersion: 2
-        x: 247
+        x: 245
         y: 1538
-        width: 254
+        width: 256
         height: 406
       alignment: 9
-      pivot: {x: .452306658, y: .30903843}
+      pivot: {x: .462003112, y: .308330655}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_6
       rect:
         serializedVersion: 2
-        x: 607
-        y: 1547
-        width: 255
-        height: 408
+        x: 663
+        y: 1575
+        width: 257
+        height: 406
       alignment: 9
-      pivot: {x: .452493817, y: .315912873}
+      pivot: {x: .46215108, y: .308330655}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_7
       rect:
         serializedVersion: 2
-        x: 1121
+        x: 1118
         y: 1552
-        width: 256
+        width: 259
         height: 406
       alignment: 9
-      pivot: {x: .443214417, y: .30903843}
+      pivot: {x: .44992432, y: .308330357}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_8
       rect:
         serializedVersion: 2
-        x: 1564
+        x: 1561
         y: 1542
-        width: 255
+        width: 258
         height: 407
       alignment: 9
-      pivot: {x: .442991734, y: .309507638}
+      pivot: {x: .449730694, y: .300834924}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_9
       rect:
         serializedVersion: 2
-        x: 2018
+        x: 2014
         y: 1542
-        width: 254
+        width: 258
         height: 406
       alignment: 9
-      pivot: {x: .452307045, y: .30903843}
+      pivot: {x: .449730694, y: .300344378}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_10
       rect:
         serializedVersion: 2
-        x: 225
+        x: 223
         y: 1108
-        width: 254
+        width: 256
         height: 407
       alignment: 9
-      pivot: {x: .438058794, y: .30671981}
+      pivot: {x: .462003112, y: .308801293}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_11
       rect:
         serializedVersion: 2
-        x: 609
-        y: 1128
-        width: 256
-        height: 406
+        x: 677
+        y: 1133
+        width: 261
+        height: 407
       alignment: 9
-      pivot: {x: .423178196, y: .306243449}
+      pivot: {x: .462731153, y: .300834924}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_12
       rect:
         serializedVersion: 2
-        x: 1102
-        y: 1103
-        width: 255
-        height: 406
+        x: 1097
+        y: 1141
+        width: 256
+        height: 405
       alignment: 9
-      pivot: {x: .438301355, y: .306243747}
+      pivot: {x: .449337482, y: .29985109}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_13
       rect:
         serializedVersion: 2
-        x: 1557
-        y: 1069
-        width: 254
-        height: 406
+        x: 1566
+        y: 1102
+        width: 258
+        height: 405
       alignment: 9
-      pivot: {x: .45354408, y: .306243449}
+      pivot: {x: .449730217, y: .307857096}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_14
       rect:
         serializedVersion: 2
-        x: 1998
+        x: 1996
         y: 1111
-        width: 254
+        width: 256
         height: 406
       alignment: 9
-      pivot: {x: .45354408, y: .306243449}
+      pivot: {x: .462002754, y: .300344378}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_15
       rect:
         serializedVersion: 2
-        x: 220
+        x: 218
         y: 657
-        width: 258
+        width: 261
         height: 407
       alignment: 9
-      pivot: {x: .439019144, y: .3163836}
+      pivot: {x: .462730914, y: .308801442}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_16
       rect:
         serializedVersion: 2
-        x: 668
+        x: 665
         y: 667
-        width: 255
+        width: 258
         height: 405
       alignment: 9
-      pivot: {x: .438301593, y: .305765033}
+      pivot: {x: .462297767, y: .299851418}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_17
       rect:
         serializedVersion: 2
-        x: 1121
+        x: 1117
         y: 672
-        width: 256
+        width: 258
         height: 407
       alignment: 9
-      pivot: {x: .423178196, y: .306719512}
+      pivot: {x: .462297767, y: .308801442}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_18
       rect:
         serializedVersion: 2
-        x: 1538
+        x: 1536
         y: 674
-        width: 255
+        width: 257
         height: 407
       alignment: 9
-      pivot: {x: .438301831, y: .297055393}
+      pivot: {x: .462150604, y: .308801293}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_19
       rect:
@@ -272,57 +273,57 @@ TextureImporter:
         width: 259
         height: 405
       alignment: 9
-      pivot: {x: .439254224, y: .315476716}
+      pivot: {x: .474961907, y: .299851269}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_20
       rect:
         serializedVersion: 2
-        x: 213
-        y: 244
-        width: 254
-        height: 407
+        x: 231
+        y: 146
+        width: 257
+        height: 408
       alignment: 9
-      pivot: {x: .438058943, y: .316383451}
+      pivot: {x: .449534506, y: .309269935}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_21
       rect:
         serializedVersion: 2
-        x: 652
-        y: 242
-        width: 256
+        x: 687
+        y: 137
+        width: 257
         height: 406
       alignment: 9
-      pivot: {x: .438542843, y: .306243509}
+      pivot: {x: .462150842, y: .300344318}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_22
       rect:
         serializedVersion: 2
-        x: 1113
-        y: 244
-        width: 255
-        height: 405
+        x: 1147
+        y: 136
+        width: 257
+        height: 408
       alignment: 9
-      pivot: {x: .438301831, y: .305764973}
+      pivot: {x: .46215108, y: .309270144}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_23
       rect:
         serializedVersion: 2
-        x: 1543
-        y: 248
+        x: 1576
+        y: 106
         width: 256
-        height: 404
+        height: 407
       alignment: 9
-      pivot: {x: .453906536, y: .315020114}
+      pivot: {x: .449337482, y: .292868048}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ninjaboi_running_notattack_24
       rect:
         serializedVersion: 2
-        x: 2044
-        y: 209
-        width: 258
+        x: 2046
+        y: 150
+        width: 257
         height: 404
       alignment: 9
-      pivot: {x: .43901974, y: .305284411}
+      pivot: {x: .436917663, y: .307381511}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
