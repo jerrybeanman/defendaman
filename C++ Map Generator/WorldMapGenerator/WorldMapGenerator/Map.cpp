@@ -230,6 +230,25 @@ void Map::joinMaps (int ** baseMap, int ** topMap) {
 
 }
 
+void Map::createResources (int ** mapCheck, int ** mapApply, int resourceAmount) {
+	int tmpX, tmpY, tries = 0;
+	for (int i = 0; i < resourceAmount; i++) {
+		while (tries++ < 5) {
+			tmpX = rand () % mapWidth;
+			tmpY = rand () % mapHeight;
+			if (mapCheck[tmpX][tmpY] >= baseSceneryDefault && mapCheck[tmpX][tmpY] <= baseSceneryMax) {
+				for (auto it = mapResources.begin (); it != mapResources.end (); it++)
+					if (it->first == tmpX && it->second == tmpY)
+						goto FAIL;
+				mapResources.push_back (std::pair<int, int> (tmpX, tmpY));
+				goto NEXT;
+			}
+			FAIL: tries = tries;
+		}
+		NEXT:tries = 0;
+	}
+}
+
 //... requests a list of 0 or more parameters of pairs, which contain <string, void*>
 std::string Map::ConvertToJSONString () {
 	std::string JSONString ("[");
@@ -263,6 +282,15 @@ std::string Map::ConvertToJSONString () {
 		if (x < mapHeight - 1)
 			JSONString += ", ";
 	}
+	JSONString += "], ";
+	JSONString.append ("\"mapResources\" : [");
+	for (auto it = mapResources.begin (); it != mapResources.end (); it++) {
+		JSONString += "[";
+		JSONString += intToString (it->first) + ", " + intToString (it->second);
+		JSONString += "]";
+		if (it != mapResources.end() - 1)
+			JSONString += ", ";
+	}
 	JSONString += "]";
 	JSONString += "}";
 	JSONString += "]";
@@ -289,7 +317,7 @@ void Map::createSpawnPoints (int ** map, int teams) {
 		}
 	} while (!validateSpawns (map, spawnPoints, teams));
 	for (int i = 0; i < teams; i++) {
-		map[spawnPoints[0][i]][spawnPoints[1][i]] = spawnPointID;
+		mapScenery[spawnPoints[0][i]][spawnPoints[1][i]] = spawnPointID;
 	}
 }
 
@@ -431,33 +459,6 @@ std::deque<AStarPoint> Map::aStarPath(int startX, int startY, int endX, int endY
 	//delete[] tmpPoints;
 	return wrongSet;
 }
-			/*find the node with the least f on the open list, call it "q"
-			pop q off the open list
-			generate q's 8 successors and set their parents to q
-			for each successor
-				if successor is the goal, stop the search
-					successor.g = q.g + distance between successor and q
-					successor.h = distance from goal to successor
-					successor.f = successor.g + successor.h
-
-					if a node with the same position as successor is in the OPEN list \
-						which has a lower f than successor, skip this successor
-						if a node with the same position as successor is in the CLOSED list \
-							which has a lower f than successor, skip this successor
-							otherwise, add the node to the open list
-							end
-							push q on the closed list
-							end
-}
-
-void aStarFinal (cameFrom, current)
-total_path : = [current]
-	while current in cameFrom.Keys :
-		current : = cameFrom[current]
-		total_path.append (current)
-		return total_path
-		*/
-
 
 
 std::string Map::intToString (int n) {

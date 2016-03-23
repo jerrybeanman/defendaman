@@ -15,6 +15,7 @@ extern "C" const char * GenerateMap (int seed) {
 
 	//first int is 1:N chance of creat
 	map->createTopScenery (10);
+	map->createResources (map->getMapBase (), map->getMapScenery(), 50);
 	map->createSpawnPoints (map->getMapBase (), 2);
 	strcpy_s (endMap, map->ConvertToJSONString ().c_str ());
 	return (endMap);

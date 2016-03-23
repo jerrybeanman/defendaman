@@ -26,6 +26,7 @@ int main () {
 		map->createBaseScenery ();
 		map->joinMaps (map->getMapBase (), map->getMapTemp ());
 		map->createTopScenery (12);
+		map->createResources (map->getMapBase (), map->getMapScenery(), 50);
 		map->createSpawnPoints (map->getMapBase (), 3);
 		//printf("%s", map->ConvertToJSONString ().c_str());
 		std::ofstream myfile;
