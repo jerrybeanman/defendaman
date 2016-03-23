@@ -471,6 +471,11 @@ public class HUD_Manager : MonoBehaviour {
 		else
 			mapManager.ArmoryList.Add(buildingLocation);
 
+		if (building.GetComponent<Building> ().type == Building.BuildingType.Watchtower) {
+			building.AddComponent<WatchtowerLightRotate>();
+			building.transform.GetChild(0).gameObject.layer = LayerMask.NameToLayer("FOVEffects");
+			building.transform.GetChild(1).gameObject.layer = LayerMask.NameToLayer("hide overlay");
+		}
 		placementRange.SetActive(false);
 		return true;
 	}
