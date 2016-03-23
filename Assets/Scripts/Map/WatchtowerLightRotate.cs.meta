@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c1cfcd39e267ddc4b8fb3696c021760a
+timeCreated: 1458759685
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - TowerVision: {fileID: 490004, guid: 183515ebcd399574b8f1bf6e9cd10156, type: 2}
+  - TowerVisionHidden: {fileID: 412148, guid: d0b4691f1d5d92a4bb7b763d4cd8e804, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
