@@ -25,7 +25,7 @@ public class Building:MonoBehaviour {
 	void Start () 
 	{
 		notifycreation();
-	}
+    }
 
 
 	void OnTriggerEnter2D(Collider2D other) 
