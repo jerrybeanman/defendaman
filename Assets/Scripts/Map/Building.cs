@@ -13,7 +13,6 @@ public class Building:MonoBehaviour {
 	public float health = 100;
 
 	public int team;
-	
 
 
 	public Building(int x, int y)
@@ -26,7 +25,7 @@ public class Building:MonoBehaviour {
 	void Start () 
 	{
 		notifycreation();
-	}
+    }
 
 
 	void OnTriggerEnter2D(Collider2D other) 
