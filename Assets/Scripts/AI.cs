@@ -20,6 +20,9 @@ public class AI : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
+        gameObject.layer = LayerMask.NameToLayer("HiddenThings");
+        gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
         bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
         NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
         NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
@@ -66,6 +69,9 @@ public class AI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (GameData.GameState == GameState.Won || GameData.GameState == GameState.Lost)
+            return;
+
         Vector3 vec = new Vector3();
         Vector3 face = new Vector3();
         float closest = 999;
@@ -154,7 +160,6 @@ public class AI : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Doing same spot shot");
                 attack.x = x;
                 attack.y = y;
             }
@@ -178,10 +183,8 @@ public class AI : MonoBehaviour {
             }
             */
             attack.Normalize();
-            Debug.Log(attack);
             Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
             attack2.AddForce(attack * speed * 2.5f);
-            //Debug.Log(attack);
             attack2.GetComponent<BasicRanged>().teamID = team;
             attack2.GetComponent<BasicRanged>().damage = 10;
             attack2.GetComponent<BasicRanged>().maxDistance = 30;

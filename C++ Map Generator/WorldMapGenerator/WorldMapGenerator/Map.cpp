@@ -12,6 +12,10 @@ int** Map::getMapBase () {
 	return mapBase;
 }
 
+int ** Map::getMapScenery () {
+	return mapScenery;
+}
+
 int** Map::getMapTemp () {
 	return tempLayer;
 }
@@ -22,6 +26,12 @@ int Map::getMapSeed () {
 
 int Map::randomizeSeed () {
 	srand (time (NULL));
+	mapSeed = rand ();
+	return mapSeed;
+}
+
+int Map::randomizeSeed (int seed) {
+	srand (seed);
 	mapSeed = rand ();
 	return mapSeed;
 }
@@ -152,6 +162,26 @@ void Map::createBaseScenery () {
 
 }
 
+void Map::createTopScenery (int sceneryChance) {
+	resetMap (mapScenery, -1);
+
+	for (int x = 0; x < mapWidth; x++)
+		for (int y = 0; y < mapHeight; y++) {
+			if (mapBase[x][y] > baseWallMax)
+				if (rand () % sceneryChance == 0)
+					if (x - 1 >= 0 && x + 1 < mapWidth && y - 1 >= 0 && y + 1 < mapHeight)
+						for (int tX = x - 1; tX <= x + 1; tX++) {
+							for (int tY = y - 1; tY <= y + 1; tY++) {
+								if (mapScenery[tX][tY] != -1)
+									break;
+								if (tX == x + 1 && tY == y + 1)
+									mapScenery[x][y] = rand () % (sceneryMax - sceneryDefault);
+							}
+						}
+		}
+	drawMap (mapScenery);
+}
+
 int Map::surroundingHeightsCount (int neighXPos, int neighYPos, int myXPos, int myYPos) {
 	//neighbour testing within the bounds of the map
 	if (neighXPos >= 0 && neighXPos < mapWidth && neighYPos >= 0 && neighYPos < mapHeight) {
@@ -201,15 +231,31 @@ void Map::joinMaps (int ** baseMap, int ** topMap) {
 }
 
 //... requests a list of 0 or more parameters of pairs, which contain <string, void*>
-std::string Map::ConvertToJSONString (int ** map) {
-	std::string JSONString ("{ ");
+std::string Map::ConvertToJSONString () {
+	std::string JSONString ("[");
+	JSONString.append ("{ ");
+	JSONString.append ("DataType : 3, ");
+	JSONString.append ("ID : 0, ");
 	JSONString.append ("\"mapWidth\" : " + intToString (mapWidth) + ", ");
 	JSONString.append ("\"mapHeight\" : " + intToString (mapHeight) + ", ");
 	JSONString.append ("\"mapIDs\" : [");
 	for (int x = 0; x < mapWidth; x++) {
 		JSONString += "[";
 		for (int y = 0; y < mapHeight; y++) {
-			JSONString += intToString(map[x][y]);
+			JSONString += intToString(mapBase[x][y]);
+			if (y < mapWidth - 1)
+				JSONString += ", ";
+		}
+		JSONString += "]";
+		if (x < mapHeight - 1)
+			JSONString += ", ";
+	}
+	JSONString += "], ";
+	JSONString.append ("\"mapSceneryIDs\" : [");
+	for (int x = 0; x < mapWidth; x++) {
+		JSONString += "[";
+		for (int y = 0; y < mapHeight; y++) {
+			JSONString += intToString (mapScenery[x][y]);
 			if (y < mapWidth - 1)
 				JSONString += ", ";
 		}
@@ -219,6 +265,7 @@ std::string Map::ConvertToJSONString (int ** map) {
 	}
 	JSONString += "]";
 	JSONString += "}";
+	JSONString += "]";
 	return JSONString;
 }
 
@@ -231,7 +278,7 @@ void Map::createSpawnPoints (int ** map, int teams) {
 		int x = rand () % mapWidth;
 		int y = rand () % mapHeight;
 		if (map[x][y] >= baseSceneryDefault && map[x][y] <= baseSceneryMax) {
-			map[x][y] = objectIDList[0];
+			map[x][y] = spawnPointID;
 			spawnPoints[0][i] = x;
 			spawnPoints[1][i] = y;
 		} else {
@@ -267,17 +314,114 @@ void Map::validateSpawns (int ** map, int ** spawnPoints, int teams) {
 			int goalTeamY = spawnPoints[1][j];
 
 			//find the heuristic values for all points on the map to the goal
-			for (int x = 0; x < mapWidth; x++) {
+			aStarPath (thisTeamX, thisTeamY, goalTeamX, goalTeamY);
+			/*for (int x = 0; x < mapWidth; x++) {
 				for (int y = 0; y < mapHeight; y++) {
 					hValues[x][y] = std::abs (x - goalTeamX) + std::abs(y - goalTeamY);
 				}
-			}
+			}*/
 
 
-			drawMap (hValues);
+			//drawMap (hValues);
 		}
 	}
 }
+
+void Map::aStarPath(int startX, int startY, int endX, int endY) {
+	const int vertical = 10;
+	const int diagonal = 14;
+	// The set of nodes already evaluated.
+	std::deque<AStarPoint> closedSet;
+	// The set of currently discovered nodes still to be evaluated.
+	// Initially, only the start node is known.
+	std::deque<AStarPoint> openSet;
+	//AStarPoint start (startX, startY);
+
+	int tmpF, tmpG, tmpH;
+	int totalLength = std::abs (startX - startX) + std::abs (startY - startY);
+	int lengths = std::abs (std::abs (startX - startX) - std::abs (startY - startY));
+	tmpG = (lengths * vertical) + (((totalLength - lengths) / 2) * diagonal);
+	totalLength = std::abs (startX - endX) + std::abs (startY - endY);
+	lengths = std::abs (std::abs (startX - endX) - std::abs (startY - endY));
+	tmpH = (lengths * vertical) + (((totalLength - lengths) / 2) * diagonal);
+	tmpF = tmpG + tmpH;
+
+	openSet.push_back (AStarPoint(startX, startY, tmpF, tmpG, tmpH));
+
+	int lowestF = mapHeight * mapWidth * diagonal;
+	AStarPoint *inOperation = new AStarPoint(0,0);
+
+	while (openSet.size () > 0) {
+		int index = 0, smallest = -1;
+		for (auto it = openSet.begin (); it != openSet.end (); it++) {
+			if (it->F < lowestF) {
+				lowestF = it->F;
+				smallest = index;
+			}
+			index++;
+		}
+
+		if (smallest != -1) {
+			closedSet.push_back (openSet[smallest]);
+			*inOperation = closedSet.back ();
+		}
+
+		AStarPoint *tmpPoints[8];
+
+		for (int locX = inOperation->X - 1; locX < inOperation->X + 1; locX++) {
+			for (int locY = inOperation->Y - 1; locY < inOperation->Y + 1; locY++) {
+				if (locX >= 0 && locX < mapWidth && locY >= 0 && locY < mapHeight) {
+					int totalLength = std::abs (startX - locX) + std::abs (startY - locY);
+					int lengths = std::abs (std::abs (startX - locX) - std::abs (startY - locY));
+					tmpG = (lengths * vertical) + (((totalLength - lengths) / 2) * diagonal);
+					totalLength = std::abs (locX - endX) + std::abs (locY - endY);
+					lengths = std::abs (std::abs (locX - endX) - std::abs (locY - endY));
+					tmpH = (lengths * vertical) + (((totalLength - lengths) / 2) * diagonal);
+					tmpF = tmpG + tmpH;
+					tmpPoints[locX * 3 + locY] = new AStarPoint (locX, locY, tmpF, tmpG, tmpH, inOperation);
+					for (auto it = openSet.begin (); it != openSet.end (); it++) {
+						if (it->X == tmpPoints[locX * 3 + locY]->X && it->Y == tmpPoints[locX * 3 + locY]->Y && it->F > tmpPoints[locX * 3 + locY]->F) {
+							for (auto itt = closedSet.begin (); itt != closedSet.end (); itt++) {
+								if (itt->X == tmpPoints[locX * 3 + locY]->X && itt->Y == tmpPoints[locX * 3 + locY]->Y && itt->F > tmpPoints[locX * 3 + locY]->F) {
+									closedSet.push_back (*tmpPoints[locX * 3 + locY]);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		openSet.erase (openSet.begin () + smallest);
+	}
+}
+			/*find the node with the least f on the open list, call it "q"
+			pop q off the open list
+			generate q's 8 successors and set their parents to q
+			for each successor
+				if successor is the goal, stop the search
+					successor.g = q.g + distance between successor and q
+					successor.h = distance from goal to successor
+					successor.f = successor.g + successor.h
+
+					if a node with the same position as successor is in the OPEN list \
+						which has a lower f than successor, skip this successor
+						if a node with the same position as successor is in the CLOSED list \
+							which has a lower f than successor, skip this successor
+							otherwise, add the node to the open list
+							end
+							push q on the closed list
+							end
+}
+
+void aStarFinal (cameFrom, current)
+total_path : = [current]
+	while current in cameFrom.Keys :
+		current : = cameFrom[current]
+		total_path.append (current)
+		return total_path
+		*/
+
+
 
 std::string Map::intToString (int n) {
 	char temp[16];

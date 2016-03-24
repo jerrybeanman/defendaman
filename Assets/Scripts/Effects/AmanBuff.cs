@@ -25,21 +25,28 @@ using UnityEngine.EventSystems;
 
 public class AmanBuff : Buff {
 
-    int speedbuff = 1;
+    int speedbuff = 20;
     int atkbuff = 5;
     int defbuf = 5;
-    int applyrate;
+    int hpbuf = 2000;
+    //int applyrate;
 
-    bool appliedspeedbuff = false;
+    //bool appliedspeedbuff = false;
 
     void Start() {
-        magnitude = 0;
-        duration = 150;
-        applyrate = 0;
+        //magnitude = 0;
+        //duration = 150;
+        //applyrate = 0;
+        var baseClass = gameObject.GetComponent<BaseClass>();
+        baseClass.ClassStat.AtkPower += atkbuff;
+        baseClass.ClassStat.MoveSpeed += speedbuff;
+        baseClass.ClassStat.Defense += defbuf;
+        baseClass.ClassStat.MaxHp += hpbuf;
+        baseClass.ClassStat.CurrentHp += hpbuf;
     }
     
     // Called every physics update
-    protected override void FixedUpdate() {
+    /*protected override void FixedUpdate() {
         applyrate++;
         if (!appliedspeedbuff) 
         {
@@ -54,13 +61,6 @@ public class AmanBuff : Buff {
                 magnitude++;
             }
         }
-        if(--duration < 0)
-        {
-            player.ClassStat.AtkPower -= (magnitude*atkbuff);
-            player.ClassStat.Defense -= (magnitude*defbuf);
-            player.ClassStat.MoveSpeed -= speedbuff;
-            Destroy(this);
-        }
-    }
+    }*/
 }
 
