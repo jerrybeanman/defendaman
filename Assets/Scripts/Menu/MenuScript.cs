@@ -88,8 +88,8 @@ public class MenuScript : MonoBehaviour {
             {
                 LobbyNetwork.ParseLobbyData(tmp);
                 UpdateLobbyList();
-				if(LobbyNetwork.Start)
-					StartCoroutine(start_level());
+				//if(LobbyNetwork.Start)
+				//	StartCoroutine(start_level());
             }
         }
     }
