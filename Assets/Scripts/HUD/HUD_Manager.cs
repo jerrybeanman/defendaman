@@ -505,12 +505,6 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
-        //Weird merge conflict here (START)
-		// Add selected building to either wallList or Armory list depending the tag
-		if(bComponent.type == Building.BuildingType.Wall)
-			mapManager.wallList.Add(buildingLocation); 
-		else
-			mapManager.ArmoryList.Add(buildingLocation);
 
 		if (building.GetComponent<Building> ().type == Building.BuildingType.Watchtower) {
 			building.AddComponent<WatchtowerLightRotate> ();
