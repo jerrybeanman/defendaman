@@ -15,8 +15,8 @@ public class Building:MonoBehaviour {
 	public int team;
 	public bool placing;
 
-	Sprite allyBuilding;
-	Sprite enemyBuilding;
+	public Sprite allyBuilding;
+	public Sprite enemyBuilding;
 
 	SpriteRenderer spriteRenderer;
 	public Building(int x, int y)
@@ -29,16 +29,13 @@ public class Building:MonoBehaviour {
 	void Start () 
 	{
 		if(!placing)
-		{
 			gameObject.GetComponent<Animator>().SetTrigger("Create");
-		}
 
 		if(GameData.MyPlayer.TeamID == team)
-			gameObject.GetComponent<SpriteRenderer>().Sprite = allyBuilding;
+			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
-			gameObject.GetComponent<SpriteRenderer>().Sprite = enemyBuilding;
+			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
 
-		spriteRenderer = gameObjectGetComponent<SpriteRenderer>();
 
 		notifycreation();
     }

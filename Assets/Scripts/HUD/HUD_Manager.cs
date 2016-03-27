@@ -163,9 +163,9 @@ public class HUD_Manager : MonoBehaviour {
 	void Start()
 	{
 		// Subscribe our chat system to the TCP network
-		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, UICode.Chat);
+		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, (int)UICode.Chat);
 		// Subscribe building creation to the UDP network
-		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, UICode.Building);
+		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.Building);
 	}
 
 	// Called once per frame
@@ -230,6 +230,8 @@ public class HUD_Manager : MonoBehaviour {
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
 
+				
+
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
 				 {
 					// Send the packet, with Team ID, user name, and the message input
@@ -276,6 +278,7 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
+
 	/*----------------------------------------------------------------------------
     --	Check for keyboard event on key "m" to open shop menu
     --
@@ -292,6 +295,7 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
+	private BuildingType buildType;
 	/*----------------------------------------------------------------------------
     --	Called by the OnClick function of the panle items in the shop menu,
     --	highlight and indicates the currently selected item
@@ -304,6 +308,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void SelectItem(int i)
 	{
+		buildType = (BuildingType)i;
 		// If nothing is currently selected
 		if(shop.Selected.Option == null)
 		{
@@ -446,7 +451,7 @@ public class HUD_Manager : MonoBehaviour {
 	void UpdateBuildingCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
-		int xPos = data[]
+		//éint xPos = data[]
 	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
@@ -492,8 +497,22 @@ public class HUD_Manager : MonoBehaviour {
 
 		placementRange.SetActive(false);
 
- 		if (Application.platform == RuntimePlatform.LinuxPlayer)
-			return true;
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			// Send the packet, with Team ID, user name, and the message input
+			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, buildingLocation.x.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.YPos, buildingLocation.y.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, buildingLocation.z.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.XRot, building.transform.rotation.x.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.rotation.z.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, buildType.ToString()));
+			Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
+		}
+		return true;
+ 	}
 		
 
 	/*----------------------------------------------------------------------------
