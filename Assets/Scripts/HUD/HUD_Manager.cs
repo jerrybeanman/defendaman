@@ -155,7 +155,6 @@ public class HUD_Manager : MonoBehaviour {
 	// Called on start of game
 	void Start()
 	{
-		GameData.GameStart = true;
 
 		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
@@ -485,6 +484,7 @@ public class HUD_Manager : MonoBehaviour {
 			building.layer = LayerMask.NameToLayer("Default");
 		}
 		placementRange.SetActive(false);
+
 		return true;
 	}
 
