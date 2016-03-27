@@ -135,8 +135,8 @@ public class GameManager : MonoBehaviour {
                 myTeam = playerData.Value.TeamID;
 				player = createdPlayer;
 				GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
-				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
-				GameObject.Find("Camera Enemies").GetComponent<FollowCamera>().target = player.transform;
+//				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
+//				GameObject.Find("Camera Enemies").GetComponent<FollowCamera>().target = player.transform;
 				if (GameObject.Find("Minimap Camera") != null)
 					GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
 				player.AddComponent<Movement>();

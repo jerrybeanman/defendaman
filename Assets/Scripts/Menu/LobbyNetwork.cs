@@ -125,6 +125,7 @@ public class LobbyNetwork : MonoBehaviour {
             case NetworkCode.PlayerJoinedLobby:
             {
                 PlayerData tmpPlayer = new PlayerData();
+                tmpPlayer.Ready = false;
                 tmpPlayer.PlayerID = PlayerPacketID;
                 tmpPlayer.Username = packet[NetworkKeyString.UserName];
                 if (GameData.MyPlayer.PlayerID == -1)
@@ -143,12 +144,15 @@ public class LobbyNetwork : MonoBehaviour {
                 {
 					int id = playerData[NetworkKeyString.PlayerID].AsInt;
 					PlayerData tempPlayer 	= new PlayerData();
+					tempPlayer.Ready 		= false;
 					tempPlayer.PlayerID  	= id;
 					tempPlayer.ClassType 	= (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
 					tempPlayer.TeamID 		= playerData[NetworkKeyString.TeamID].AsInt;
-					tempPlayer.Ready 		= playerData[NetworkKeyString.Ready].AsBool;
+					tempPlayer.Ready 		= Convert.ToBoolean(playerData[NetworkKeyString.Ready].AsInt);
 					tempPlayer.Username		= playerData[NetworkKeyString.UserName];
                     GameData.LobbyData.Add(id, tempPlayer);
+
+                    print("[Debug] UpdatePlayerList()" + playerData[NetworkKeyString.TeamID].AsBool);
                 }
                 break;
             }
@@ -165,7 +169,7 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Start = true;
+				Application.LoadLevel("hud_test");
 				break;
 			}	
 			
