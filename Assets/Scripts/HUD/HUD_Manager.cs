@@ -230,8 +230,6 @@ public class HUD_Manager : MonoBehaviour {
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
 
-				
-
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
 				 {
 					// Send the packet, with Team ID, user name, and the message input
@@ -451,7 +449,27 @@ public class HUD_Manager : MonoBehaviour {
 	void UpdateBuildingCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
-		//éint xPos = data[]
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt].Building;
+
+		// Retrieve the Building component attached with the game object
+		Building bComponent = building.GetComponent<Building>();
+
+		Vector3 pos = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
+
+		bComponent.team = data[NetworkKeyString.TeamID].AsInt;
+		
+		Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
+
+	
+		bComponent.GetComponent<Building>().X = (int)pos.x;
+		bComponent.GetComponent<Building>().Y = (int)pos.y;
+
+		// Add selected building to either wallList or Armory list depending the tag
+		if(bComponent.type == Building.BuildingType.Wall)
+			mapManager.wallList.Add(pos); 
+		else
+			mapManager.ArmoryList.Add(pos);
+
 	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
@@ -464,8 +482,6 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	private bool PlaceBuilding(GameObject building)
 	{
-		// Retrieve the Building component attached with the game object
-		Building bComponent = building.GetComponent<Building>();
 
 		// Construct a vector of where the Gameobject will be placed 
 		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
@@ -477,23 +493,14 @@ public class HUD_Manager : MonoBehaviour {
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
 		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
-
-		SetAllCollidersStatus(shop.Selected.Building, true);
+		Destroy(building);
 
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
-		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
-		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
-
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
 
-		// Add selected building to either wallList or Armory list depending the tag
-		if(bComponent.type == Building.BuildingType.Wall)
-			mapManager.wallList.Add(buildingLocation); 
-		else
-			mapManager.ArmoryList.Add(buildingLocation);
 
 		placementRange.SetActive(false);
 
