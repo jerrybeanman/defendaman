@@ -19,14 +19,15 @@ public class MapManager : MonoBehaviour {
     private const string INCR = "incr";
     private const string DECR = "decr";
     /* A set of constant map update event types. */
-    enum EventType {
+    public enum EventType 
+    {
         CREATE_MAP = 0,
         RESOUCE_TAKEN = 1,
         RESOURCE_DEPLETED = 2,
         ITEM_DROPPED = 3,
         ITEM_PICKEDUP = 4,
         BUILDING_HIT = 5,
-        BUILDING_DSTR = 6
+        BUILDING_DSTR = 6,
     };
     /* ID of map update event, i.e. its event type. */
     private EventType _id;

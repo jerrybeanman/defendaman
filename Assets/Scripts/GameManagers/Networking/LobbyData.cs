@@ -16,6 +16,12 @@ public class NetworkKeyString
 	public static string StartGame 	= "StartGame";
 	public static string UserName   = "UserName";
 	public static string Message	= "Message";
+    public static string XPos       = "XPos";
+    public static string YPos       = "YPos";
+    public static string ZPos       = "ZPos";
+    public static string XRot       = "YPos";
+    public static string YPos       = "YPos";
+    public static string ZRot       = "ZRot";
 }
 
 public class PlayerData {

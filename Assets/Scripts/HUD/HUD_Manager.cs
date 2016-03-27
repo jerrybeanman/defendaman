@@ -6,6 +6,13 @@ using System.Globalization;
 using SimpleJSON;
 using System.Collections.Generic;
 
+
+public enum UICode
+{
+	Chat 		= 1,
+	Building 	= 2
+}
+
 public class HUD_Manager : MonoBehaviour {
 	#region Classes
 	/**
@@ -155,12 +162,11 @@ public class HUD_Manager : MonoBehaviour {
 	// Called on start of game
 	void Start()
 	{
-
 		// Subscribe our chat system to the TCP network
-		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
+		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, UICode.Chat);
+		// Subscribe building creation to the UDP network
+		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, UICode.Building);
 	}
-
-
 
 	// Called once per frame
 	void Update()
@@ -193,6 +199,7 @@ public class HUD_Manager : MonoBehaviour {
 		UpdateTimer();
 	}
 
+
 	/*----------------------------------------------------------------------------
     --	Check for any events triggered in the chat box
     --
@@ -223,12 +230,15 @@ public class HUD_Manager : MonoBehaviour {
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
 
-				// Send the packet, with Team ID, user name, and the message input
-				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
-				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
-				packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
-				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
+				if (Application.platform == RuntimePlatform.LinuxPlayer)
+				 {
+					// Send the packet, with Team ID, user name, and the message input
+					List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+					packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
+					packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
+					Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
+				}
 
 				// Clear out the chat window
 				chat.input.text = "";
@@ -244,7 +254,7 @@ public class HUD_Manager : MonoBehaviour {
     --
     --	Interface:  void CheckSkillStatus()
     --
-    --	programmer: Jerry Jia
+    --	progrbammer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
 	void CheckSkillStatus()
@@ -337,18 +347,22 @@ public class HUD_Manager : MonoBehaviour {
 			// Assign team attribute so ally cannot damage the building 
 			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
 
+			// Let the building know that it is currently being placed
+			shop.Selected.Building.GetComponent<Building>().placing = true;
+
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
 
-
-			// Set the color transparency 
+			// Make sprite a bit transparent 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
 
+			// Set current rotation value to be zero
 			curRot = 0;
 
+			// Display placement area on HUD
 			placementRange.SetActive(true);
 		}
 	}
@@ -358,7 +372,7 @@ public class HUD_Manager : MonoBehaviour {
     --	Called by the OnClick function on the buy button in the shop menu
     --	Interface:  public void Buy()
     --
-    --	programmer: Jerry Jia, Thomas Yu
+    --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
 	public void SetAllCollidersStatus (GameObject go, bool active) 
@@ -428,6 +442,12 @@ public class HUD_Manager : MonoBehaviour {
 			yield return new WaitForEndOfFrame ();
 		}
 	}
+
+	void UpdateBuildingCallBack(JSONClass data)
+	{
+		int team = data[NetworkKeyString.TeamID].AsInt;
+		int xPos = data[]
+	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
@@ -472,8 +492,9 @@ public class HUD_Manager : MonoBehaviour {
 
 		placementRange.SetActive(false);
 
-		return true;
-	}
+ 		if (Application.platform == RuntimePlatform.LinuxPlayer)
+			return true;
+		
 
 	/*----------------------------------------------------------------------------
     --	Highlight and select an item in the shop menu
@@ -562,6 +583,8 @@ public class HUD_Manager : MonoBehaviour {
 		if(NetworkingManager.TCP_Send(packet, 256) < 0)
 			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
 	}
+
+
 
 	/*----------------------------------------------------------------------------
     --  CallBack function that will subscribe to NetworkingManager to recieve
