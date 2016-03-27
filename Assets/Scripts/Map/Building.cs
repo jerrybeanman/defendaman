@@ -13,7 +13,7 @@ public class Building:MonoBehaviour {
 	public float health = 100;
 
 	public int team;
-	public bool placing;
+	public bool placing = false;
 
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;

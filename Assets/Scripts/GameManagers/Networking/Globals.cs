@@ -20,8 +20,8 @@ public class NetworkKeyString
     public static string XPos       = "XPos";
     public static string YPos       = "YPos";
     public static string ZPos       = "ZPos";
-    public static string XRot       = "YPos";
-    public static string YRot       = "YPos";
+    public static string XRot       = "XRot";
+    public static string YRot       = "YRot";
     public static string ZRot       = "ZRot";
 	public static string BuildType  = "BuildType";
 }

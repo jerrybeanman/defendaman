@@ -237,7 +237,7 @@ public class HUD_Manager : MonoBehaviour {
 					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
-					Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
+					Send(NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.NA));
 				}
 
 				// Clear out the chat window
@@ -306,7 +306,8 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void SelectItem(int i)
 	{
-		buildType = (BuildingType)i;
+		buildType = (BuildingType)i + 1;
+		print ("aaaa " + buildType.ToString());
 		// If nothing is currently selected
 		if(shop.Selected.Option == null)
 		{
@@ -449,7 +450,8 @@ public class HUD_Manager : MonoBehaviour {
 	void UpdateBuildingCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
-		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt].Building;
+		print ("[Debug] " + data.ToString());
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt - 1].Building;
 
 		// Retrieve the Building component attached with the game object
 		Building bComponent = building.GetComponent<Building>();
@@ -457,7 +459,9 @@ public class HUD_Manager : MonoBehaviour {
 		Vector3 pos = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
 
 		bComponent.team = data[NetworkKeyString.TeamID].AsInt;
-		
+
+		building.GetComponent<Building>().placing = false;
+
 		Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
 
 	
@@ -484,7 +488,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 
 		// Construct a vector of where the Gameobject will be placed 
-		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
+		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-2);
 
 		// Check if it is a valid location to place the building 
 		if(!CheckValidLocation(buildingLocation))
@@ -501,11 +505,11 @@ public class HUD_Manager : MonoBehaviour {
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
 
-
 		placementRange.SetActive(false);
 
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
+			//print ("[DEBUG]: PlaceBuilding() x-" + buildingLocation.x + " y-" + buildingLocation.y + " z-" + buildingLocation.z);
 			// Send the packet, with Team ID, user name, and the message input
 			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -515,8 +519,9 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.XRot, building.transform.rotation.x.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.rotation.z.ToString()));
-			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, buildType.ToString()));
-			Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
+			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
+			Send(packet);
 		}
 		return true;
  	}
