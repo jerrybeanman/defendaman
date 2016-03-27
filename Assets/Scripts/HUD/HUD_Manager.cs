@@ -505,7 +505,27 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
+        //Weird merge conflict here (START)
+		// Add selected building to either wallList or Armory list depending the tag
+		if(bComponent.type == Building.BuildingType.Wall)
+			mapManager.wallList.Add(buildingLocation); 
+		else
+			mapManager.ArmoryList.Add(buildingLocation);
 
+		if (building.GetComponent<Building> ().type == Building.BuildingType.Watchtower) {
+			building.AddComponent<WatchtowerLightRotate> ();
+			building.transform.GetChild (0).gameObject.layer = LayerMask.NameToLayer ("FOVEffects");
+			building.transform.GetChild (1).gameObject.layer = LayerMask.NameToLayer ("hide overlay");
+		} else if (building.GetComponent<Building> ().type == Building.BuildingType.Turret) {
+			// Calling this method:
+			// instantTurret(float reload, int speed, int teamToIgnore, int range)
+			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
+			// our team # = GameData.myPlayer.TeamID
+			building.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
+
+			building.layer = LayerMask.NameToLayer("Default");
+		}
+        //weird merge conflict here (END)
 		placementRange.SetActive(false);
 
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
