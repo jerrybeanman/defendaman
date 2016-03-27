@@ -497,7 +497,8 @@ public class HUD_Manager : MonoBehaviour {
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
 		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
-		Destroy(building);
+
+		SetAllCollidersStatus(building, true);
 
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
@@ -509,7 +510,6 @@ public class HUD_Manager : MonoBehaviour {
 
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
-			//print ("[DEBUG]: PlaceBuilding() x-" + buildingLocation.x + " y-" + buildingLocation.y + " z-" + buildingLocation.z);
 			// Send the packet, with Team ID, user name, and the message input
 			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -522,6 +522,7 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
 			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
 			Send(packet);
+			Destroy(building);
 		}
 		return true;
  	}
