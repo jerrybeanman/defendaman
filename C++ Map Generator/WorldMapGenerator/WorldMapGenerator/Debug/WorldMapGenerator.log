@@ -1,17 +1,25 @@
-﻿Build started 2016-03-06 1:49:17 PM.
-     1>Project "C:\Users\Jaegar\Desktop\C++ Map Generator\WorldMapGenerator\WorldMapGenerator\WorldMapGenerator.vcxproj" on node 2 (Build target(s)).
+﻿Build started 2016-03-23 12:20:13 PM.
+     1>Project "D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\WorldMapGenerator\WorldMapGenerator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp Map.cpp
+         Map.cpp
+     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\map.cpp(28): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\map.cpp(213): warning C4018: '<': signed/unsigned mismatch
+     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\map.cpp(215): warning C4018: '<': signed/unsigned mismatch
          Application.cpp
-     1>c:\users\jaegar\desktop\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(8): warning C4018: '<': signed/unsigned mismatch
-     1>c:\users\jaegar\desktop\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(10): warning C4018: '<': signed/unsigned mismatch
+     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(10): warning C4018: '<': signed/unsigned mismatch
+     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(12): warning C4018: '<': signed/unsigned mismatch
+         Generating Code...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /l"0x0409" /nologo /fo"Debug\Resource.res" Resource.rc 
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jaegar\Desktop\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Jaegar\Desktop\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jaegar\Desktop\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.lib" /MACHINE:X86 Debug\Resource.res
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.lib" /MACHINE:X86 Debug\Resource.res
          Debug\Application.obj
          Debug\Map.obj
-         WorldMapGenerator.vcxproj -> C:\Users\Jaegar\Desktop\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.exe
-     1>Done Building Project "C:\Users\Jaegar\Desktop\C++ Map Generator\WorldMapGenerator\WorldMapGenerator\WorldMapGenerator.vcxproj" (Build target(s)).
+         LINK : D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.exe not found or not built by the last incremental link; performing full link
+         WorldMapGenerator.vcxproj -> D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.exe
+     1>Done Building Project "D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\WorldMapGenerator\WorldMapGenerator.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.55
+Time Elapsed 00:00:03.03

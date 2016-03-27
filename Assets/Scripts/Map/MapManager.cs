@@ -53,8 +53,11 @@ public class MapManager : MonoBehaviour {
     public List<Sprite> _mapWalkable;
     public List<Sprite> _mapSceneryObjects;
 
-	//variables used for buildings
-	public List<GameObject> buildingsCreated;
+    /* List of world resource objects */
+    private List<Resource> _mapResources = new List<Resource>();
+
+    //variables used for buildings
+    public List<GameObject> buildingsCreated;
 	public List<Vector2>  wallList;
 	public List<Vector2>  ArmoryList;
 	Vector3 lastFramePosition;
@@ -231,6 +234,11 @@ public class MapManager : MonoBehaviour {
             for (int y = 0; y < _mapHeight; y++)
                 _mapScenery[x, y] = mapSceneryX[y].AsInt;
         }
+
+        JSONArray resources = message["mapResources"].AsArray;
+        for (int i = 0; i < resources.Count; i++) {
+            _mapResources.Add(new Resource(resources[i][0].AsInt, resources[i][1].AsInt));
+        }
     }
    
     /*------------------------------------------------------------------------------------------------------------------
@@ -268,7 +276,7 @@ public class MapManager : MonoBehaviour {
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
                 //TODO: _map should be _mapScenery
-                if (_map[x, y] >= 200 && _map[x, y] <= 201) {
+                if (_mapScenery[x, y] >= 200 && _map[x, y] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
                 if (_mapScenery[x, y] != -1) {
