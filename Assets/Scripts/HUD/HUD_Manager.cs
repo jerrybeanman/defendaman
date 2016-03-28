@@ -171,6 +171,8 @@ public class HUD_Manager : MonoBehaviour {
 	// Called once per frame
 	void Update()
 	{
+		if(Input.GetKeyDown(KeyCode.B))
+			Buy();
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
@@ -307,7 +309,6 @@ public class HUD_Manager : MonoBehaviour {
 	public void SelectItem(int i)
 	{
 		buildType = (BuildingType)i + 1;
-		print ("aaaa " + buildType.ToString());
 		// If nothing is currently selected
 		if(shop.Selected.Option == null)
 		{
@@ -353,6 +354,7 @@ public class HUD_Manager : MonoBehaviour {
 
 			// Let the building know that it is currently being placed
 			shop.Selected.Building.GetComponent<Building>().placing = true;
+
 
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
@@ -500,25 +502,13 @@ public class HUD_Manager : MonoBehaviour {
 
 		SetAllCollidersStatus(building, true);
 
+
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
 
-		if (building.GetComponent<Building> ().type == Building.BuildingType.Watchtower) {
-			building.AddComponent<WatchtowerLightRotate> ();
-			building.transform.GetChild (0).gameObject.layer = LayerMask.NameToLayer ("FOVEffects");
-			building.transform.GetChild (1).gameObject.layer = LayerMask.NameToLayer ("hide overlay");
-		} else if (building.GetComponent<Building> ().type == Building.BuildingType.Turret) {
-			// Calling this method:
-			// instantTurret(float reload, int speed, int teamToIgnore, int range)
-			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
-			// our team # = GameData.myPlayer.TeamID
-			building.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
-
-			building.layer = LayerMask.NameToLayer("Default");
-		}
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
 
@@ -537,6 +527,9 @@ public class HUD_Manager : MonoBehaviour {
 			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
 			Send(packet);
 			Destroy(building);
+		}else
+		{
+			building.GetComponent<Building>().placing = false;
 		}
 		return true;
  	}
