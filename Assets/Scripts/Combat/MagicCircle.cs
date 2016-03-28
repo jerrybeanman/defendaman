@@ -51,6 +51,7 @@ public class MagicCircle : Area
     ---------------------------------------------------------------------------------------------------------------------*/
     void Start()
     {
+		transform.position = new Vector3(transform.position.x, transform.position.y, -2);
         startPos = transform.position;
         Invoke("removeCircle", duration);
     }
