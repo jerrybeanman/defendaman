@@ -173,6 +173,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		if(Input.GetKeyDown(KeyCode.B))
 			Buy();
+
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
@@ -308,7 +309,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void SelectItem(int i)
 	{
-		buildType = (BuildingType)i + 1;
+		buildType = (BuildingType)i;
 		// If nothing is currently selected
 		if(shop.Selected.Option == null)
 		{
@@ -453,7 +454,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		print ("[Debug] " + data.ToString());
-		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt - 1].Building;
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt].Building;
 
 		// Retrieve the Building component attached with the game object
 		Building bComponent = building.GetComponent<Building>();
@@ -544,8 +545,8 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void HighlightItem(int i)
 	{
-		shop.Selected.Option = shop.Items[i].Option;
-		shop.Selected.Building = shop.Items[i].Building;
+		shop.Selected.Option = shop.Items[i-1].Option;
+		shop.Selected.Building = shop.Items[i-1].Building;
 		shop.Selected.Option.image.color = Color.green;
 	}
 

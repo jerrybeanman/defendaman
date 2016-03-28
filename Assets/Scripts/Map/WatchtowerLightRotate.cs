@@ -5,11 +5,20 @@ public class WatchtowerLightRotate : MonoBehaviour {
 
 	// Adjust this to change the speed of rotation
 	public int speed = 2;
+	public Sprite allyTop;
+	public Sprite enemyTop;
+
 	Building parent;
+	
 	// Use this for initialization
 	void Start () 
 	{
 		parent = transform.parent.gameObject.GetComponent<Building>();
+		if(parent.team == GameData.MyPlayer.TeamID)
+			gameObject.GetComponent<SpriteRenderer>().sprite = allyTop;
+		else
+			gameObject.GetComponent<SpriteRenderer>().sprite = enemyTop;
+
 		if(parent.placing)
 		{
 			transform.GetChild(0).gameObject.SetActive(false);
