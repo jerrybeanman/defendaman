@@ -8,28 +8,25 @@ public class Building:MonoBehaviour {
 
 	public BuildingType type;
 
-	public int X {get; set;}
-	public int Y {get;  set;}
 	public float health = 100;
 
 	public int team;
-	public bool placing = false;
 
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
 
+	public float ConstructionTime = 2f;
+
+	public bool placing = false;
+
 	SpriteRenderer spriteRenderer;
-	public Building(int x, int y)
-	{
-		this.X=x;
-		this.Y=y;
-	}
 
 	// Use this for initialization
 	void Start () 
 	{
 		if(!placing)
-			gameObject.GetComponent<Animator>().SetTrigger("Create");
+			//gameObject.GetComponent<Animator>().SetTrigger("Create");
+			StartCoroutine(Construct());
 
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
@@ -46,9 +43,24 @@ public class Building:MonoBehaviour {
 			gameObject.layer = LayerMask.NameToLayer("Default");
 		}
 
+
 		notifycreation();
     }
 
+	IEnumerator Construct()
+	{
+		float elapsedTime = 0.0f;
+		Vector3 startingScale = new Vector3(0, 0, 0); // have a startingRotation as well
+		Vector3 targetScale = transform.localScale;
+
+		while (elapsedTime < ConstructionTime) 
+		{
+			elapsedTime += Time.deltaTime; // <- move elapsedTime increment here
+			// Scale
+			transform.localScale = Vector3.Slerp(startingScale, targetScale, (elapsedTime / ConstructionTime));
+			yield return new WaitForEndOfFrame ();
+		}
+	}
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{

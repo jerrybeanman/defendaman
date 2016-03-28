@@ -14,14 +14,14 @@ public class AI : MonoBehaviour {
     private Rigidbody2D rb2d;
     private int speed = 35;
     public double reload = 2.0f;
-    Rigidbody2D bullet;
+    public Rigidbody2D bullet;
     public int team = -2;
     public int aiID = 0;
     // Use this for initialization
     void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("Default");
-        bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+       	//bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
 		NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
         NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
         rb2d = GetComponent<Rigidbody2D>();

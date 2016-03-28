@@ -467,10 +467,6 @@ public class HUD_Manager : MonoBehaviour {
 
 		Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
 
-	
-		bComponent.GetComponent<Building>().X = (int)pos.x;
-		bComponent.GetComponent<Building>().Y = (int)pos.y;
-
 		// Add selected building to either wallList or Armory list depending the tag
 		if(bComponent.type == Building.BuildingType.Wall)
 			mapManager.wallList.Add(pos); 
@@ -499,7 +495,6 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
-		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
 
 		SetAllCollidersStatus(building, true);
 
@@ -527,11 +522,13 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
 			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
 			Send(packet);
-			Destroy(building);
 		}else
 		{
-			building.GetComponent<Building>().placing = false;
+			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, Quaternion.identity);
+			testBuild.GetComponent<Building>().placing = false;
 		}
+
+		Destroy(building);
 		return true;
  	}
 		
