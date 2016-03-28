@@ -17,9 +17,12 @@ public class Building:MonoBehaviour {
 
 	public float ConstructionTime = 2f;
 
-	public bool placing = false;
-
 	SpriteRenderer spriteRenderer;
+
+	[HideInInspector]
+	public bool placing = false;
+	[HideInInspector]
+	public bool placeble = true;
 
 	// Use this for initialization
 	void Start () 
@@ -64,6 +67,8 @@ public class Building:MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
+		if(placing)
+			placeble = false;
 		if(health<=0)
 			Destroy(gameObject);
 		var attack = other.gameObject.GetComponent<Trigger>();
@@ -76,6 +81,11 @@ public class Building:MonoBehaviour {
 		notifydeath();
 	}
 
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if(placing)
+			placeble = true;
+	}
 
 	public void notifycreation(){
 		//????

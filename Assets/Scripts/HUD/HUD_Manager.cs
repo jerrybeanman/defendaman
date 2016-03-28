@@ -19,28 +19,28 @@ public class HUD_Manager : MonoBehaviour {
 	 *  Indicates the player health on bottom left corner of HUD
 	 */
 	[System.Serializable]
-	public class PlayerProfile 	
+	public class PlayerProfile
 	{
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]	
-	public class AllyKing 		
-	{ 
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
+		public Image 	Health;
+		public Animator HealthAnimator;
 	}
 	/**
 	 *  Indicates the health bar of ally king
 	 */
 	[System.Serializable]
-	public class EnemyKing 		
-	{ 
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
+	public class AllyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class EnemyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
 	}
 
 	/**
@@ -386,7 +386,11 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		foreach(BoxCollider2D c in go.GetComponents<BoxCollider2D> ())
 		{
-			c.enabled = active;
+			c.isTrigger = !active;
+			if(!active)
+				go.layer =  LayerMask.NameToLayer("Default");
+			else
+				go.layer =  LayerMask.NameToLayer("Minimap");
 		}
 	}
 
@@ -413,7 +417,7 @@ public class HUD_Manager : MonoBehaviour {
 		buildings.transform.position = cursorPosition;
 
 		// Check if it is a valid location to place the building 
-		if(!CheckValidLocation(cursorPosition))
+		if(!CheckValidLocation(buildings))
 		{
 			// Set the color transparency 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0.3f);
@@ -490,7 +494,7 @@ public class HUD_Manager : MonoBehaviour {
 		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-2);
 
 		// Check if it is a valid location to place the building 
-		if(!CheckValidLocation(buildingLocation))
+		if(!CheckValidLocation(building))
 			return false;
 
 		// Set the color transparency 
@@ -571,29 +575,15 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia, Thomas Yu
     --	@return: void
 	------------------------------------------------------------------------------*/
-	private bool CheckValidLocation(Vector2 building){
-		//Check if existing armory object is in the way
-		foreach(var armory in mapManager.ArmoryList)
-		{
-			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance) < 3)
-				return false;
-		}
-		//Check if any walls are conflicting with desired placing
-		foreach(var wall in mapManager.wallList)
-		{
-			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 2)
-				return false;
-		}
-		
+	private bool CheckValidLocation(GameObject building)
+	{
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
-		float distance_from_player = Vector3.Distance(player, building);
+		float distance_from_player = Vector3.Distance(player, building.transform.position);
 		if(distance_from_player > 6)
 			return false;
 
-		return true;
+		return 	building.GetComponent<Building>().placeble;
 	}
 
 	/*----------------------------------------------------------------------------
