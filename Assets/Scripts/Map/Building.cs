@@ -68,7 +68,10 @@ public class Building:MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 		if(placing)
+		{
+			print ("dont place plz");
 			placeble = false;
+		}
 		if(health<=0)
 			Destroy(gameObject);
 		var attack = other.gameObject.GetComponent<Trigger>();
@@ -84,7 +87,10 @@ public class Building:MonoBehaviour {
 	void OnTriggerExit2D(Collider2D other)
 	{
 		if(placing)
+		{
 			placeble = true;
+			print ("place plzzz");
+		}
 	}
 
 	public void notifycreation(){
