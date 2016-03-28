@@ -33,6 +33,7 @@ public class Movement : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(rb2d.position + vec * (float)distance, -Vector2.up, 0.0001f);
         if (hit.collider != null)
         {
+            Debug.Log("Collision on blink");
             return false;
         }
         return true;
@@ -65,8 +66,7 @@ public class Movement : MonoBehaviour
             var layerMask = (1 << 8);
             RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
             //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
-            rb2d.position = rb2d.position + vec * distance;
-
+            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
             Debug.Log("Vector Distance: " + hit.distance);
 
         }

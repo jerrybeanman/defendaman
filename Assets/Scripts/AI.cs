@@ -4,16 +4,17 @@ using SimpleJSON;
 
 public class AI : MonoBehaviour {
     bool route = false;
-    float facing;
+    float facing = 0;
     float accuracy = 3.5f;
     public float angleFacing;
     Pair<int, Vector2> lastLocation = new Pair<int, Vector2>(-5, new Vector2());
-    int range= 35;
+    int range = 35;
     Vector2 curMove;
     public float xCoord, yCoord;
     private Rigidbody2D rb2d;
     private int speed = 35;
     public double reload = 2.0f;
+    public double resetReload;
     Rigidbody2D bullet;
     public int team = -2;
     public int aiID = 0;
@@ -26,8 +27,9 @@ public class AI : MonoBehaviour {
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    void instantTurret(float reload, int speed, int teamToIgnore, int range)
+    public void instantTurret(float reload, int speed, int teamToIgnore, int range)
     {
+        this.resetReload = reload;
         this.reload = reload;
         this.speed = speed;
         this.team = teamToIgnore;
@@ -39,9 +41,9 @@ public class AI : MonoBehaviour {
         Vector2 attack;
         attack.x = packet["vecX"].AsFloat;
         attack.y = packet["vecY"].AsFloat;
-       
-        
-       
+
+
+
 
         Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
 
@@ -70,7 +72,6 @@ public class AI : MonoBehaviour {
         Vector3 face = new Vector3();
         float closest = 999;
         int id = 0, realId;
-        float facing;
         if (!route)
         {
             curMove = getRoute();
@@ -79,27 +80,113 @@ public class AI : MonoBehaviour {
         foreach (var playerData in GameData.LobbyData)
         {
             float dist;
-
             vec = GameData.PlayerPosition[playerData.Key];
             realId = GameData.MyPlayer.PlayerID;
             dist = Mathf.Sqrt(Mathf.Pow((rb2d.position.x - vec.x), 2) + Mathf.Pow((rb2d.position.y - vec.y), 2));
-            //Debug.Log("Player Position: " + vec.x + " " + vec.y + "Distance: " + dist + "Current Closest: " + closest );
-
-
             if (dist < closest)
             {
                 id = realId;
                 closest = dist;
                 face = vec;
+                lastLocation.first = realId;
             }
         }
         if (closest > range)
         {
             id = -1;
             lastLocation.first = -1;
+            reload -= Time.deltaTime;
             return;
         }
+        setFace(face);
 
+        if (reload < 0)
+        {
+            Vector2 attackSpot = new Vector2();
+            Vector2 attack = new Vector2();
+
+            if (face.x != lastLocation.second.x || face.y != lastLocation.second.y)
+            {
+                if (id == lastLocation.first && face != (Vector3)lastLocation.second)
+                {
+
+                    attackSpot = getIntersection(face, lastLocation.second, 25);
+                    attack = attackSpot;
+                }
+                else
+                {
+                    attack.x = face.x - rb2d.position.x;
+                    attack.y = face.y - rb2d.position.y;
+                }
+            }
+            else
+            {
+                Debug.Log(face + " " + transform.position);
+
+                attack.x = face.x - rb2d.position.x;
+                attack.y = face.y - rb2d.position.y;
+            }
+
+
+            //attack.Normalize();
+            /*
+            System.Random rnd = new System.Random();
+            float offset;
+            
+            offset = (float)(rnd.NextDouble() * accuracy - accuracy / 2);
+            //offsetY = (float)(rnd.NextDouble() * 3.0 - 1.5);
+            if (attack.x > attack.y)
+            {
+                attack.x += attack.x * offset;
+
+            }
+            else
+            {
+                attack.y += attack.y * offset;
+            }
+            */
+     
+            if (checkBlocked(attack))
+            {
+                attack.Normalize();
+                createBullet(attack);
+                
+            }
+           
+
+        }
+        else
+        {
+            reload -= Time.fixedDeltaTime;
+        }
+        //rb2d.MovePosition(rb2d.position + curMove * speed  * Time.fixedDeltaTime);
+        transform.rotation = Quaternion.AngleAxis(facing, Vector3.forward);
+        lastLocation.first = id;
+        lastLocation.second = face;
+
+    }
+    private bool checkBlocked(Vector2 attackSpot)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(rb2d.position + attackSpot * 0.2f, attackSpot, attackSpot.magnitude * 0.6f);
+        if (hit.collider != null)
+        {
+            Debug.Log("Collision on shot" + hit.point + "Vector: " + attackSpot);
+
+            return false;
+        }
+        return true;
+    }
+    private void createBullet(Vector2 attackDir)
+    {
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
+        attack.AddForce(attackDir * speed * 2.5f);
+        attack.GetComponent<BasicRanged>().teamID = team;
+        attack.GetComponent<BasicRanged>().damage = 10;
+        attack.GetComponent<BasicRanged>().maxDistance = 30;
+        reload = resetReload;
+    }
+    private void setFace(Vector2 face)
+    {
         float x, y;
 
         x = face.x - rb2d.position.x;
@@ -128,74 +215,6 @@ public class AI : MonoBehaviour {
             }
         }
         facing = getDegree(facing);
-        //facing = Mathf.Tan(xVal / yVal);
-        //  Debug.Log("Your position:" + rb2d.position.x + " " + rb2d.position.y);
-        //Debug.Log("Closest player position:" + face.x + " " + face.y);
-        //Debug.Log(facing);
-        if (reload < 0)
-        {
-            Vector2 attackSpot = new Vector2();
-            Vector2 attack = new Vector2();
-
-            if (face.x != lastLocation.second.x || face.y != lastLocation.second.y )
-            {
-                if (id == lastLocation.first && face != (Vector3)lastLocation.second)
-                {
-
-                    attackSpot = getIntersection(face, lastLocation.second, 25);
-                    attack = attackSpot;
-                }
-                else
-                {
-                    Debug.Log("Doing same spot shot");
-                    attack.x = x;
-                    attack.y = y;
-                }
-            }
-            else
-            {
-                Debug.Log("Doing same spot shot");
-                attack.x = x;
-                attack.y = y;
-            }
-
-
-            //attack.Normalize();
-            /*
-            System.Random rnd = new System.Random();
-            float offset;
-            
-            offset = (float)(rnd.NextDouble() * accuracy - accuracy / 2);
-            //offsetY = (float)(rnd.NextDouble() * 3.0 - 1.5);
-            if (attack.x > attack.y)
-            {
-                attack.x += attack.x * offset;
-
-            }
-            else
-            {
-                attack.y += attack.y * offset;
-            }
-            */
-            attack.Normalize();
-            Debug.Log(attack);
-            Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
-            attack2.AddForce(attack * speed * 2.5f);
-            //Debug.Log(attack);
-            attack2.GetComponent<BasicRanged>().teamID = team;
-            attack2.GetComponent<BasicRanged>().damage = 10;
-            attack2.GetComponent<BasicRanged>().maxDistance = 30;
-            reload = 1;
-        }
-        else
-        {
-            reload -= Time.fixedDeltaTime;
-        }
-        //rb2d.MovePosition(rb2d.position + curMove * speed  * Time.fixedDeltaTime);
-        transform.rotation = Quaternion.AngleAxis((float)facing, Vector3.forward);
-        lastLocation.first = id;
-        lastLocation.second = face;
-
     }
     Vector2 getRoute()
     {
@@ -225,22 +244,15 @@ public class AI : MonoBehaviour {
         Vector2 path = cur - last ;
         path.Normalize();
         path = path * spd;
-        Debug.Log("Cur: " + cur + " LAST : " + last);
-        Debug.Log("PATH: " + path);
         target.x = cur.x - rb2d.position.x;
         target.y = cur.y - rb2d.position.y;
-        Debug.Log("target: " + target);
         float a = Vector2.Dot(path, path) - (this.speed * this.speed);
-        Debug.Log("A:" + a);
         float b = 2 * Vector2.Dot(path, target);
-        Debug.Log("B: " + b);
         float c = Vector2.Dot(target, target);
-        Debug.Log("C: " + c);
-        float p = -b / (2 * a);
-        float q = (float)Mathf.Sqrt((b * b) - 4 * a * c) / (2 * a);
-        Debug.Log("P:" + p + " Q " + q);
-        float t1 = p - q;
-        float t2 = p + q;
+        float quad1 = -b / (2 * a);
+        float quad2 = (float)Mathf.Sqrt((b * b) - 4 * a * c) / (2 * a);
+        float t1 = quad1 - quad2;
+        float t2 = quad1 + quad2;
         float t;
         if(t1 > t2 && t2 > 0)
         {
@@ -250,20 +262,10 @@ public class AI : MonoBehaviour {
         {
             t = t1;
         }
-        
         Vector2 aimSpot = cur + path * t;
-        Debug.Log("Aim spot: " + aimSpot);
-        Debug.Log(transform.position + " DIF " + rb2d.position);
         shoot.x = aimSpot.x - rb2d.position.x;
         shoot.y = aimSpot.y - rb2d.position.y;
-       
-        float timeToImpact = shoot.magnitude / this.speed;
-        Debug.Log("Time: " + t + " Second Speed: " + timeToImpact);
-
-        Debug.Log("Bullet End:" + (rb2d.position + shoot * this.speed * t));
-        // shoot.Normalize();
-        shoot.Normalize();
-        Debug.Log("Returning shoot:" + shoot);
+        //shoot.Normalize();
         return shoot;
 
     }
