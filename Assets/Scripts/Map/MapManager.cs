@@ -22,7 +22,7 @@ public class MapManager : MonoBehaviour {
     public enum EventType 
     {
         CREATE_MAP = 0,
-        RESOUCE_TAKEN = 1,
+        RESOURCE_TAKEN = 1,
         RESOURCE_DEPLETED = 2,
         ITEM_DROPPED = 3,
         ITEM_PICKEDUP = 4,
@@ -53,8 +53,10 @@ public class MapManager : MonoBehaviour {
     public List<Sprite> _mapWalkable;
     public List<Sprite> _mapSceneryObjects;
 
-    /* List of world resource objects */
-    private List<Resource> _mapResources = new List<Resource>();
+    // Resource Objects, Game Objects, Sprites
+    private List<GameObject> _mapResources = new List<GameObject>();
+	public GameObject mapResource;
+	public List<Sprite> _resourceSprites;
 
     //variables used for buildings
     public List<GameObject> buildingsCreated;
@@ -90,7 +92,6 @@ public class MapManager : MonoBehaviour {
         // Find all objects with the tag "Tile" and add them to the arraylist.
         _pooledObjects = GameObject.FindGameObjectsWithTag("Tile");
         print("pooledObjects size: " + _pooledObjects.Length);
-        
 
         // Deactivate all game objects on start.
         for (int i = 0; i < _pooledObjects.Length; i++) {
@@ -106,7 +107,7 @@ public class MapManager : MonoBehaviour {
 	 * view frustum.
 	 * 
 	 * Iterate through the list of pooled objects. If the object is in the camera, set it to 
-	 * active. Else, set it to unactive.
+	 * active. Else, set it to inactive.
 	 */
     private void check_object_pool() {
 		if (GameData.GameStart) {
@@ -114,8 +115,7 @@ public class MapManager : MonoBehaviour {
 	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 	        frustumWidth = frustumHeight * mainCamera.aspect;
 
-	        if (_pooledObjects != null) 
-			{
+	        if (_pooledObjects != null) {
 	            for (int i = 0; i < _pooledObjects.Length; i++) {
 	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
 	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
@@ -130,37 +130,20 @@ public class MapManager : MonoBehaviour {
 		}
     }
 
-    /**
-	 * Check the object pool in camera view and update their activation every second. Check if user wants to place a building
-	 */
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	Update
+    -- DATE: 		February 16, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	Update(void)
+    -- RETURNS: 	void.
+    -- NOTES:
+    -- Called once per frame. Check the objects currently in view and update object pool.
+    ----------------------------------------------------------------------------------------------------------------------*/
     void Update() {
 		check_object_pool ();
 	}
-
-    /**
-	 * Decode the received message and handle its event.
-	 * @param message 	received JSON message from NetworkingManager
-	 */
-    /*public void receive_message(JSONClass message, int id) {
-        var data = message["data"].ToString();
-        var data2 = message["data2"].AsInt;
-        var data3 = message["data3"].AsFloat;
-        _id = (EventType)id;
-        _data = message[DATA];
-        //decode_message(message);
-        handle_event(_map, _id, _data);
-	}*/
-
-    /**
-	 * Set the MapManager's private variables based on the parsed JSON string.
-	 * A message's "data" component can be broken down into its event type, 
-	 * the terrain/building type, and the terrain/building property values.
-	 * @param message 	received JSON message from NetworkingManager
-	 */
-    //private void decode_message(JSONClass msgObject) {
-    //	_string_map = msgObject[MAP];
-    //	_data = msgObject[DATA];
-    //}
 
     /**
 	 * Deserialize JSON string into 2D int array.
@@ -170,31 +153,36 @@ public class MapManager : MonoBehaviour {
         return _map;
     }
 
-
-
-
     /* Serialize 2D int array into JSON string. */
     private string parse_int_map(int[][] map) {
         return _string_map;
     }
 
-    /**
-	 * Execute the appropriate action given a received event.
-	 * @param map 	2d int array of map values
-	 * @param id 	id of received event, i.e. its event type 
-	 * @param data 	ancillary data of map event
-	 */
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: handle_event
+    -- DATE: February 16, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
+    -- INTERFACE: void handle_event(int id, JSONClass message)
+    --				int id				id of received event, i.e. its event type 
+    --				JSONClass message	the message in JSON for map creation 
+    -- RETURNS: void.
+    -- NOTES:
+	-- Execute the appropriate action given a received event.
+    ----------------------------------------------------------------------------------------------------------------------*/
     public void handle_event(int id, JSONClass message) {
-        // Enums are not ints in C# :(
         switch ((EventType)id) {
             case EventType.CREATE_MAP:
                 create_map(message);
                 draw_map();
                 instantiate_pool();
                 break;
-            case EventType.RESOUCE_TAKEN:
+            case EventType.RESOURCE_TAKEN:
+				// TODO: decrease resources left
                 break;
             case EventType.RESOURCE_DEPLETED:
+				// TODO: trigger depleted animation
                 break;
             case EventType.ITEM_DROPPED:
                 break;
@@ -207,10 +195,20 @@ public class MapManager : MonoBehaviour {
         }
     }
 
-    /**
-	 * Render map sprites to scene given a 2d map array. 
-	 * @param map 	2d int array of map values
-	 */
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	create_map
+    -- DATE: 		February 16, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER: 	Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: 	Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
+    -- INTERFACE: 	create_map(JSONClass message)
+    --					JSONClass message	the message in JSON for map creation, containing map data
+    -- RETURNS: 	void.
+    -- NOTES:
+    -- Parses the JSON message and initializes map objects.
+	-- Render map sprites to scene given a 2D map array. 
+	-- Instantiates a Resource game object and adds it to the list.
+    ----------------------------------------------------------------------------------------------------------------------*/
     private void create_map(JSONClass message) {
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
@@ -225,24 +223,32 @@ public class MapManager : MonoBehaviour {
                 _map[x, y] = mapX[y].AsInt;
         }
 
-
         JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
         
-
         for (int x = 0; x < _mapWidth; x++) {
             JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
             for (int y = 0; y < _mapHeight; y++)
                 _mapScenery[x, y] = mapSceneryX[y].AsInt;
         }
 
+		// Instantiates resource objects and adds them to list.
+		// Creates resource game objects on the map. It goes through the list of resources from the JSON message and instantiates them based on 
+		// their X and Y positions, which were pre-generated and assigned by the server. 
+		// The sprite is set randomly from a range of sprites (assigned in Unity Editor).
         JSONArray resources = message["mapResources"].AsArray;
         for (int i = 0; i < resources.Count; i++) {
-            _mapResources.Add(new Resource(resources[i][0].AsInt, resources[i][1].AsInt));
-        }
-    }
+			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, -2), Quaternion.identity) as GameObject;
+			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
+			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
+			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
+			temp.GetComponent<Resource>().amount = 5;
+			Debug.Log ("Adding resource at (" + temp.GetComponent<Resource>().x + ", " + temp.GetComponent<Resource>().y + ") Amount: " + temp.GetComponent<Resource>().amount);
+			_mapResources.Add (temp);
+		}
+	}
    
     /*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: placeSprites
+    -- FUNCTION: draw_map
     --
     -- DATE: February 19, 2016
     --
@@ -252,20 +258,20 @@ public class MapManager : MonoBehaviour {
     --
     -- PROGRAMMER: Thomas Yu, Jaegar Sarauer
     --
-    -- INTERFACE: void placeSprites()
+    -- INTERFACE: void draw_map()
     --
     -- RETURNS: void.
     --
     -- NOTES:
-    -- This function places sprites on the terrain. Currently it checks the value of the 2d array and if the array is 0, it randomly generates
-    -- one of two types of grass. If the array value is 1, it randomly generates oneof two types of water. This will be refactored so that all
-    -- there will be a different value in the array for each sprite. It also generates a 2collision box on the water tiles so thatr objects
-    -- cannot enter it.
+    -- This function places sprites on the terrain. Currently it checks the value of the 2d array and if the array is 0, 
+    -- it randomly generates one of two types of grass. If the array value is 1, it randomly generates oneof two types of 
+    -- water. This will be refactored so that all will be a different value in the array for each sprite. It also 
+    -- generates a 2collision box on the water tiles so thatr objects enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
         if (_map == null)
             return;
-        for (int x = 0; x < _mapWidth; x++)
+        for (int x = 0; x < _mapWidth; x++) {
             for (int y = 0; y < _mapHeight; y++) {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
@@ -284,5 +290,6 @@ public class MapManager : MonoBehaviour {
                     Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
                 }
             }
-    }
+		}
+	}
 }
