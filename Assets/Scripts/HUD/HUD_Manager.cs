@@ -19,28 +19,28 @@ public class HUD_Manager : MonoBehaviour {
 	 *  Indicates the player health on bottom left corner of HUD
 	 */
 	[System.Serializable]
-	public class PlayerProfile 	
+	public class PlayerProfile
 	{
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]	
-	public class AllyKing 		
-	{ 
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
+		public Image 	Health;
+		public Animator HealthAnimator;
 	}
 	/**
 	 *  Indicates the health bar of ally king
 	 */
 	[System.Serializable]
-	public class EnemyKing 		
-	{ 
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
+	public class AllyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class EnemyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
 	}
 
 	/**
@@ -171,6 +171,9 @@ public class HUD_Manager : MonoBehaviour {
 	// Called once per frame
 	void Update()
 	{
+		if(Input.GetKeyDown(KeyCode.B))
+			Buy();
+
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
@@ -306,8 +309,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void SelectItem(int i)
 	{
-		buildType = (BuildingType)i + 1;
-		print ("aaaa " + buildType.ToString());
+		buildType = (BuildingType)i;
 		// If nothing is currently selected
 		if(shop.Selected.Option == null)
 		{
@@ -354,6 +356,7 @@ public class HUD_Manager : MonoBehaviour {
 			// Let the building know that it is currently being placed
 			shop.Selected.Building.GetComponent<Building>().placing = true;
 
+
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
 
@@ -383,7 +386,11 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		foreach(BoxCollider2D c in go.GetComponents<BoxCollider2D> ())
 		{
-			c.enabled = active;
+			c.isTrigger = !active;
+			if(!active)
+				go.layer =  LayerMask.NameToLayer("Default");
+			else
+				go.layer =  LayerMask.NameToLayer("Minimap");
 		}
 	}
 
@@ -410,7 +417,7 @@ public class HUD_Manager : MonoBehaviour {
 		buildings.transform.position = cursorPosition;
 
 		// Check if it is a valid location to place the building 
-		if(!CheckValidLocation(cursorPosition))
+		if(!CheckValidLocation(buildings))
 		{
 			// Set the color transparency 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0.3f);
@@ -451,7 +458,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		print ("[Debug] " + data.ToString());
-		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt - 1].Building;
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt].Building;
 
 		// Retrieve the Building component attached with the game object
 		Building bComponent = building.GetComponent<Building>();
@@ -463,10 +470,6 @@ public class HUD_Manager : MonoBehaviour {
 		building.GetComponent<Building>().placing = false;
 
 		Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
-
-	
-		bComponent.GetComponent<Building>().X = (int)pos.x;
-		bComponent.GetComponent<Building>().Y = (int)pos.y;
 
 		// Add selected building to either wallList or Armory list depending the tag
 		if(bComponent.type == Building.BuildingType.Wall)
@@ -491,45 +494,26 @@ public class HUD_Manager : MonoBehaviour {
 		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-2);
 
 		// Check if it is a valid location to place the building 
-		if(!CheckValidLocation(buildingLocation))
+		if(!CheckValidLocation(building))
 			return false;
 
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
-		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
-		Destroy(building);
+
+		SetAllCollidersStatus(building, true);
+
 
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
-        //Weird merge conflict here (START)
-		// Add selected building to either wallList or Armory list depending the tag
-		if(bComponent.type == Building.BuildingType.Wall)
-			mapManager.wallList.Add(buildingLocation); 
-		else
-			mapManager.ArmoryList.Add(buildingLocation);
 
-		if (building.GetComponent<Building> ().type == Building.BuildingType.Watchtower) {
-			building.AddComponent<WatchtowerLightRotate> ();
-			building.transform.GetChild (0).gameObject.layer = LayerMask.NameToLayer ("FOVEffects");
-			building.transform.GetChild (1).gameObject.layer = LayerMask.NameToLayer ("hide overlay");
-		} else if (building.GetComponent<Building> ().type == Building.BuildingType.Turret) {
-			// Calling this method:
-			// instantTurret(float reload, int speed, int teamToIgnore, int range)
-			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
-			// our team # = GameData.myPlayer.TeamID
-			building.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
-
-			building.layer = LayerMask.NameToLayer("Default");
-		}
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
 
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
-			//print ("[DEBUG]: PlaceBuilding() x-" + buildingLocation.x + " y-" + buildingLocation.y + " z-" + buildingLocation.z);
 			// Send the packet, with Team ID, user name, and the message input
 			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -542,7 +526,13 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
 			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
 			Send(packet);
+		}else
+		{
+			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, Quaternion.identity);
+			testBuild.GetComponent<Building>().placing = false;
 		}
+
+		Destroy(building);
 		return true;
  	}
 		
@@ -556,8 +546,8 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void HighlightItem(int i)
 	{
-		shop.Selected.Option = shop.Items[i].Option;
-		shop.Selected.Building = shop.Items[i].Building;
+		shop.Selected.Option = shop.Items[i-1].Option;
+		shop.Selected.Building = shop.Items[i-1].Building;
 		shop.Selected.Option.image.color = Color.green;
 	}
 
@@ -585,29 +575,15 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia, Thomas Yu
     --	@return: void
 	------------------------------------------------------------------------------*/
-	private bool CheckValidLocation(Vector2 building){
-		//Check if existing armory object is in the way
-		foreach(var armory in mapManager.ArmoryList)
-		{
-			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance) < 3)
-				return false;
-		}
-		//Check if any walls are conflicting with desired placing
-		foreach(var wall in mapManager.wallList)
-		{
-			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 2)
-				return false;
-		}
-		
+	private bool CheckValidLocation(GameObject building)
+	{
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
-		float distance_from_player = Vector3.Distance(player, building);
-		if(distance_from_player > 6)
+		float distance_from_player = Vector3.Distance(player, building.transform.position);
+		if(distance_from_player > 8)
 			return false;
 
-		return true;
+		return 	building.GetComponent<Building>().placeble;
 	}
 
 	/*----------------------------------------------------------------------------
