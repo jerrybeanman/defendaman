@@ -47,24 +47,11 @@ namespace Networking
 		public:
 			Server() {}
 			~Server(){}
-    	/*
-		   Initialize socket, server address to lookup to, and connect to the server
-
-		   @return: socket file descriptor
-		 */
 		virtual int InitializeSocket(short port) = 0;
 
-		/*
-		   Sends a message to all the clients
-
-		*/
 		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
 
-    virtual void * Receive() = 0;
-
-    virtual void PrepareSelect() = 0;
-
-    virtual int SetSocketOpt() = 0;
+        virtual void * Receive() = 0;
 
 		void fatal(const char* error);
 

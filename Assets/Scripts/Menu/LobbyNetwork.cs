@@ -92,6 +92,9 @@ public class LobbyNetwork : MonoBehaviour {
 		if(NetworkingManager.TCP_Send(packet, 256) < 0)
 			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
 	}
+
+	public static bool Start = false;
+
 	public static void ParseLobbyData(string raw)
 	{
         int PlayerPacketID;
@@ -103,26 +106,17 @@ public class LobbyNetwork : MonoBehaviour {
         {
             case NetworkCode.TeamChangeRequest:
             {
-                Debug.Log("[Debug]: Team chagne request");
-                Debug.Log("[Debug]: Content--" + raw);
 				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;
 
-				PrintData();
                 break;
             }
             case NetworkCode.ClassChangeRequest:
             {
-                Debug.Log("[Debug]: Class change request");
-                Debug.Log("[Debug]: Content--" + raw);
 				GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)packet[NetworkKeyString.ClassID].AsInt;
-
-				PrintData();
 				break;
             }
             case NetworkCode.ReadyRequest:
             {
-                Debug.Log("[Debug]: Ready request");
-                Debug.Log("[Debug]: Content--" + raw);
 				GameData.LobbyData[PlayerPacketID].Ready = Convert.ToBoolean(packet[NetworkKeyString.Ready].AsInt);
 
 				PrintData();
@@ -130,15 +124,12 @@ public class LobbyNetwork : MonoBehaviour {
             }
             case NetworkCode.PlayerJoinedLobby:
             {
-                Debug.Log("[Debug]: Player has joined lobby");
-                Debug.Log("[Debug]: Content--" + raw);
-
                 PlayerData tmpPlayer = new PlayerData();
+                tmpPlayer.Ready = false;
                 tmpPlayer.PlayerID = PlayerPacketID;
                 tmpPlayer.Username = packet[NetworkKeyString.UserName];
                 if (GameData.MyPlayer.PlayerID == -1)
                 {
-                	Debug.Log("[Debug]: Got our own ID!");
                     GameData.MyPlayer.PlayerID = PlayerPacketID;
                 }
                 else
@@ -148,24 +139,20 @@ public class LobbyNetwork : MonoBehaviour {
             }
             case NetworkCode.UpdatePlayerList:
             {
-                Debug.Log("[Debug]: Got update table message");
-                Debug.Log("[Debug]: Content--" + raw);
-
                 // fills in existing player data
                 foreach (JSONNode playerData in packet["LobbyData"].AsArray)
                 {
 					int id = playerData[NetworkKeyString.PlayerID].AsInt;
-					Debug.Log("[Debug]: IN UPDATEPLAYERLIST");
 					PlayerData tempPlayer 	= new PlayerData();
+					tempPlayer.Ready 		= false;
 					tempPlayer.PlayerID  	= id;
 					tempPlayer.ClassType 	= (ClassType)playerData[NetworkKeyString.ClassID].AsInt;
 					tempPlayer.TeamID 		= playerData[NetworkKeyString.TeamID].AsInt;
-					tempPlayer.Ready 		= playerData[NetworkKeyString.Ready].AsBool;
+					tempPlayer.Ready 		= Convert.ToBoolean(playerData[NetworkKeyString.Ready].AsInt);
 					tempPlayer.Username		= playerData[NetworkKeyString.UserName];
                     GameData.LobbyData.Add(id, tempPlayer);
 
-                    Debug.Log("[Debug]: Player ID: " + GameData.LobbyData[id].PlayerID.ToString() + "ClassID: " +
-                              GameData.LobbyData[id].ClassType.ToString() + "TeamID: " + GameData.LobbyData[id].TeamID.ToString() + "Username: " + GameData.LobbyData[id].Username);
+                    print("[Debug] UpdatePlayerList()" + playerData[NetworkKeyString.TeamID].AsBool);
                 }
                 break;
             }
@@ -182,14 +169,12 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("EngineTeam_master");
+				Application.LoadLevel("hud_test");
 				break;
 			}	
 			
         }
 	}
-
-
 
 	public static void PrintData()
 	{

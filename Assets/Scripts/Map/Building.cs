@@ -4,63 +4,102 @@ using System;
 
 public class Building:MonoBehaviour {
 	
-	public enum BuildingType{Empty,Armory };
-	
-	public int X {get; set;}
-	public int Y {get;  set;}
-	public float health = 100;
-	GameObject building;
-	public int team;
-	
-	public Building(int x, int y){
-		this.X=x;
-		this.Y=y;
-	}
-	// Use this for initialization
-	void Start () {
-		this.health=100;
-		notifycreation();
-		Debug.Log ("X Position is:" + X + "Y position is : " + Y );
+	public enum BuildingType{Empty,Armory,Wall,Watchtower,Turret};
 
-	}
-	void OnTriggerEnter2D(Collider2D other) {
-		//		if (coll.gameObject.tag == "Enemy")
-		//			coll.gameObject.SendMessage("ApplyDamage", 10);
-		Debug.Log (this.health);
-		if(health<=0){
-			Destroy(gameObject);
+	public BuildingType type;
+
+	public float health = 100;
+
+	public int team;
+
+	public Sprite allyBuilding;
+	public Sprite enemyBuilding;
+
+	public float ConstructionTime = 2f;
+
+	SpriteRenderer spriteRenderer;
+
+	[HideInInspector]
+	public bool placing = false;
+	[HideInInspector]
+	public bool placeble = true;
+
+	// Use this for initialization
+	void Start () 
+	{
+		if(!placing)
+			//gameObject.GetComponent<Animator>().SetTrigger("Create");
+			StartCoroutine(Construct());
+
+		if(GameData.MyPlayer.TeamID == team)
+			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
+		else
+			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
+		if (type == Building.BuildingType.Turret) 
+		{
+			// Calling this method:
+			// instantTurret(float reload, int speed, int teamToIgnore, int range)
+			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
+			// our team # = GameData.myPlayer.TeamID
+			//gameObject.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
+            //gameObject.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 10);
+            gameObject.layer = LayerMask.NameToLayer("Default");
 		}
+
+
+		notifycreation();
+    }
+
+	IEnumerator Construct()
+	{
+		float elapsedTime = 0.0f;
+		Vector3 startingScale = new Vector3(0, 0, 0); // have a startingRotation as well
+		Vector3 targetScale = transform.localScale;
+
+		while (elapsedTime < ConstructionTime) 
+		{
+			elapsedTime += Time.deltaTime; // <- move elapsedTime increment here
+			// Scale
+			transform.localScale = Vector3.Slerp(startingScale, targetScale, (elapsedTime / ConstructionTime));
+			yield return new WaitForEndOfFrame ();
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D other) 
+	{
+        if (other.gameObject.GetComponent<Projectile>() && other.gameObject.GetComponent<Projectile>().teamID == GetComponent<AI>().team)
+            return;
+		if(placing)
+		{
+			print ("dont place plz");
+			placeble = false;
+		}
+		if(health<=0)
+			Destroy(gameObject);
 		var attack = other.gameObject.GetComponent<Trigger>();
-		Debug.Log("Projectile hit");
 		if (attack != null)
 		{
-			Debug.Log("Attack was not null");
 			if (attack.teamID == team)
-			{
-				//health-=10;
-				Debug.Log("Test health" + health);
-				Debug.Log("Same team");
 				return;
-			}
 			health-=10;
 		}
-		else
-		{
-			Debug.Log("Attack was null");
-		}
-
-
 		notifydeath();
 	}
-	// Update is called once per frame
-	void Update () {
-		
+
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if(placing)
+		{
+			placeble = true;
+			print ("place plzzz");
+		}
 	}
+
 	public void notifycreation(){
 		//????
-		
 	}
-	public void	notifydeath(){
+	public void	notifydeath()
+	{
 		//?
 	}
 	

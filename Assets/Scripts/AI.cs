@@ -13,27 +13,41 @@ public class AI : MonoBehaviour {
     public float xCoord, yCoord;
     private Rigidbody2D rb2d;
     private int speed = 35;
-    public double reload = 2.0f;
-    public double resetReload;
-    Rigidbody2D bullet;
+    public double reload = 9999999.0f;
+    public double resetReload = 999;
+    public int damage = 10;
+    public Rigidbody2D bullet;
+    public double swap;
     public int team = -2;
     public int aiID = 0;
+    int teamSwap;
+    double reloadSwap;
     // Use this for initialization
     void Start()
     {
-        bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
-        NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
+        gameObject.layer = LayerMask.NameToLayer("Default");
+       	//bullet = (Rigidbody2D)Resources.Load("Prefabs/Bullet", typeof(Rigidbody2D));
+		NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
         NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
         rb2d = GetComponent<Rigidbody2D>();
+        reload = 999999999f;
+        resetReload = 999;
+        Debug.Log("Constructed");
     }
 
-    public void instantTurret(float reload, int speed, int teamToIgnore, int range)
+    public void instantTurret(float reload, int speed, int teamToIgnore, int range, int damage1)
     {
+        Debug.Log("init called");
         this.resetReload = reload;
         this.reload = reload;
+        reloadSwap = reload;
+        teamSwap = teamToIgnore;
         this.speed = speed;
         this.team = teamToIgnore;
         this.range = range;
+        this.damage = damage1;
+        swap = reload;
+        Debug.Log("Stuff:" + reload + " " + speed + " " + teamToIgnore + " " + range + " " + damage);
     }
     void CreateProjectile(JSONClass packet)
     {
@@ -57,6 +71,7 @@ public class AI : MonoBehaviour {
 
     void UpdateAI(JSONClass packet)
     {
+    
         Debug.Log("Received packet: " + packet.ToString());
         xCoord = packet["x"].AsFloat;
         yCoord = packet["y"].AsFloat;
@@ -68,6 +83,18 @@ public class AI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (gameObject.GetComponent<Building>().placing)
+            return;
+        if (reload > 1000)
+        {
+            reload = reloadSwap;    
+            resetReload = reloadSwap;            
+        }
+        
+        // Debug.Log("Reload: " + reload);
+        if (GameData.GameState == GameState.Won || GameData.GameState == GameState.Lost)
+            return;
+
         Vector3 vec = new Vector3();
         Vector3 face = new Vector3();
         float closest = 999;
@@ -79,9 +106,14 @@ public class AI : MonoBehaviour {
         }
         foreach (var playerData in GameData.LobbyData)
         {
+           // Debug.Log("Player TEam: " + playerData.Value.TeamID + "Ignoring: " + team);
+            if (playerData.Value.TeamID == team)
+            {
+                continue;
+            }
             float dist;
             vec = GameData.PlayerPosition[playerData.Key];
-            realId = GameData.MyPlayer.PlayerID;
+            realId = playerData.Value.PlayerID;
             dist = Mathf.Sqrt(Mathf.Pow((rb2d.position.x - vec.x), 2) + Mathf.Pow((rb2d.position.y - vec.y), 2));
             if (dist < closest)
             {
@@ -121,10 +153,11 @@ public class AI : MonoBehaviour {
             }
             else
             {
-                Debug.Log(face + " " + transform.position);
+
 
                 attack.x = face.x - rb2d.position.x;
                 attack.y = face.y - rb2d.position.y;
+
             }
 
 
@@ -145,14 +178,29 @@ public class AI : MonoBehaviour {
                 attack.y += attack.y * offset;
             }
             */
-     
+
             if (checkBlocked(attack))
             {
                 attack.Normalize();
                 createBullet(attack);
                 
             }
-           
+            else
+            {
+                Debug.Log("Blocked");
+                reload -= Time.fixedDeltaTime;
+            }
+            transform.rotation = Quaternion.AngleAxis(facing, Vector3.forward);
+            lastLocation.first = id;
+            lastLocation.second = face;
+
+          /*  attack.Normalize();
+            Rigidbody2D attack2 = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
+            attack2.AddForce(attack * speed * 2.5f);
+            attack2.GetComponent<BasicRanged>().teamID = team;
+            attack2.GetComponent<BasicRanged>().damage = 10;
+            attack2.GetComponent<BasicRanged>().maxDistance = 30;
+            reload = 1;*/
 
         }
         else
@@ -170,7 +218,7 @@ public class AI : MonoBehaviour {
         RaycastHit2D hit = Physics2D.Raycast(rb2d.position + attackSpot * 0.2f, attackSpot, attackSpot.magnitude * 0.6f);
         if (hit.collider != null)
         {
-            Debug.Log("Collision on shot" + hit.point + "Vector: " + attackSpot);
+            //Debug.Log("Collision on shot" + hit.point + "Vector: " + attackSpot);
 
             return false;
         }
@@ -178,12 +226,13 @@ public class AI : MonoBehaviour {
     }
     private void createBullet(Vector2 attackDir)
     {
+        reload = resetReload;
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
         attack.AddForce(attackDir * speed * 2.5f);
         attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = 10;
+        attack.GetComponent<BasicRanged>().damage = damage;
         attack.GetComponent<BasicRanged>().maxDistance = 30;
-        reload = resetReload;
+        
     }
     private void setFace(Vector2 face)
     {

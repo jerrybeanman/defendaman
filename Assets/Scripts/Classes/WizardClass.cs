@@ -13,7 +13,7 @@
 --
 --  DESIGNERS:      Hank Lo
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Wizard Class.
@@ -32,7 +32,7 @@ public class WizardClass : RangedClass
     {
         base.Start();
         fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
-        magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
+        magicCircle = (Rigidbody2D)Resources.Load("Prefabs/MagicCircle", typeof(Rigidbody2D));
 
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -42,11 +42,11 @@ public class WizardClass : RangedClass
 	{
         this._className = "Wizard";
         this._classDescription = "Wingardium Leviosa. No, not leviosAA, leviOsa.";
-        this._classStat.MaxHp = 75;
+        this._classStat.MaxHp = 100;
         this._classStat.CurrentHp = this._classStat.MaxHp;
 
         //placeholder numbers
-        this._classStat.MoveSpeed = 10;
+        this._classStat.MoveSpeed = 8;
         this._classStat.AtkPower = 3;
         this._classStat.Defense  = 5;
         
@@ -91,7 +91,8 @@ public class WizardClass : RangedClass
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS: None
+    -- REVISIONS:
+    --      - March 17, 2016: Fixed instantiation to work through networking
     --
     -- DESIGNER: Hank Lo
     --
@@ -108,15 +109,16 @@ public class WizardClass : RangedClass
     public override float specialAttack(Vector2 dir)
     {
         base.specialAttack(dir);
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10.0f;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, mousePos, Quaternion.identity);
+        Vector2 mousePos = Input.mousePosition;
+        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        var distance = (mousePos - (Vector2) transform.position).magnitude;
+        Vector2 endp = (Vector2) transform.position + (distance * dir);
+
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, endp, Quaternion.identity);
         attack.GetComponent<MagicCircle>().playerID = playerID;
         attack.GetComponent<MagicCircle>().teamID = team;
         attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
-        attack.GetComponent<MagicCircle>().duration = 200;
 
         return cooldowns[1];
     }
