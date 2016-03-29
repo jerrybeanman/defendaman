@@ -17,7 +17,7 @@ void drawMap (int ** mapArray, Map map) {
 	}
 }
 
-int main () {
+/*int main () {
 	char c;
 	Map *map = new Map (100, 100, 44);
 	do {
@@ -40,4 +40,33 @@ int main () {
 		map = map2;
 	} while (c != 'q');
 	return 0;
+}*/
+
+char endMap[100000];
+
+const char * GenerateMap (int seed) {
+	Map *map = new Map (100, 100, 44);
+	map->randomizeSeed (seed);
+	map->buildMapBase ();
+	map->createBaseScenery ();
+	map->joinMaps (map->getMapBase (), map->getMapTemp ());
+
+	//first int is 1:N chance of creat
+	map->createTopScenery (10);
+	map->createResources (map->getMapBase (), map->getMapScenery (), 50);
+	map->createSpawnPoints (map->getMapBase (), 2);
+	strcpy_s (endMap, map->ConvertToJSONString ().c_str ());
+	printf ("%d", strlen (endMap));
+	return (endMap);
 }
+
+int main () {
+	char c;
+	do {
+		GenerateMap (1000);
+		c = getchar ();
+	} while (c != 'q');
+	return 0;
+}
+
+

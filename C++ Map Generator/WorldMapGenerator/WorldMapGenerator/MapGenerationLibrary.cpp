@@ -18,5 +18,6 @@ extern "C" const char * GenerateMap (int seed) {
 	map->createResources (map->getMapBase (), map->getMapScenery(), 50);
 	map->createSpawnPoints (map->getMapBase (), 2);
 	strcpy_s (endMap, map->ConvertToJSONString ().c_str ());
+	printf ("%d", strlen(endMap));
 	return (endMap);
 }
