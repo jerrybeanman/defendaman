@@ -4,7 +4,8 @@ using System.Collections;
 public class WatchtowerLightRotate : MonoBehaviour {
 
 	// Adjust this to change the speed of rotation
-	public int speed = 2;
+	public float cycleTime;
+	public float angle;
 	public Sprite allyTop;
 	public Sprite enemyTop;
 
@@ -29,6 +30,7 @@ public class WatchtowerLightRotate : MonoBehaviour {
 			transform.GetChild(0).gameObject.SetActive(false);
 			transform.GetChild(1).gameObject.SetActive(false);
 		}
+		StartCoroutine(LoopRotation());
 	}
 
 	bool set = false;
@@ -41,6 +43,24 @@ public class WatchtowerLightRotate : MonoBehaviour {
 			transform.GetChild(1).gameObject.SetActive(true);
 			set = !set;
 		}
-		transform.Rotate(new Vector3(0, 0, speed));
+		//transform.Rotate(new Vector3(0, 0, speed));
+	}
+
+	IEnumerator LoopRotation()
+	{
+		while(true)
+		{
+			float elapsedTime = 0f;
+			Quaternion startingRotation = transform.rotation; // have a startingRotation as well
+			Quaternion targetRotation =  Quaternion.Euler (0f, 0f, transform.rotation.z + angle);
+			while (elapsedTime < cycleTime) 
+			{
+				elapsedTime += Time.deltaTime; // <- move elapsedTime increment here
+				// Rotations
+				transform.rotation = Quaternion.Slerp(startingRotation, targetRotation,  (elapsedTime / cycleTime));
+				yield return new WaitForEndOfFrame ();
+			}
+			angle *= -1f;
+		}
 	}
 }
