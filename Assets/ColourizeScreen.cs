@@ -4,7 +4,9 @@ using System.Collections;
 public class ColourizeScreen : MonoBehaviour {
     private GameObject death { get; set; }
     private GameObject injured { get; set; }
+    private GameObject healed { get; set; }
     private float injuryDuration = .1f;
+    private float healedDuration = .15f;
 
     public static ColourizeScreen instance;
     
@@ -28,12 +30,16 @@ public class ColourizeScreen : MonoBehaviour {
                 case "Injured":
                     injured = child.gameObject;
                     break;
+                case "Healed":
+                    healed = child.gameObject;
+                    break;
                 default:
                     break;
             }
         }
         death.SetActive(false);
         injured.SetActive(false);
+        healed.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -43,6 +49,7 @@ public class ColourizeScreen : MonoBehaviour {
 
     public void PlayerHurt()
     {
+        healed.SetActive(false);
         injured.SetActive(true);
         Invoke("UndoPlayerHurt", injuryDuration);
     }
@@ -50,6 +57,13 @@ public class ColourizeScreen : MonoBehaviour {
     public void PlayerDied()
     {
         death.SetActive(true);
+    }
+
+    public void PlayerHealed()
+    {
+        injured.SetActive(false);
+        healed.SetActive(true);
+        Invoke("UndoPlayerHealed", healedDuration);
     }
 
     public void PlayerRevived()
@@ -60,5 +74,10 @@ public class ColourizeScreen : MonoBehaviour {
     private void UndoPlayerHurt()
     {
         injured.SetActive(false);
+    }
+
+    private void UndoPlayerHealed()
+    {
+        healed.SetActive(false);
     }
 }

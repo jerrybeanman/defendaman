@@ -88,9 +88,17 @@ public class MenuScript : MonoBehaviour {
             {
                 LobbyNetwork.ParseLobbyData(tmp);
                 UpdateLobbyList();
+				//if(LobbyNetwork.Start)
+				//	StartCoroutine(start_level());
             }
         }
     }
+
+	IEnumerator start_level()
+	{
+		yield return new WaitForSeconds(2f);
+		Application.LoadLevel("EngineTeam_master");
+	}
 
     void OnGUI()
     {
@@ -293,6 +301,7 @@ public class MenuScript : MonoBehaviour {
 
 	public void LeaveLobby()
 	{
+		GameData.LobbyData.Remove(GameData.MyPlayer.PlayerID);
 		LobbyNetwork.SendLobbyData(NetworkCode.PlayerLeftLobby);
 		if(LobbyNetwork.connected)
 		{

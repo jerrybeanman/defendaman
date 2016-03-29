@@ -13,7 +13,7 @@
 --
 --  DESIGNERS:      Hank Lo
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Wizard Class.
@@ -24,7 +24,7 @@ using System.Collections;
 public class WizardClass : RangedClass
 {
     int[] distance = new int[2]{ 20, 0 };
-    int[] speed = new int[2] { 80, 0 };
+    int[] speed = new int[2] { 60, 0 };
     Rigidbody2D fireball;
     Rigidbody2D magicCircle;
 
@@ -32,7 +32,7 @@ public class WizardClass : RangedClass
     {
         base.Start();
         fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
-        magicCircle = (Rigidbody2D)Resources.Load("Prefabs/magic_circle", typeof(Rigidbody2D));
+        magicCircle = (Rigidbody2D)Resources.Load("Prefabs/MagicCircle", typeof(Rigidbody2D));
 
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
