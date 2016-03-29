@@ -210,6 +210,7 @@ public class MapManager : MonoBehaviour {
 	-- Instantiates a Resource game object and adds it to the list.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void create_map(JSONClass message) {
+		print (message.ToString ());
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
         _map = new int[_mapWidth, _mapHeight];
@@ -246,6 +247,7 @@ public class MapManager : MonoBehaviour {
 			_mapResources.Add (temp);
 		}
 	}
+
    
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: draw_map
@@ -269,9 +271,15 @@ public class MapManager : MonoBehaviour {
     -- generates a 2collision box on the water tiles so thatr objects enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
-        if (_map == null)
+        if (_map == null) {
+			print ("[DEBUG-map] _map value was null");
             return;
+<<<<<<< HEAD
         for (int x = 0; x < _mapWidth; x++) {
+=======
+		}
+        for (int x = 0; x < _mapWidth; x++)
+>>>>>>> b3e530128ae1bf17238add041a4ddabe5a25a8c8
             for (int y = 0; y < _mapHeight; y++) {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
@@ -281,8 +289,8 @@ public class MapManager : MonoBehaviour {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
-                //TODO: _map should be _mapScenery
-                if (_mapScenery[x, y] >= 200 && _map[x, y] <= 201) {
+
+				if (_mapScenery[x, y] >= 200 && _mapScenery[x, y] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
                 if (_mapScenery[x, y] != -1) {
