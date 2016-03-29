@@ -20,6 +20,10 @@ static class Constants
     public const string INCOMPATIBLE_MSG    = "Incompatible weapon";
     public const string NO_EQUIPPED         = "No weapon equipped";
     public const string INV_FULL            = "Inventory is full";
+    public const int SLOT_1                 = 0;
+    public const int SLOT_2                 = 1;
+    public const int SLOT_3                 = 2;
+    public const int SLOT_4                 = 3;
 }
 
 /*-----------------------------------------------------------------------------
@@ -88,6 +92,49 @@ public class Inventory : MonoBehaviour
         AddItem(2, 200);
         AddItem(3, 10);
         AddItem(0);
+    }
+
+    /*
+     * Binds inventory items to number keys. The keys 1, 2, 3, 4 will call useConsumable()
+     * on the items in matching inventory slots if the item is a consumable.
+     */
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            if (inventory_item_list[Constants.SLOT_1].type == Constants.CONSUMABLE_TYPE)
+            {
+                Debug.Log("1 is consumable");
+                UseConsumable(Constants.SLOT_1);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            if (inventory_item_list[Constants.SLOT_2].type == Constants.CONSUMABLE_TYPE)
+            {
+                Debug.Log("2 is consumable");
+                UseConsumable(Constants.SLOT_2);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            if (inventory_item_list[Constants.SLOT_3].type == Constants.CONSUMABLE_TYPE)
+            {
+                Debug.Log("3 is consumable");
+                UseConsumable(Constants.SLOT_3);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            if (inventory_item_list[Constants.SLOT_4].type == Constants.CONSUMABLE_TYPE)
+            {
+                Debug.Log("4 is consumable");
+                UseConsumable(Constants.SLOT_4);
+            }
+        }
     }
 
     /* 

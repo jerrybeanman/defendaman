@@ -107,7 +107,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnPointerEnter(PointerEventData eventData)
     {
         _tooltip.Activate(item);
-        
     }
 
     /*
@@ -119,13 +118,24 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
 
     /*
-     * Sets the ItemMenu game object to active and its position in the event of a right mouse click
+     * Handles click events on the inventory items
      */
     public void OnPointerClick(PointerEventData eventData)
     {
+        // Right click: set the ItemMenu to active and its position in the event of a right mouse click
         if (eventData.pointerId == -2)
         {
             _item_menu.Activate(item, amount, item_pos);
+        }
+
+        // Left click: call userConsumable() if the item is of the consumable types
+        if (eventData.pointerId == -1)
+        {
+            if (item.type == Constants.CONSUMABLE_TYPE)
+            {
+                //Debug.Log("left click and consumable type");
+                _inventory.UseConsumable(item_pos);
+            }
         }
     }
 }
