@@ -458,7 +458,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		print ("[Debug] " + data.ToString());
-		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt].Building;
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
 
 		// Retrieve the Building component attached with the game object
 		Building bComponent = building.GetComponent<Building>();

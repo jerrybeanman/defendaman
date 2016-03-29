@@ -24,13 +24,18 @@ public class WatchtowerLightRotate : MonoBehaviour {
 			transform.GetChild(0).gameObject.SetActive(false);
 			transform.GetChild(1).gameObject.SetActive(false);
 		}
+		if(parent.team != GameData.MyPlayer.TeamID)
+		{
+			transform.GetChild(0).gameObject.SetActive(false);
+			transform.GetChild(1).gameObject.SetActive(false);
+		}
 	}
 
 	bool set = false;
 	// Update is called once per frame
 	void Update () 
 	{
-		if(!parent.placing && !set)
+		if(!parent.placing && !set && parent.team == GameData.MyPlayer.TeamID)
 		{
 			transform.GetChild(0).gameObject.SetActive(true);
 			transform.GetChild(1).gameObject.SetActive(true);

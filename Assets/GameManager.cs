@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviour {
 
         foreach (var playerData in GameData.LobbyData)
         {
+			Debug.Log("[DEBUG] Size: " + GameData.TeamSpawnPoints.Count + " On team: " + playerData.Value.TeamID );
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
             switch (playerData.Value.ClassType)

@@ -212,6 +212,7 @@ public class MapManager : MonoBehaviour {
 	 * @param map 	2d int array of map values
 	 */
     private void create_map(JSONClass message) {
+		print (message.ToString ());
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
         _map = new int[_mapWidth, _mapHeight];
@@ -239,6 +240,8 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < resources.Count; i++) {
             _mapResources.Add(new Resource(resources[i][0].AsInt, resources[i][1].AsInt));
         }
+
+		print("[DEBUG-map] Generated map size " +_mapWidth + " by " + _mapHeight);
     }
    
     /*------------------------------------------------------------------------------------------------------------------
@@ -263,8 +266,10 @@ public class MapManager : MonoBehaviour {
     -- cannot enter it.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void draw_map() {
-        if (_map == null)
+        if (_map == null) {
+			print ("[DEBUG-map] _map value was null");
             return;
+		}
         for (int x = 0; x < _mapWidth; x++)
             for (int y = 0; y < _mapHeight; y++) {
                 //If the 2D array is land
@@ -275,8 +280,8 @@ public class MapManager : MonoBehaviour {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
                 }
-                //TODO: _map should be _mapScenery
-                if (_mapScenery[x, y] >= 200 && _map[x, y] <= 201) {
+
+				if (_mapScenery[x, y] >= 200 && _mapScenery[x, y] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
                 if (_mapScenery[x, y] != -1) {
