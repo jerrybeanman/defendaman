@@ -469,8 +469,12 @@ public class HUD_Manager : MonoBehaviour {
 
 		building.GetComponent<Building>().placing = false;
 
-		Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
-
+		GameObject b1 = (GameObject)Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
+        if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) {
+           // building.GetComponent<AI>()
+           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 10);
+            Debug.Log("Instant turret 1");
+        }
 		// Add selected building to either wallList or Armory list depending the tag
 		if(bComponent.type == Building.BuildingType.Wall)
 			mapManager.wallList.Add(pos); 
@@ -530,7 +534,14 @@ public class HUD_Manager : MonoBehaviour {
 		{
 			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, building.transform.rotation);
 			testBuild.GetComponent<Building>().placing = false;
-		}
+            if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
+            {//
+                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 10);
+
+                //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 10);
+                Debug.Log("Instant turret 2");
+            }
+        }
 
 		Destroy(building);
 		return true;
