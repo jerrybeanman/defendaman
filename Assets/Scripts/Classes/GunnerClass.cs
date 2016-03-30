@@ -147,7 +147,6 @@ public class GunnerClass : RangedClass
 
         var member = new List<Pair<string, string>>();
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));
-        NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
         EndAttackAnimation();
         CancelInvoke("EndAttackAnimation");
     }
