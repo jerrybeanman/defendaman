@@ -458,7 +458,7 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		print ("[Debug] " + data.ToString());
-		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt].Building;
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
 
 		// Retrieve the Building component attached with the game object
 		Building bComponent = building.GetComponent<Building>();
@@ -532,7 +532,7 @@ public class HUD_Manager : MonoBehaviour {
 			Send(packet);
 		}else
 		{
-			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, Quaternion.identity);
+			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, building.transform.rotation);
 			testBuild.GetComponent<Building>().placing = false;
             if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
             {//GameData.MyPlayer.TeamID

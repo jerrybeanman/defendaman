@@ -252,44 +252,44 @@ void Map::createResources (int ** mapCheck, int ** mapApply, int resourceAmount)
 //... requests a list of 0 or more parameters of pairs, which contain <string, void*>
 std::string Map::ConvertToJSONString () {
 	std::string JSONString ("[");
-	JSONString.append ("{ ");
-	JSONString.append ("DataType : 3, ");
-	JSONString.append ("ID : 0, ");
-	JSONString.append ("\"mapWidth\" : " + intToString (mapWidth) + ", ");
-	JSONString.append ("\"mapHeight\" : " + intToString (mapHeight) + ", ");
-	JSONString.append ("\"mapIDs\" : [");
+	JSONString.append ("{");
+	JSONString.append ("DataType:3,");
+	JSONString.append ("ID:0,");
+	JSONString.append ("\"mapWidth\":" + intToString (mapWidth) + ",");
+	JSONString.append ("\"mapHeight\":" + intToString (mapHeight) + ",");
+	JSONString.append ("\"mapIDs\":[");
 	for (int x = 0; x < mapWidth; x++) {
 		JSONString += "[";
 		for (int y = 0; y < mapHeight; y++) {
 			JSONString += intToString(mapBase[x][y]);
 			if (y < mapWidth - 1)
-				JSONString += ", ";
+				JSONString += ",";
 		}
 		JSONString += "]";
 		if (x < mapHeight - 1)
-			JSONString += ", ";
+			JSONString += ",";
 	}
-	JSONString += "], ";
-	JSONString.append ("\"mapSceneryIDs\" : [");
+	JSONString += "],";
+	JSONString.append ("\"mapSceneryIDs\":[");
 	for (int x = 0; x < mapWidth; x++) {
 		JSONString += "[";
 		for (int y = 0; y < mapHeight; y++) {
 			JSONString += intToString (mapScenery[x][y]);
 			if (y < mapWidth - 1)
-				JSONString += ", ";
+				JSONString += ",";
 		}
 		JSONString += "]";
 		if (x < mapHeight - 1)
-			JSONString += ", ";
+			JSONString += ",";
 	}
-	JSONString += "], ";
-	JSONString.append ("\"mapResources\" : [");
+	JSONString += "],";
+	JSONString.append ("\"mapResources\":[");
 	for (auto it = mapResources.begin (); it != mapResources.end (); it++) {
 		JSONString += "[";
-		JSONString += intToString (it->first) + ", " + intToString (it->second);
+		JSONString += intToString (it->first) + "," + intToString (it->second);
 		JSONString += "]";
 		if (it != mapResources.end() - 1)
-			JSONString += ", ";
+			JSONString += ",";
 	}
 	JSONString += "]";
 	JSONString += "}";
