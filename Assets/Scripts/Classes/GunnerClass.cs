@@ -52,6 +52,7 @@ public class GunnerClass : RangedClass
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         if (inSpecial)
             return 0f;
         base.basicAttack(dir);
@@ -74,6 +75,7 @@ public class GunnerClass : RangedClass
 
     public override float specialAttack(Vector2 dir)
     {
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.specialAttack(dir);
 
         this.dir = dir;
