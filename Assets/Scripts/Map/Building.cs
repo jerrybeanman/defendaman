@@ -67,8 +67,8 @@ public class Building:MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-        if (other.gameObject.GetComponent<Projectile>() && other.gameObject.GetComponent<Projectile>().teamID == GetComponent<AI>().team)
-            return;
+		if(other.gameObject.tag == "Bullet")
+			return;
 		if(placing)
 		{
 			print ("dont place plz");
