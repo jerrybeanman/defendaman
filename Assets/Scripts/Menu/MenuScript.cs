@@ -227,14 +227,14 @@ public class MenuScript : MonoBehaviour {
                 break;
             case 2:
                 soldier_panel.SetActive(false);
-                mage_panel.SetActive(true);
-                ninja_panel.SetActive(false);
+                mage_panel.SetActive(false);
+                ninja_panel.SetActive(true);
                 aman_panel.SetActive(false);
                 break;
             case 3:
                 soldier_panel.SetActive(false);
-                mage_panel.SetActive(false);
-                ninja_panel.SetActive(true);
+                mage_panel.SetActive(true);
+                ninja_panel.SetActive(false);
                 aman_panel.SetActive(false);
                 break;
             case 4:
