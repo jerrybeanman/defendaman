@@ -18,6 +18,10 @@ ExportedObj/
 *.booproj
 *.svd
 
+#local test files (Jaegar)
+output.txt
+*.sdf
+
 
 # Unity3D generated meta files
 #*.pidb.meta

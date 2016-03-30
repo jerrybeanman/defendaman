@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = GameData.MyPlayer.TeamID;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
-       
+
         /*var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
         var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
         var createdAI3 = ((Transform)Instantiate(AI, new Vector3(85, 10, -10), Quaternion.identity)).gameObject;
@@ -100,9 +100,13 @@ public class GameManager : MonoBehaviour {
 
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
-        
+      //  GameData.TeamSpawnPoints.Clear();
+        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(0,0));
+        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(2,2));
+
         foreach (var playerData in GameData.LobbyData)
         {
+			Debug.Log("[DEBUG] Size: " + GameData.TeamSpawnPoints.Count + " On team: " + playerData.Value.TeamID );
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
             switch (playerData.Value.ClassType)
@@ -184,9 +188,6 @@ public class GameManager : MonoBehaviour {
                     shadows.transform.Translate(0, 0, 11);
                 }
             } else { //Hide enemies
-				// Get the hpFrame & Bar for enemy players
-				Transform hpFrame = createdPlayer.transform.GetChild(0);
-				Transform hpBar = hpFrame.transform.GetChild(0);
 				// Fetch the stencil masked material
 				Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
 				// Move enemy behind stencil mask
@@ -194,10 +195,6 @@ public class GameManager : MonoBehaviour {
 				// set the enemy, hpFrame & hpBar materials to stencil masked and layer to hidden
 				createdPlayer.GetComponent<SpriteRenderer> ().material = hiddenMat;
 				createdPlayer.layer = LayerMask.NameToLayer("HiddenThings");
-				hpFrame.gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
-				hpFrame.gameObject.layer = LayerMask.NameToLayer("HiddenThings");
-				hpBar.gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
-				hpBar.gameObject.layer = LayerMask.NameToLayer("HiddenThings");
 			}
         }
 
@@ -211,8 +208,6 @@ public class GameManager : MonoBehaviour {
                 GameData.EnemyKingID = king.second;
             }
         }
-
-        
 
 		NetworkingManager.StartGame();
     }

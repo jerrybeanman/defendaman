@@ -6,6 +6,7 @@ using UnityEngine;
 
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
 public enum GameState { Playing, Dying, Dead, Won, Lost}
+public enum BuildingType { Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5}
 // Lobby message key fields 
 public class NetworkKeyString
 {
@@ -16,9 +17,17 @@ public class NetworkKeyString
 	public static string StartGame 	= "StartGame";
 	public static string UserName   = "UserName";
 	public static string Message	= "Message";
+    public static string XPos       = "XPos";
+    public static string YPos       = "YPos";
+    public static string ZPos       = "ZPos";
+    public static string XRot       = "XRot";
+    public static string YRot       = "YRot";
+    public static string ZRot       = "ZRot";
+	public static string BuildType  = "BuildType";
 }
 
-public class PlayerData {
+public class PlayerData 
+{
     public int PlayerID = -1;
     public string Username { get; set; }
     public int TeamID { get; set; }

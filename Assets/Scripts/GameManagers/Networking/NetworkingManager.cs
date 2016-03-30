@@ -38,7 +38,7 @@ This method takes in three things:
     DataType you want to receive, e.g. DataType.Player for data of a player
     int ID of which of the DataType you want to receive info from, e.g. ID 1 on DataType.Player is Player 1's data
 
-e.g. NetworkingManager.Subscribe((JSONClass json) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
+e.g. NetworkingManager.Subscribe((JSONClass [json]) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
 */
 public class NetworkingManager : MonoBehaviour
 {
@@ -278,7 +278,6 @@ public class NetworkingManager : MonoBehaviour
         //On Linux, get a proper packet
         if (Application.platform == RuntimePlatform.LinuxPlayer) {
             result = Marshal.PtrToStringAnsi(UDP_GetData());
-			print ("[DEBUG] Received UDP Data: " + result);
         } else {
             //On Windows, return whatever JSON data we want to generate/test for
             result = "[]";
@@ -294,7 +293,6 @@ public class NetworkingManager : MonoBehaviour
         if (Application.platform == RuntimePlatform.LinuxPlayer)
         {
             result = Marshal.PtrToStringAnsi(TCP_GetData());
-			print ("[DEBUG] Received TCP Data: " + result);
         }
         else {
             //On Windows, return whatever JSON data we want to generate/test for
@@ -388,7 +386,9 @@ public class NetworkingManager : MonoBehaviour
             UDPClient = UDP_CreateClient();
             UDP_ConnectToServer(GameData.IP, 8000);
             UDP_StartReadThread();
-        }
+			GameData.GameStart = true;
+        
+		}
         catch (Exception)
         {
             //On Windows
@@ -411,5 +411,5 @@ public class NetworkingManager : MonoBehaviour
         GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
     }
 
-    #endregion
+ 	   #endregion
 }
