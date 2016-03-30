@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, NotImplemented = 4}
+public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, aman = 4}
 public enum GameState { Playing, Dying, Dead, Won, Lost}
 public enum BuildingType { Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5}
 // Lobby message key fields 
