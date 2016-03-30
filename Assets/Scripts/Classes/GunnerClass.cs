@@ -66,7 +66,7 @@ public class GunnerClass : RangedClass
         attack.AddForce(dir * speed[0]);//was newdir
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower / 5;
+        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
         attack.GetComponent<BasicRanged>().maxDistance = distance[0];
 
         return cooldowns[0];
