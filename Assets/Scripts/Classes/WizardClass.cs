@@ -74,6 +74,7 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float basicAttack(Vector2 dir)
     {
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
