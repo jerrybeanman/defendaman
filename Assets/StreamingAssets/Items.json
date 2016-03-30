@@ -126,7 +126,7 @@
       "damage": 0,
       "armor": 0,
 			"health": 0,
-			"speed": 5
+			"speed": 10
     },
 		"duration": 5,
 		"classType": -1,
