@@ -78,10 +78,7 @@ public class Tooltip : MonoBehaviour
             _data += "\n<color=#ffffff>Damage: </color>" + _item.damage +
                 "\n<color=#ffffff>Armor: </color>" + _item.armor;
         }
-        else if (_item.type == Constants.CONSUMABLE_TYPE)
-        {
-            _data += "\n<color=#ffffff>Recover: </color>" + _item.health + " hp";
-        }
+        
         if (_amount >= 0)
         {
             _data += "\n<color=#ffffff>Amount: </color>" + _amount;

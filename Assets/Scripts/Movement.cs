@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
     public float speed;
     movestyle movestyles;
     float midX, midY;
-
+    BaseClass.PlayerBaseStat ClassStat;
 
     void Start()
     {
@@ -23,7 +23,8 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-        speed = gameObject.GetComponent<BaseClass>().ClassStat.MoveSpeed;
+
+        ClassStat = GetComponent<BaseClass>().ClassStat;
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
     //Checks if the end teleport point is valid, or if it is in a wall
@@ -76,6 +77,7 @@ public class Movement : MonoBehaviour
     }
     void Update()
     {
+        speed = ClassStat.MoveSpeed;
         if (Input.GetKeyDown(KeyCode.Equals))
             movestyles = movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute;
 

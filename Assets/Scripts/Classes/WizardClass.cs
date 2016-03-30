@@ -74,6 +74,7 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float basicAttack(Vector2 dir)
     {
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
@@ -110,12 +111,12 @@ public class WizardClass : RangedClass
     {
         base.specialAttack(dir);
 
-        Vector2 mousePos = Input.mousePosition;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        var distance = (mousePos - (Vector2) transform.position).magnitude;
-        Vector2 endp = (Vector2) transform.position + (distance * dir);
+        //Vector2 mousePos = Input.mousePosition;
+        //mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        //var distance = (dir - (Vector2) transform.position).magnitude;
+        //Vector2 endp = (Vector2) transform.position + (distance * dir);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, endp, Quaternion.identity);
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
         attack.GetComponent<MagicCircle>().playerID = playerID;
         attack.GetComponent<MagicCircle>().teamID = team;
         attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;

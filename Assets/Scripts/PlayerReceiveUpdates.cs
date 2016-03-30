@@ -41,7 +41,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
 
     void took_damage(JSONClass packet)
     {
-        GetComponent<BaseClass>().doDamage(packet["Damage"].AsFloat, true);
+        GetComponent<BaseClass>().doDamage(packet["NewHP"].AsFloat, true);
     }
 
     void died(JSONClass packet)
