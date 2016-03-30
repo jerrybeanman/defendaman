@@ -29,6 +29,8 @@ public class MagicCircle : Area
 {
     private Vector2 startPos;
     public int duration;
+	public Sprite allyCircle;
+	public Sprite enemyCircle;
 
     /*---------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: Start
@@ -54,6 +56,11 @@ public class MagicCircle : Area
 		transform.position = new Vector3(transform.position.x, transform.position.y, -2);
         startPos = transform.position;
         Invoke("removeCircle", duration);
+		if(teamID == GameData.MyPlayer.TeamID)
+		{
+			gameObject.GetComponent<SpriteRenderer>().sprite = allyCircle;
+		}else
+			gameObject.GetComponent<SpriteRenderer>().sprite = enemyCircle;
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
