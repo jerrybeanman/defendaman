@@ -32,6 +32,7 @@ public class AI : MonoBehaviour {
         rb2d = GetComponent<Rigidbody2D>();
         reload = 999999999f;
         resetReload = 999;
+        gameObject.layer = 2;
         Debug.Log("Constructed");
     }
 
@@ -111,6 +112,10 @@ public class AI : MonoBehaviour {
             {
                 continue;
             }
+            if (!GameData.PlayerPosition.ContainsKey(playerData.Value.PlayerID))
+            {
+                continue;
+            }
             float dist;
             vec = GameData.PlayerPosition[playerData.Key];
             realId = playerData.Value.PlayerID;
@@ -187,7 +192,6 @@ public class AI : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Blocked");
                 reload -= Time.fixedDeltaTime;
             }
             transform.rotation = Quaternion.AngleAxis(facing, Vector3.forward);
@@ -215,9 +219,22 @@ public class AI : MonoBehaviour {
     }
     private bool checkBlocked(Vector2 attackSpot)
     {
-        RaycastHit2D hit = Physics2D.Raycast(rb2d.position + attackSpot * 0.2f, attackSpot, attackSpot.magnitude * 0.6f);
+        Vector2 move = attackSpot;
+        Debug.Log(attackSpot.magnitude);
+        float dist = attackSpot.magnitude;
+        move.Normalize();
+        var layerMask = (1 << 2);
+        layerMask = ~layerMask;
+        RaycastHit2D hit = Physics2D.Raycast(rb2d.position, attackSpot, dist * 1.1f, layerMask);
+       // RaycastHit2D hit = Physics2D.Raycast(rb2d.position, attackSpot, dist * 0.8f);
         if (hit.collider != null)
         {
+
+            if (hit.collider.tag.Equals("Player"))
+            {
+                return true;
+            }
+            // if(hit.collider.gameObject.name)
             //Debug.Log("Collision on shot" + hit.point + "Vector: " + attackSpot);
 
             return false;

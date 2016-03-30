@@ -112,7 +112,7 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
         if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
-            if (attack.teamID == team) {
+            if (attack.teamID == team || GameData.MyPlayer == null) {
                 return;
             }
 

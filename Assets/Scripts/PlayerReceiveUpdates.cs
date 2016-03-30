@@ -47,6 +47,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
     void died(JSONClass packet)
     {
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
+        GameData.PlayerPosition.Remove(playerID);
         Destroy(gameObject);
     }
 
