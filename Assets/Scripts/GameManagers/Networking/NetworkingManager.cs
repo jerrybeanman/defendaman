@@ -349,11 +349,11 @@ public class NetworkingManager : MonoBehaviour
         if (protocol == Protocol.NA)
             sending += "[";
         sending += "{";
-        sending += "\"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
+        sending += "\"DataType\":" + (int)type + ",\"ID\":" + id + ",";
 
         foreach (var pair in memersToSend)
         {
-            sending += " \"" + pair.first + "\" : " + pair.second + ",";
+            sending += "\"" + pair.first + "\":" + pair.second + ",";
         }
         //if (protocol != Protocol.NA)
         //    sending = sending.Remove(1, 1);
