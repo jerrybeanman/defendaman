@@ -1,0 +1,70 @@
+[
+  {
+    "id": 0,
+    "title": "Steel Gloves",
+    "description": "Gloves made from steel. Yea.",
+		"stats": {
+      "damage": 1,
+      "armor": 4,
+			"health": 0,
+			"speed": 0
+    },
+		"duration": -1,
+    "classType": -1,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorGauntlet_blue",
+		"worldSlug": "blue_potion_2"
+  },
+  {
+    "id": 1,
+    "title": "The Great Stick",
+    "description": "It's a stick and that's pretty great.",
+		"stats": {
+      "damage": 56,
+      "armor": 0,
+			"health": 0,
+			"speed": 0
+    },
+		"duration": -1,
+    "classType": 2,
+    "stackable": true,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "blue_potion_2"
+  },
+  {
+    "id": 2,
+    "title": "Gold",
+		"description": "Use to buy stuff.",
+    "stats": {
+      "damage": 0,
+      "armor": 0,
+			"health": 0,
+			"speed": 0
+    },
+		"duration": -1,
+		"classType": -1,
+    "stackable": true,
+		"type": "Resource",
+    "slug": "coin_ic_1",
+		"worldSlug": "coins_ic"
+  },
+  {
+    "id": 3,
+    "title": "Health Potion",
+		"description": "Heals a little.",
+    "stats": {
+      "damage": 0,
+      "armor": 0,
+			"health": 5,
+			"speed": 0
+    },
+		"duration": -1,
+		"classType": -1,
+    "stackable": true,
+		"type": "Consumable",
+    "slug": "blue_potion_round",
+		"worldSlug": "blue_potion_round"
+  }
+]
