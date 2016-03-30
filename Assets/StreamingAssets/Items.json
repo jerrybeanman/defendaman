@@ -14,7 +14,7 @@
     "stackable": false,
 		"type": "Weapon",
     "slug": "cursorGauntlet_blue",
-		"worldSlug": "blue_potion_2"
+		"worldSlug": "cursorGauntlet_blue"
   },
   {
     "id": 1,
@@ -28,10 +28,10 @@
     },
 		"duration": -1,
     "classType": 2,
-    "stackable": true,
+    "stackable": false,
 		"type": "Weapon",
     "slug": "cursorSword_gold",
-		"worldSlug": "blue_potion_2"
+		"worldSlug": "cursorSword_gold"
   },
   {
     "id": 2,
@@ -47,13 +47,13 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Resource",
-    "slug": "coin_ic_1",
+    "slug": "coins_ic",
 		"worldSlug": "coins_ic"
   },
   {
     "id": 3,
     "title": "Health Potion",
-		"description": "Heals a little.",
+		"description": "Heals a little.\n<color=#ffffff>Recover: </color>5 hp",
     "stats": {
       "damage": 0,
       "armor": 0,
@@ -64,7 +64,75 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
+    "slug": "green_portion_round",
+		"worldSlug": "green_portion_round"
+  },
+	{
+    "id": 4,
+    "title": "High Potion",
+		"description": "Heals a lot.\n<color=#ffffff>Recover: </color>10 hp",
+    "stats": {
+      "damage": 0,
+      "armor": 0,
+			"health": 10,
+			"speed": 0
+    },
+		"duration": -1,
+		"classType": -1,
+    "stackable": true,
+		"type": "Consumable",
     "slug": "blue_potion_round",
 		"worldSlug": "blue_potion_round"
+  },
+	{
+    "id": 5,
+    "title": "Damage Potion",
+		"description": "Temporary damage boost.",
+    "stats": {
+      "damage": 5,
+      "armor": 0,
+			"health": 0,
+			"speed": 0
+    },
+		"duration": 5,
+		"classType": -1,
+    "stackable": true,
+		"type": "Consumable",
+    "slug": "red_potion_classic",
+		"worldSlug": "red_potion_classic"
+  }
+	{
+    "id": 6,
+    "title": "Armor Potion",
+		"description": "Temporary armor boost.",
+    "stats": {
+      "damage": 0,
+      "armor": 5,
+			"health": 0,
+			"speed": 0
+    },
+		"duration": 5,
+		"classType": -1,
+    "stackable": true,
+		"type": "Consumable",
+    "slug": "blue_potion_classic",
+		"worldSlug": "blue_potion_classic"
+  }
+	{
+    "id": 7,
+    "title": "Speed Potion",
+		"description": "Temporary speed boost.",
+    "stats": {
+      "damage": 0,
+      "armor": 0,
+			"health": 0,
+			"speed": 5
+    },
+		"duration": 5,
+		"classType": -1,
+    "stackable": true,
+		"type": "Consumable",
+    "slug": "yellow_portion_classic",
+		"worldSlug": "yellow_portion_classic"
   }
 ]

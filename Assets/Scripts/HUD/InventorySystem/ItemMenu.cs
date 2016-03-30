@@ -103,8 +103,6 @@ public class ItemMenu : MonoBehaviour
         GameData.MouseBlocked = false;
         Inventory.instance.UseConsumable(_inv_pos);
         Deactivate();
-
-        
     }
 
     /* 

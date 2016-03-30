@@ -52,7 +52,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (item != null)
+        if (item != null && item_pos != Constants.WEAPON_SLOT)
         {
             this.transform.SetParent(this.transform.parent.parent);
             this.transform.position = eventData.position - _offset;
@@ -65,7 +65,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnDrag(PointerEventData eventData)
     {
-        if (item != null)
+        if (item != null && item_pos != Constants.WEAPON_SLOT)
         {
             this.transform.position = eventData.position - _offset;
         }
@@ -75,27 +75,22 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      * The item is dropped and centered in the new slot
      */
     public void OnEndDrag(PointerEventData eventData)
-    {
-        this.transform.SetParent(_inventory.slot_list[item_pos].transform);
-        this.transform.position = _inventory.slot_list[item_pos].transform.position;
-        GetComponent<CanvasGroup>().blocksRaycasts = true;
-        _inventory.UpdateWeaponStats();
-        /*
-        String s = "item pos: ";
-        foreach (Item item in Inventory.instance.inventory_item_list)
+    {   
+        if (item_pos != Constants.WEAPON_SLOT)
         {
-            s += item.id + " ";
+            this.transform.SetParent(_inventory.slot_list[item_pos].transform);
+            this.transform.position = _inventory.slot_list[item_pos].transform.position;
+            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            _inventory.UpdateWeaponStats();
         }
-        Debug.Log(s);
-        */
     }
-    
+
     /*
      * Calculates the offset
      */
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (item != null)
+        if (item != null && item_pos == Constants.WEAPON_SLOT)
         {
             _offset = eventData.position - new Vector2(this.transform.position.x, this.transform.position.y);
         }
@@ -122,20 +117,24 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Right click: set the ItemMenu to active and its position in the event of a right mouse click
-        if (eventData.pointerId == -2)
+        if (item_pos != Constants.WEAPON_SLOT)
         {
-            _item_menu.Activate(item, amount, item_pos);
-        }
-
-        // Left click: call userConsumable() if the item is of the consumable types
-        if (eventData.pointerId == -1)
-        {
-            if (item.type == Constants.CONSUMABLE_TYPE)
+            // Right click: set the ItemMenu to active and its position in the event of a right mouse click
+            if (eventData.pointerId == -2)
             {
-                //Debug.Log("left click and consumable type");
-                _inventory.UseConsumable(item_pos);
+                _item_menu.Activate(item, amount, item_pos);
             }
+
+            // Left click: call userConsumable() if the item is of the consumable types
+            if (eventData.pointerId == -1)
+            {
+                if (item.type == Constants.CONSUMABLE_TYPE)
+                {
+                    //Debug.Log("left click and consumable type");
+                    _inventory.UseConsumable(item_pos);
+                }
+            }
+
         }
     }
 }

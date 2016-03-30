@@ -40,27 +40,37 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     {
         ItemData _dropped_item = eventData.pointerDrag.GetComponent<ItemData>();
 
-        if (_inventory.inventory_item_list[slot_pos].id == -1)
+        if (_dropped_item.item_pos != Constants.WEAPON_SLOT && slot_pos != Constants.WEAPON_SLOT)
         {
-            _inventory.inventory_item_list[_dropped_item.item_pos] = new Item();
-            _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
-            _dropped_item.item_pos = slot_pos;
+            if (_inventory.inventory_item_list[slot_pos].id == -1)
+            {
+                _inventory.inventory_item_list[_dropped_item.item_pos] = new Item();
+                _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
+                _dropped_item.item_pos = slot_pos;
+            }
+            else if (_dropped_item.item_pos != slot_pos)
+            {
+                Transform item = this.transform.GetChild(0);
+
+                _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
+                _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
+
+                item.GetComponent<ItemData>().item_pos = _dropped_item.item_pos;
+                item.transform.SetParent(_inventory.slot_list[_dropped_item.item_pos].transform);
+                item.transform.position = _inventory.slot_list[_dropped_item.item_pos].transform.position;
+                _dropped_item.item_pos = slot_pos;
+                _dropped_item.transform.SetParent(this.transform);
+                _dropped_item.transform.position = this.transform.position;
+                _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
+                _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
+            }
         }
-        else if (_dropped_item.item_pos != slot_pos)
+        /*
+        String s = "item pos: ";
+        foreach (Item item in Inventory.instance.inventory_item_list)
         {
-            Transform item = this.transform.GetChild(0);
-
-            _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
-            _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
-
-            item.GetComponent<ItemData>().item_pos = _dropped_item.item_pos;
-            item.transform.SetParent(_inventory.slot_list[_dropped_item.item_pos].transform);
-            item.transform.position = _inventory.slot_list[_dropped_item.item_pos].transform.position;
-            _dropped_item.item_pos = slot_pos;
-            _dropped_item.transform.SetParent(this.transform);
-            _dropped_item.transform.position = this.transform.position;
-            _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
-            _inventory.inventory_item_list[slot_pos] = _dropped_item.item; 
+            s += item.id + " ";
         }
+        Debug.Log(s);*/
     }
 }
