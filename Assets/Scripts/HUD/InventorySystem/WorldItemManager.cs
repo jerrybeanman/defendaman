@@ -30,6 +30,16 @@ public class WorldItemManager : MonoBehaviour
     public GameObject world_item;
     Inventory _inventory;
     int _my_player_id;
+	public static WorldItemManager Instance;
+
+	void Awake()
+	{
+		if (Instance == null)				//Check if instance already exists
+			Instance = this;				//if not, set instance to this
+		else if (Instance != this)			//If instance already exists and it's not this:
+			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a WorldItemManager. 
+		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+	}
 
     /*
      * Retrives the ItemManager script, the Inventory script and the player id
