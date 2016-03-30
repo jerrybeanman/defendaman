@@ -528,7 +528,7 @@ public class HUD_Manager : MonoBehaviour {
 			Send(packet);
 		}else
 		{
-			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, Quaternion.identity);
+			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, building.transform.rotation);
 			testBuild.GetComponent<Building>().placing = false;
 		}
 
