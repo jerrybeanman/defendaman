@@ -45,6 +45,15 @@ public class PlayerReceiveUpdates : MonoBehaviour {
     void took_damage(JSONClass packet)
     {
         baseClass.ClassStat.CurrentHp = packet["NewHP"].AsFloat;
+
+        GameManager.instance.PlayerTookDamage(playerID, packet["NewHP"].AsFloat, baseClass.ClassStat);
+
+        if (baseClass.ClassStat.CurrentHp <= 0.0f)
+        {
+            NetworkingManager.Unsubscribe(DataType.Player, playerID);
+            GameData.PlayerPosition.Remove(playerID);
+            Destroy(gameObject);
+        }
     }
 
     void died(JSONClass packet)
