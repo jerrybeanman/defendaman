@@ -145,12 +145,10 @@ public abstract class BaseClass : MonoBehaviour {
         switch (playerData["Attack"].AsInt)
         {
             case 0:
-                HUD_Manager.instance.UseMainSkill(cooldowns[0]);
                 basicAttack(directionOfAttack);
                 //Regular attack
                 break;
             case 1:
-                HUD_Manager.instance.UseSubSkill(cooldowns[1]);
                 specialAttack(directionOfAttack);
                 //Regular special attack
                 break;
