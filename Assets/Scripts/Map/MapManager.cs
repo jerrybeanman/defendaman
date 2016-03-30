@@ -199,7 +199,7 @@ public class MapManager : MonoBehaviour {
     -- FUNCTION: 	create_map
     -- DATE: 		February 16, 2016
     -- REVISIONS: 	N/A
-    -- DESIGNER: 	Jaegar Sarauer, Krystle Bulalakaw
+    --it  DESIGNER: 	Jaegar Sarauer, Krystle Bulalakaw
     -- PROGRAMMER: 	Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
     -- INTERFACE: 	create_map(JSONClass message)
     --					JSONClass message	the message in JSON for map creation, containing map data
@@ -274,12 +274,8 @@ public class MapManager : MonoBehaviour {
         if (_map == null) {
 			print ("[DEBUG-map] _map value was null");
             return;
-<<<<<<< HEAD
-        for (int x = 0; x < _mapWidth; x++) {
-=======
 		}
         for (int x = 0; x < _mapWidth; x++)
->>>>>>> b3e530128ae1bf17238add041a4ddabe5a25a8c8
             for (int y = 0; y < _mapHeight; y++) {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
@@ -300,4 +296,3 @@ public class MapManager : MonoBehaviour {
             }
 		}
 	}
-}
