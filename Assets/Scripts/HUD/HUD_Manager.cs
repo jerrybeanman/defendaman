@@ -342,7 +342,7 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null)
+		if(shop.Selected.Option != null && !ItemBought)
 		{
 			// Indicates that an item has been bought
 			ItemBought = true;
@@ -472,7 +472,7 @@ public class HUD_Manager : MonoBehaviour {
 		GameObject b1 = (GameObject)Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
         if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) {
            // building.GetComponent<AI>()
-           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 10);
+           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
             Debug.Log("Instant turret 1");
         }
 		// Add selected building to either wallList or Armory list depending the tag
@@ -536,9 +536,9 @@ public class HUD_Manager : MonoBehaviour {
 			testBuild.GetComponent<Building>().placing = false;
             if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
             {//
-                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 10);
+                //testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 15);
 
-                //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 10);
+                testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
                 Debug.Log("Instant turret 2");
             }
         }
