@@ -41,9 +41,9 @@ public class Building:MonoBehaviour {
 			// instantTurret(float reload, int speed, int teamToIgnore, int range)
 			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
 			// our team # = GameData.myPlayer.TeamID
-			gameObject.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
-			
-			gameObject.layer = LayerMask.NameToLayer("Default");
+			//gameObject.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
+            //gameObject.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 10);
+            gameObject.layer = LayerMask.NameToLayer("Default");
 		}
 
 
@@ -67,6 +67,8 @@ public class Building:MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
+        if (other.gameObject.GetComponent<Projectile>() && other.gameObject.GetComponent<Projectile>().teamID == GetComponent<AI>().team)
+            return;
 		if(placing)
 		{
 			print ("dont place plz");

@@ -29,7 +29,8 @@ public class Attack : MonoBehaviour {
 
             HUD_Manager.instance.UseMainSkill(player.cooldowns[0]);
             attackReady = false;
-            var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
+            //var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
+            var dir = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float delay = player.basicAttack(dir);
             Invoke("enableAttack", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {
@@ -45,7 +46,8 @@ public class Attack : MonoBehaviour {
             //right click attack
             HUD_Manager.instance.UseSubSkill(player.cooldowns[1]);
             specialReady = false;
-            var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
+            //var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
+            var dir = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float delay = player.specialAttack(dir);
             Invoke("enableSpecial", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {

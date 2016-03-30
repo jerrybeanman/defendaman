@@ -112,7 +112,7 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
         if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
-            if (attack.teamID == team) {
+            if (attack.teamID == team || GameData.MyPlayer == null) {
                 return;
             }
 
@@ -123,7 +123,7 @@ public abstract class BaseClass : MonoBehaviour {
             if (attack is Projectile)
                 Destroy(other.gameObject);
 
-            if (playerID != GameData.MyPlayer.PlayerID)
+            if (GameData.MyPlayer == null || playerID != GameData.MyPlayer.PlayerID)
                 return;
 
             var memersToSend = new List<Pair<string, string>>();
@@ -145,12 +145,10 @@ public abstract class BaseClass : MonoBehaviour {
         switch (playerData["Attack"].AsInt)
         {
             case 0:
-                HUD_Manager.instance.UseMainSkill(cooldowns[0]);
                 basicAttack(directionOfAttack);
                 //Regular attack
                 break;
             case 1:
-                HUD_Manager.instance.UseSubSkill(cooldowns[1]);
                 specialAttack(directionOfAttack);
                 //Regular special attack
                 break;
