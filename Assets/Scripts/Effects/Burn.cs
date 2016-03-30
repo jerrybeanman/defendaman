@@ -12,7 +12,7 @@ public class Burn : Debuff
     {
         base.FixedUpdate();
         if(duration % 25 == 0) {
-            player.doDamage(5f, true);
+            player.doDamage(10f, true);
         }
     }
 }
