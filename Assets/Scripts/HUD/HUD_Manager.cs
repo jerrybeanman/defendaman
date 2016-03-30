@@ -457,7 +457,6 @@ public class HUD_Manager : MonoBehaviour {
 	void UpdateBuildingCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
-		print ("[Debug] " + data.ToString());
 		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
 
 		// Retrieve the Building component attached with the game object
@@ -469,8 +468,9 @@ public class HUD_Manager : MonoBehaviour {
 
 		building.GetComponent<Building>().placing = false;
 
-		GameObject b1 = (GameObject)Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
-        if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) {
+		GameObject b1 = (GameObject)Instantiate(building, pos, Quaternion.Euler(0, 0, data[NetworkKeyString.ZRot].AsFloat));
+        if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) 
+		{
            // building.GetComponent<AI>()
            b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
             Debug.Log("Instant turret 1");
@@ -516,6 +516,7 @@ public class HUD_Manager : MonoBehaviour {
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
 
+		print ("x: " + building.transform.rotation.x + " y: " + building.transform.rotation.y + " z: " + building.transform.rotation.z);
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
 			// Send the packet, with Team ID, user name, and the message input
@@ -526,7 +527,7 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, buildingLocation.z.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.XRot, building.transform.rotation.x.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
-			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.rotation.z.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.eulerAngles.z.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
 			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
 			Send(packet);

@@ -22,6 +22,8 @@ public class AI : MonoBehaviour {
     public int aiID = 0;
     int teamSwap;
     double reloadSwap;
+	public Building parent;
+
     // Use this for initialization
     void Start()
     {
@@ -32,6 +34,7 @@ public class AI : MonoBehaviour {
         rb2d = GetComponent<Rigidbody2D>();
         
         gameObject.layer = 2;
+		parent = gameObject.GetComponent<Building>();
         Debug.Log("Constructed");
     }
 
@@ -83,7 +86,7 @@ public class AI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (gameObject.GetComponent<Building>().placing)
+        if (parent.placing && !parent.constructed)
             return;
         /*if (reload > 1000)
         {
