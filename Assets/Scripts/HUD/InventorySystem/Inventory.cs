@@ -87,11 +87,15 @@ public class Inventory : MonoBehaviour
             slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
         // TODO: Remove this. Adding initial items to the inventory (testing)
-        AddItem(1);
-        AddItem(2);
-        AddItem(2, 200);
-        AddItem(3, 10);
-        AddItem(0);
+        //AddItem(1);
+        //AddItem(2);
+        //AddItem(2, 200);
+        //AddItem(3, 10);
+        //AddItem(0);
+        AddItem(4);
+        AddItem(5);
+        AddItem(6);
+        AddItem(7);
     }
 
     /*
