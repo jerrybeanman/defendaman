@@ -78,7 +78,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         speed = ClassStat.MoveSpeed;
-		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBLocked)
+		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBlocked)
             movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
         if (movestyles == movestyle.absolute)
@@ -204,23 +204,23 @@ public class Movement : MonoBehaviour
         bool moveDown = false;
         bool vMoved = false;
         Vector2 ret = new Vector2();
-        if (Input.GetKey(up) && !GameData.InputBLocked)
+        if (Input.GetKey(up) && !GameData.InputBlocked)
         {
             angleFacing += 0;
             vMoved = true;
         }
-        else if (Input.GetKey(down) && !GameData.InputBLocked)
+        else if (Input.GetKey(down) && !GameData.InputBlocked)
         {
             vMoved = true;
             moveDown = true;
             angleFacing += 180;
         }
-		if (Input.GetKey(left) && !GameData.InputBLocked)
+		if (Input.GetKey(left) && !GameData.InputBlocked)
         {
             angleHorz += 90;
             hMoved = true;
         }
-		if (Input.GetKey(right) && !GameData.InputBLocked)
+		if (Input.GetKey(right) && !GameData.InputBlocked)
         {
             angleHorz += -90;
             hMoved = true;

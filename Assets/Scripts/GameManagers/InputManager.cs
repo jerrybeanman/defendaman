@@ -2,26 +2,28 @@
 using System.Collections;
 
 public class InputManager : MonoBehaviour {
-
-
+	
 	// Update is called once per frame
 	void Update () {
-		if(!GameData.InputBLocked)
+		if(!GameData.InputBlocked)
 		{
 			if (Input.GetKeyDown(KeyCode.Z))
 			{
 				GameStart_Testing.instance.myID = 1;
-				GameStart_Testing.instance.StartOfGame();
+				if (Application.platform != RuntimePlatform.LinuxPlayer)
+					GameStart_Testing.instance.StartOfGame();
 			}
 			if (Input.GetKeyDown(KeyCode.X))
 			{
 				GameStart_Testing.instance.myID = 2;
-				GameStart_Testing.instance.StartOfGame();
+				if (Application.platform != RuntimePlatform.LinuxPlayer)
+					GameStart_Testing.instance.StartOfGame();
 			}
 			if (Input.GetKeyDown(KeyCode.C))
 			{
 				GameStart_Testing.instance.myID = 3;
-				GameStart_Testing.instance.StartOfGame();
+				if (Application.platform != RuntimePlatform.LinuxPlayer)
+					GameStart_Testing.instance.StartOfGame();
 			}
 
 			if (Input.GetKeyDown(KeyCode.Alpha1))
