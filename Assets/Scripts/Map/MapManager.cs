@@ -84,7 +84,35 @@ public class MapManager : MonoBehaviour {
     void Start() {
     }
 
-    /**
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	Update
+    -- DATE: 		February 16, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	Update(void)
+    -- RETURNS: 	void.
+    -- NOTES:
+    -- Called once per frame. Check the objects currently in view and update object pool.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	void Update() {
+		check_object_pool ();
+	}
+	
+	/**
+	 * Deserialize JSON string into 2D int array.
+	 */
+	private int[,] parse_string_map(string map) {
+		// _map = json.deserialization<int>(map)
+		return _map;
+	}
+	
+	/* Serialize 2D int array into JSON string. */
+	private string parse_int_map(int[][] map) {
+		return _string_map;
+	}
+	
+	/**
      * Find the camera distance used to calculate the camera view frustum.
      * Create the list of pooled objects and deactivate them.
      * Perform initial object pool check.
@@ -133,37 +161,9 @@ public class MapManager : MonoBehaviour {
     }
 
 	/*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: 	Update
-    -- DATE: 		February 16, 2016
-    -- REVISIONS: 	N/A
-    -- DESIGNER:  	Krystle Bulalakaw
-    -- PROGRAMMER: 	Krystle Bulalakaw
-    -- INTERFACE: 	Update(void)
-    -- RETURNS: 	void.
-    -- NOTES:
-    -- Called once per frame. Check the objects currently in view and update object pool.
-    ----------------------------------------------------------------------------------------------------------------------*/
-    void Update() {
-		check_object_pool ();
-	}
-
-    /**
-	 * Deserialize JSON string into 2D int array.
-	 */
-    private int[,] parse_string_map(string map) {
-        // _map = json.deserialization<int>(map)
-        return _map;
-    }
-
-    /* Serialize 2D int array into JSON string. */
-    private string parse_int_map(int[][] map) {
-        return _string_map;
-    }
-
-	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: handle_event
     -- DATE: February 16, 2016
-    -- REVISIONS: N/A
+    -- REVISIONS: March 31 - Add RESOURCE_TAKEN event processing
     -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
     -- PROGRAMMER: Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
     -- INTERFACE: void handle_event(int id, JSONClass message)
@@ -181,6 +181,7 @@ public class MapManager : MonoBehaviour {
                 instantiate_pool();
                 break;
             case EventType.RESOURCE_TAKEN:
+                ProcessResourceTakenEvent(message);
 				// TODO: decrease resources left
                 break;
             case EventType.RESOURCE_DEPLETED:
@@ -303,4 +304,37 @@ public class MapManager : MonoBehaviour {
                 }
             }
         }
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: ProcessResourceTakenEvent
+    --
+    -- DATE: March 31, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    --
+    -- PROGRAMMER: Krystle Bulalakaw
+    --
+    -- INTERFACE: void ProcessResourceTakenEvent(JSONClass message)
+    --							JSONClass message - the message received from the server
+    --
+    -- RETURNS: void.
+    --
+    -- NOTES:
+    -- This function processes the message received from the server that a resource was taken.
+    -- Using the X, Y, and Amount parsed from the message, find the Resource in the list and decrease its amount.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	public void ProcessResourceTakenEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		int amount = message["ResourceAmountTaken"].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Decrease its amount
+		temp.GetComponent<Resource>().DecreaseAmount(amount);
 	}
+}
