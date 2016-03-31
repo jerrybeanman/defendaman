@@ -198,8 +198,8 @@ public abstract class BaseClass : MonoBehaviour {
             get { return _atkPower; }
             set
             {
-                update_stats();
                 _atkPower = value;
+                update_stats();
             }
         }
 
@@ -209,8 +209,8 @@ public abstract class BaseClass : MonoBehaviour {
             get { return _defense; }
             set
             {
-                update_stats();
                 _defense = value;
+                update_stats();
             }
         }
 
