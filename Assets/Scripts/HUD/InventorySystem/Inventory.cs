@@ -87,11 +87,15 @@ public class Inventory : MonoBehaviour
             slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
         // TODO: Remove this. Adding initial items to the inventory (testing)
+        //AddItem(1);
+        //AddItem(2);
+        //AddItem(2, 200);
+        //AddItem(3, 10);
+        //AddItem(0);
         AddItem(1);
-        AddItem(2);
-        AddItem(2, 200);
-        AddItem(3, 10);
-        AddItem(0);
+        AddItem(5, 5);
+        AddItem(6);
+        AddItem(7);
     }
 
     /*
@@ -334,9 +338,6 @@ public class Inventory : MonoBehaviour
 
         GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
         GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
-        Debug.Log("damage: " + GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT]);
-        Debug.Log("armor: " + GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT]);
-        Debug.Log("gold: " + GameData.MyPlayer.Resources[Constants.GOLD_RES]);
     }
 
     public void DisplayWeaponError(string msg)

@@ -8,6 +8,7 @@ using SimpleJSON;
 public class PlayerReceiveUpdates : MonoBehaviour {
     public int playerID;
     private Vector2 lastPosition;
+    BaseClass baseClass;
 
 	// Use this for initialization
 	void Start () {
@@ -18,7 +19,9 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         NetworkingManager.Subscribe(use_potion, DataType.Potion, playerID);
         NetworkingManager.Subscribe(new_stats, DataType.StatUpdate, playerID);
         GameData.PlayerPosition.Add(playerID, transform.position);
-	}
+        baseClass = GetComponent<BaseClass>();
+
+    }
 
     void update_position(JSONClass player) {
         Vector3 position = new Vector3(player["x"].AsFloat, player["y"].AsFloat, -10f);
@@ -42,12 +45,22 @@ public class PlayerReceiveUpdates : MonoBehaviour {
 
     void took_damage(JSONClass packet)
     {
-        GetComponent<BaseClass>().doDamage(packet["Damage"].AsFloat, true);
+        baseClass.ClassStat.CurrentHp = packet["NewHP"].AsFloat;
+
+        GameManager.instance.PlayerTookDamage(playerID, packet["NewHP"].AsFloat, baseClass.ClassStat);
+
+        if (baseClass.ClassStat.CurrentHp <= 0.0f)
+        {
+            NetworkingManager.Unsubscribe(DataType.Player, playerID);
+            GameData.PlayerPosition.Remove(playerID);
+            Destroy(gameObject);
+        }
     }
 
     void died(JSONClass packet)
     {
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
+        GameData.PlayerPosition.Remove(playerID);
         Destroy(gameObject);
     }
 
