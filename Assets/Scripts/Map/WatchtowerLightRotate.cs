@@ -26,12 +26,7 @@ public class WatchtowerLightRotate : MonoBehaviour {
 		else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyTop;
 
-		if(parent.placing)
-		{
-			transform.GetChild(0).gameObject.SetActive(false);
-			transform.GetChild(1).gameObject.SetActive(false);
-		}
-		if(parent.team != GameData.MyPlayer.TeamID)
+		if(parent.placing || parent.team != GameData.MyPlayer.TeamID || !parent.constructed)
 		{
 			transform.GetChild(0).gameObject.SetActive(false);
 			transform.GetChild(1).gameObject.SetActive(false);
@@ -45,7 +40,7 @@ public class WatchtowerLightRotate : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if(!parent.placing && !set && parent.team == GameData.MyPlayer.TeamID)
+		if(!parent.placing && !set && parent.team == GameData.MyPlayer.TeamID && parent.constructed)
 		{
 			transform.GetChild(0).gameObject.SetActive(true);
 			transform.GetChild(1).gameObject.SetActive(true);
