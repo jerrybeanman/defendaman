@@ -43,11 +43,12 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void PlayerTookDamage(int playerID, float damage, BaseClass.PlayerBaseStat ClassStat)
+    public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat)
     {
+        var damage = (ClassStat.CurrentHp - newHP);
         if (GameData.MyPlayer.PlayerID == playerID)
         {
-            HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
+            HUD_Manager.instance.UpdatePlayerHealth(-(damage/ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0) {
                 PlayerDied();
             } else {
@@ -66,7 +67,6 @@ public class GameManager : MonoBehaviour {
             HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0)
                 GameLost();
-
         }
 
         if (playerID == GameData.EnemyKingID)
@@ -79,7 +79,8 @@ public class GameManager : MonoBehaviour {
 
     private static void PlayerDied()
     {
-        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.UDP);
+        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
+        GameData.PlayerPosition.Remove(GameData.MyPlayer.PlayerID);
         GameData.GameState = GameState.Dying;
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");

@@ -71,7 +71,7 @@ public class WorldItemData : MonoBehaviour
             // Prevent that a pickup event was received
             //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
                 // Pretend that a pickup event was received
-                //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+                _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
             }
             else
             {

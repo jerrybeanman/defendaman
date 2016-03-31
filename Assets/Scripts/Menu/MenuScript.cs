@@ -219,15 +219,9 @@ public class MenuScript : MonoBehaviour {
 
         switch (value)
         {
-            case 0:
+            case 1:
                 soldier_panel.SetActive(true);
                 mage_panel.SetActive(false);
-                ninja_panel.SetActive(false);
-                aman_panel.SetActive(false);
-                break;
-            case 1:
-                soldier_panel.SetActive(false);
-                mage_panel.SetActive(true);
                 ninja_panel.SetActive(false);
                 aman_panel.SetActive(false);
                 break;
@@ -238,6 +232,12 @@ public class MenuScript : MonoBehaviour {
                 aman_panel.SetActive(false);
                 break;
             case 3:
+                soldier_panel.SetActive(false);
+                mage_panel.SetActive(true);
+                ninja_panel.SetActive(false);
+                aman_panel.SetActive(false);
+                break;
+            case 4:
                 soldier_panel.SetActive(false);
                 mage_panel.SetActive(false);
                 ninja_panel.SetActive(false);

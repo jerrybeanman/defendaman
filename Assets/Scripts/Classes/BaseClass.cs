@@ -112,7 +112,7 @@ public abstract class BaseClass : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
         if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
-            if (attack.teamID == team) {
+            if (attack.teamID == team || GameData.MyPlayer == null) {
                 return;
             }
 
@@ -123,14 +123,14 @@ public abstract class BaseClass : MonoBehaviour {
             if (attack is Projectile)
                 Destroy(other.gameObject);
 
-            if (playerID != GameData.MyPlayer.PlayerID)
+            if (GameData.MyPlayer == null || playerID != GameData.MyPlayer.PlayerID)
                 return;
 
             var memersToSend = new List<Pair<string, string>>();
             memersToSend.Add(new Pair<string, string>("EnemyID", attack.playerID.ToString()));
-            memersToSend.Add(new Pair<string, string>("Damage", damageTaken.ToString()));
-            NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP);
-
+            memersToSend.Add(new Pair<string, string>("NewHP", ClassStat.CurrentHp.ToString()));
+            print(NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP));
+            
             return;
         } else {
             Debug.Log("Attack was null");
@@ -145,12 +145,10 @@ public abstract class BaseClass : MonoBehaviour {
         switch (playerData["Attack"].AsInt)
         {
             case 0:
-                HUD_Manager.instance.UseMainSkill(cooldowns[0]);
                 basicAttack(directionOfAttack);
                 //Regular attack
                 break;
             case 1:
-                HUD_Manager.instance.UseSubSkill(cooldowns[1]);
                 specialAttack(directionOfAttack);
                 //Regular special attack
                 break;
@@ -208,16 +206,19 @@ public abstract class BaseClass : MonoBehaviour {
         {
             ClassStat.AtkPower += damage;
             ClassStat.Defense += armour;
-            doDamage(-health);
+            if (health != 0)
+                doDamage(-health);
             ClassStat.CurrentHp += health;
             ClassStat.MoveSpeed += speed;
         } else
         {
             ClassStat.AtkPower += damage;
             ClassStat.Defense += armour;
-            doDamage(-health);
+            if (health != 0)
+                doDamage(-health);
             ClassStat.CurrentHp += health;
             ClassStat.MoveSpeed += speed;
+            Debug.Log(ClassStat.MoveSpeed);
             StartCoroutine(Debuff(damage, armour, speed, duration));
         }
     }

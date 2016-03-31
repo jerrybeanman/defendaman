@@ -317,7 +317,7 @@ public class HUD_Manager : MonoBehaviour {
 			HighlightItem(i);
 		}else
 		// If an selected item has been selected
-		if(shop.Selected.Option == shop.Items[i].Option)
+		if(shop.Selected.Option == shop.Items[i-1].Option)
 		{
 			// Unselect and take off the highlight
 			UnHighlightItem();
@@ -342,7 +342,7 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null)
+		if(shop.Selected.Option != null && !ItemBought)
 		{
 			// Indicates that an item has been bought
 			ItemBought = true;
@@ -457,7 +457,6 @@ public class HUD_Manager : MonoBehaviour {
 	void UpdateBuildingCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
-		print ("[Debug] " + data.ToString());
 		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
 
 		// Retrieve the Building component attached with the game object
@@ -469,8 +468,13 @@ public class HUD_Manager : MonoBehaviour {
 
 		building.GetComponent<Building>().placing = false;
 
-		Instantiate(building, pos, Quaternion.Euler(data[NetworkKeyString.XRot].AsFloat, data[NetworkKeyString.YRot].AsFloat, data[NetworkKeyString.ZRot].AsFloat));
-
+		GameObject b1 = (GameObject)Instantiate(building, pos, Quaternion.Euler(0, 0, data[NetworkKeyString.ZRot].AsFloat));
+        if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) 
+		{
+           // building.GetComponent<AI>()
+           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
+            Debug.Log("Instant turret 1");
+        }
 		// Add selected building to either wallList or Armory list depending the tag
 		if(bComponent.type == Building.BuildingType.Wall)
 			mapManager.wallList.Add(pos); 
@@ -512,6 +516,7 @@ public class HUD_Manager : MonoBehaviour {
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
 
+		print ("x: " + building.transform.rotation.x + " y: " + building.transform.rotation.y + " z: " + building.transform.rotation.z);
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
 			// Send the packet, with Team ID, user name, and the message input
@@ -522,7 +527,7 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, buildingLocation.z.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.XRot, building.transform.rotation.x.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
-			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.rotation.z.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.eulerAngles.z.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
 			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
 			Send(packet);
@@ -530,7 +535,14 @@ public class HUD_Manager : MonoBehaviour {
 		{
 			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, building.transform.rotation);
 			testBuild.GetComponent<Building>().placing = false;
-		}
+            if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
+            {//
+                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 15);
+
+                //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
+                Debug.Log("Instant turret 2");
+            }
+        }
 
 		Destroy(building);
 		return true;
@@ -808,5 +820,10 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.ProgressBar.fillAmount = 0f;
 			subSkill.CoolDown = CoolDown;
 		}
+	}
+
+	public void UpgradeWeapon()
+	{
+		Debug.Log ("Upgrade weapon here");
 	}
 }
