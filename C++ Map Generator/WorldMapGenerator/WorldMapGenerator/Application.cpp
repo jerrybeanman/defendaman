@@ -17,7 +17,7 @@ void drawMap (int ** mapArray, Map map) {
 	}
 }
 
-/*int main () {
+int main () {
 	char c;
 	Map *map = new Map (100, 100, 44);
 	do {
@@ -27,7 +27,7 @@ void drawMap (int ** mapArray, Map map) {
 		map->joinMaps (map->getMapBase (), map->getMapTemp ());
 		map->createTopScenery (12);
 		map->createResources (map->getMapBase (), map->getMapScenery(), 50);
-		map->createSpawnPoints (map->getMapBase (), 3);
+		map->createSpawnPoints (map->getMapBase (), 2);
 		//printf("%s", map->ConvertToJSONString ().c_str());
 		std::ofstream myfile;
 		myfile.open ("output.txt");
@@ -40,8 +40,8 @@ void drawMap (int ** mapArray, Map map) {
 		map = map2;
 	} while (c != 'q');
 	return 0;
-}*/
-
+}
+/*
 char endMap[100000];
 
 const char * GenerateMap (int seed) {
@@ -69,4 +69,4 @@ int main () {
 	return 0;
 }
 
-
+*/

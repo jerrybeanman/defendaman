@@ -2,58 +2,25 @@
 
 //Carson
 public class GameStart_Testing : MonoBehaviour {
-    int myID = -1;
+    public int myID = -1;
     NetworkingManager networkingManager;
+	public static GameStart_Testing instance;
 
 	// Use this for initialization
 	void Start () {
+		//Check if instance already exists
+		if (instance == null)				
+			//if not, set instance to this
+			instance = this;				
+		//If instance already exists and it's not this:
+		else if (instance != this)			
+			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+			Destroy(gameObject);   		
         networkingManager = GetComponent<NetworkingManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        //if (GameData.GameStart)
-        //    return;
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            myID = 1;
-            StartOfGame();
-        }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            myID = 2;
-            StartOfGame();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            myID = 3;
-            StartOfGame();
-        }
-        /*if (Input.GetKeyDown(KeyCode.V))
-        {
-            myID = 4;
-            StartOfGame();
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            myID = 5;
-            StartOfGame();
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            myID = 6;
-            StartOfGame();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            myID = 7;
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            myID = 8;
-            StartOfGame();
-        }*/
     }
 
     public void StartOfGame()
@@ -82,15 +49,6 @@ public class GameStart_Testing : MonoBehaviour {
         if (GameData.MyPlayer == null)
             Debug.Log("Player data not set");
 
-        // Update the stat boost a player gets from a compatible equipped weapon
-        Inventory.instance.UpdateWeaponStats();
-
-        if (Application.platform != RuntimePlatform.LinuxPlayer)
-        {
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(32, 32));
-            GameData.TeamSpawnPoints.Add(new Pair<int, int>(50, 50));
-        }
-
         GameData.Seed = 1000;
 
         GameData.IP = "192.168.0.3";
@@ -99,5 +57,8 @@ public class GameStart_Testing : MonoBehaviour {
             GameManager.instance.StartGame(GameData.Seed);
         else
 		    Application.LoadLevel("EngineTeam_master");
+
+        // Update the stat boost a player gets from a compatible equipped weapon
+        //Inventory.instance.UpdateWeaponStats();
     }
 }

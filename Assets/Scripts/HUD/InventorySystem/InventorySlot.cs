@@ -40,9 +40,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     {
         ItemData _dropped_item = eventData.pointerDrag.GetComponent<ItemData>();
 
-        if (_dropped_item.item_pos != Constants.WEAPON_SLOT && slot_pos != Constants.WEAPON_SLOT)
-        {
-            if (_inventory.inventory_item_list[slot_pos].id == -1)
+        //if (_dropped_item.item_pos != Constants.WEAPON_SLOT && slot_pos != Constants.WEAPON_SLOT) // Uncomment to make weapon slot static
+        //{
+        if (_inventory.inventory_item_list[slot_pos].id == -1)
             {
                 _inventory.inventory_item_list[_dropped_item.item_pos] = new Item();
                 _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
@@ -64,7 +64,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
                 _inventory.inventory_item_list[_dropped_item.item_pos] = item.GetComponent<ItemData>().item;
                 _inventory.inventory_item_list[slot_pos] = _dropped_item.item;
             }
-        }
+        //}
         /*
         String s = "item pos: ";
         foreach (Item item in Inventory.instance.inventory_item_list)
