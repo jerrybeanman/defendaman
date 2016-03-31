@@ -51,12 +51,7 @@ public class GunnerClass : RangedClass
         if (inSpecial)
             return 0f;
         base.basicAttack(dir);
-        /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
-        var innacY = Random.value * inaccuracy - (inaccuracy / 2);
-        var newMouse = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x + innacX, Input.mousePosition.y + innacY, 0));
-        var newdir = (Vector2)((newMouse - transform.position).normalized);
-        */
-        var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);//was newdir
@@ -86,14 +81,6 @@ public class GunnerClass : RangedClass
         {
             if (inSpecial && Input.GetMouseButton(1))
             {
-                //var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
-
-                /*Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, startPosition, transform.rotation);
-                attack.AddForce(dir * speed[1]);
-                attack.GetComponent<BasicRanged>().playerID = playerID;
-                attack.GetComponent<BasicRanged>().teamID = team;
-                attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
-                attack.GetComponent<BasicRanged>().maxDistance = distance[1];*/
                 if (mainCamera.orthographicSize < zoomOut)
                 {
                     mainCamera.orthographicSize += .1f;
@@ -124,15 +111,7 @@ public class GunnerClass : RangedClass
 
     void fire()
     {
-        //Replace with lazer beammmm
-        /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
-        var innacY = Random.value * inaccuracy - (inaccuracy / 2);
-        var newMouse = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x + innacX, Input.mousePosition.y + innacY, 0));
-        var newdir = (Vector2)((newMouse - transform.position).normalized);
-        */
-
-        //dir's were newdir
-        var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
