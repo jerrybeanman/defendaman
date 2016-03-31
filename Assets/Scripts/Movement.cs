@@ -12,7 +12,7 @@ public class Movement : MonoBehaviour
     movestyle movestyles;
     float midX, midY;
     BaseClass.PlayerBaseStat ClassStat;
-
+	Animator anim;
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-
+		anim = gameObject.GetComponent<Animator>();
         ClassStat = GetComponent<BaseClass>().ClassStat;
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
@@ -96,11 +96,11 @@ public class Movement : MonoBehaviour
         // animation trigger test
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
-            gameObject.GetComponent<Animator>().SetBool("moving", true);
+            anim.SetBool("moving", true);
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
         {
-            gameObject.GetComponent<Animator>().SetBool("moving", false);
+            anim.SetBool("moving", false);
         }
     }
     void sendToServer(double x, double y)
@@ -265,11 +265,6 @@ public class Movement : MonoBehaviour
         Vector2 position = new Vector2((float)xMod, (float)yMod);
 
         return position;
-    }
-
-    void OnCollisonExit2D(Collision2D collision)
-    {
-
     }
 
     public void setAbs()
