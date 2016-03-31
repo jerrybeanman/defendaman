@@ -92,53 +92,11 @@ public class Inventory : MonoBehaviour
         //AddItem(2, 200);
         //AddItem(3, 10);
         //AddItem(0);
-        AddItem(1);
-        AddItem(5, 5);
-        AddItem(6);
-        AddItem(7);
-    }
 
-    /*
-     * Binds inventory items to number keys. The keys 1, 2, 3, 4 will call useConsumable()
-     * on the items in matching inventory slots if the item is a consumable.
-     */
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            if (inventory_item_list[Constants.SLOT_1].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("1 is consumable");
-                UseConsumable(Constants.SLOT_1);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            if (inventory_item_list[Constants.SLOT_2].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("2 is consumable");
-                UseConsumable(Constants.SLOT_2);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            if (inventory_item_list[Constants.SLOT_3].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("3 is consumable");
-                UseConsumable(Constants.SLOT_3);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            if (inventory_item_list[Constants.SLOT_4].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("4 is consumable");
-                UseConsumable(Constants.SLOT_4);
-            }
-        }
+        //AddItem(1);
+        //AddItem(5, 5);
+        //AddItem(6);
+        //AddItem(7);
     }
 
     /* 
@@ -316,6 +274,14 @@ public class Inventory : MonoBehaviour
         string _weapon_error_msg = Constants.NO_EQUIPPED;
         int damage = 0;
         int armor = 0;
+
+        var classStat = GameManager.instance.player.GetComponent<BaseClass>().ClassStat;
+
+        if(GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] != 0)
+            classStat.AtkPower -= GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT];
+        if(GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] != 0)
+            classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT];
+
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
         {
             ItemData _data = slot_list[Constants.WEAPON_SLOT].transform.GetChild(0).GetComponent<ItemData>();
@@ -338,6 +304,11 @@ public class Inventory : MonoBehaviour
 
         GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
         GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
+
+        if(damage != 0)
+            classStat.AtkPower += damage;
+        if(armor != 0)
+            classStat.Defense += armor;
     }
 
     public void DisplayWeaponError(string msg)
