@@ -34,7 +34,8 @@ public abstract class Projectile : Trigger
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         //If its a player or an AI, ignore it, otherwise destroy itself
-        if (other.gameObject.GetComponent<BaseClass>() != null)
+        var player = other.gameObject.GetComponent<BaseClass>();
+        if (player != null && teamID == player.team)
         {
             //If it collided with a player
             return;
@@ -47,7 +48,8 @@ public abstract class Projectile : Trigger
             return;
         }
 
-        if (other.gameObject.GetComponent<AI>() != null && teamID == other.gameObject.GetComponent<AI>().team)
+        var ai = other.gameObject.GetComponent<AI>();
+        if (ai != null && teamID == ai.team)
         {
             
             //If it collided with AI
@@ -59,10 +61,9 @@ public abstract class Projectile : Trigger
             //If it collided with items
             return;
         }
-
         //Otherwise, its a wall or some solid
+
         if (--pierce < 0) {
-            //Debug.Log("Projectile Collided with: " + other);
             Destroy(gameObject);
         }
     }

@@ -10,7 +10,7 @@ public class GunnerClass : RangedClass
     int[] distance = new int[2] { 12, 12 };
     int[] speed = new int[2] { 200, 300 };
     Rigidbody2D bullet;
-    Rigidbody2D bullet2;
+    Rigidbody2D laser;
     Camera mainCamera;
     Camera visionCamera;
     Camera hiddenCamera;
@@ -33,7 +33,7 @@ public class GunnerClass : RangedClass
         fired = false;
         
         bullet = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
-        bullet2 = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
+        laser = (Rigidbody2D)Resources.Load("Prefabs/Laser", typeof(Rigidbody2D));
         
         var controller = Resources.Load("Controllers/gunboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -134,13 +134,15 @@ public class GunnerClass : RangedClass
         //dir's were newdir
         var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
-        attack.GetComponent<BasicRanged>().playerID = playerID;
-        attack.GetComponent<BasicRanged>().teamID = team;
+        var attackRanged = attack.GetComponent<BasicRanged>();
+        attackRanged.playerID = playerID;
+        attackRanged.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
-        attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
+        attackRanged.damage = ClassStat.AtkPower * zoomRatio;
+        attackRanged.maxDistance = (int)(distance[1] * zoomRatio);
+        attackRanged.pierce = 10;
 
         var member = new List<Pair<string, string>>();
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));
