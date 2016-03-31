@@ -174,9 +174,9 @@ public class MenuScript : MonoBehaviour {
             
             switch (class_type)
             {
-                case ClassType.Gunner: avatar = _gunner_avatar; break;
-                case ClassType.Ninja: avatar = _ninja_avatar; break;
-                case ClassType.Wizard: avatar = _mage_avatar; break;
+                case ClassType.Gunner: 	avatar = _gunner_avatar; break;
+                case ClassType.Ninja: 	avatar = _ninja_avatar; break;
+                case ClassType.Wizard: 	avatar = _mage_avatar; break;
             }
 
             team_to_set[index].transform.Find("Profile").transform.GetComponent<Image>().sprite = avatar;
