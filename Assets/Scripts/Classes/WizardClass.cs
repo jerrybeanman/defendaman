@@ -77,6 +77,8 @@ public class WizardClass : RangedClass
         attack.GetComponent<Fireball>().damage = ClassStat.AtkPower;
         attack.GetComponent<Fireball>().maxDistance = distance[0];
 
+		print (attack.GetComponent<Fireball>().playerID);
+		
         return cooldowns[0];
     }
 

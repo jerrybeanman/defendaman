@@ -47,12 +47,14 @@ public class PlayerData
 
 public class GameData
 {
+	public static bool 			InputBlocked 	 = false;
+	public static bool 			KeyBlocked 		 = false;
     public static Dictionary<int,PlayerData> LobbyData = new Dictionary<int, PlayerData>();
 	public static PlayerData 	MyPlayer		= new PlayerData();
     public static int 			EnemyKingID 	{ get; set; }
     public static int 			AllyKingID 		{ get; set; }
     public static bool 			MouseBlocked 	{ get; set; }
-	public static bool 			KeyBlocked 		 = false;
+
               
     public static Dictionary<int, Vector3> PlayerPosition = new Dictionary<int, Vector3>();    
 	public static int 			Seed			{ get; set; }
