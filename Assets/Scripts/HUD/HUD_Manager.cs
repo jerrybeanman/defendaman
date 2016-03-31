@@ -812,4 +812,9 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.CoolDown = CoolDown;
 		}
 	}
+
+	public void UpgradeWeapon()
+	{
+		Debug.Log ("Upgrade weapon here");
+	}
 }
