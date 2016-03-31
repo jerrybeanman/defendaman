@@ -111,7 +111,7 @@ public class NinjaClass : MeleeClass
         if (gameObject.GetComponent<MagicDebuff>() == null) {
             var movement = gameObject.GetComponent<Movement>();
             if (movement != null)
-                movement.doBlink(15f);
+                movement.doBlink(10f);
         }
 
         return cooldowns[1];

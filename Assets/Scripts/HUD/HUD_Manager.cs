@@ -195,9 +195,6 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Check if skills are used or not
 		CheckSkillStatus();
-
-		// Check for events to open the shop menu
-		CheckShopOption();
 		
 		UpdateTimer();
 	}
@@ -211,7 +208,7 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	void CheckChatAction()
+	public void CheckChatAction()
 	{
 		// If return key has been pressed
 		if(Input.GetKeyDown(KeyCode.Return))
@@ -222,7 +219,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Block all other keyboard inputs
 				GameData.KeyBlocked = true;
-
+				GameData.InputBLocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
@@ -232,7 +229,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
-
+				GameData.InputBLocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
 				 {
 					// Send the packet, with Team ID, user name, and the message input
@@ -288,7 +285,7 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	void CheckShopOption()
+	public void CheckShopOption()
 	{
 		if(Input.GetKeyDown(KeyCode.M))
 		{
@@ -475,12 +472,6 @@ public class HUD_Manager : MonoBehaviour {
            b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
             Debug.Log("Instant turret 1");
         }
-		// Add selected building to either wallList or Armory list depending the tag
-		if(bComponent.type == Building.BuildingType.Wall)
-			mapManager.wallList.Add(pos); 
-		else
-			mapManager.ArmoryList.Add(pos);
-
 	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
@@ -820,5 +811,10 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.ProgressBar.fillAmount = 0f;
 			subSkill.CoolDown = CoolDown;
 		}
+	}
+
+	public void UpgradeWeapon()
+	{
+		Debug.Log ("Upgrade weapon here");
 	}
 }

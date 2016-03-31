@@ -35,19 +35,7 @@ public class Building:MonoBehaviour {
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
-		if (type == Building.BuildingType.Turret) 
-		{
-			// Calling this method:
-			// instantTurret(float reload, int speed, int teamToIgnore, int range)
-			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
-			// our team # = GameData.myPlayer.TeamID
-			//gameObject.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
-            //gameObject.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 10);
-            gameObject.layer = LayerMask.NameToLayer("Default");
-		}
 
-
-		notifycreation();
     }
 	public bool constructed = false;
 	IEnumerator Construct()

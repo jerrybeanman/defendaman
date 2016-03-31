@@ -5,7 +5,7 @@ public class bomb : MonoBehaviour {
 
 	DynamicLight thisLight;
 	TimerClass timer;
-	GameObject player;
+		GameObject player;
 
 	float tmpValue = 0;
 
