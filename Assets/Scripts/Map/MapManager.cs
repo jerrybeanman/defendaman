@@ -93,10 +93,13 @@ public class MapManager : MonoBehaviour {
     -- INTERFACE: 	Update(void)
     -- RETURNS: 	void.
     -- NOTES:
-    -- Called once per frame. Check the objects currently in view and update object pool.
+    -- Called once per frame.
+    -- Check the objects currently in view and update object pool.
+    -- Checks the list of resources and respawns after some time them if they are depleted.
     ----------------------------------------------------------------------------------------------------------------------*/
 	void Update() {
 		check_object_pool ();
+		RespawnDepletedObjectsLoop();
 	}
 	
 	/**
@@ -182,7 +185,6 @@ public class MapManager : MonoBehaviour {
                 break;
             case EventType.RESOURCE_TAKEN:
                 ProcessResourceTakenEvent(message);
-				// TODO: decrease resources left
                 break;
             case EventType.RESOURCE_DEPLETED:
 				// TODO: trigger depleted animation
@@ -336,5 +338,67 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Decrease its amount
 		temp.GetComponent<Resource>().DecreaseAmount(amount);
+	}
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: RespawnDepletedObjectsLoop
+    --
+    -- DATE: March 31, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    --
+    -- PROGRAMMER: Krystle Bulalakaw
+    --
+    -- INTERFACE: void RespawnDepletedObjectsLoop()
+    --
+    -- RETURNS: void.
+    --
+    -- NOTES:
+    -- Iterates through the list of map resources and checks if it is depleted. If it is, start a coroutine to respawn
+    -- some amount of it after a number of seconds.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	public void RespawnDepletedObjectsLoop() {
+		int seconds = 30;
+		int amount = 5;
+
+		for (int i = 0; i < _mapResources.Count; i++) {
+			Resource res = _mapResources[i].GetComponent<Resource>();
+			if (res.depleted) {
+				StartCoroutine(RespawnAfterTime(_mapResources[i], seconds, amount));
+			}
+		}
+	}
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: IEnumerator RespawnAfterTime
+    --
+    -- DATE: March 31, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    --
+    -- PROGRAMMER: Krystle Bulalakaw
+    --
+    -- INTERFACE: IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount)
+    -                   GameObject go - Resource Game Object instance
+    --                  int seconds   - number of seconds to wait before respawning resource
+    --                  int amount    - amount of resource to respawn
+    --
+    -- RETURNS: void.
+    --
+    -- NOTES:
+    -- Waits some number of seconds then sets a random Tree sprite, replenishes the resource amount, and activates
+    -- the Game Object instance.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount) {
+		yield return new WaitForSeconds(seconds);
+
+		go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
+		go.GetComponent<Resource>().amount = amount;
+		go.GetComponent<Resource>().depleted = false;
+		go.SetActive(true);
 	}
 }

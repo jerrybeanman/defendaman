@@ -54,6 +54,7 @@ class Resource : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
 	void Start () {
 		animator = GetComponent<Animator>();
+		depleted = false;
 	}
 	
 	/*------------------------------------------------------------------------------------------------------------------
@@ -95,7 +96,6 @@ class Resource : MonoBehaviour {
 			this.amount = 0;
 			depleted = true;
 			StartCoroutine(ExplodeAndDestroy());
-			StartCoroutine (Respawn());
 		}
 		
 		Debug.Log("Decreased resource amount from " + amt1 + " to " + this.amount + " at (" + this.x + ", " + this.y + ")" );
@@ -120,15 +120,6 @@ class Resource : MonoBehaviour {
 		gameObject.SetActive(false);
 	}
 	
-	// Not working
-	IEnumerator Respawn() {
-		yield return new WaitForSeconds(3f);
-		this.amount = 5;
-		animator.ResetTrigger("Depleted");
-		gameObject.SetActive (true);
-	}
-	
-	
 	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	OnTriggerEnter2D
     -- DATE: 		March 30, 2016
@@ -144,15 +135,10 @@ class Resource : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) {
 		int amount = 1;
-		//DecreaseAmount(amount);
 		List<Pair<string, string>> msg = CreateResourceDecreasedNetworkMessage(x, y, amount);
-		Debug.Log ("resource taken message: " + msg);
-		Debug.Log ("networking manager instance: " + NetworkingManager.instance);
-		
 		var packet = NetworkingManager.send_next_packet(DataType.Environment, (int)MapManager.EventType.RESOURCE_TAKEN, msg, Protocol.TCP);
 		// Wrap JSON child into array
 		string temp = "[" + packet + "]";
-		Debug.Log ("packet: " + temp);
 		// Fakes network data updates for local testing. Comment this line when actually testing on network.
 		NetworkingManager.instance.update_data(temp);
 	}
