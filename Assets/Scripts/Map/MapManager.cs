@@ -295,11 +295,11 @@ public class MapManager : MonoBehaviour {
         for (int x = OUTERWALL_THICKNESS; x < _mapWidth + OUTERWALL_THICKNESS; x++)
             for (int y = OUTERWALL_THICKNESS; y < _mapHeight + OUTERWALL_THICKNESS; y++) {
                 if (_mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS] >= 200 && _mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS] <= 201) {
-                    GameData.TeamSpawnPoints.Add(new Pair<int, int>(x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS));
+                    GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
                 if (_mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS] != -1) {
                     _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS]) % _mapSceneryObjects.Count];
-                    Instantiate(_scenery, new Vector3(x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS, -1), Quaternion.identity);
+                    Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
                 }
             }
         }
