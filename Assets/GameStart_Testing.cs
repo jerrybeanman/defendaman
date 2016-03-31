@@ -82,9 +82,6 @@ public class GameStart_Testing : MonoBehaviour {
         if (GameData.MyPlayer == null)
             Debug.Log("Player data not set");
 
-        // Update the stat boost a player gets from a compatible equipped weapon
-        Inventory.instance.UpdateWeaponStats();
-
         if (Application.platform != RuntimePlatform.LinuxPlayer)
         {
             GameData.TeamSpawnPoints.Add(new Pair<int, int>(32, 32));
@@ -99,5 +96,8 @@ public class GameStart_Testing : MonoBehaviour {
             GameManager.instance.StartGame(GameData.Seed);
         else
 		    Application.LoadLevel("EngineTeam_master");
+
+        // Update the stat boost a player gets from a compatible equipped weapon
+        //Inventory.instance.UpdateWeaponStats();
     }
 }
