@@ -97,7 +97,7 @@ public class NinjaClass : MeleeClass
         base.specialAttack(dir);
 
         teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
-        Invoke("cleanupTeleport", 1f);
+        Destroy(teleportInstance, 1);
 
         if (gameObject.GetComponent<MagicDebuff>() == null) {
             var movement = gameObject.GetComponent<Movement>();
@@ -106,10 +106,5 @@ public class NinjaClass : MeleeClass
         }
 
         return cooldowns[1];
-    }
-
-    private void cleanupTeleport()
-    {
-        Destroy(teleportInstance.gameObject);
     }
 }

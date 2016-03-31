@@ -136,13 +136,13 @@ public class GunnerClass : RangedClass
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
-        var attackRanged = attack.GetComponent<BasicRanged>();
-        attackRanged.playerID = playerID;
-        attackRanged.teamID = team;
+        var laserAttack = attack.GetComponent<Laser>();
+        laserAttack.playerID = playerID;
+        laserAttack.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
-        attackRanged.damage = ClassStat.AtkPower * zoomRatio;
-        attackRanged.maxDistance = (int)(distance[1] * zoomRatio);
-        attackRanged.pierce = 10;
+        laserAttack.damage = ClassStat.AtkPower * zoomRatio;
+        laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
+        laserAttack.pierce = 10;
 
         var member = new List<Pair<string, string>>();
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));
