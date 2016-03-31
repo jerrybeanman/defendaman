@@ -29,7 +29,8 @@
 typedef struct Player
 {
     int            socket;
-    sockaddr_in    connection;
+    sockaddr_in    tcp_connection;
+    sockaddr_in    udp_connection;
     int            id;
     char           username[32];
     int            team;
@@ -37,28 +38,36 @@ typedef struct Player
     bool           isReady;
 } Player;
 
-/* List of players currently connected to the server */
-static std::map<int, Player>           _PlayerTable;
-
 namespace Networking
 {
 	class Server
 	{
 		public:
-			Server() {}
-			~Server(){}
-		virtual int InitializeSocket(short port) = 0;
+		Server() {}
+		~Server(){}
+
+    virtual int InitializeSocket(short port) = 0;
 
 		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
 
-        virtual void * Receive() = 0;
+    virtual void * Receive() = 0;
 
 		void fatal(const char* error);
 
     int isReadyToInt(Player player);
 
+    void SetPlayerList(std::map<int, Player>* players);
+
+    void SetConnectionList(std::vector<std::string>* connections);
+
+    int getPlayerId(std::string ipString);
+
 	protected:
-		struct sockaddr_in     _ServerAddress;
+    std::map<int, Player>*    _PlayerTable;
+    std::vector<std::string>* _Connections;
+
+
+    struct sockaddr_in     _ServerAddress;
 		int 				           _UDPReceivingSocket;
     int                    _TCPAcceptingSocket;
     fd_set                 _allset;              // File descriptor set for connected sockets
