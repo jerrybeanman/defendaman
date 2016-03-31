@@ -8,12 +8,6 @@ public abstract class BaseClass : MonoBehaviour {
     //Cooldowns
     public float[] cooldowns { get; protected set; }
 
-	/* Name of the class. Ex: "Archer, warrior.." */
-	protected string _className;
-
-    /* Short description of the class.*/
-    protected string _classDescription;
-
     /* Base stats that all classes share*/
     protected PlayerBaseStat _classStat;
 
@@ -45,18 +39,6 @@ public abstract class BaseClass : MonoBehaviour {
 
         _classStat = new PlayerBaseStat(playerID);
     }
-	
-	public string ClassName
-	{
-		get { return this._className; }
-		set { this._className = value;}
-	}
-
-	public string ClassDescription
-	{
-		get { return this._classDescription; }
-		set { this._classDescription = value;}
-	}
 
 	public PlayerBaseStat ClassStat
 	{
