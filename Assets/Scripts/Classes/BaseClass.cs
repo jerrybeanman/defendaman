@@ -8,14 +8,8 @@ public abstract class BaseClass : MonoBehaviour {
     //Cooldowns
     public float[] cooldowns { get; protected set; }
 
-	/* Name of the class. Ex: "Archer, warrior.." */
-	protected string _className;
-
-    /* Short description of the class.*/
-    protected string _classDescription;
-
     /* Base stats that all classes share*/
-    protected PlayerBaseStat _classStat = new PlayerBaseStat();
+    protected PlayerBaseStat _classStat;
 
     public int team;
     public int playerID;
@@ -42,19 +36,9 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
-    }
-	
-	public string ClassName
-	{
-		get { return this._className; }
-		set { this._className = value;}
-	}
 
-	public string ClassDescription
-	{
-		get { return this._classDescription; }
-		set { this._classDescription = value;}
-	}
+        _classStat = new PlayerBaseStat(playerID);
+    }
 
 	public PlayerBaseStat ClassStat
 	{
@@ -62,8 +46,7 @@ public abstract class BaseClass : MonoBehaviour {
         {
             if (this._classStat == null)
             {
-                Debug.Log("Classstat was not set");
-                this._classStat = new PlayerBaseStat();
+                this._classStat = new PlayerBaseStat(playerID);
             }
             return this._classStat;
         }
@@ -120,9 +103,6 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == GameData.MyPlayer.PlayerID)
                 damageTaken = doDamage(attack.damage);
 
-            if (attack is Projectile)
-                Destroy(other.gameObject);
-
             if (GameData.MyPlayer == null || playerID != GameData.MyPlayer.PlayerID)
                 return;
 
@@ -173,6 +153,12 @@ public abstract class BaseClass : MonoBehaviour {
     [System.Serializable]
 	public class PlayerBaseStat
 	{
+        public PlayerBaseStat(int id)
+        {
+            _playerID = id;
+        }
+
+        private int _playerID;
         private float _currentHp;
 		public float CurrentHp {
             get
@@ -185,10 +171,39 @@ public abstract class BaseClass : MonoBehaviour {
         }
 		public float MaxHp;
 		public float MoveSpeed;
-		public float AtkPower;
-        public float Defense;
-        //TODO: defensive stats, etc.
-	}
+        private float _atkPower;
+		public float AtkPower
+        {
+            get { return _atkPower; }
+            set
+            {
+                _atkPower = value;
+                update_stats();
+            }
+        }
+
+        private float _defense;
+        public float Defense
+        {
+            get { return _defense; }
+            set
+            {
+                _defense = value;
+                update_stats();
+            }
+        }
+
+        public void update_stats()
+        {
+            if (_playerID != GameData.MyPlayer.PlayerID)
+                return;
+            List<Pair<string, string>> memers = new List<Pair<string, string>>();
+            memers.Add(new Pair<string, string>("AtkPower", AtkPower.ToString()));
+            memers.Add(new Pair<string, string>("Defense", Defense.ToString()));
+            //NetworkingManager.send_next_packet(DataType.StatUpdate, _playerID, memers, Protocol.TCP));
+            Debug.Log(NetworkingManager.send_next_packet(DataType.StatUpdate, _playerID, memers, Protocol.TCP));
+        }
+    }
 
     public void StartAttackAnimation()
     {
@@ -212,8 +227,10 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.MoveSpeed += speed;
         } else
         {
-            ClassStat.AtkPower += damage;
-            ClassStat.Defense += armour;
+            if (damage != 0)
+                ClassStat.AtkPower += damage;
+            if (armour != 0)
+                ClassStat.Defense += armour;
             if (health != 0)
                 doDamage(-health);
             ClassStat.CurrentHp += health;
@@ -226,8 +243,10 @@ public abstract class BaseClass : MonoBehaviour {
     IEnumerator Debuff(int damage, int armour, int speed, int duration)
     {
         yield return new WaitForSeconds(duration);
-        ClassStat.AtkPower -= damage;
-        ClassStat.Defense -= armour;
+        if (damage != 0)
+            ClassStat.AtkPower -= damage;
+        if (armour != 0)
+            ClassStat.Defense -= armour;
         ClassStat.MoveSpeed -= speed;
     }
 }

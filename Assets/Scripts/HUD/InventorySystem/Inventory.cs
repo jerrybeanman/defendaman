@@ -92,10 +92,11 @@ public class Inventory : MonoBehaviour
         //AddItem(2, 200);
         //AddItem(3, 10);
         //AddItem(0);
-        AddItem(1);
-        AddItem(5, 5);
-        AddItem(6);
-        AddItem(7);
+
+        //AddItem(1);
+        //AddItem(5, 5);
+        //AddItem(6);
+        //AddItem(7);
     }
 
     /* 
@@ -273,6 +274,14 @@ public class Inventory : MonoBehaviour
         string _weapon_error_msg = Constants.NO_EQUIPPED;
         int damage = 0;
         int armor = 0;
+
+        var classStat = GameManager.instance.player.GetComponent<BaseClass>().ClassStat;
+
+        if(GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] != 0)
+            classStat.AtkPower -= GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT];
+        if(GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] != 0)
+            classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT];
+
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
         {
             ItemData _data = slot_list[Constants.WEAPON_SLOT].transform.GetChild(0).GetComponent<ItemData>();
@@ -295,6 +304,11 @@ public class Inventory : MonoBehaviour
 
         GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
         GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
+
+        if(damage != 0)
+            classStat.AtkPower += damage;
+        if(armor != 0)
+            classStat.Defense += armor;
     }
 
     public void DisplayWeaponError(string msg)

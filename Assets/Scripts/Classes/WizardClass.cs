@@ -23,35 +23,37 @@ using System.Collections;
 
 public class WizardClass : RangedClass
 {
-    int[] distance = new int[2]{ 20, 0 };
-    int[] speed = new int[2] { 60, 0 };
+    int[] distance = new int[2]{ 25, 0 };
+    int[] speed = new int[2] { 100, 0 };
     Rigidbody2D fireball;
     Rigidbody2D magicCircle;
 
     new void Start()
     {
+        cooldowns = new float[2] { 0.5f, 6 };
         base.Start();
+
+        _classStat.MaxHp = 100;
+        _classStat.CurrentHp = _classStat.MaxHp;
+        _classStat.MoveSpeed = 8;
+        _classStat.AtkPower = 3;
+        _classStat.Defense = 5;
+        
         fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
         magicCircle = (Rigidbody2D)Resources.Load("Prefabs/MagicCircle", typeof(Rigidbody2D));
 
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+
+        //Starting item kit
+        if (playerID == GameData.MyPlayer.PlayerID)
+        {
+            Inventory.instance.AddItem(1);
+            Inventory.instance.AddItem(5, 5);
+            Inventory.instance.AddItem(6);
+            Inventory.instance.AddItem(7);
+        }
     }
-
-	public WizardClass()
-	{
-        this._className = "Wizard";
-        this._classDescription = "Wingardium Leviosa. No, not leviosAA, leviOsa.";
-        this._classStat.MaxHp = 100;
-        this._classStat.CurrentHp = this._classStat.MaxHp;
-
-        //placeholder numbers
-        this._classStat.MoveSpeed = 8;
-        this._classStat.AtkPower = 3;
-        this._classStat.Defense  = 5;
-        
-        cooldowns = new float[2] { 0.5f, 6 };
-	}
 
     /*---------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: basicAttack

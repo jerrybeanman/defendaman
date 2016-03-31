@@ -29,4 +29,5 @@ output.txt
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 *.asset
+*.asset.meta
 Library/InspectorExpandedItems.asset
