@@ -23,8 +23,8 @@ using System.Collections;
 
 public class WizardClass : RangedClass
 {
-    int[] distance = new int[2]{ 15, 0 };
-    int[] speed = new int[2] { 120, 0 };
+    int[] distance = new int[2]{ 20, 0 };
+    int[] speed = new int[2] { 60, 0 };
     Rigidbody2D fireball;
     Rigidbody2D magicCircle;
 
