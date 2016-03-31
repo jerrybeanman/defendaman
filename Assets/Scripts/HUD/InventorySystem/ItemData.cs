@@ -52,7 +52,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (item != null && item_pos != Constants.WEAPON_SLOT)
+        if (item != null) // && item_pos != Constants.WEAPON_SLOT) // Uncomment to make weapon slot static
         {
             this.transform.SetParent(this.transform.parent.parent);
             this.transform.position = eventData.position - _offset;
@@ -65,7 +65,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnDrag(PointerEventData eventData)
     {
-        if (item != null && item_pos != Constants.WEAPON_SLOT)
+        if (item != null) // && item_pos != Constants.WEAPON_SLOT) // Uncomment to make weapon slot static
         {
             this.transform.position = eventData.position - _offset;
         }
@@ -75,14 +75,14 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      * The item is dropped and centered in the new slot
      */
     public void OnEndDrag(PointerEventData eventData)
-    {   
-        if (item_pos != Constants.WEAPON_SLOT)
-        {
-            this.transform.SetParent(_inventory.slot_list[item_pos].transform);
+    {
+        //if (item_pos != Constants.WEAPON_SLOT) // Uncomment to make weapon slot static
+        //{
+        this.transform.SetParent(_inventory.slot_list[item_pos].transform);
             this.transform.position = _inventory.slot_list[item_pos].transform.position;
             GetComponent<CanvasGroup>().blocksRaycasts = true;
             _inventory.UpdateWeaponStats();
-        }
+        //}
     }
 
     /*
@@ -90,7 +90,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (item != null && item_pos == Constants.WEAPON_SLOT)
+        if (item != null) // && item_pos == Constants.WEAPON_SLOT) // Uncomment to make weapon slot static
         {
             _offset = eventData.position - new Vector2(this.transform.position.x, this.transform.position.y);
         }
@@ -117,8 +117,8 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
      */
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (item_pos != Constants.WEAPON_SLOT)
-        {
+        //if (item_pos != Constants.WEAPON_SLOT) // Uncomment to make weapon slot static
+        //{
             // Right click: set the ItemMenu to active and its position in the event of a right mouse click
             if (eventData.pointerId == -2)
             {
@@ -135,6 +135,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                 }
             }
 
-        }
+        //}
     }
 }
