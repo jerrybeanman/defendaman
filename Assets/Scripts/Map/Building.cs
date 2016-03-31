@@ -4,7 +4,7 @@ using System;
 
 public class Building:MonoBehaviour {
 	
-	public enum BuildingType{Empty,Armory,Wall,Watchtower,Turret};
+	public enum BuildingType{Empty,Armory,Wall,Watchtower,Turret, Alchemist};
 
 	public BuildingType type;
 
