@@ -128,9 +128,9 @@ public abstract class BaseClass : MonoBehaviour {
 
             var memersToSend = new List<Pair<string, string>>();
             memersToSend.Add(new Pair<string, string>("EnemyID", attack.playerID.ToString()));
-            memersToSend.Add(new Pair<string, string>("Damage", damageTaken.ToString()));
-            NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP);
-
+            memersToSend.Add(new Pair<string, string>("NewHP", ClassStat.CurrentHp.ToString()));
+            print(NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP));
+            
             return;
         } else {
             Debug.Log("Attack was null");
@@ -206,16 +206,19 @@ public abstract class BaseClass : MonoBehaviour {
         {
             ClassStat.AtkPower += damage;
             ClassStat.Defense += armour;
-            doDamage(-health);
+            if (health != 0)
+                doDamage(-health);
             ClassStat.CurrentHp += health;
             ClassStat.MoveSpeed += speed;
         } else
         {
             ClassStat.AtkPower += damage;
             ClassStat.Defense += armour;
-            doDamage(-health);
+            if (health != 0)
+                doDamage(-health);
             ClassStat.CurrentHp += health;
             ClassStat.MoveSpeed += speed;
+            Debug.Log(ClassStat.MoveSpeed);
             StartCoroutine(Debuff(damage, armour, speed, duration));
         }
     }
