@@ -49,7 +49,7 @@ public class Building:MonoBehaviour {
 
 		notifycreation();
     }
-
+	public bool constructed = false;
 	IEnumerator Construct()
 	{
 		float elapsedTime = 0.0f;
@@ -63,12 +63,13 @@ public class Building:MonoBehaviour {
 			transform.localScale = Vector3.Slerp(startingScale, targetScale, (elapsedTime / ConstructionTime));
 			yield return new WaitForEndOfFrame ();
 		}
+		constructed = true;
 	}
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-        if (other.gameObject.GetComponent<Projectile>() && other.gameObject.GetComponent<Projectile>().teamID == GetComponent<AI>().team)
-            return;
+		if(other.gameObject.tag == "Bullet")
+			return;
 		if(placing)
 		{
 			print ("dont place plz");
