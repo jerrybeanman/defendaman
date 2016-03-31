@@ -1,34 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public abstract class Projectile : Trigger
+public class Laser : Projectile
 {
-    private Vector2 startPos;
-    public int maxDistance;
-    public int pierce = 0;
-    
-    protected void Start()
-    {
-        startPos = transform.position;
-        if(GameData.MyPlayer == null)
-        {
-            Debug.Log("caught null");
-            return;
-        }
-        if (teamID != GameData.MyPlayer.TeamID)
-        {
-            Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
-            gameObject.layer = LayerMask.NameToLayer("HiddenThings");
-            gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
-        }
-    }
+    GameObject explosion;
 
-    void Update()
+    new void Start()
     {
-        if (Vector2.Distance(startPos, transform.position) >= maxDistance)
-        {
-            Destroy(gameObject);
-        }
+        base.Start();
+        explosion = (GameObject)Resources.Load("Prefabs/LaserExplosion", typeof(GameObject));
     }
 
     protected override void OnTriggerEnter2D(Collider2D other)
@@ -51,7 +32,7 @@ public abstract class Projectile : Trigger
         var ai = other.gameObject.GetComponent<AI>();
         if (ai != null && teamID == ai.team)
         {
-            
+
             //If it collided with AI
             return;
         }
@@ -61,10 +42,15 @@ public abstract class Projectile : Trigger
             //If it collided with items
             return;
         }
-        //Otherwise, its a wall or some solid
+        
+        var instance = (GameObject)Instantiate(explosion, transform.position, transform.rotation);
+        Destroy(instance, 1);
 
-        if (--pierce < 0) {
+        //Otherwise, its a wall or some solid
+        if (--pierce < 0 || other.name == "obstacleTiles(Clone)")
+        {
             Destroy(gameObject);
         }
     }
 }
+

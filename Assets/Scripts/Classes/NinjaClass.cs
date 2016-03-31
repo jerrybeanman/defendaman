@@ -26,39 +26,35 @@ public class NinjaClass : MeleeClass
 {
     Rigidbody2D sword;
     Rigidbody2D attack;
+    BasicSword attackSword;
     GameObject teleport;
     GameObject teleportInstance;
 
     new void Start()
     {
+        cooldowns = new float[2] { 0.95f, 2 };
         base.Start();
+
+        _classStat.MaxHp = 150;
+        _classStat.CurrentHp = this._classStat.MaxHp;
+        _classStat.MoveSpeed = 12;
+        _classStat.AtkPower = 20;
+        _classStat.Defense = 5;
+        
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
         teleport = (GameObject)Resources.Load("Prefabs/NinjaTeleport", typeof(GameObject));
 
         attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
         attack.GetComponent<BoxCollider2D>().enabled = false;
-        attack.GetComponent<BasicSword>().playerID = playerID;
-        attack.GetComponent<BasicSword>().teamID = team;
-        attack.GetComponent<BasicSword>().damage = ClassStat.AtkPower;
+
+        attackSword = attack.GetComponent<BasicSword>();
+        attackSword.playerID = playerID;
+        attackSword.teamID = team;
+        attackSword.damage = ClassStat.AtkPower;
         attack.transform.parent = transform;
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
-    }
-
-    public NinjaClass()
-    {
-        this._className = "Ninja";
-        this._classDescription = "You'll never see him coming.";
-        this._classStat.MaxHp = 150;
-        this._classStat.CurrentHp = this._classStat.MaxHp;
-
-        //placeholder numbers
-        this._classStat.MoveSpeed = 12;
-        this._classStat.AtkPower = 20;
-        this._classStat.Defense = 5;
-
-        cooldowns = new float[2] { 0.95f, 2 };
     }
 
     //attacks return time it takes to execute
@@ -66,6 +62,8 @@ public class NinjaClass : MeleeClass
     {
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir);
+
+        attackSword.damage = ClassStat.AtkPower;
 
         StartAttackAnimation();
         Invoke("EndAttackAnimation", cooldowns[0] / 2);
@@ -99,7 +97,7 @@ public class NinjaClass : MeleeClass
         base.specialAttack(dir);
 
         teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
-        Invoke("cleanupTeleport", 1f);
+        Destroy(teleportInstance, 1);
 
         if (gameObject.GetComponent<MagicDebuff>() == null) {
             var movement = gameObject.GetComponent<Movement>();
@@ -108,10 +106,5 @@ public class NinjaClass : MeleeClass
         }
 
         return cooldowns[1];
-    }
-
-    private void cleanupTeleport()
-    {
-        Destroy(teleportInstance.gameObject);
     }
 }
