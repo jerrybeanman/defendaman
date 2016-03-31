@@ -98,49 +98,6 @@ public class Inventory : MonoBehaviour
         AddItem(7);
     }
 
-    /*
-     * Binds inventory items to number keys. The keys 1, 2, 3, 4 will call useConsumable()
-     * on the items in matching inventory slots if the item is a consumable.
-     */
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            if (inventory_item_list[Constants.SLOT_1].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("1 is consumable");
-                UseConsumable(Constants.SLOT_1);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            if (inventory_item_list[Constants.SLOT_2].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("2 is consumable");
-                UseConsumable(Constants.SLOT_2);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            if (inventory_item_list[Constants.SLOT_3].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("3 is consumable");
-                UseConsumable(Constants.SLOT_3);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            if (inventory_item_list[Constants.SLOT_4].type == Constants.CONSUMABLE_TYPE)
-            {
-                Debug.Log("4 is consumable");
-                UseConsumable(Constants.SLOT_4);
-            }
-        }
-    }
-
     /* 
      * Takes an item id and the amount and adds an Item object into an open slot in the inventory or stacks 
      * it on a slot containing the same item.
