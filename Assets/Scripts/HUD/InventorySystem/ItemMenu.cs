@@ -131,7 +131,7 @@ public class ItemMenu : MonoBehaviour
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
             // Pretend that a drop message was received
-            //_world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+            _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
         }
         GameData.MouseBlocked = false;
         Deactivate();

@@ -368,7 +368,7 @@ std::deque<AStarPoint> Map::aStarPath(int startX, int startY, int endX, int endY
 	//if the distance from one point to another is 25% of the shortest
 	//of width or height of the map, it is regarded as too close and is 
 	//returned as a bad path
-	if (tmpF < vertical * std::fmin (mapWidth, mapHeight) / 3)
+	if (tmpF < vertical * std::fmin (mapWidth, mapHeight) / 4)
 		return wrongSet;
 
 	openSet.push_back (AStarPoint(startX, startY, tmpF, tmpG, tmpH));
