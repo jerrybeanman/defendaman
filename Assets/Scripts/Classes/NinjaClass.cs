@@ -9,9 +9,10 @@
 --
 --  DATE:           March 9, 2016
 --
---  REVISIONS:      (Date and Description)
+--  REVISIONS:      March 29, 2016
+--                      Added teleportation animation
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
 --  PROGRAMMER:     Hank Lo, Allen Tsang
 --
@@ -25,11 +26,14 @@ public class NinjaClass : MeleeClass
 {
     Rigidbody2D sword;
     Rigidbody2D attack;
+    GameObject teleport;
+    GameObject teleportInstance;
 
     new void Start()
     {
         base.Start();
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
+        teleport = (GameObject)Resources.Load("Prefabs/NinjaTeleport", typeof(GameObject));
 
         attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
         attack.GetComponent<BoxCollider2D>().enabled = false;
@@ -60,6 +64,7 @@ public class NinjaClass : MeleeClass
     //attacks return time it takes to execute
     public override float basicAttack(Vector2 dir)
     {
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir);
 
         StartAttackAnimation();
@@ -73,11 +78,12 @@ public class NinjaClass : MeleeClass
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS: None
+    -- REVISIONS: March 29, 2016
+    --              Added teleportation animation
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float specialAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
@@ -92,12 +98,20 @@ public class NinjaClass : MeleeClass
     {
         base.specialAttack(dir);
 
+        teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
+        Invoke("cleanupTeleport", 1f);
+
         if (gameObject.GetComponent<MagicDebuff>() == null) {
             var movement = gameObject.GetComponent<Movement>();
             if (movement != null)
-                movement.doBlink(15f);
+                movement.doBlink(10f);
         }
 
         return cooldowns[1];
+    }
+
+    private void cleanupTeleport()
+    {
+        Destroy(teleportInstance.gameObject);
     }
 }

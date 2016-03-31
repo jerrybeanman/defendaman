@@ -88,13 +88,13 @@ public class MenuScript : MonoBehaviour {
             {
                 LobbyNetwork.ParseLobbyData(tmp);
                 UpdateLobbyList();
-				if(LobbyNetwork.Start)
-					StartCoroutine(Start());
+				//if(LobbyNetwork.Start)
+				//	StartCoroutine(start_level());
             }
         }
     }
 
-	IEnumerator Start()
+	IEnumerator start_level()
 	{
 		yield return new WaitForSeconds(2f);
 		Application.LoadLevel("EngineTeam_master");
@@ -174,9 +174,9 @@ public class MenuScript : MonoBehaviour {
             
             switch (class_type)
             {
-                case ClassType.Gunner: avatar = _gunner_avatar; break;
-                case ClassType.Ninja: avatar = _ninja_avatar; break;
-                case ClassType.Wizard: avatar = _mage_avatar; break;
+                case ClassType.Gunner: 	avatar = _gunner_avatar; break;
+                case ClassType.Ninja: 	avatar = _ninja_avatar; break;
+                case ClassType.Wizard: 	avatar = _mage_avatar; break;
             }
 
             team_to_set[index].transform.Find("Profile").transform.GetComponent<Image>().sprite = avatar;
@@ -219,15 +219,9 @@ public class MenuScript : MonoBehaviour {
 
         switch (value)
         {
-            case 0:
+            case 1:
                 soldier_panel.SetActive(true);
                 mage_panel.SetActive(false);
-                ninja_panel.SetActive(false);
-                aman_panel.SetActive(false);
-                break;
-            case 1:
-                soldier_panel.SetActive(false);
-                mage_panel.SetActive(true);
                 ninja_panel.SetActive(false);
                 aman_panel.SetActive(false);
                 break;
@@ -238,6 +232,12 @@ public class MenuScript : MonoBehaviour {
                 aman_panel.SetActive(false);
                 break;
             case 3:
+                soldier_panel.SetActive(false);
+                mage_panel.SetActive(true);
+                ninja_panel.SetActive(false);
+                aman_panel.SetActive(false);
+                break;
+            case 4:
                 soldier_panel.SetActive(false);
                 mage_panel.SetActive(false);
                 ninja_panel.SetActive(false);

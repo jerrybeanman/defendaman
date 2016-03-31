@@ -78,6 +78,8 @@ class Map {
 
 	std::deque<AStarPoint> aStarPath (int startX, int startY, int endX, int endY);
 
+	void createResources (int ** mapCheck, int ** mapApply, int resourceAmount);
+
 	~Map () {
 		delete[] mapBase;
 		delete[] tempLayer;
@@ -99,7 +101,7 @@ class Map {
 	int mapHeight;
 	int ** mapBase;
 	int ** mapScenery;
-	std::vector<std::pair<int, int>> mapInteractables;
+	std::vector<std::pair<int, int>> mapResources;
 	int ** tempLayer;
 	int baseWallChance;
 	int * objectIDList;

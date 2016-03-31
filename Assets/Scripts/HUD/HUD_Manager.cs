@@ -6,34 +6,41 @@ using System.Globalization;
 using SimpleJSON;
 using System.Collections.Generic;
 
+
+public enum UICode
+{
+	Chat 		= 1,
+	Building 	= 2
+}
+
 public class HUD_Manager : MonoBehaviour {
 	#region Classes
 	/**
 	 *  Indicates the player health on bottom left corner of HUD
 	 */
 	[System.Serializable]
-	public class PlayerProfile 	
+	public class PlayerProfile
 	{
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]	
-	public class AllyKing 		
-	{ 
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
+		public Image 	Health;
+		public Animator HealthAnimator;
 	}
 	/**
 	 *  Indicates the health bar of ally king
 	 */
 	[System.Serializable]
-	public class EnemyKing 		
-	{ 
-		public Image 	Health;						
-		public Animator HealthAnimator; 	
+	public class AllyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class EnemyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
 	}
 
 	/**
@@ -155,17 +162,18 @@ public class HUD_Manager : MonoBehaviour {
 	// Called on start of game
 	void Start()
 	{
-		GameData.GameStart = true;
-
 		// Subscribe our chat system to the TCP network
-		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, 1);
+		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, (int)UICode.Chat);
+		// Subscribe building creation to the UDP network
+		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.Building);
 	}
-
-
 
 	// Called once per frame
 	void Update()
 	{
+		if(Input.GetKeyDown(KeyCode.B))
+			Buy();
+
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
@@ -187,12 +195,10 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Check if skills are used or not
 		CheckSkillStatus();
-
-		// Check for events to open the shop menu
-		CheckShopOption();
 		
 		UpdateTimer();
 	}
+
 
 	/*----------------------------------------------------------------------------
     --	Check for any events triggered in the chat box
@@ -202,7 +208,7 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	void CheckChatAction()
+	public void CheckChatAction()
 	{
 		// If return key has been pressed
 		if(Input.GetKeyDown(KeyCode.Return))
@@ -213,7 +219,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Block all other keyboard inputs
 				GameData.KeyBlocked = true;
-
+				GameData.InputBLocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
@@ -223,13 +229,16 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
-
-				// Send the packet, with Team ID, user name, and the message input
-				List<Pair<string, string>> packetData = new List<Pair<string, string>>();
-				packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
-				packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
-				packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
-				Send(NetworkingManager.send_next_packet(DataType.UI, 1, packetData, Protocol.NA));
+				GameData.InputBLocked = false;
+				if (Application.platform == RuntimePlatform.LinuxPlayer)
+				 {
+					// Send the packet, with Team ID, user name, and the message input
+					List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+					packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
+					packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
+					Send(NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.NA));
+				}
 
 				// Clear out the chat window
 				chat.input.text = "";
@@ -245,7 +254,7 @@ public class HUD_Manager : MonoBehaviour {
     --
     --	Interface:  void CheckSkillStatus()
     --
-    --	programmer: Jerry Jia
+    --	progrbammer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
 	void CheckSkillStatus()
@@ -267,6 +276,7 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
+
 	/*----------------------------------------------------------------------------
     --	Check for keyboard event on key "m" to open shop menu
     --
@@ -275,7 +285,7 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	void CheckShopOption()
+	public void CheckShopOption()
 	{
 		if(Input.GetKeyDown(KeyCode.M))
 		{
@@ -283,6 +293,7 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
+	private BuildingType buildType;
 	/*----------------------------------------------------------------------------
     --	Called by the OnClick function of the panle items in the shop menu,
     --	highlight and indicates the currently selected item
@@ -295,6 +306,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void SelectItem(int i)
 	{
+		buildType = (BuildingType)i;
 		// If nothing is currently selected
 		if(shop.Selected.Option == null)
 		{
@@ -302,7 +314,7 @@ public class HUD_Manager : MonoBehaviour {
 			HighlightItem(i);
 		}else
 		// If an selected item has been selected
-		if(shop.Selected.Option == shop.Items[i].Option)
+		if(shop.Selected.Option == shop.Items[i-1].Option)
 		{
 			// Unselect and take off the highlight
 			UnHighlightItem();
@@ -327,7 +339,7 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null)
+		if(shop.Selected.Option != null && !ItemBought)
 		{
 			// Indicates that an item has been bought
 			ItemBought = true;
@@ -338,18 +350,23 @@ public class HUD_Manager : MonoBehaviour {
 			// Assign team attribute so ally cannot damage the building 
 			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
 
+			// Let the building know that it is currently being placed
+			shop.Selected.Building.GetComponent<Building>().placing = true;
+
+
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
 
-
-			// Set the color transparency 
+			// Make sprite a bit transparent 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
 
+			// Set current rotation value to be zero
 			curRot = 0;
 
+			// Display placement area on HUD
 			placementRange.SetActive(true);
 		}
 	}
@@ -359,14 +376,18 @@ public class HUD_Manager : MonoBehaviour {
     --	Called by the OnClick function on the buy button in the shop menu
     --	Interface:  public void Buy()
     --
-    --	programmer: Jerry Jia, Thomas Yu
+    --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
 	public void SetAllCollidersStatus (GameObject go, bool active) 
 	{
 		foreach(BoxCollider2D c in go.GetComponents<BoxCollider2D> ())
 		{
-			c.enabled = active;
+			c.isTrigger = !active;
+			if(!active)
+				go.layer =  LayerMask.NameToLayer("Default");
+			else
+				go.layer =  LayerMask.NameToLayer("Minimap");
 		}
 	}
 
@@ -393,7 +414,7 @@ public class HUD_Manager : MonoBehaviour {
 		buildings.transform.position = cursorPosition;
 
 		// Check if it is a valid location to place the building 
-		if(!CheckValidLocation(cursorPosition))
+		if(!CheckValidLocation(buildings))
 		{
 			// Set the color transparency 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0.3f);
@@ -429,6 +450,29 @@ public class HUD_Manager : MonoBehaviour {
 			yield return new WaitForEndOfFrame ();
 		}
 	}
+
+	void UpdateBuildingCallBack(JSONClass data)
+	{
+		int team = data[NetworkKeyString.TeamID].AsInt;
+		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
+
+		// Retrieve the Building component attached with the game object
+		Building bComponent = building.GetComponent<Building>();
+
+		Vector3 pos = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
+
+		bComponent.team = data[NetworkKeyString.TeamID].AsInt;
+
+		building.GetComponent<Building>().placing = false;
+
+		GameObject b1 = (GameObject)Instantiate(building, pos, Quaternion.Euler(0, 0, data[NetworkKeyString.ZRot].AsFloat));
+        if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) 
+		{
+           // building.GetComponent<AI>()
+           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
+            Debug.Log("Instant turret 1");
+        }
+	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
@@ -440,40 +484,61 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	private bool PlaceBuilding(GameObject building)
 	{
-		// Retrieve the Building component attached with the game object
-		Building bComponent = building.GetComponent<Building>();
 
 		// Construct a vector of where the Gameobject will be placed 
-		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-10);
+		Vector3 buildingLocation = new Vector3((int)currFramePosition.x, (int)currFramePosition.y,-2);
 
 		// Check if it is a valid location to place the building 
-		if(!CheckValidLocation(buildingLocation))
+		if(!CheckValidLocation(building))
 			return false;
 
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
-		shop.Selected.Building.GetComponent<Animator>().SetTrigger("Create");
 
-		SetAllCollidersStatus(shop.Selected.Building, true);
+		SetAllCollidersStatus(building, true);
+
 
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
 
-		bComponent.GetComponent<Building>().X = (int)currFramePosition.x;
-		bComponent.GetComponent<Building>().Y = (int)currFramePosition.y;
-
 		// Add selected building to the list of created buildings
 		mapManager.buildingsCreated.Add(building);
 
-		// Add selected building to either wallList or Armory list depending the tag
-		if(bComponent.type == Building.BuildingType.Wall)
-			mapManager.wallList.Add(buildingLocation); 
-		else
-			mapManager.ArmoryList.Add(buildingLocation);
-
+        //weird merge conflict here (END)
 		placementRange.SetActive(false);
+
+		print ("x: " + building.transform.rotation.x + " y: " + building.transform.rotation.y + " z: " + building.transform.rotation.z);
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			// Send the packet, with Team ID, user name, and the message input
+			List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, buildingLocation.x.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.YPos, buildingLocation.y.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, buildingLocation.z.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.XRot, building.transform.rotation.x.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.eulerAngles.z.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
+			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
+			Send(packet);
+		}else
+		{
+			GameObject testBuild = (GameObject)Instantiate(building, buildingLocation, building.transform.rotation);
+			testBuild.GetComponent<Building>().placing = false;
+            if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
+            {//
+                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 15);
+
+                //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
+                Debug.Log("Instant turret 2");
+            }
+        }
+
+		Destroy(building);
 		return true;
-	}
+ 	}
+		
 
 	/*----------------------------------------------------------------------------
     --	Highlight and select an item in the shop menu
@@ -484,8 +549,8 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void HighlightItem(int i)
 	{
-		shop.Selected.Option = shop.Items[i].Option;
-		shop.Selected.Building = shop.Items[i].Building;
+		shop.Selected.Option = shop.Items[i-1].Option;
+		shop.Selected.Building = shop.Items[i-1].Building;
 		shop.Selected.Option.image.color = Color.green;
 	}
 
@@ -513,29 +578,15 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia, Thomas Yu
     --	@return: void
 	------------------------------------------------------------------------------*/
-	private bool CheckValidLocation(Vector2 building){
-		//Check if existing armory object is in the way
-		foreach(var armory in mapManager.ArmoryList)
-		{
-			float distance=Vector2.Distance (building,armory);
-			if(Mathf.Abs (distance) < 3)
-				return false;
-		}
-		//Check if any walls are conflicting with desired placing
-		foreach(var wall in mapManager.wallList)
-		{
-			float distance=Vector2.Distance (building,wall);
-			if(Mathf.Abs (distance)< 2)
-				return false;
-		}
-		
+	private bool CheckValidLocation(GameObject building)
+	{
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
-		float distance_from_player = Vector3.Distance(player, building);
-		if(distance_from_player > 6)
+		float distance_from_player = Vector3.Distance(player, building.transform.position);
+		if(distance_from_player > 8)
 			return false;
 
-		return true;
+		return 	building.GetComponent<Building>().placeble;
 	}
 
 	/*----------------------------------------------------------------------------
@@ -562,6 +613,8 @@ public class HUD_Manager : MonoBehaviour {
 		if(NetworkingManager.TCP_Send(packet, 256) < 0)
 			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
 	}
+
+
 
 	/*----------------------------------------------------------------------------
     --  CallBack function that will subscribe to NetworkingManager to recieve
@@ -758,5 +811,10 @@ public class HUD_Manager : MonoBehaviour {
 			subSkill.ProgressBar.fillAmount = 0f;
 			subSkill.CoolDown = CoolDown;
 		}
+	}
+
+	public void UpgradeWeapon()
+	{
+		Debug.Log ("Upgrade weapon here");
 	}
 }

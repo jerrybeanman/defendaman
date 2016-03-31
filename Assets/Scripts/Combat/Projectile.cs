@@ -10,6 +10,11 @@ public abstract class Projectile : Trigger
     protected void Start()
     {
         startPos = transform.position;
+        if(GameData.MyPlayer == null)
+        {
+            Debug.Log("caught null");
+            return;
+        }
         if (teamID != GameData.MyPlayer.TeamID)
         {
             Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
@@ -44,6 +49,7 @@ public abstract class Projectile : Trigger
 
         if (other.gameObject.GetComponent<AI>() != null && teamID == other.gameObject.GetComponent<AI>().team)
         {
+            
             //If it collided with AI
             return;
         }

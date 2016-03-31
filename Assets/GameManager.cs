@@ -43,11 +43,12 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void PlayerTookDamage(int playerID, float damage, BaseClass.PlayerBaseStat ClassStat)
+    public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat)
     {
+        var damage = (ClassStat.CurrentHp - newHP);
         if (GameData.MyPlayer.PlayerID == playerID)
         {
-            HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
+            HUD_Manager.instance.UpdatePlayerHealth(-(damage/ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0) {
                 PlayerDied();
             } else {
@@ -66,7 +67,6 @@ public class GameManager : MonoBehaviour {
             HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0)
                 GameLost();
-
         }
 
         if (playerID == GameData.EnemyKingID)
@@ -79,7 +79,8 @@ public class GameManager : MonoBehaviour {
 
     private static void PlayerDied()
     {
-        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.UDP);
+        NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
+        GameData.PlayerPosition.Remove(GameData.MyPlayer.PlayerID);
         GameData.GameState = GameState.Dying;
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
@@ -91,8 +92,8 @@ public class GameManager : MonoBehaviour {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = GameData.MyPlayer.TeamID;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
-       
-       /* var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
+
+        /*var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
         var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
         var createdAI3 = ((Transform)Instantiate(AI, new Vector3(85, 10, -10), Quaternion.identity)).gameObject;
         var createdAI4 = ((Transform)Instantiate(AI, new Vector3(75, 55, -10), Quaternion.identity)).gameObject;
@@ -100,9 +101,13 @@ public class GameManager : MonoBehaviour {
 
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
-        
+      //  GameData.TeamSpawnPoints.Clear();
+        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(0,0));
+        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(2,2));
+
         foreach (var playerData in GameData.LobbyData)
         {
+			Debug.Log("[DEBUG] Size: " + GameData.TeamSpawnPoints.Count + " On team: " + playerData.Value.TeamID );
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
             switch (playerData.Value.ClassType)
@@ -135,8 +140,8 @@ public class GameManager : MonoBehaviour {
                 myTeam = playerData.Value.TeamID;
 				player = createdPlayer;
 				GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
-				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
-				GameObject.Find("Camera Enemies").GetComponent<FollowCamera>().target = player.transform;
+//				GameObject.Find("Camera FOV").GetComponent<FollowCamera>().target = player.transform;
+//				GameObject.Find("Camera Enemies").GetComponent<FollowCamera>().target = player.transform;
 				if (GameObject.Find("Minimap Camera") != null)
 					GameObject.Find("Minimap Camera").GetComponent<FollowCamera>().target = player.transform;
 				player.AddComponent<Movement>();
@@ -184,9 +189,6 @@ public class GameManager : MonoBehaviour {
                     shadows.transform.Translate(0, 0, 11);
                 }
             } else { //Hide enemies
-				// Get the hpFrame & Bar for enemy players
-				Transform hpFrame = createdPlayer.transform.GetChild(0);
-				Transform hpBar = hpFrame.transform.GetChild(0);
 				// Fetch the stencil masked material
 				Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
 				// Move enemy behind stencil mask
@@ -194,10 +196,6 @@ public class GameManager : MonoBehaviour {
 				// set the enemy, hpFrame & hpBar materials to stencil masked and layer to hidden
 				createdPlayer.GetComponent<SpriteRenderer> ().material = hiddenMat;
 				createdPlayer.layer = LayerMask.NameToLayer("HiddenThings");
-				hpFrame.gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
-				hpFrame.gameObject.layer = LayerMask.NameToLayer("HiddenThings");
-				hpBar.gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
-				hpBar.gameObject.layer = LayerMask.NameToLayer("HiddenThings");
 			}
         }
 
@@ -211,8 +209,6 @@ public class GameManager : MonoBehaviour {
                 GameData.EnemyKingID = king.second;
             }
         }
-
-        
 
 		NetworkingManager.StartGame();
     }

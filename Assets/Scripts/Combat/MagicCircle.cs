@@ -29,6 +29,8 @@ public class MagicCircle : Area
 {
     private Vector2 startPos;
     public int duration;
+	public Sprite allyCircle;
+	public Sprite enemyCircle;
 
     /*---------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: Start
@@ -51,8 +53,14 @@ public class MagicCircle : Area
     ---------------------------------------------------------------------------------------------------------------------*/
     void Start()
     {
+		transform.position = new Vector3(transform.position.x, transform.position.y, -2);
         startPos = transform.position;
         Invoke("removeCircle", duration);
+		if(teamID == GameData.MyPlayer.TeamID)
+		{
+			gameObject.GetComponent<SpriteRenderer>().sprite = allyCircle;
+		}else
+			gameObject.GetComponent<SpriteRenderer>().sprite = enemyCircle;
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
@@ -99,30 +107,32 @@ public class MagicCircle : Area
     ---------------------------------------------------------------------------------------------------------------------*/
     protected void OnTriggerStay2D(Collider2D other) 
     {
+        var target = other.gameObject.GetComponent<BaseClass>();
         // if same team
-        if (other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
+        if (target != null && teamID == target.team)
         {
-            var b = other.gameObject.GetComponent<MagicBuff>();
-            if (b == null)
+            var buff = other.gameObject.GetComponent<MagicBuff>();
+            if (buff == null)
             {
                 other.gameObject.AddComponent<MagicBuff>();
             }
             else
             {
-                b.duration = 150;
+                buff.duration = 150;
             }
             return;
         } 
-        else if (other.gameObject.GetComponent<BaseClass>() != null && teamID != other.gameObject.GetComponent<BaseClass>().team)
+        //if other team
+        else if (target != null && teamID != target.team)
         {
-            var db = other.gameObject.GetComponent<MagicDebuff>();
-            if (db == null)
+            var debuff = other.gameObject.GetComponent<MagicDebuff>();
+            if (debuff == null)
             {
                 other.gameObject.AddComponent<MagicDebuff>();
             }
             else
             {
-                db.duration = 150;
+                debuff.duration = 150;
             }
             return;
         }
@@ -149,22 +159,24 @@ public class MagicCircle : Area
     -- The magic circle removes the debuff/buff to enemies/allies if it was applied before
     ---------------------------------------------------------------------------------------------------------------------*/
     protected void OnTriggerExit2D(Collider2D other) {
+        var target = other.gameObject.GetComponent<BaseClass>();
         // if same team
-        if (other.gameObject.GetComponent<BaseClass>() != null && teamID == other.gameObject.GetComponent<BaseClass>().team)
+        if (target != null && teamID == target.team)
         {
-            var b = other.gameObject.GetComponent<MagicBuff>();
-            if (b != null)
+            var buff = other.gameObject.GetComponent<MagicBuff>();
+            if (buff != null)
             {
-                b.duration = -1;
+                buff.duration = -1;
             }
             return;
         } 
-        else if (other.gameObject.GetComponent<BaseClass>() != null && teamID != other.gameObject.GetComponent<BaseClass>().team)
+        // if other team
+        else if (target != null && teamID != target.team)
         {
-            var db = other.gameObject.GetComponent<MagicDebuff>();
-            if (db != null)
+            var debuff = other.gameObject.GetComponent<MagicDebuff>();
+            if (debuff != null)
             {
-                db.duration = -1;
+                debuff.duration = -1;
             }
             return;
         }

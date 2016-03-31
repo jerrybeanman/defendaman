@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
     public float speed;
     movestyle movestyles;
     float midX, midY;
-
+    BaseClass.PlayerBaseStat ClassStat;
 
     void Start()
     {
@@ -23,7 +23,8 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-        speed = gameObject.GetComponent<BaseClass>().ClassStat.MoveSpeed;
+
+        ClassStat = GetComponent<BaseClass>().ClassStat;
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
     //Checks if the end teleport point is valid, or if it is in a wall
@@ -33,6 +34,7 @@ public class Movement : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(rb2d.position + vec * (float)distance, -Vector2.up, 0.0001f);
         if (hit.collider != null)
         {
+            Debug.Log("Collision on blink");
             return false;
         }
         return true;
@@ -75,8 +77,9 @@ public class Movement : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Equals))
-            movestyles = movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute;
+        speed = ClassStat.MoveSpeed;
+		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBLocked)
+            movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
         if (movestyles == movestyle.absolute)
         {
@@ -201,23 +204,23 @@ public class Movement : MonoBehaviour
         bool moveDown = false;
         bool vMoved = false;
         Vector2 ret = new Vector2();
-        if (Input.GetKey(up))
+        if (Input.GetKey(up) && !GameData.InputBLocked)
         {
             angleFacing += 0;
             vMoved = true;
         }
-        else if (Input.GetKey(down))
+        else if (Input.GetKey(down) && !GameData.InputBLocked)
         {
             vMoved = true;
             moveDown = true;
             angleFacing += 180;
         }
-        if (Input.GetKey(left))
+		if (Input.GetKey(left) && !GameData.InputBLocked)
         {
             angleHorz += 90;
             hMoved = true;
         }
-        if (Input.GetKey(right))
+		if (Input.GetKey(right) && !GameData.InputBLocked)
         {
             angleHorz += -90;
             hMoved = true;
