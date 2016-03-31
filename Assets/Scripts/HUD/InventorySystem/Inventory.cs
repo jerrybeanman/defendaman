@@ -320,8 +320,10 @@ public class Inventory : MonoBehaviour
 
         var classStat = GameManager.instance.player.GetComponent<BaseClass>().ClassStat;
 
-        classStat.AtkPower -= GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT];
-        classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT];
+        if(GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] != 0)
+            classStat.AtkPower -= GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT];
+        if(GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] != 0)
+            classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT];
 
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
         {
@@ -346,8 +348,10 @@ public class Inventory : MonoBehaviour
         GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
         GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
 
-        classStat.AtkPower += damage;
-        classStat.Defense += armor;
+        if(damage != 0)
+            classStat.AtkPower += damage;
+        if(armor != 0)
+            classStat.Defense += armor;
     }
 
     public void DisplayWeaponError(string msg)
