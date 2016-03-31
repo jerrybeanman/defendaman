@@ -246,8 +246,10 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.MoveSpeed += speed;
         } else
         {
-            ClassStat.AtkPower += damage;
-            ClassStat.Defense += armour;
+            if (damage != 0)
+                ClassStat.AtkPower += damage;
+            if (armour != 0)
+                ClassStat.Defense += armour;
             if (health != 0)
                 doDamage(-health);
             ClassStat.CurrentHp += health;
@@ -260,8 +262,10 @@ public abstract class BaseClass : MonoBehaviour {
     IEnumerator Debuff(int damage, int armour, int speed, int duration)
     {
         yield return new WaitForSeconds(duration);
-        ClassStat.AtkPower -= damage;
-        ClassStat.Defense -= armour;
+        if (damage != 0)
+            ClassStat.AtkPower -= damage;
+        if (armour != 0)
+            ClassStat.Defense -= armour;
         ClassStat.MoveSpeed -= speed;
     }
 }
