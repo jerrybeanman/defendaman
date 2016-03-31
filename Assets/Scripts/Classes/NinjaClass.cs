@@ -31,6 +31,18 @@ public class NinjaClass : MeleeClass
 
     new void Start()
     {
+        _classStat = new PlayerBaseStat(playerID);
+        _className = "Ninja";
+        _classDescription = "You'll never see him coming.";
+        _classStat.MaxHp = 150;
+        _classStat.CurrentHp = this._classStat.MaxHp;
+
+        //placeholder numbers
+        _classStat.MoveSpeed = 12;
+        _classStat.AtkPower = 20;
+        _classStat.Defense = 5;
+
+        cooldowns = new float[2] { 0.95f, 2 };
         base.Start();
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
         teleport = (GameObject)Resources.Load("Prefabs/NinjaTeleport", typeof(GameObject));
@@ -44,21 +56,6 @@ public class NinjaClass : MeleeClass
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
-    }
-
-    public NinjaClass()
-    {
-        this._className = "Ninja";
-        this._classDescription = "You'll never see him coming.";
-        this._classStat.MaxHp = 150;
-        this._classStat.CurrentHp = this._classStat.MaxHp;
-
-        //placeholder numbers
-        this._classStat.MoveSpeed = 12;
-        this._classStat.AtkPower = 20;
-        this._classStat.Defense = 5;
-
-        cooldowns = new float[2] { 0.95f, 2 };
     }
 
     //attacks return time it takes to execute

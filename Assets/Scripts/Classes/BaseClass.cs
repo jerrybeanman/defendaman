@@ -15,7 +15,7 @@ public abstract class BaseClass : MonoBehaviour {
     protected string _classDescription;
 
     /* Base stats that all classes share*/
-    protected PlayerBaseStat _classStat = new PlayerBaseStat();
+    protected PlayerBaseStat _classStat;
 
     public int team;
     public int playerID;
@@ -62,8 +62,7 @@ public abstract class BaseClass : MonoBehaviour {
         {
             if (this._classStat == null)
             {
-                Debug.Log("Classstat was not set");
-                this._classStat = new PlayerBaseStat();
+                this._classStat = new PlayerBaseStat(playerID);
             }
             return this._classStat;
         }
@@ -175,6 +174,12 @@ public abstract class BaseClass : MonoBehaviour {
     [System.Serializable]
 	public class PlayerBaseStat
 	{
+        public PlayerBaseStat(int id)
+        {
+            _playerID = id;
+        }
+
+        private int _playerID;
         private float _currentHp;
 		public float CurrentHp {
             get
@@ -187,10 +192,39 @@ public abstract class BaseClass : MonoBehaviour {
         }
 		public float MaxHp;
 		public float MoveSpeed;
-		public float AtkPower;
-        public float Defense;
-        //TODO: defensive stats, etc.
-	}
+        private float _atkPower;
+		public float AtkPower
+        {
+            get { return _atkPower; }
+            set
+            {
+                update_stats();
+                _atkPower = value;
+            }
+        }
+
+        private float _defense;
+        public float Defense
+        {
+            get { return _defense; }
+            set
+            {
+                update_stats();
+                _defense = value;
+            }
+        }
+
+        public void update_stats()
+        {
+            if (_playerID != GameData.MyPlayer.PlayerID)
+                return;
+            List<Pair<string, string>> memers = new List<Pair<string, string>>();
+            memers.Add(new Pair<string, string>("AtkPower", AtkPower.ToString()));
+            memers.Add(new Pair<string, string>("Defense", Defense.ToString()));
+            //NetworkingManager.send_next_packet(DataType.StatUpdate, _playerID, memers, Protocol.TCP));
+            Debug.Log(NetworkingManager.send_next_packet(DataType.StatUpdate, _playerID, memers, Protocol.TCP));
+        }
+    }
 
     public void StartAttackAnimation()
     {
