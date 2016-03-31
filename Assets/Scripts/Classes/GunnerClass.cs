@@ -19,22 +19,19 @@ public class GunnerClass : RangedClass
     bool inSpecial;
     bool fired;
 
-    new void Start() {
-        _classStat = new PlayerBaseStat(playerID);
-        _className = "Gunner";
-        _classDescription = "Boom - Headshot";
+    new void Start()
+    {
+        cooldowns = new float[2] { 0.2f, 5f };
+        base.Start();
+
         _classStat.MaxHp = 150;
         _classStat.CurrentHp = this._classStat.MaxHp;
-
-        //placeholder numbers
         _classStat.MoveSpeed = 10;
         _classStat.AtkPower = 20;
         _classStat.Defense = 5;
         inSpecial = false;
         fired = false;
-
-        cooldowns = new float[2] { 0.2f, 5f };
-        base.Start();
+        
         bullet = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
         bullet2 = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
         

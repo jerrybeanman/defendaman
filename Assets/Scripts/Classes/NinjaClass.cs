@@ -32,19 +32,15 @@ public class NinjaClass : MeleeClass
 
     new void Start()
     {
-        _classStat = new PlayerBaseStat(playerID);
-        _className = "Ninja";
-        _classDescription = "You'll never see him coming.";
+        cooldowns = new float[2] { 0.95f, 2 };
+        base.Start();
+
         _classStat.MaxHp = 150;
         _classStat.CurrentHp = this._classStat.MaxHp;
-
-        //placeholder numbers
         _classStat.MoveSpeed = 12;
         _classStat.AtkPower = 20;
         _classStat.Defense = 5;
-
-        cooldowns = new float[2] { 0.95f, 2 };
-        base.Start();
+        
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
         teleport = (GameObject)Resources.Load("Prefabs/NinjaTeleport", typeof(GameObject));
 

@@ -42,6 +42,8 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
+
+        _classStat = new PlayerBaseStat(playerID);
     }
 	
 	public string ClassName

@@ -30,19 +30,15 @@ public class WizardClass : RangedClass
 
     new void Start()
     {
-        _classStat = new PlayerBaseStat(playerID);
-        _className = "Wizard";
-        _classDescription = "Wingardium Leviosa. No, not leviosAA, leviOsa.";
+        cooldowns = new float[2] { 0.5f, 6 };
+        base.Start();
+
         _classStat.MaxHp = 100;
         _classStat.CurrentHp = this._classStat.MaxHp;
-
-        //placeholder numbers
         _classStat.MoveSpeed = 8;
         _classStat.AtkPower = 3;
         _classStat.Defense = 5;
-
-        cooldowns = new float[2] { 0.5f, 6 };
-        base.Start();
+        
         fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
         magicCircle = (Rigidbody2D)Resources.Load("Prefabs/MagicCircle", typeof(Rigidbody2D));
 
