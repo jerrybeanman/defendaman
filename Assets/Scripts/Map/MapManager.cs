@@ -117,12 +117,14 @@ public class MapManager : MonoBehaviour {
 	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 	        frustumWidth = frustumHeight * mainCamera.aspect;
 
-	        if (_pooledObjects != null) {
-	            for (int i = 0; i < _pooledObjects.Length; i++) {
-	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
-	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
-	                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
-	                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
+            if (_pooledObjects != null) {
+	            for (int i = 0; i < _pooledObjects.Length; i++)
+                {
+                    var pooledTransform = _pooledObjects[i].GetComponent<Transform>();
+                    if ((pooledTransform.position.x > cameraPosition.x + frustumWidth)
+	                    && (pooledTransform.position.x < cameraPosition.x - frustumWidth)
+	                    && (pooledTransform.position.y > cameraPosition.y + frustumHeight)
+	                    && (pooledTransform.position.y < cameraPosition.y - frustumHeight)) {
 	                    _pooledObjects[i].SetActive(true);
 	                } else {
 	                    _pooledObjects[i].SetActive(false);
