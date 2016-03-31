@@ -219,7 +219,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Block all other keyboard inputs
 				GameData.KeyBlocked = true;
-				GameData.InputBLocked = true;
+				GameData.InputBlocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
@@ -229,7 +229,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
-				GameData.InputBLocked = false;
+				GameData.InputBlocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
 				 {
 					// Send the packet, with Team ID, user name, and the message input

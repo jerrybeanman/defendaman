@@ -23,6 +23,8 @@ public class Building:MonoBehaviour {
 	public bool placing = false;
 	[HideInInspector]
 	public bool placeble = true;
+	[HideInInspector]
+	public bool constructed = false;
 
 	// Use this for initialization
 	void Start () 
@@ -37,7 +39,7 @@ public class Building:MonoBehaviour {
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
 
     }
-	public bool constructed = false;
+
 	IEnumerator Construct()
 	{
 		float elapsedTime = 0.0f;
