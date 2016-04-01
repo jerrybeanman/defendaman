@@ -17,6 +17,7 @@ public abstract class BaseClass : MonoBehaviour {
     private int allyKingID;
     private int enemyKingID;
 
+	private HealthBar healthBar;
     protected void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
@@ -37,6 +38,8 @@ public abstract class BaseClass : MonoBehaviour {
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
 
+		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+		
         _classStat = new PlayerBaseStat(playerID);
     }
 
@@ -53,11 +56,12 @@ public abstract class BaseClass : MonoBehaviour {
 
 		protected set
 		{
-			this._classStat.CurrentHp = value.CurrentHp;
-			this._classStat.MaxHp = value.MaxHp;
-			this._classStat.MoveSpeed = value.MoveSpeed;
-			this._classStat.AtkPower = value.AtkPower;
-            this._classStat.Defense = value.Defense;
+			this._classStat.CurrentHp 	= value.CurrentHp;
+			this._classStat.MaxHp 		= value.MaxHp;
+			this._classStat.MoveSpeed 	= value.MoveSpeed;
+			this._classStat.AtkPower 	= value.AtkPower;
+            this._classStat.Defense 	= value.Defense;
+			healthBar.UpdateHealth(this._classStat.MaxHp, this._classStat.CurrentHp);
 		}
 	}
 

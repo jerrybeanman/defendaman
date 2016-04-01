@@ -4,10 +4,10 @@ using System.Collections;
 public class HealthBar : MonoBehaviour
 {
 
-	private SpriteRenderer spriteRenderer;
-	private BaseClass baseClass;
-	private float TotalHealth;
-	private GameObject holder;
+	private SpriteRenderer 	spriteRenderer;
+	private BaseClass 		baseClass;
+	private float 			TotalHealth;
+	private GameObject 		holder;
 
 	public 	Sprite allyHealth;
 	public 	Sprite enemyHealth;
@@ -37,10 +37,8 @@ public class HealthBar : MonoBehaviour
 		transform.position = new Vector3(transform.parent.position.x, transform.parent.position.y + 1, -10);
 	}
 
-
-    public void TakeDmg(float dmg)
+    public void UpdateHealth(float MaxHp, float CurrentHp)
     {
-		float scalePercentage 	=  1f / TotalHealth / dmg;
-		holder.transform.localScale = new Vector3(holder.transform.localScale.x - scalePercentage, holder.transform.localScale.y, holder.transform.localScale.z);
+		holder.transform.localScale = new Vector3(MaxHp / CurrentHp, holder.transform.localScale.y, holder.transform.localScale.z);
     }
 }
