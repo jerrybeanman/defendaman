@@ -27,10 +27,10 @@ public class HealthBar : MonoBehaviour
     void OnGUI()
     {
 
-        Vector2 targetPos = transform.position;
-        targetPos = Camera.main.WorldToScreenPoint(transform.position);
+       // Vector2 targetPos = transform.position;
+        //targetPos = Camera.main.WorldToScreenPoint(transform.position);
 
-        GUI.Box(new Rect(targetPos.x -30, Screen.height - targetPos.y - 46, 60, 20), curHealth + "/" + maxHealth);
+        //GUI.Box(new Rect(targetPos.x -30, Screen.height - targetPos.y - 46, 60, 20), curHealth + "/" + maxHealth);
 
     }
 
