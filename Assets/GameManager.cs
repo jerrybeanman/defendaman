@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
         GameData.MyPlayer = null;
+        instance.player = null;
     }
 
     public void StartGame(int seed)
