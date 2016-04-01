@@ -84,7 +84,38 @@ public class MapManager : MonoBehaviour {
     void Start() {
     }
 
-    /**
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	Update
+    -- DATE: 		February 16, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	Update(void)
+    -- RETURNS: 	void.
+    -- NOTES:
+    -- Called once per frame.
+    -- Check the objects currently in view and update object pool.
+    -- Checks the list of resources and respawns after some time them if they are depleted.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	void Update() {
+		check_object_pool ();
+		RespawnDepletedObjectsLoop();
+	}
+	
+	/**
+	 * Deserialize JSON string into 2D int array.
+	 */
+	private int[,] parse_string_map(string map) {
+		// _map = json.deserialization<int>(map)
+		return _map;
+	}
+	
+	/* Serialize 2D int array into JSON string. */
+	private string parse_int_map(int[][] map) {
+		return _string_map;
+	}
+	
+	/**
      * Find the camera distance used to calculate the camera view frustum.
      * Create the list of pooled objects and deactivate them.
      * Perform initial object pool check.
@@ -135,37 +166,9 @@ public class MapManager : MonoBehaviour {
     }
 
 	/*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: 	Update
-    -- DATE: 		February 16, 2016
-    -- REVISIONS: 	N/A
-    -- DESIGNER:  	Krystle Bulalakaw
-    -- PROGRAMMER: 	Krystle Bulalakaw
-    -- INTERFACE: 	Update(void)
-    -- RETURNS: 	void.
-    -- NOTES:
-    -- Called once per frame. Check the objects currently in view and update object pool.
-    ----------------------------------------------------------------------------------------------------------------------*/
-    void Update() {
-		check_object_pool ();
-	}
-
-    /**
-	 * Deserialize JSON string into 2D int array.
-	 */
-    private int[,] parse_string_map(string map) {
-        // _map = json.deserialization<int>(map)
-        return _map;
-    }
-
-    /* Serialize 2D int array into JSON string. */
-    private string parse_int_map(int[][] map) {
-        return _string_map;
-    }
-
-	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: handle_event
     -- DATE: February 16, 2016
-    -- REVISIONS: N/A
+    -- REVISIONS: March 31 - Add RESOURCE_TAKEN event processing
     -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
     -- PROGRAMMER: Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
     -- INTERFACE: void handle_event(int id, JSONClass message)
@@ -183,7 +186,7 @@ public class MapManager : MonoBehaviour {
                 instantiate_pool();
                 break;
             case EventType.RESOURCE_TAKEN:
-				// TODO: decrease resources left
+                ProcessResourceTakenEvent(message);
                 break;
             case EventType.RESOURCE_DEPLETED:
 				// TODO: trigger depleted animation
@@ -305,4 +308,99 @@ public class MapManager : MonoBehaviour {
                 }
             }
         }
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: ProcessResourceTakenEvent
+    --
+    -- DATE: March 31, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    --
+    -- PROGRAMMER: Krystle Bulalakaw
+    --
+    -- INTERFACE: void ProcessResourceTakenEvent(JSONClass message)
+    --							JSONClass message - the message received from the server
+    --
+    -- RETURNS: void.
+    --
+    -- NOTES:
+    -- This function processes the message received from the server that a resource was taken.
+    -- Using the X, Y, and Amount parsed from the message, find the Resource in the list and decrease its amount.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	public void ProcessResourceTakenEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		int amount = message["ResourceAmountTaken"].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Decrease its amount
+		temp.GetComponent<Resource>().DecreaseAmount(amount);
 	}
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: RespawnDepletedObjectsLoop
+    --
+    -- DATE: March 31, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    --
+    -- PROGRAMMER: Krystle Bulalakaw
+    --
+    -- INTERFACE: void RespawnDepletedObjectsLoop()
+    --
+    -- RETURNS: void.
+    --
+    -- NOTES:
+    -- Iterates through the list of map resources and checks if it is depleted. If it is, start a coroutine to respawn
+    -- some amount of it after a number of seconds.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	public void RespawnDepletedObjectsLoop() {
+		int seconds = 30;
+		int amount = 5;
+
+		for (int i = 0; i < _mapResources.Count; i++) {
+			Resource res = _mapResources[i].GetComponent<Resource>();
+			if (res.depleted) {
+				StartCoroutine(RespawnAfterTime(_mapResources[i], seconds, amount));
+			}
+		}
+	}
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: IEnumerator RespawnAfterTime
+    --
+    -- DATE: March 31, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    --
+    -- PROGRAMMER: Krystle Bulalakaw
+    --
+    -- INTERFACE: IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount)
+    -                   GameObject go - Resource Game Object instance
+    --                  int seconds   - number of seconds to wait before respawning resource
+    --                  int amount    - amount of resource to respawn
+    --
+    -- RETURNS: void.
+    --
+    -- NOTES:
+    -- Waits some number of seconds then sets a random Tree sprite, replenishes the resource amount, and activates
+    -- the Game Object instance.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount) {
+		yield return new WaitForSeconds(seconds);
+
+		go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
+		go.GetComponent<Resource>().amount = amount;
+		go.GetComponent<Resource>().depleted = false;
+		go.SetActive(true);
+	}
+}
