@@ -20,16 +20,18 @@ public class MapManager : MonoBehaviour {
     private const string DECR = "decr";
     /* How many walls will line the outside to not give an image of an empty world around the edges */
     const int OUTERWALL_THICKNESS = 30;
+	const int RESOURCE_AMOUNT = 100;
     /* A set of constant map update event types. */
     public enum EventType 
     {
         CREATE_MAP = 0,
         RESOURCE_TAKEN = 1,
         RESOURCE_DEPLETED = 2,
-        ITEM_DROPPED = 3,
-        ITEM_PICKEDUP = 4,
-        BUILDING_HIT = 5,
-        BUILDING_DSTR = 6,
+		RESOURCE_RESPAWN = 3,
+        ITEM_DROPPED = 4,
+        ITEM_PICKEDUP = 5,
+        BUILDING_HIT = 6,
+        BUILDING_DSTR = 7,
     };
     /* ID of map update event, i.e. its event type. */
     private EventType _id;
@@ -99,7 +101,6 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
 	void Update() {
 		check_object_pool ();
-		RespawnDepletedObjectsLoop();
 	}
 	
 	/**
@@ -185,10 +186,16 @@ public class MapManager : MonoBehaviour {
                 break;
             case EventType.RESOURCE_TAKEN:
                 ProcessResourceTakenEvent(message);
+				Debug.Log ("Got resource taken message");
                 break;
             case EventType.RESOURCE_DEPLETED:
-				// TODO: trigger depleted animation
+				ProcessResourceDepletedEvent(message);
+				Debug.Log ("Got resource depleted message");
                 break;
+			case EventType.RESOURCE_RESPAWN:
+				ProcessResourceRespawnEvent(message);
+				Debug.Log ("Got resource respawn message");
+				break;
             case EventType.ITEM_DROPPED:
                 break;
             case EventType.ITEM_PICKEDUP:
@@ -250,7 +257,7 @@ public class MapManager : MonoBehaviour {
 			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
 			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
 			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
-			temp.GetComponent<Resource>().amount = 5;
+			temp.GetComponent<Resource>().amount = RESOURCE_AMOUNT;
 			Debug.Log ("Adding resource at (" + temp.GetComponent<Resource>().x + ", " + temp.GetComponent<Resource>().y + ") Amount: " + temp.GetComponent<Resource>().amount);
 			_mapResources.Add (temp);
 		}
@@ -309,20 +316,13 @@ public class MapManager : MonoBehaviour {
 
 	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: ProcessResourceTakenEvent
-    --
     -- DATE: March 31, 2016
-    --
     -- REVISIONS: N/A
-    --
     -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
-    --
     -- PROGRAMMER: Krystle Bulalakaw
-    --
     -- INTERFACE: void ProcessResourceTakenEvent(JSONClass message)
     --							JSONClass message - the message received from the server
-    --
     -- RETURNS: void.
-    --
     -- NOTES:
     -- This function processes the message received from the server that a resource was taken.
     -- Using the X, Y, and Amount parsed from the message, find the Resource in the list and decrease its amount.
@@ -341,54 +341,85 @@ public class MapManager : MonoBehaviour {
 	}
 
 	/*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: RespawnDepletedObjectsLoop
-    --
-    -- DATE: March 31, 2016
-    --
+    -- FUNCTION: ProcessResourceDepletedEvent
+    -- DATE: April 1, 2016
     -- REVISIONS: N/A
-    --
     -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
-    --
     -- PROGRAMMER: Krystle Bulalakaw
-    --
-    -- INTERFACE: void RespawnDepletedObjectsLoop()
-    --
+    -- INTERFACE: void ProcessResourceDepletedEvent(JSONClass message)
+    --							JSONClass message - the message received from the server
     -- RETURNS: void.
-    --
     -- NOTES:
-    -- Iterates through the list of map resources and checks if it is depleted. If it is, start a coroutine to respawn
-    -- some amount of it after a number of seconds.
+    -- This function processes the message received from the server that a resource was depleted.
+    -- Using the X and Y parsed from the message, find the Resource in the list and explode/deactivate it.
     ----------------------------------------------------------------------------------------------------------------------*/
-	public void RespawnDepletedObjectsLoop() {
-		int seconds = 30;
-		int amount = 5;
+	public void ProcessResourceDepletedEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Explode/destroy it
+		StartCoroutine(ExplodeAndDestroy(temp));
+	}
 
-		for (int i = 0; i < _mapResources.Count; i++) {
-			Resource res = _mapResources[i].GetComponent<Resource>();
-			if (res.depleted) {
-				StartCoroutine(RespawnAfterTime(_mapResources[i], seconds, amount));
-			}
-		}
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: ProcessResourceRespawnEvent
+    -- DATE: April 1, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Krystle Bulalakaw
+    -- INTERFACE: void ProcessResourceRespawnEvent(JSONClass message)
+    --							JSONClass message - the message received from the server
+    -- RETURNS: void.
+    -- NOTES:
+    -- This function processes the message received from the server to respawn a resource.
+    -- Using the X and Y parsed from the message, respawn a resource after some time.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	public void ProcessResourceRespawnEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Respawn it
+		StartCoroutine(ExplodeAndDestroy(temp));
+		StartCoroutine(RespawnAfterTime(temp, 10, RESOURCE_AMOUNT));
+	}
+
+	/*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	ExplodeAndDestroy
+    -- DATE: 		March 30, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	ExplodeAndDestory()
+    -- RETURNS: 	IEnumerator - generic enumerator used to run a coroutine alongside Update()
+    -- NOTES:
+    -- Plays the explosion animation on resource depletion, waits for animation to complete, then destroys the gameobject.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	IEnumerator ExplodeAndDestroy(GameObject go) {
+		go.GetComponent<Resource>().animator.SetTrigger("Depleted");
+		// TODO: get animation clip length
+		yield return new WaitForSeconds(0.267f);
+		go.SetActive(false);
 	}
 
 	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: IEnumerator RespawnAfterTime
-    --
     -- DATE: March 31, 2016
-    --
     -- REVISIONS: N/A
-    --
     -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
-    --
     -- PROGRAMMER: Krystle Bulalakaw
-    --
     -- INTERFACE: IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount)
     -                   GameObject go - Resource Game Object instance
     --                  int seconds   - number of seconds to wait before respawning resource
     --                  int amount    - amount of resource to respawn
-    --
     -- RETURNS: void.
-    --
     -- NOTES:
     -- Waits some number of seconds then sets a random Tree sprite, replenishes the resource amount, and activates
     -- the Game Object instance.
@@ -398,7 +429,6 @@ public class MapManager : MonoBehaviour {
 
 		go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
 		go.GetComponent<Resource>().amount = amount;
-		go.GetComponent<Resource>().depleted = false;
 		go.SetActive(true);
 	}
 }
