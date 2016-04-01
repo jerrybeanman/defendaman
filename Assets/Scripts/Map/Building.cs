@@ -11,7 +11,7 @@ public class Building:MonoBehaviour {
 	public float health = 100;
 
 	public int team;
-
+	public int collidercounter=0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
 
@@ -20,7 +20,7 @@ public class Building:MonoBehaviour {
 	SpriteRenderer spriteRenderer;
 
 	[HideInInspector]
-	public bool placing = false;
+	public bool placing = true;
 	[HideInInspector]
 	public bool placeble;
 	[HideInInspector]
@@ -33,7 +33,7 @@ public class Building:MonoBehaviour {
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());
 
-		placeble = true;
+		placeble = false;
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
@@ -59,12 +59,15 @@ public class Building:MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
+
 		if(other.gameObject.tag == "Bullet")
 			return;
 		if(placing)
 		{
+			collidercounter++;
 			print ("dont place");
 			placeble = false;
+
 		}
 		if(health<=0)
 			Destroy(gameObject);
@@ -82,6 +85,7 @@ public class Building:MonoBehaviour {
 	{
 		if(placing)
 		{
+			collidercounter--;
 			placeble = true;
 			print ("place plzzz");
 		}

@@ -585,8 +585,10 @@ public class HUD_Manager : MonoBehaviour {
 		float distance_from_player = Vector3.Distance(player, building.transform.position);
 		if(distance_from_player > 8)
 			return false;
+		if(building.GetComponent<Building>().collidercounter==0)
+			return building.GetComponent<Building>().placeble;
+		return false;
 
-		return 	building.GetComponent<Building>().placeble;
 	}
 
 	/*----------------------------------------------------------------------------
