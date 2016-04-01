@@ -5,16 +5,23 @@ public class HealthBar : MonoBehaviour
 {
 
 	private SpriteRenderer spriteRenderer;
-	public Sprite allyHealth;
-	public Sprite enemyHealth;
+	private BaseClass baseClass;
+	private float TotalHealth;
+	private GameObject holder;
+
+	public 	Sprite allyHealth;
+	public 	Sprite enemyHealth;
     // Use this for initialization
     void Start()
     {
+		holder = transform.GetChild(0).gameObject;
 		// this is bad, dont do it lol. ill fix it later
-		spriteRenderer = transform.GetChild(0).transform.GetChild(0).GetComponent<SpriteRenderer>();
+		spriteRenderer 	= holder.transform.GetChild(0).GetComponent<SpriteRenderer>();
+		baseClass 		= transform.parent.gameObject.GetComponent<BaseClass>();
+		TotalHealth		= baseClass.ClassStat.MaxHp;
 
 		// fix this later too
-		if(transform.parent.gameObject.GetComponent<BaseClass>().team == GameData.MyPlayer.TeamID)
+		if(baseClass.team == GameData.MyPlayer.TeamID)
 		{
 			spriteRenderer.sprite = allyHealth;
 		}else
@@ -33,6 +40,7 @@ public class HealthBar : MonoBehaviour
 
     public void TakeDmg(float dmg)
     {
-
+		float scalePercentage 	=  1f / TotalHealth / dmg;
+		holder.transform.localScale = new Vector3(holder.transform.localScale.x - scalePercentage, holder.transform.localScale.y, holder.transform.localScale.z);
     }
 }
