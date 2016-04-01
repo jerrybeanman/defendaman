@@ -25,7 +25,7 @@ public class GunnerClass : RangedClass
         base.Start();
 
         _classStat.MaxHp = 150;
-        _classStat.CurrentHp = this._classStat.MaxHp;
+        _classStat.CurrentHp = _classStat.MaxHp;
         _classStat.MoveSpeed = 10;
         _classStat.AtkPower = 20;
         _classStat.Defense = 5;
@@ -42,6 +42,15 @@ public class GunnerClass : RangedClass
         visionCamera = GameObject.Find("Camera FOV").GetComponent<Camera>();
         hiddenCamera = GameObject.Find("Camera Enemies").GetComponent<Camera>();
         NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
+
+        //Starting item kit
+        if (playerID == GameData.MyPlayer.PlayerID)
+        {
+            Inventory.instance.AddItem(1);
+            Inventory.instance.AddItem(5, 5);
+            Inventory.instance.AddItem(6);
+            Inventory.instance.AddItem(7);
+        }
     }
 
     //attacks return time it takes to execute

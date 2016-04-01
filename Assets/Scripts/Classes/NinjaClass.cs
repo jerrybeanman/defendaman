@@ -36,7 +36,7 @@ public class NinjaClass : MeleeClass
         base.Start();
 
         _classStat.MaxHp = 150;
-        _classStat.CurrentHp = this._classStat.MaxHp;
+        _classStat.CurrentHp = _classStat.MaxHp;
         _classStat.MoveSpeed = 12;
         _classStat.AtkPower = 20;
         _classStat.Defense = 5;
@@ -55,6 +55,15 @@ public class NinjaClass : MeleeClass
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+        
+        //Starting item kit
+        if(playerID == GameData.MyPlayer.PlayerID)
+        {
+            Inventory.instance.AddItem(1);
+            Inventory.instance.AddItem(5, 5);
+            Inventory.instance.AddItem(6);
+            Inventory.instance.AddItem(7);
+        }
     }
 
     //attacks return time it takes to execute

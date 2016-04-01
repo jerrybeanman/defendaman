@@ -4,7 +4,6 @@
 #include <arpa/inet.h>
 
 using namespace Networking;
-extern std::map<int, Player>           _PlayerTable;
 /*
 	Initialize socket, server address to lookup to, and connect to the server
 
@@ -96,16 +95,18 @@ Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
 void * ServerUDP::Receive()
 {
   int nready = 0;                      // Data received indicator.
-  int numPlayers = 0;                  // Number of currently connected players.
+  //int numPlayers = 0;                  // Number of currently connected players.
   struct sockaddr_in Client;           // Incoming client's socket address information
   unsigned ClientLen = sizeof(Client); // Client address length
   char* buf = (char *)malloc(BUFSIZE); // Buffer for receiving packets
   fd_set rset;                         // Ready set
-  char con[24][64];                    // Currently connected clients (Saves time from map iterating).
+  //char con[24][64];                    // Currently connected clients (Saves time from map iterating).
   bool found = false;                  // Checks to see if a packet received from a client was from the proper client.
   std::map<int, Player>::iterator it;  // Map iterator
+  std::vector<std::string>::iterator it2; // Connections iterator
 
-  memset(con, 0, sizeof(con));
+
+  //memset(con, 0, sizeof(con));
 
   while (1)
   {
@@ -121,36 +122,18 @@ void * ServerUDP::Receive()
           fatal("UDP_Server_Recv: recvfrom() failed\n");
         }
         //fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
-
-        for(int i = 0; i < 24; i++)
+        it2 = find (_Connections->begin(), _Connections->end(), inet_ntoa (Client.sin_addr));
+        if (it2 != _Connections->end())
         {
-          if(strcmp(con[i], inet_ntoa (Client.sin_addr)) == 0)
-          {
-            found = true; //(numPlayers - 24)
-            break;
-          }
-          else
-          {
-            found = false;
-          }
+          int id = getPlayerId(inet_ntoa(Client.sin_addr));
+          memcpy(&(*_PlayerTable)[id].udp_connection, &Client, sizeof(Client));
         }
-
-        if(!found)
+        else // Not a valid user, ignore it.
         {
-          it = _PlayerTable.find(numPlayers-24);
-          if(it == _PlayerTable.end())
-          {
-            fprintf(stderr, "ServerUDP::Receive: Playerlist full.\n");
-
-          }
-          else
-          {
-            memcpy(&it->second.connection, &Client, sizeof(Client));
-            sprintf(con[numPlayers++], "%s", inet_ntoa (Client.sin_addr));
-          }
-
+          continue;
         }
         //std::cout << buf << std::endl;
+        //std::cerr << "Map size is: " << _PlayerTable->size() << std::endl;
 
       //TODO: Refactor when the TCP passes over the map to the UDP server,
       //      will need to place all connections already into the char** "con"
@@ -180,30 +163,25 @@ void * ServerUDP::Receive()
 */
 void ServerUDP::Broadcast(const char* message, sockaddr_in * excpt)
 {
-  for(std::map<int, Player>::const_iterator it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
+  for(std::map<int, Player>::const_iterator it = _PlayerTable->begin(); it != _PlayerTable->end(); ++it)
   {
+    //std::cerr << "client:"<< inet_ntoa((it->second).udp_connection.sin_addr);
     //Do not allow invalid clients
-    if(strcmp(inet_ntoa ((it->second).connection.sin_addr), "0.0.0.0") == 0)
+    if(strcmp(inet_ntoa ((it->second).udp_connection.sin_addr), "0.0.0.0") == 0)
       continue;
 
     //If there has been a single client specified, check if they don't
-    if(excpt != NULL && strcmp(inet_ntoa ((it->second).connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
+    if(excpt != NULL && strcmp(inet_ntoa ((it->second).udp_connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
       continue;
 
-    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&((it->second).connection), sizeof(sockaddr_in)) == -1)
+    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&((it->second).udp_connection), sizeof(sockaddr_in)) == -1)
     {
-      fprintf(stderr, "Failed to send to [%s]\n", inet_ntoa ((it->second).connection.sin_addr));
+      fprintf(stderr, "Failed to send to [%s]\n", inet_ntoa ((it->second).udp_connection.sin_addr));
       perror("ServerUDP::Broadcast");
       return;
     }
+    //std::cerr << " Oh yeah." << std::endl;
   }
-}
-/*
-  Registers the passed in Player list as a class member to be used in broadcasticonst ng UDP packets.
-*/
-void ServerUDP::SetPlayerList(std::map<int, Player> players)
-{
-  _PlayerTable = players;
 }
 
 /*
@@ -215,7 +193,7 @@ Programmer: Vivek Kalia, Tyler Trepanier-Bracken
 */
 void ServerUDP::PrepareSelect()
 {
-    Player _bad;
+    /*Player _bad;
 
     //Initialize all components to be invalid!
     _bad.socket = -1;
@@ -239,7 +217,10 @@ void ServerUDP::PrepareSelect()
       _clients[x] = _bad;
     }
 
-    _PlayerTable = _clients;
+    (*_PlayerTable) = _clients;*/
+
+    _maxfd = _UDPReceivingSocket;
+    _maxi = -1;
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);
