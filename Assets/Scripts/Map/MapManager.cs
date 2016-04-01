@@ -19,7 +19,7 @@ public class MapManager : MonoBehaviour {
     private const string INCR = "incr";
     private const string DECR = "decr";
     /* How many walls will line the outside to not give an image of an empty world around the edges */
-    const int OUTERWALL_THICKNESS = 11; //(Camera size + gunnerclass.cs max zoom out)/2
+    const int OUTERWALL_THICKNESS = 24; //(Camera size + gunnerclass.cs max zoom out)/2
     /* A set of constant map update event types. */
     public enum EventType 
     {
