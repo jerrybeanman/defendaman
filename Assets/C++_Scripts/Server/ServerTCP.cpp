@@ -1,17 +1,20 @@
 #include "ServerTCP.h"
 
 using namespace Networking;
+using namespace json11;
+extern std::map<int, Player>           _PlayerTable;
 
-/*
-	Initialize socket, server address to lookup to, and connect to the server
-
-	@return: socket file descriptor
-*/
+/**
+ * Initialize server socket and address
+ * @author Jerry Jia
+ * @date   2016-03-11
+ * @param  port       port number
+ * @return            -1 on failure, 0 on success
+ */
 int ServerTCP::InitializeSocket(short port)
 {
     int err = -1;
-
-	int optval = 1;	/* set SO_REUSEADDR on a socket to true (1) */
+	  int optval = 1;	/* set SO_REUSEADDR on a socket to true (1) */
 
     /* Create a TCP streaming socket */
     if ((_TCPAcceptingSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
@@ -35,101 +38,106 @@ int ServerTCP::InitializeSocket(short port)
         std::cout << "InitializeSocket: bind() failed with errno " << errno << std::endl;
         return err;
     }
-
     /* Listen for connections */
     listen(_TCPAcceptingSocket, MAXCONNECTIONS);
 
     return 0;
 }
 
-/*
-	Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
-	Add connected player to the list of players
-
-	@return: id that is assigned to the player
-*/
+/**
+ * Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
+ * Add connected player to the list of players
+ * @author Jerry Jia, Martin Minkov
+ * @date   2016-03-11
+ * @param  player     player object
+ * @return            -1 on failure, 0 on success
+ */
 int ServerTCP::Accept(Player * player)
 {
-    char buf[PACKETLEN];
     unsigned int        ClientLen = sizeof(player->connection);
-    printf("before accept\n");
+
     /* Accepts a connection from the client */
     if ((player->socket = accept(_TCPAcceptingSocket, (struct sockaddr *)&player->connection, &ClientLen)) == -1)
     {
         std::cerr << "Accept() failed with errno" << errno << std::endl;
         return -1;
     }
-    printf("After accept\n");
-    /* Not the best way to do it since we're using vectors */
-    player->id = _PlayerList.size();
+
     player->isReady = false;
+    player->playerClass = 0;
+    player->team = 0;
 
-    _PlayerList.push_back(*player);
+    //Add player to list
+    int id = getPlayerId(inet_ntoa(player->connection.sin_addr));
+    player->id = id;
+    _PlayerTable.insert(std::pair<int, Player>(id, *player));
 
-    sprintf(buf, "Player %lu has joined the lobby\n", _PlayerList.size());
-    printf(buf);
-    this->ServerTCP::Broadcast(buf);
     newPlayer = *player;
     return player->id;
 }
 
-
-/*
-	Creates a child process to handle incoming messages from new player that has just connected to the lobby
-
-	@return: child PDI (0 for child process)
-*/
+/**
+ * Static function used by client_library.cpp to create a reading thread to handle one client
+ * @author Jerry Jia
+ * @date   2016-03-11
+ * @param  server     ServerTCP object
+ * @return            ServerTCP::Receive() address
+ */
 void * ServerTCP::CreateClientManager(void * server)
 {
-    /* God forbid */
     return ((ServerTCP *)server)->Receive();
 }
 
-
-/*
-	Recieves data from child process that is dedicated for each player's socket
-
-	@return: 1 on success, -1 on error, 0 on disconnect
-*/
+/**
+ * Continuosly recieves messages from a specific client
+ * @author Jerry Jia, Martin Minkov
+ * @date   2016-03-11
+ * @return 0 for thread execution code
+ */
 void * ServerTCP::Receive()
 {
     Player tmpPlayer = newPlayer;
   	int BytesRead;
     char * buf;						          	/* buffer read from one recv call      	  */
 
-    //JSON segments
-    char dataType[30];
-    int code;
-    char id[30];
-    int idValue;
-    int requestValue;
-
   	buf = (char *)malloc(PACKETLEN); 	/* allocates memory 							        */
+    memset(buf, 0, PACKETLEN);
     while (1)
     {
-      	BytesRead = recv (tmpPlayer.socket, buf, PACKETLEN, 0);
+      int bytesToRead = PACKETLEN;
+      char *bp = buf;
+       while((BytesRead = recv(tmpPlayer.socket, bp, bytesToRead, 0)) < PACKETLEN)
+       {
+         if (BytesRead == 0)
+          break;
+          
+         bytesToRead -= BytesRead;
+         bp += BytesRead;
+       }
 
-      	if(BytesRead < 0) /* recv() failed */
+        /* recv() failed */
+      	if(BytesRead < 0)
       	{
       		printf("recv() failed with errno: %d", errno);
       		return 0;
       	}
-      	if(BytesRead == 0) /* client disconnected */
+        /* client disconnected */
+      	if(BytesRead == 0)
       	{
-      		sprintf(buf, "Player %d has left the lobby \n", tmpPlayer.id + 1);
-          printf(buf);
+      		sprintf(buf, "Player %d has left the lobby \n", tmpPlayer.id);
+          printf("%s", buf);
+
+          //Send all players that this player has left
           this->ServerTCP::Broadcast(buf);
-      		return 0;
+
+          //Remove player from player list
+          _PlayerTable.erase(tmpPlayer.id);
+
+          return 0;
       	}
-
-        std::cout << buf << std::endl;
-
-        /*Parsed  based on json array*/
-        sscanf(buf, "%s %i %s %i %i", dataType, &code, id, &idValue, &requestValue);
-        this->ServerTCP::CheckServerRequest(tmpPlayer.id, code, idValue, requestValue);
-
-      	/* Broadcast echo packet back to all players */
-      	this->ServerTCP::Broadcast(buf);
+        //Handle Data Received
+        std::cout << "Received: " << buf << std::endl;
+        this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
     }
     free(buf);
     return 0;
@@ -138,71 +146,261 @@ void * ServerTCP::Receive()
 /*
 	Sends a message to all the clients
 
+  @author Jerry Jia, Gabriella Chueng
+  @date   2016-03-11
+  @param  message    [description]
+
+  Revision:
+  Date       Author      Description
+  2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
 */
-void ServerTCP::Broadcast(char * message)
+void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
-	for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-		if(send(_PlayerList[i].socket, message, PACKETLEN, 0) == -1)
-		{
-			std::cerr << "Broadcast() failed for player id: " << _PlayerList[i].id + 1 << std::endl;
+  Player tmpPlayer;
+  for(const auto &pair : _PlayerTable)
+  {
+    tmpPlayer = pair.second;
+    if(send(tmpPlayer.socket, message, PACKETLEN, 0) == -1)
+    {
+      std::cerr << "Broadcast() failed for player id: " << pair.first << std::endl;
 			std::cerr << "errno: " << errno << std::endl;
 			return;
-		}
-	}
-}
-
-/*Parses incoming JSON and process request*/
-void ServerTCP::CheckServerRequest(int playerId, int code, int idValue, int requestValue)
-{
-  char * buf;
-  buf = (char *)malloc(PACKETLEN); 	/* allocates memory */
-  if(code == Networking && idValue == TeamChangeRequest)
-  {
-    std::cout << "Team change: " << requestValue << std::endl;
-    _PlayerList[playerId].team = requestValue;
-  } else if (code == Networking && idValue == ReadyRequest)
-  {
-    std::cout << "Ready change: " << requestValue << std::endl;
-    if (requestValue == 0)
-    {
-      _PlayerList[playerId].isReady = false;
-    } else if (requestValue == 1)
-    {
-      _PlayerList[playerId].isReady =  true;
-    }
-    if (this->ServerTCP::AllPlayersReady())
-    {
-      printf("All players are ready\n");
-      sprintf(buf, "Game is starting!\n");
-      printf(buf);
-      this->ServerTCP::Broadcast(buf); // or use flag to ignore all recv messages
     }
   }
-  free(buf);
 }
-/* Check ready status on all connected players
 
-   @return true if all players are ready, false otherwise
-*/
+/**
+ * Sends a message to a specific client
+ * @author Martin Minkov, Scott Plummer
+ * @date   2016-03-11
+ * @param  player     Player to send
+ * @param  message    message to send
+ */
+void ServerTCP::sendToClient(Player player, const char * message)
+{
+	if(send(player.socket, message, PACKETLEN, 0) == -1)
+	{
+		std::cerr << "Broadcast() failed for player id: " << player.id << std::endl;
+		std::cerr << "errno: " << errno << std::endl;
+		return;
+	}
+}
+/**
+ * Parse client json message and determines server logic
+ * @author Jerry Jia, Martin Minkov, Scott Plummer, Dylan Blake
+ * @date   2016-03-11
+ * @param  player     Player that recives the message
+ * @param  buffer     json message
+ *
+ * Revisions: Tyler Trepanier-Bracken  2016/03/14
+ *            Added in a GameEnd case with a restart server placeholder.
+ */
+void ServerTCP::CheckServerRequest(Player player, char * buffer)
+{
+  std::string error;
+  Json json = Json::parse(buffer, error).array_items()[0];
+
+  if (json["DataType"].int_value() != Networking) {
+    this->ServerTCP::Broadcast(buffer);
+    return;
+  }
+
+  switch(json["ID"].int_value())
+  {
+    //Player joining team request
+    case TeamChangeRequest:
+      std::cout << "Team change: " << json[TeamID].int_value() << std::endl;
+      _PlayerTable[player.id].team = json[TeamID].int_value();
+      this->ServerTCP::Broadcast(buffer);
+      break;
+
+    //Player joining class request
+    case ClassChangeRequest:
+      std::cout << "Class change: " << json[ClassID].int_value() << std::endl;
+      _PlayerTable [player.id].playerClass = json[ClassID].int_value();
+      this->ServerTCP::Broadcast(buffer);
+      break;
+
+    //Player making a ready request
+    case ReadyRequest:
+      std::cout << "Ready change: " << (json[Ready].int_value() ? "ready" : "not ready") << std::endl;
+      _PlayerTable[player.id].isReady = (json[Ready].int_value() ? true : false);
+      this->ServerTCP::Broadcast(buffer);
+      break;
+
+    //New Player has joined lobby
+    case PlayerJoinedLobby:
+  	  std::cout << "New Player Change: " << json[UserName].string_value() << std::endl;
+  	  strcpy(_PlayerTable[player.id].username, json[UserName].string_value().c_str());
+
+  	  //Send player a table of players
+  	  sendToClient(player, constructPlayerTable().c_str());
+
+      //Create packet and send to everyone
+      this->ServerTCP::Broadcast(UpdateID(_PlayerTable[player.id]).c_str());
+      break;
+
+    case PlayerLeftLobby:
+      std::cout << "Player: " << json[PlayerID].int_value() << " has left the lobby" << std::endl;
+      _PlayerTable.erase(json[PlayerID].int_value());
+      this->ServerTCP::Broadcast(buffer);
+      write(_sockPair[0], "2", PACKETLEN);
+      break;
+
+    case GameStart:
+      std::cout << "Player: " << json[PlayerID].int_value() << " has started the game" << std::endl;
+      //All players in lobby are ready
+      if (this->ServerTCP::AllPlayersReady())
+      {
+        this->ServerTCP::Broadcast(buffer);
+        this->ServerTCP::Broadcast(generateMapSeed().c_str());
+      }
+      break;
+
+    case GameEnd: //Currently allows any player to annouce the end of the game.
+      std::cout << "Player: " << json[PlayerID].int_value() << " has ended the game" << std::endl;
+      this->ServerTCP::Broadcast(buffer);     // Inform all clients that the game has ended.
+      this->ServerTCP::ShutDownGameServer();  // Send a message to the UDP to kill itself.
+      break;
+  }
+}
+
+
+/**
+ * Check if all the players within _ClientTable are ready
+ * @author ???
+ * @date   2016-03-11
+ * @return true if all the players are ready, false otherwise
+ */
 bool ServerTCP::AllPlayersReady()
 {
-  for(std::vector<int>::size_type i = 0; i != _PlayerList.size(); i++)
-	{
-    if(!_PlayerList[i].isReady)
-		{
-      printf("Player %d is not ready\n", _PlayerList[i].id + 1);
+  Player tmpPlayer;
+  for(const auto &pair : _PlayerTable)
+  {
+    tmpPlayer = pair.second;
+    if(tmpPlayer.isReady == false)
+    {
+      printf("Player %d is not ready\n", tmpPlayer.id);
 			return false;
-		} else {
-      printf("Player %d is ready\n", _PlayerList[i].id + 1);
+    } else {
+      printf("Player %d is ready\n", tmpPlayer.id);
     }
-	}
+  }
   return true;
 }
-/*
-  Returns the registered player list from the game lobby
-*/
-std::vector<Player> ServerTCP::setPlayerList()
+
+/**
+ * Constructs a json message containing an array of current player's statuses
+ * @author Martin Minkov, Scott Plummer, Jerry Jia
+ * @date   2016-03-11
+ * @return the constructed json table
+ */
+std::string ServerTCP::constructPlayerTable()
 {
-  return _PlayerList;
+	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : [";
+	for (auto it = _PlayerTable.begin(); it != _PlayerTable.end();)
+	{
+		std::string tempUserName((it->second).username);
+		packet += "{";
+    packet += "\"PlayerID\" : " + std::to_string(it->first);
+		packet += ",  \"UserName\" : \"" + tempUserName + "\"";
+		packet += ", \"TeamID\": " +  std::to_string((it->second).team);
+		packet += ", \"ClassID\" : " + std::to_string((it->second).playerClass);
+		packet += ", \"Ready\" : " + std::to_string(Server::isReadyToInt(it->second));
+		packet += (++it == _PlayerTable.end() ? "}" : "},");
+	}
+	packet +=    "]";
+  packet += "}]";
+
+  std::cout << "THIS IS OUR PACKET THAT WE ARE SENDING" << packet << std::endl;
+	return packet;
+}
+
+/**
+ * Returns the registered player list from the game lobby
+ * @author Martin Minkov, Scott Plummer
+ * @date   2016-03-11
+ * @param  player     player object
+ * @return            updated json with the player's id
+ */
+std::string ServerTCP::UpdateID(const Player& player)
+{
+   char buf[PACKETLEN];
+   std::cout << player.username << std::endl;
+   sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
+   std::string temp(buf);
+   return temp;
+}
+
+/**
+ * [ServerTCP::generateMapSeed description]
+ * @author ???
+ * @date   2016-03-11
+ * @return [description]
+ */
+std::string ServerTCP::generateMapSeed()
+{
+	int mapSeed;
+	srand (time (NULL));
+	mapSeed = rand ();
+	std::string packet = "[{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}]";
+	return packet;
+}
+
+/**
+ * ???
+ */
+std::map<int, Player> ServerTCP::getPlayerTable()
+{
+  return _PlayerTable;
+}
+
+/**
+ * [ServerTCP::getPlayerId description]
+ * @author ???
+ * @date   2016-03-11
+ * @param  ipString   [description]
+ * @return            [description]
+ */
+int ServerTCP::getPlayerId(std::string ipString)
+{
+  std::size_t index = ipString.find_last_of(".");
+  return stoi(ipString.substr(index+1));
+}
+
+/**
+ * [ServerTCP::ShutDownGameServer                                     ]
+ * [    Sends a message to the UDP Server via the already created pipe]
+ * [    indicating that the game is over.                             ]
+ * @author Tyler Trepanier-Bracken
+ * @date   2016-03-14
+ * @param  void
+ * @return void
+ */
+void ServerTCP::ShutDownGameServer(void)
+{
+  char sbuf[20];
+  char rbuf[20];
+  static int MESSAGE_SIZE = 20;
+  int nread = 0;
+  sprintf(sbuf, "%s", "GameEnd");
+
+  if(_sockPair[0] == -1 && _sockPair[1] == -1) //check if the sockets aren't in error
+  {
+    // Critical error SIGTERM the UDP
+    // TODO
+  }
+
+  for (;;) // Wait forever until a read has occured.
+  {
+    switch (nread = read(_sockPair[0], &rbuf, MESSAGE_SIZE)) // Polling, need to fix
+    {
+      case -1:
+      case 0:
+        break;
+      default:
+        // Assume that any message means that the UDP is shutting down
+        std::cerr << "UDP shutting down." << std::endl;
+    }
+  }
 }

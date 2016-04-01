@@ -10,12 +10,13 @@
 #include <netdb.h>
 #include <utility>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <pthread.h>
 #include <errno.h>
 #include <stdio.h>
 
-#define PACKETLEN       128
+#define PACKETLEN       512
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
@@ -32,40 +33,38 @@ typedef struct Player
     int            id;
     char           username[32];
     int            team;
+    int            playerClass;
     bool           isReady;
 } Player;
+
+/* List of players currently connected to the server */
+static std::map<int, Player>           _PlayerTable;
 
 namespace Networking
 {
 	class Server
 	{
 		public:
-			Server(){}
+			Server() {}
 			~Server(){}
-    	/*
-		   Initialize socket, server address to lookup to, and connect to the server
-
-		   @return: socket file descriptor
-		 */
 		virtual int InitializeSocket(short port) = 0;
 
-		/*
-		   Sends a message to all the clients
+		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
 
-		 */
-		virtual void Broadcast(char * message) = 0;
-
-    virtual void * Receive() = 0;
+        virtual void * Receive() = 0;
 
 		void fatal(const char* error);
 
-		protected:
+    int isReadyToInt(Player player);
+
+	protected:
 		struct sockaddr_in     _ServerAddress;
 		int 				           _UDPReceivingSocket;
-		int                    _TCPAcceptingSocket;
-
-    /* List of players currently connected to the server */
-    std::vector<Player>             _PlayerList;
+    int                    _TCPAcceptingSocket;
+    fd_set                 _allset;              // File descriptor set for connected sockets
+    int                    _maxfd;               //Maximum amount of file descriptors
+    int                    _maxi;                // Current maximum connections
+    int                    _sockPair[2];         // Communication pipe between TCP and UDP servers.
 
 	};
 }

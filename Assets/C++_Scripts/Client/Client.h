@@ -14,9 +14,7 @@
 #include <pthread.h>
 #include "CircularBuffer.h"
 
-#define TeamRequest1 1
-#define TeamRequest2 2
-#define PACKETLEN    256
+#define PACKETLEN    512
 #define MAXPACKETS   10
 
 namespace Networking
@@ -24,7 +22,8 @@ namespace Networking
     class Client
     {
         public:
-          pthread_t ReadThread;
+          int             serverSocket;
+          pthread_t       ReadThread;
 
           Client();
           virtual ~Client() {};
@@ -43,7 +42,6 @@ namespace Networking
 
         protected:
             CircularBuffer  CBPackets; // buffer for data coming in from network
-            int             serverSocket;
             struct          sockaddr_in serverAddr;
             char*           currentData; // the single instance of data exposed to Unity for reading
     };

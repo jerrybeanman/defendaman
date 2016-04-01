@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SimpleJSON;
+using System.Collections.Generic;
+using System;
 
 public abstract class BaseClass : MonoBehaviour {
     //Cooldowns
@@ -21,22 +23,25 @@ public abstract class BaseClass : MonoBehaviour {
     private int allyKingID;
     private int enemyKingID;
 
-    void Start ()
+    protected void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
-        yourPlayerID = networkingManager.player.GetComponent<BaseClass>().playerID;
-        allyKingID = networkingManager.allyKingID;
-        enemyKingID = networkingManager.enemyKingID;
+        yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
+        allyKingID = GameData.AllyKingID;
+        enemyKingID = GameData.EnemyKingID;
 
         NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
 
-        HUD_Manager.instance.subSkill.CoolDown = cooldowns[0];
-        HUD_Manager.instance.mainSkill.CoolDown = cooldowns[1];
-        HUD_Manager.instance.playerProfile.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-        if (playerID == allyKingID)
-            HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-        if (playerID == enemyKingID)
-            HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+        if (playerID == yourPlayerID)
+        {
+            HUD_Manager.instance.subSkill.CoolDown = cooldowns[0];
+            HUD_Manager.instance.mainSkill.CoolDown = cooldowns[1];
+            HUD_Manager.instance.playerProfile.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            if (playerID == allyKingID)
+                HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            if (playerID == enemyKingID)
+                HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+        }
     }
 	
 	public string ClassName
@@ -69,63 +74,81 @@ public abstract class BaseClass : MonoBehaviour {
 			this._classStat.MaxHp = value.MaxHp;
 			this._classStat.MoveSpeed = value.MoveSpeed;
 			this._classStat.AtkPower = value.AtkPower;
+            this._classStat.Defense = value.Defense;
 		}
 	}
 
-    public float doDamage(float damage)
+    public float doDamage(float damage, bool trueDamage = false)
     {
-        //TODO: add defense to calculation
-        ClassStat.CurrentHp -= damage;
+        // hank: Added defensive calculation
+        float finaldamage = damage;
+
+        if (!trueDamage)
+        {
+            float reduction = (30 / (ClassStat.Defense + 30));
+            finaldamage = damage * reduction;
+        }
+        
+        ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
         {
             ClassStat.CurrentHp = ClassStat.MaxHp;
         }
 
-        Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
-        
-        if (yourPlayerID == playerID) {
-            HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
-        }
+        //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
 
-        if (playerID == allyKingID) {
-            HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
-        }
+        GameManager.instance.PlayerTookDamage(playerID, finaldamage, ClassStat);
 
-        if (playerID == enemyKingID) {
-            HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / ClassStat.MaxHp));
-        }
-
-        //gameObject.GetComponentInChildren<Transform>().localScale = new Vector3(.5f, 1, 1);
-
-        return ClassStat.CurrentHp;
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        var attack = other.gameObject.GetComponent<Trigger>();
-        if (attack.teamID == team)
-        {
-            return;
-        }
-        if (doDamage(attack.damage) <= 0.0f)
+        if (ClassStat.CurrentHp <= 0.0f)
         {
             //death
+            NetworkingManager.Unsubscribe(DataType.Player, playerID);
             Destroy(gameObject);
+        }
+
+        return finaldamage;
+    }
+
+    void OnTriggerEnter2D(Collider2D other) {
+        Trigger attack;
+        if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
+            if (attack.teamID == team || GameData.MyPlayer == null) {
+                return;
+            }
+
+            var damageTaken = 0f;
+            if (playerID == GameData.MyPlayer.PlayerID)
+                damageTaken = doDamage(attack.damage);
+
+            if (attack is Projectile)
+                Destroy(other.gameObject);
+
+            if (GameData.MyPlayer == null || playerID != GameData.MyPlayer.PlayerID)
+                return;
+
+            var memersToSend = new List<Pair<string, string>>();
+            memersToSend.Add(new Pair<string, string>("EnemyID", attack.playerID.ToString()));
+            memersToSend.Add(new Pair<string, string>("NewHP", ClassStat.CurrentHp.ToString()));
+            print(NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP));
+            
+            return;
+        } else {
+            Debug.Log("Attack was null");
         }
     }
 
     void receiveAttackFromServer(JSONClass playerData)
     {
+        if (playerData["ID"].AsInt == GameData.MyPlayer.PlayerID)
+            return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
         switch (playerData["Attack"].AsInt)
         {
             case 0:
-                HUD_Manager.instance.UseMainSkill(cooldowns[0]);
                 basicAttack(directionOfAttack);
                 //Regular attack
                 break;
             case 1:
-                HUD_Manager.instance.UseSubSkill(cooldowns[1]);
                 specialAttack(directionOfAttack);
                 //Regular special attack
                 break;
@@ -139,23 +162,72 @@ public abstract class BaseClass : MonoBehaviour {
 
     public virtual float basicAttack(Vector2 dir)
     {
-        HUD_Manager.instance.UseMainSkill(cooldowns[0]);
         return cooldowns[0];
     }
 
     public virtual float specialAttack(Vector2 dir)
     {
-        HUD_Manager.instance.UseSubSkill(cooldowns[1]);
         return cooldowns[1];
     }
 
     [System.Serializable]
 	public class PlayerBaseStat
 	{
-		public float CurrentHp;
+        private float _currentHp;
+		public float CurrentHp {
+            get
+            {
+                return _currentHp;
+            }
+            set {
+                _currentHp = (value > MaxHp) ? MaxHp : value;
+            }
+        }
 		public float MaxHp;
 		public float MoveSpeed;
 		public float AtkPower;
+        public float Defense;
         //TODO: defensive stats, etc.
 	}
+
+    public void StartAttackAnimation()
+    {
+        gameObject.GetComponent<Animator>().SetBool("attacking", true);
+    }
+
+    public void EndAttackAnimation()
+    {
+        gameObject.GetComponent<Animator>().SetBool("attacking", false);
+    }
+
+    public void UsePotion(int damage, int armour, int health, int speed, int duration)
+    {
+        if (duration == 0)
+        {
+            ClassStat.AtkPower += damage;
+            ClassStat.Defense += armour;
+            if (health != 0)
+                doDamage(-health);
+            ClassStat.CurrentHp += health;
+            ClassStat.MoveSpeed += speed;
+        } else
+        {
+            ClassStat.AtkPower += damage;
+            ClassStat.Defense += armour;
+            if (health != 0)
+                doDamage(-health);
+            ClassStat.CurrentHp += health;
+            ClassStat.MoveSpeed += speed;
+            Debug.Log(ClassStat.MoveSpeed);
+            StartCoroutine(Debuff(damage, armour, speed, duration));
+        }
+    }
+
+    IEnumerator Debuff(int damage, int armour, int speed, int duration)
+    {
+        yield return new WaitForSeconds(duration);
+        ClassStat.AtkPower -= damage;
+        ClassStat.Defense -= armour;
+        ClassStat.MoveSpeed -= speed;
+    }
 }

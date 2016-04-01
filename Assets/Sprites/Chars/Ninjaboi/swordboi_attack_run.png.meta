@@ -1,0 +1,330 @@
+fileFormatVersion: 2
+guid: eda265ef53ab6944c9bf6ba77da5862b
+timeCreated: 1457093136
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: swordboi_attack_run_0
+    21300002: swordboi_attack_run_1
+    21300004: swordboi_attack_run_2
+    21300006: swordboi_attack_run_3
+    21300008: swordboi_attack_run_4
+    21300010: swordboi_attack_run_5
+    21300012: swordboi_attack_run_6
+    21300014: swordboi_attack_run_7
+    21300016: swordboi_attack_run_8
+    21300018: swordboi_attack_run_9
+    21300020: swordboi_attack_run_10
+    21300022: swordboi_attack_run_11
+    21300024: swordboi_attack_run_12
+    21300026: swordboi_attack_run_13
+    21300028: swordboi_attack_run_14
+    21300030: swordboi_attack_run_15
+    21300032: swordboi_attack_run_16
+    21300034: swordboi_attack_run_17
+    21300036: swordboi_attack_run_18
+    21300038: swordboi_attack_run_19
+    21300040: swordboi_attack_run_20
+    21300042: swordboi_attack_run_21
+    21300044: swordboi_attack_run_22
+    21300046: swordboi_attack_run_23
+    21300048: swordboi_attack_run_24
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: swordboi_attack_run_0
+      rect:
+        serializedVersion: 2
+        x: 492
+        y: 2494
+        width: 260
+        height: 407
+      alignment: 9
+      pivot: {x: .465790957, y: .2960352}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_1
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 2492
+        width: 257
+        height: 422
+      alignment: 9
+      pivot: {x: .442319632, y: .296260029}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_2
+      rect:
+        serializedVersion: 2
+        x: 1365
+        y: 2495
+        width: 268
+        height: 423
+      alignment: 9
+      pivot: {x: .433624715, y: .303750187}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_3
+      rect:
+        serializedVersion: 2
+        x: 1803
+        y: 2494
+        width: 275
+        height: 423
+      alignment: 9
+      pivot: {x: .424533039, y: .303750187}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_4
+      rect:
+        serializedVersion: 2
+        x: 2239
+        y: 2495
+        width: 272
+        height: 423
+      alignment: 9
+      pivot: {x: .412800521, y: .296741098}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_5
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 1945
+        width: 279
+        height: 449
+      alignment: 9
+      pivot: {x: .414988756, y: .288702011}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_6
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 1943
+        width: 269
+        height: 467
+      alignment: 9
+      pivot: {x: .433871031, y: .271452487}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_7
+      rect:
+        serializedVersion: 2
+        x: 1367
+        y: 1945
+        width: 329
+        height: 481
+      alignment: 9
+      pivot: {x: .355816424, y: .265776753}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_8
+      rect:
+        serializedVersion: 2
+        x: 1803
+        y: 1945
+        width: 380
+        height: 462
+      alignment: 9
+      pivot: {x: .297147423, y: .268979013}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_9
+      rect:
+        serializedVersion: 2
+        x: 2238
+        y: 1937
+        width: 432
+        height: 448
+      alignment: 9
+      pivot: {x: .273523957, y: .301466256}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_10
+      rect:
+        serializedVersion: 2
+        x: 58
+        y: 1395
+        width: 465
+        height: 393
+      alignment: 9
+      pivot: {x: .244966269, y: .37929669}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_11
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 1392
+        width: 532
+        height: 367
+      alignment: 9
+      pivot: {x: .221356273, y: .411137462}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_12
+      rect:
+        serializedVersion: 2
+        x: 1206
+        y: 1371
+        width: 577
+        height: 334
+      alignment: 9
+      pivot: {x: .195207357, y: .508357823}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_13
+      rect:
+        serializedVersion: 2
+        x: 1833
+        y: 1363
+        width: 591
+        height: 307
+      alignment: 9
+      pivot: {x: .188257411, y: .572743177}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_14
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 900
+        width: 615
+        height: 344
+      alignment: 9
+      pivot: {x: .186805829, y: .573033512}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_15
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 844
+        width: 645
+        height: 381
+      alignment: 9
+      pivot: {x: .179733306, y: .675843418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_16
+      rect:
+        serializedVersion: 2
+        x: 1764
+        y: 915
+        width: 537
+        height: 298
+      alignment: 9
+      pivot: {x: .214090869, y: .565572619}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_17
+      rect:
+        serializedVersion: 2
+        x: 2359
+        y: 938
+        width: 492
+        height: 295
+      alignment: 9
+      pivot: {x: .233331442, y: .556776345}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_18
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 398
+        width: 269
+        height: 403
+      alignment: 9
+      pivot: {x: .416981071, y: .326829016}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_19
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 62
+        width: 260
+        height: 404
+      alignment: 9
+      pivot: {x: .446317226, y: .313438118}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_20
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 381
+        width: 271
+        height: 408
+      alignment: 9
+      pivot: {x: .417593747, y: .315267235}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_21
+      rect:
+        serializedVersion: 2
+        x: 1219
+        y: 404
+        width: 247
+        height: 414
+      alignment: 9
+      pivot: {x: .46609509, y: .3112019}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_22
+      rect:
+        serializedVersion: 2
+        x: 1655
+        y: 404
+        width: 259
+        height: 410
+      alignment: 9
+      pivot: {x: .45688796, y: .302551568}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_23
+      rect:
+        serializedVersion: 2
+        x: 2092
+        y: 406
+        width: 258
+        height: 402
+      alignment: 9
+      pivot: {x: .456720859, y: .312510014}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: swordboi_attack_run_24
+      rect:
+        serializedVersion: 2
+        x: 2525
+        y: 407
+        width: 262
+        height: 385
+      alignment: 9
+      pivot: {x: .446727037, y: .325983375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,17 +1,28 @@
-
 #include "Server.h"
 #include "ServerTCP.h"
 #include "ServerUDP.h"
-
 using namespace Networking;
+
+int rc;
 
 int main()
 {
-  int rc;
-  ServerTCP TestServer;
-  ServerUDP UDPServer;
+  pthread_t udpThread;
+  ServerTCP serverTCP;
+  ServerUDP serverUDP;
 
-  if((rc = TestServer.InitializeSocket(7000)) != 0)
+  if((rc = serverUDP.InitializeSocket(8000)) != 0)
+  {
+      std::cerr << "UDP Server initialization failed." << std::endl;
+      return 1;
+  }
+  std::cerr << "UDP Server initialized." << std::endl;
+  if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &serverUDP) < 0)
+  {
+      std::cerr << "thread creation failed" << std::endl;
+  }
+
+  if((rc = serverTCP.InitializeSocket(7000)) != 0)
   {
     std::cerr << "TCP Server initialization failed." << std::endl;
     return -1;
@@ -21,23 +32,21 @@ int main()
 
   while(1)
   {
-      /* assign it into the player object if we want to manipulate the thread */
+      //assign it into the player object if we want to manipulate the thread
       pthread_t readThread;
 
       int playerID;
       struct Player player;
-      if ((playerID = TestServer.Accept(&player)) == -1)
+      if ((playerID = serverTCP.Accept(&player)) == -1)
       {
         std::cerr << "rip.\n" << std::endl;
       }
 
       /* Creates the thread to handle new clients */
-      if(pthread_create(&readThread, NULL, &ServerTCP::CreateClientManager, (void *) &TestServer) < 0)
+      if(pthread_create(&readThread, NULL, &ServerTCP::CreateClientManager, (void *) &serverTCP) < 0)
       {
         std::cerr << "thread creation failed" << std::endl;
       }
   }
-
-
-  return 0;
+	return 0;
 }
