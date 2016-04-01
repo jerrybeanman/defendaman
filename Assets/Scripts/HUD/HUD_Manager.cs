@@ -219,7 +219,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Block all other keyboard inputs
 				GameData.KeyBlocked = true;
-				GameData.InputBLocked = true;
+				GameData.InputBlocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
 				chat.input.Select();
@@ -229,7 +229,7 @@ public class HUD_Manager : MonoBehaviour {
 			{
 				// Unblocck keyboard inputs 
 				GameData.KeyBlocked = false;
-				GameData.InputBLocked = false;
+				GameData.InputBlocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
 				 {
 					// Send the packet, with Team ID, user name, and the message input
@@ -350,12 +350,11 @@ public class HUD_Manager : MonoBehaviour {
 			// Assign team attribute so ally cannot damage the building 
 			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
 
-			// Let the building know that it is currently being placed
-			shop.Selected.Building.GetComponent<Building>().placing = true;
-
-
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+
+			// Let the building know that it is currently being placed
+			shop.Selected.Building.GetComponent<Building>().placing = true;
 
 			// Make sprite a bit transparent 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
@@ -491,6 +490,7 @@ public class HUD_Manager : MonoBehaviour {
 		// Check if it is a valid location to place the building 
 		if(!CheckValidLocation(building))
 			return false;
+
 
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);

@@ -3,50 +3,43 @@ using System.Collections;
 
 public class HealthBar : MonoBehaviour
 {
-    public int maxHealth = 100;
-    public int curHealth = 100;
-    BaseClass baseClass;
 
-    public float healthBarLength;
+	private SpriteRenderer 	spriteRenderer;
+	private BaseClass 		baseClass;
+	private float 			TotalHealth;
+	private GameObject 		holder;
 
+	public 	Sprite allyHealth;
+	public 	Sprite enemyHealth;
     // Use this for initialization
     void Start()
     {
-        healthBarLength = Screen.width / 6;
-        baseClass = GetComponent<BaseClass>();
-    }
+		holder = transform.GetChild(0).gameObject;
+		// this is bad, dont do it lol. ill fix it later
+		spriteRenderer 	= holder.transform.GetChild(0).GetComponent<SpriteRenderer>();
+		baseClass 		= transform.parent.gameObject.GetComponent<BaseClass>();
+		TotalHealth		= baseClass.ClassStat.MaxHp;
 
-    // Update is called once per frame
-    void Update()
+		// fix this later too
+		if(baseClass.team == GameData.MyPlayer.TeamID)
+		{
+			spriteRenderer.sprite = allyHealth;
+		}else
+		{
+			spriteRenderer.sprite = enemyHealth;
+		}
+	}
+
+
+	void LateUpdate()
+	{
+		transform.rotation = Quaternion.Euler(0, 0, 0);
+		transform.position = new Vector3(transform.parent.position.x, transform.parent.position.y + 1, -10);
+	}
+
+    public void UpdateHealth(float MaxHp, float CurrentHp)
     {
-        AddjustCurrentHealth(0);
-        maxHealth = (int)baseClass.ClassStat.MaxHp;
-        curHealth = (int)baseClass.ClassStat.CurrentHp;
-    }
-
-    void OnGUI()
-    {
-
-        Vector2 targetPos = transform.position;
-        targetPos = Camera.main.WorldToScreenPoint(transform.position);
-
-        GUI.Box(new Rect(targetPos.x -30, Screen.height - targetPos.y - 46, 60, 20), curHealth + "/" + maxHealth);
-
-    }
-
-    public void AddjustCurrentHealth(int adj)
-    {
-        curHealth += adj;
-
-        if (curHealth < 0)
-            curHealth = 0;
-
-        if (curHealth > maxHealth)
-            curHealth = maxHealth;
-
-        if (maxHealth < 1)
-            maxHealth = 1;
-
-        healthBarLength = (Screen.width / 6) * (curHealth / (float)maxHealth);
+		Debug.Log("Current:" + CurrentHp + " Max: " + MaxHp);
+		holder.transform.localScale = new Vector3(CurrentHp / MaxHp, holder.transform.localScale.y, holder.transform.localScale.z);
     }
 }
