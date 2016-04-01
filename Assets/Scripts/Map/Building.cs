@@ -22,7 +22,7 @@ public class Building:MonoBehaviour {
 	[HideInInspector]
 	public bool placing = false;
 	[HideInInspector]
-	public bool placeble = true;
+	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
 
@@ -33,6 +33,7 @@ public class Building:MonoBehaviour {
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());
 
+		placeble = true;
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
@@ -62,7 +63,7 @@ public class Building:MonoBehaviour {
 			return;
 		if(placing)
 		{
-			print ("dont place plz");
+			print ("dont place");
 			placeble = false;
 		}
 		if(health<=0)

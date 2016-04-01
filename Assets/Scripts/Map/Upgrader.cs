@@ -16,7 +16,6 @@ public class Upgrader : MonoBehaviour {
 		{
 			if(b.type == Building.BuildingType.Armory)
 			{
-				print ("Asdfasdf");
 				GameObject.Find("HUD").transform.GetChild(12).gameObject.SetActive (true);
 			}
 			if(b.type == Building.BuildingType.Alchemist)
