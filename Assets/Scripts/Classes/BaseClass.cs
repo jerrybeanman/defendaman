@@ -40,7 +40,7 @@ public abstract class BaseClass : MonoBehaviour {
 
 		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
 		
-        _classStat = new PlayerBaseStat(playerID);
+        _classStat = new PlayerBaseStat(playerID, healthBar);
     }
 
 	public PlayerBaseStat ClassStat
@@ -49,7 +49,7 @@ public abstract class BaseClass : MonoBehaviour {
         {
             if (this._classStat == null)
             {
-                this._classStat = new PlayerBaseStat(playerID);
+                this._classStat = new PlayerBaseStat(playerID, healthBar);
             }
             return this._classStat;
         }
@@ -61,7 +61,6 @@ public abstract class BaseClass : MonoBehaviour {
 			this._classStat.MoveSpeed 	= value.MoveSpeed;
 			this._classStat.AtkPower 	= value.AtkPower;
             this._classStat.Defense 	= value.Defense;
-			healthBar.UpdateHealth(this._classStat.MaxHp, this._classStat.CurrentHp);
 		}
 	}
 
@@ -157,11 +156,13 @@ public abstract class BaseClass : MonoBehaviour {
     [System.Serializable]
 	public class PlayerBaseStat
 	{
-        public PlayerBaseStat(int id)
+        public PlayerBaseStat(int id, HealthBar healthBar)
         {
             _playerID = id;
+			_healthBar = healthBar;
         }
 
+		private HealthBar _healthBar;
         private int _playerID;
         private float _currentHp;
 		public float CurrentHp {
@@ -170,7 +171,9 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-                _currentHp = (value > MaxHp) ? MaxHp : value;
+				
+				_currentHp = (value > MaxHp) ? MaxHp : value;
+				_healthBar.UpdateHealth(MaxHp, CurrentHp);
             }
         }
 		public float MaxHp;
