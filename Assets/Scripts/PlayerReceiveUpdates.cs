@@ -9,6 +9,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
     public int playerID;
     private Vector2 lastPosition;
     BaseClass baseClass;
+    Animator animator;
 
 	// Use this for initialization
 	void Start () {
@@ -20,19 +21,17 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         NetworkingManager.Subscribe(new_stats, DataType.StatUpdate, playerID);
         GameData.PlayerPosition.Add(playerID, transform.position);
         baseClass = GetComponent<BaseClass>();
-
+        animator = gameObject.GetComponent<Animator>();
     }
 
     void update_position(JSONClass player) {
-        Vector3 position = new Vector3(player["x"].AsFloat, player["y"].AsFloat, -10f);
         if (pos_changed(player["x"].AsFloat, player["y"].AsFloat))
-            gameObject.GetComponent<Animator>().SetBool("moving", true);
+            animator.SetBool("moving", true);
         else
-            gameObject.GetComponent<Animator>().SetBool("moving", false);
-        transform.position = position;
-        Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat);
-        transform.rotation = rotation;
-        GameData.PlayerPosition[playerID] = position;
+            animator.SetBool("moving", false);
+        transform.position.Set(player["x"].AsFloat, player["y"].AsFloat, -10f);
+        transform.rotation.Set(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat);
+        GameData.PlayerPosition[playerID] = transform.position;
         lastPosition = transform.position;
     }
 
