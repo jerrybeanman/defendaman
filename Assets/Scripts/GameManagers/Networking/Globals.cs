@@ -47,7 +47,7 @@ public class PlayerData
 
 public class GameData
 {
-	public static bool 			InputBLocked 	 = false;
+	public static bool 			InputBlocked 	 = false;
 	public static bool 			KeyBlocked 		 = false;
     public static Dictionary<int,PlayerData> LobbyData = new Dictionary<int, PlayerData>();
 	public static PlayerData 	MyPlayer		= new PlayerData();

@@ -97,6 +97,11 @@ public class LobbyNetwork : MonoBehaviour {
 
 	public static void ParseLobbyData(string raw)
 	{
+        if (raw.Length < 4)
+        {
+            Debug.Log("Empty Data. Mesage: " + raw);
+            return;
+        }
         int PlayerPacketID;
 		Debug.Log("[Debug]: " + raw);
         RecievedData = raw;

@@ -55,34 +55,12 @@ public class MagicCircle : Area
     {
 		transform.position = new Vector3(transform.position.x, transform.position.y, -2);
         startPos = transform.position;
-        Invoke("removeCircle", duration);
+        Destroy(gameObject, duration);
 		if(teamID == GameData.MyPlayer.TeamID)
 		{
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyCircle;
 		}else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyCircle;
-    }
-
-    /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: removeCircle
-    --
-    -- DATE: March 16, 2016
-    --
-    -- REVISIONS: None
-    --
-    -- DESIGNER: Hank Lo
-    --
-    -- PROGRAMMER: Hank Lo
-    --
-    -- INTERFACE: void removeCircle(void)
-    --
-    -- RETURNS: void
-    --
-    -- NOTES:
-    -- Function that's called when the object needs to be removed - this function removes the magic circle.
-    ---------------------------------------------------------------------------------------------------------------------*/
-    void removeCircle() {
-        Destroy(gameObject);
     }
 
     /*---------------------------------------------------------------------------------------------------------------------

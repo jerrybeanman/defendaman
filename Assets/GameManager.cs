@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
         GameData.MyPlayer = null;
+        instance.player = null;
     }
 
     public void StartGame(int seed)
@@ -195,9 +196,12 @@ public class GameManager : MonoBehaviour {
 				createdPlayer.transform.Translate(0,0,9);
 				// set the enemy, hpFrame & hpBar materials to stencil masked and layer to hidden
 				createdPlayer.GetComponent<SpriteRenderer> ().material = hiddenMat;
-				createdPlayer.layer = LayerMask.NameToLayer("HiddenThings");
+				SetLayerRecursively(createdPlayer, "HiddenThings");
+				SetMaterialRecursively(createdPlayer, hiddenMat);
+				
 			}
         }
+
 
         foreach (var king in kings)
         {
@@ -212,6 +216,27 @@ public class GameManager : MonoBehaviour {
 
 		NetworkingManager.StartGame();
     }
+
+	void SetMaterialRecursively(GameObject obj, Material mat)
+	{
+		SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+		if(sr != null)
+			sr.material = mat;
+
+		foreach( Transform child in obj.transform )
+		{
+			SetMaterialRecursively(child.gameObject, mat);
+		}
+	}
+	void SetLayerRecursively(GameObject obj, string name)
+	{
+		obj.layer = LayerMask.NameToLayer(name);
+		
+		foreach( Transform child in obj.transform )
+		{
+			SetLayerRecursively( child.gameObject, name);
+		}
+	}
 
     private void gameEnd(JSONClass packet)
     {
