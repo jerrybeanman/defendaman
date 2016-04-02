@@ -20,7 +20,10 @@ public class GunnerClass : RangedClass
 	bool fired;
 	
 	// added by jerry
-	private DynamicLight FOVCone;
+	public	float 		 slowPercentage = 5;	// Speed to slow by when in special attack mode. Stacks up.
+	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
+	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
+	private float		 BaseSpeed = 10;		// Stores the base move speed
 	private DynamicLight FOVConeHidden;
 	
 	new void Start()
@@ -30,7 +33,7 @@ public class GunnerClass : RangedClass
 		
 		_classStat.MaxHp = 150;
 		_classStat.CurrentHp = _classStat.MaxHp;
-		_classStat.MoveSpeed = 10;
+		_classStat.MoveSpeed = BaseSpeed;
 		_classStat.AtkPower = 20;
 		_classStat.Defense = 5;
 		inSpecial = false;
@@ -54,8 +57,11 @@ public class GunnerClass : RangedClass
 			Inventory.instance.AddItem(5, 5);
 			Inventory.instance.AddItem(6);
 			Inventory.instance.AddItem(7);
+
+			// Initialize Vision Cone and movement components
 			FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
 			FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
+			movement 		= gameObject.GetComponent<Movement>();
 		}
 		
 	}
@@ -104,11 +110,13 @@ public class GunnerClass : RangedClass
 					FOVCone.RangeAngle -= 2.5f;
 					FOVConeHidden.RangeAngle -= 2.5f;
 					
-					
 					mainCamera.orthographicSize += .1f;
 					visionCamera.orthographicSize += .1f;
 					hiddenCamera.orthographicSize += .1f;
+
+					_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
 				}
+
 				MapManager.cameraDistance = -mainCamera.orthographicSize;
 			}
 			
@@ -124,18 +132,32 @@ public class GunnerClass : RangedClass
 			}
 		}
 	}
-	
+
+	/*----------------------------------------------------------------------------
+    --	Set speed back to normal, and zooms camera back in
+    --
+    --	Interface:  IEnumerator ZoomIn()
+    --
+    --	programmer: Jerry Jia, Carson Roscoe, Allan Tsang
+    --	@return: number of seconds to wait before executing next instruction
+	------------------------------------------------------------------------------*/
 	IEnumerator ZoomIn()
 	{
+		// Set speed back to base speed
+		_classStat.MoveSpeed = BaseSpeed;
+		// Wait a bit so we can see that 360 quickscope
 		yield return new WaitForSeconds(1);
+
+		// TODO:: Fix all these magic numbers after...
 		while(mainCamera.orthographicSize > zoomIn)
 		{
-			//lower it
+			// Zooms the vision cone back in and adjust angle back to original
 			FOVCone.LightRadius -= 2;
 			FOVConeHidden.LightRadius -= 2;
 			FOVCone.RangeAngle += 5;
 			FOVConeHidden.RangeAngle += 5;
-			
+
+			// Zooms camera back in
 			mainCamera.orthographicSize -= .2f;
 			visionCamera.orthographicSize -= .2f;
 			hiddenCamera.orthographicSize -= .2f;
@@ -143,6 +165,7 @@ public class GunnerClass : RangedClass
 			yield return null;
 		}
 	}
+
 	void fire()
 	{
 		var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);

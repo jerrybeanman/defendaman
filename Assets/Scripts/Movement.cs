@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
     public float speed;
     movestyle movestyles;
     float midX, midY;
-    BaseClass.PlayerBaseStat ClassStat;
+    public BaseClass.PlayerBaseStat ClassStat;
 	Animator anim;
     void Start()
     {
