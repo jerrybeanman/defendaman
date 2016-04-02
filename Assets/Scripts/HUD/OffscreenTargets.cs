@@ -7,10 +7,11 @@ public class OffscreenTargets : MonoBehaviour {
 
     public Canvas canvas;
     public Image OffScreenSprite;
-    public bool displayOffscreen;
-    Vector3 screenCenter = new Vector3(Screen.width, Screen.height, 0) * .5f;
+    [Range(0.1f, 1.0f)]
+    public float offset = 0.7f;
 
     private Image offSprite;
+    private Vector3 screenCenter = new Vector3(Screen.width, Screen.height, 0) * .5f;
     private Vector3 offScreen = new Vector3(-100, -100, 0);
 
     private Rect centerRect;
@@ -57,46 +58,47 @@ public class OffscreenTargets : MonoBehaviour {
             offSprite.rectTransform.position = offScreen;//get rid of the arrow indicator
         }
         else {
-            if (displayOffscreen)
-            {
-                PlaceOffscreen(screenpos);
-            }
-
+            PlaceOffscreen(screenpos);
         }
     }
 
     void PlaceOffscreen(Vector3 screenpos)
     {
-        float x = screenpos.x;
-        float y = screenpos.y;
-        float offset = 100;
-        float angle = 0;
+        Vector3 indicationPos = screenpos;
+        screenpos -= screenCenter;
 
-        if (screenpos.x > Screen.width) //right
-        {
-            angle = 90;
-            x = Screen.width - offset;
-        }
-        if (screenpos.x < 0)
-        {
-            angle = -90;
-            x = offset;
-        }
+        float angle = Mathf.Atan2(screenpos.y, screenpos.x);
+        angle = angle * Mathf.Rad2Deg;
 
-        if (screenpos.y > Screen.height)
-        {
-            angle = 180;
-            y = Screen.height - offset;
-        }
+        float slope = screenpos.y / screenpos.x;
+
+        Vector3 screenBounds = screenCenter * offset; // offset from edge value
+
         if (screenpos.y < 0)
         {
-            y = offset;
+            indicationPos.x = -screenBounds.y / slope;
+            indicationPos.y = -screenBounds.y;
+        } else
+        {
+            indicationPos.x = screenBounds.y / slope;
+            indicationPos.y = screenBounds.y;
         }
 
-        Vector3 offscreenPos = new Vector3(x, y, 0);
-        offSprite.rectTransform.position = offscreenPos;
+        if (indicationPos.x < -screenBounds.x)
+        {
+            indicationPos.x = -screenBounds.x;
+            indicationPos.y = slope * -screenBounds.x;
+        } else if (indicationPos.x > screenBounds.x)
+        {
+            indicationPos.x = screenBounds.x;
+            indicationPos.y = slope * screenBounds.x;
+        }
 
-        offSprite.rectTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        indicationPos += screenCenter;
+        screenpos += screenCenter;
+
+        offSprite.rectTransform.position = indicationPos;
+        offSprite.rectTransform.rotation = Quaternion.Euler(0, 0, angle - 90);
     }
 
 }
