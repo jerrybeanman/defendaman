@@ -18,6 +18,8 @@ public class MapManager : MonoBehaviour {
     private const string TRANSACTION = "transaction";
     private const string INCR = "incr";
     private const string DECR = "decr";
+    /* How many walls will line the outside to not give an image of an empty world around the edges */
+    const int OUTERWALL_THICKNESS = 24; //(Camera size + gunnerclass.cs max zoom out)/2
     /* A set of constant map update event types. */
     public enum EventType 
     {
@@ -115,12 +117,14 @@ public class MapManager : MonoBehaviour {
 	        frustumHeight = 2.0f * cameraDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 	        frustumWidth = frustumHeight * mainCamera.aspect;
 
-	        if (_pooledObjects != null) {
-	            for (int i = 0; i < _pooledObjects.Length; i++) {
-	                if ((_pooledObjects[i].GetComponent<Transform>().position.x > cameraPosition.x + frustumWidth)
-	                    && (_pooledObjects[i].GetComponent<Transform>().position.x < cameraPosition.x - frustumWidth)
-	                    && (_pooledObjects[i].GetComponent<Transform>().position.y > cameraPosition.y + frustumHeight)
-	                    && (_pooledObjects[i].GetComponent<Transform>().position.y < cameraPosition.y - frustumHeight)) {
+            if (_pooledObjects != null) {
+	            for (int i = 0; i < _pooledObjects.Length; i++)
+                {
+                    var pooledTransform = _pooledObjects[i].GetComponent<Transform>();
+                    if ((pooledTransform.position.x > cameraPosition.x + frustumWidth)
+	                    && (pooledTransform.position.x < cameraPosition.x - frustumWidth)
+	                    && (pooledTransform.position.y > cameraPosition.y + frustumHeight)
+	                    && (pooledTransform.position.y < cameraPosition.y - frustumHeight)) {
 	                    _pooledObjects[i].SetActive(true);
 	                } else {
 	                    _pooledObjects[i].SetActive(false);
@@ -213,15 +217,18 @@ public class MapManager : MonoBehaviour {
 		print (message.ToString ());
         _mapWidth = message["mapWidth"].AsInt;
         _mapHeight = message["mapHeight"].AsInt;
-        _map = new int[_mapWidth, _mapHeight];
+        _map = new int[_mapWidth  + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
         _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message["mapIDs"].AsArray;
 
-        for (int x = 0; x < _mapWidth; x++) {
-            JSONArray mapX = mapArrays[x].AsArray;
-            for (int y = 0; y < _mapHeight; y++)
-                _map[x, y] = mapX[y].AsInt;
+        for (int x = 0; x < _mapWidth + (OUTERWALL_THICKNESS * 2); x++) {
+            JSONArray mapX = mapArrays[x - OUTERWALL_THICKNESS].AsArray;
+            for (int y = 0; y < _mapHeight + (OUTERWALL_THICKNESS * 2); y++)
+                if (x >= OUTERWALL_THICKNESS && x < _mapWidth + OUTERWALL_THICKNESS && y >= OUTERWALL_THICKNESS && y < _mapHeight + OUTERWALL_THICKNESS)
+                    _map[x, y] = mapX[y - OUTERWALL_THICKNESS].AsInt;
+                else
+                    _map[x, y] = 0; //outer wall edges
         }
 
         JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
@@ -275,8 +282,8 @@ public class MapManager : MonoBehaviour {
 			print ("[DEBUG-map] _map value was null");
             return;
 		}
-        for (int x = 0; x < _mapWidth; x++)
-            for (int y = 0; y < _mapHeight; y++) {
+        for (int x = 0; x < _mapWidth + (OUTERWALL_THICKNESS * 2); x++)
+            for (int y = 0; y < _mapHeight + (OUTERWALL_THICKNESS * 2); y++) {
                 //If the 2D array is land
                 if (_map[x, y] >= 0 && _map[x, y] < 100) {
                     _obstacle.GetComponent<SpriteRenderer>().sprite = _mapSolids[_map[x, y] % _mapSolids.Count];
@@ -284,15 +291,18 @@ public class MapManager : MonoBehaviour {
                 } else if (_map[x, y] >= 100 && _map[x, y] < 200) {
                     _tile.GetComponent<SpriteRenderer>().sprite = _mapWalkable[(_map[x, y] - 100) % _mapWalkable.Count];
                     Instantiate(_tile, new Vector3(x, y), Quaternion.identity);
-                }
+                }	
+            }
 
-				if (_mapScenery[x, y] >= 200 && _mapScenery[x, y] <= 201) {
+        for (int x = OUTERWALL_THICKNESS; x < _mapWidth + OUTERWALL_THICKNESS; x++)
+            for (int y = OUTERWALL_THICKNESS; y < _mapHeight + OUTERWALL_THICKNESS; y++) {
+                if (_mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS] >= 200 && _mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS] <= 201) {
                     GameData.TeamSpawnPoints.Add(new Pair<int, int>(x, y));
                 }
-                if (_mapScenery[x, y] != -1) {
-                    _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x, y]) % _mapSceneryObjects.Count];
+                if (_mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS] != -1) {
+                    _scenery.GetComponent<SpriteRenderer>().sprite = _mapSceneryObjects[(_mapScenery[x - OUTERWALL_THICKNESS, y - OUTERWALL_THICKNESS]) % _mapSceneryObjects.Count];
                     Instantiate(_scenery, new Vector3(x, y, -1), Quaternion.identity);
                 }
             }
-		}
+        }
 	}

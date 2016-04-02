@@ -10,7 +10,7 @@ public class GunnerClass : RangedClass
     int[] distance = new int[2] { 12, 12 };
     int[] speed = new int[2] { 200, 300 };
     Rigidbody2D bullet;
-    Rigidbody2D bullet2;
+    Rigidbody2D laser;
     Camera mainCamera;
     Camera visionCamera;
     Camera hiddenCamera;
@@ -19,26 +19,21 @@ public class GunnerClass : RangedClass
     bool inSpecial;
     bool fired;
 
-    GunnerClass() {
-        this._className = "Gunner";
-        this._classDescription = "Boom - Headshot";
-        this._classStat.MaxHp = 150;
-        this._classStat.CurrentHp = this._classStat.MaxHp;
+    new void Start()
+    {
+        cooldowns = new float[2] { 0.2f, 5f };
+        base.Start();
 
-        //placeholder numbers
-        this._classStat.MoveSpeed = 10;
-        this._classStat.AtkPower = 20;
-        this._classStat.Defense = 5;
+        _classStat.MaxHp = 150;
+        _classStat.CurrentHp = _classStat.MaxHp;
+        _classStat.MoveSpeed = 10;
+        _classStat.AtkPower = 20;
+        _classStat.Defense = 5;
         inSpecial = false;
         fired = false;
-
-        cooldowns = new float[2] { 0.2f, 5f };
-    }
-
-    new void Start() {
-        base.Start();
+        
         bullet = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
-        bullet2 = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
+        laser = (Rigidbody2D)Resources.Load("Prefabs/Laser", typeof(Rigidbody2D));
         
         var controller = Resources.Load("Controllers/gunboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
@@ -48,8 +43,19 @@ public class GunnerClass : RangedClass
         hiddenCamera = GameObject.Find("Camera Enemies").GetComponent<Camera>();
         NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
 
+        //Starting item kit
+        if (playerID == GameData.MyPlayer.PlayerID)
+        {
+            Inventory.instance.AddItem(1);
+            Inventory.instance.AddItem(5, 5);
+            Inventory.instance.AddItem(6);
+            Inventory.instance.AddItem(7);
+        }
+
+        //add gunboi attack sound
         au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
+
     }
 
     //attacks return time it takes to execute
@@ -59,18 +65,13 @@ public class GunnerClass : RangedClass
         if (inSpecial)
             return 0f;
         base.basicAttack(dir);
-        /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
-        var innacY = Random.value * inaccuracy - (inaccuracy / 2);
-        var newMouse = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x + innacX, Input.mousePosition.y + innacY, 0));
-        var newdir = (Vector2)((newMouse - transform.position).normalized);
-        */
-        var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);//was newdir
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower / 5;
+        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
         attack.GetComponent<BasicRanged>().maxDistance = distance[0];
 
         return cooldowns[0];
@@ -94,14 +95,6 @@ public class GunnerClass : RangedClass
         {
             if (inSpecial && Input.GetMouseButton(1))
             {
-                //var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
-
-                /*Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet2, startPosition, transform.rotation);
-                attack.AddForce(dir * speed[1]);
-                attack.GetComponent<BasicRanged>().playerID = playerID;
-                attack.GetComponent<BasicRanged>().teamID = team;
-                attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * 3;
-                attack.GetComponent<BasicRanged>().maxDistance = distance[1];*/
                 if (mainCamera.orthographicSize < zoomOut)
                 {
                     mainCamera.orthographicSize += .1f;
@@ -132,23 +125,17 @@ public class GunnerClass : RangedClass
 
     void fire()
     {
-        //Replace with lazer beammmm
-        /*var innacX = Random.value * inaccuracy - (inaccuracy / 2);
-        var innacY = Random.value * inaccuracy - (inaccuracy / 2);
-        var newMouse = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x + innacX, Input.mousePosition.y + innacY, 0));
-        var newdir = (Vector2)((newMouse - transform.position).normalized);
-        */
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
-        //dir's were newdir
-        var startPosition = new Vector3(transform.position.x + (dir.x * 2.5f), transform.position.y + (dir.y * 2.5f), -5);
-
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
-        attack.GetComponent<BasicRanged>().playerID = playerID;
-        attack.GetComponent<BasicRanged>().teamID = team;
+        var laserAttack = attack.GetComponent<Laser>();
+        laserAttack.playerID = playerID;
+        laserAttack.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower * zoomRatio;
-        attack.GetComponent<BasicRanged>().maxDistance = (int)(distance[1] * zoomRatio);
+        laserAttack.damage = ClassStat.AtkPower * zoomRatio;
+        laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
+        laserAttack.pierce = 10;
 
         var member = new List<Pair<string, string>>();
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));

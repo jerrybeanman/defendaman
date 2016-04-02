@@ -2,6 +2,34 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    PauseMenu.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      void SetMovementOption(int i)
+--      void turnoffMenu()
+--      void MainMenu()
+--      void SettingOptionMenu()
+--      void SetMovement(int i)
+--
+--
+--  DATE:           Feburary , 2016
+--
+--  REVISIONS:      March 30, 2016
+--                      -- connection using C# instead of unitiy function 
+--
+--  DESIGNERS:      Eunwon Moon
+--
+--  PROGRAMMER:     Eunwon Moon
+--
+--  NOTES:
+--  This class is displaying menu while playing game.
+--  possible to change movement control type or sound volume.
+--
+---------------------------------------------------------------------------------------*/
+
 public class PauseMenu : MonoBehaviour {
  
     public GameObject MainMenuGrp;

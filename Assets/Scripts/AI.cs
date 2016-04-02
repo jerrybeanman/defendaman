@@ -13,8 +13,8 @@ public class AI : MonoBehaviour {
     public float xCoord, yCoord;
     private Rigidbody2D rb2d;
     private int speed = 35;
-    public double reload = 9999999.0f;
-    public double resetReload = 999;
+    public double reload ;
+	public double resetReload;
     public int damage = 10;
     public Rigidbody2D bullet;
     public double swap;
@@ -22,6 +22,8 @@ public class AI : MonoBehaviour {
     public int aiID = 0;
     int teamSwap;
     double reloadSwap;
+	public Building parent;
+
     // Use this for initialization
     void Start()
     {
@@ -30,9 +32,9 @@ public class AI : MonoBehaviour {
 		NetworkingManager.Subscribe(UpdateAI, DataType.AI, aiID);
         NetworkingManager.Subscribe(CreateProjectile, DataType.AIProjectile, aiID);
         rb2d = GetComponent<Rigidbody2D>();
-        reload = 999999999f;
-        resetReload = 999;
+        
         gameObject.layer = 2;
+		parent = gameObject.GetComponent<Building>();
         Debug.Log("Constructed");
     }
 
@@ -84,14 +86,14 @@ public class AI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (gameObject.GetComponent<Building>().placing)
+        if (parent.placing && !parent.constructed)
             return;
-        if (reload > 1000)
+        /*if (reload > 1000)
         {
             reload = reloadSwap;    
             resetReload = reloadSwap;            
         }
-        
+        */
         // Debug.Log("Reload: " + reload);
         if (GameData.GameState == GameState.Won || GameData.GameState == GameState.Lost)
             return;
@@ -244,7 +246,7 @@ public class AI : MonoBehaviour {
     private void createBullet(Vector2 attackDir)
     {
         reload = resetReload;
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
+		Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
         attack.AddForce(attackDir * speed * 2.5f);
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = damage;

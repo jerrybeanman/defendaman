@@ -43,11 +43,12 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void PlayerTookDamage(int playerID, float damage, BaseClass.PlayerBaseStat ClassStat)
+    public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat)
     {
+        var damage = (ClassStat.CurrentHp - newHP);
         if (GameData.MyPlayer.PlayerID == playerID)
         {
-            HUD_Manager.instance.UpdatePlayerHealth(-(damage / ClassStat.MaxHp));
+            HUD_Manager.instance.UpdatePlayerHealth(-(damage/ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0) {
                 PlayerDied();
             } else {
@@ -66,7 +67,6 @@ public class GameManager : MonoBehaviour {
             HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0)
                 GameLost();
-
         }
 
         if (playerID == GameData.EnemyKingID)
@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
         GameData.MyPlayer = null;
+        instance.player = null;
     }
 
     public void StartGame(int seed)

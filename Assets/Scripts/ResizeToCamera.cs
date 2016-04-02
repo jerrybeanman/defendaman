@@ -3,8 +3,10 @@ using System.Collections;
 
 public class ResizeToCamera : MonoBehaviour {
 
+    //Transform cameraTransform;
+
 	void Start () {
-		SpriteRenderer sr=GetComponent<SpriteRenderer>();
+		/*SpriteRenderer sr=GetComponent<SpriteRenderer>();
 		if(sr==null) return;
 		
 		transform.localScale=new Vector3(1,1,1);
@@ -23,6 +25,7 @@ public class ResizeToCamera : MonoBehaviour {
 		Vector3 yHeight = transform.localScale;
 		yHeight.y=worldScreenHeight / height;
 		transform.localScale=yHeight * 6;
-		//transform.localScale.y = worldScreenHeight / height;
+		//transform.localScale.y = worldScreenHeight / height;*/
+        
 	}
 }

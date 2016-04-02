@@ -11,8 +11,8 @@ public class Movement : MonoBehaviour
     public float speed;
     movestyle movestyles;
     float midX, midY;
-
-
+    BaseClass.PlayerBaseStat ClassStat;
+	Animator anim;
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -23,7 +23,8 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-        speed = gameObject.GetComponent<BaseClass>().ClassStat.MoveSpeed;
+		anim = gameObject.GetComponent<Animator>();
+        ClassStat = GetComponent<BaseClass>().ClassStat;
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
     //Checks if the end teleport point is valid, or if it is in a wall
@@ -76,8 +77,9 @@ public class Movement : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Equals))
-            movestyles = movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute;
+        speed = ClassStat.MoveSpeed;
+		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBlocked)
+            movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
         if (movestyles == movestyle.absolute)
         {
@@ -94,11 +96,11 @@ public class Movement : MonoBehaviour
         // animation trigger test
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
-            gameObject.GetComponent<Animator>().SetBool("moving", true);
+            anim.SetBool("moving", true);
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
         {
-            gameObject.GetComponent<Animator>().SetBool("moving", false);
+            anim.SetBool("moving", false);
         }
     }
     void sendToServer(double x, double y)
@@ -202,23 +204,23 @@ public class Movement : MonoBehaviour
         bool moveDown = false;
         bool vMoved = false;
         Vector2 ret = new Vector2();
-        if (Input.GetKey(up))
+        if (Input.GetKey(up) && !GameData.InputBlocked)
         {
             angleFacing += 0;
             vMoved = true;
         }
-        else if (Input.GetKey(down))
+        else if (Input.GetKey(down) && !GameData.InputBlocked)
         {
             vMoved = true;
             moveDown = true;
             angleFacing += 180;
         }
-        if (Input.GetKey(left))
+		if (Input.GetKey(left) && !GameData.InputBlocked)
         {
             angleHorz += 90;
             hMoved = true;
         }
-        if (Input.GetKey(right))
+		if (Input.GetKey(right) && !GameData.InputBlocked)
         {
             angleHorz += -90;
             hMoved = true;
@@ -263,11 +265,6 @@ public class Movement : MonoBehaviour
         Vector2 position = new Vector2((float)xMod, (float)yMod);
 
         return position;
-    }
-
-    void OnCollisonExit2D(Collision2D collision)
-    {
-
     }
 
     public void setAbs()

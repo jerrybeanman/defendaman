@@ -23,6 +23,8 @@ public class Building:MonoBehaviour {
 	public bool placing = false;
 	[HideInInspector]
 	public bool placeble = true;
+	[HideInInspector]
+	public bool constructed = false;
 
 	// Use this for initialization
 	void Start () 
@@ -35,19 +37,7 @@ public class Building:MonoBehaviour {
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
-		if (type == Building.BuildingType.Turret) 
-		{
-			// Calling this method:
-			// instantTurret(float reload, int speed, int teamToIgnore, int range)
-			// Suggested values: 1.5 - 3 reload, 35-40 speed, 15 range
-			// our team # = GameData.myPlayer.TeamID
-			//gameObject.GetComponent<AI>().instantTurret(1.5f, 35, 111, 15);
-            //gameObject.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 10);
-            gameObject.layer = LayerMask.NameToLayer("Default");
-		}
 
-
-		notifycreation();
     }
 
 	IEnumerator Construct()
@@ -63,12 +53,13 @@ public class Building:MonoBehaviour {
 			transform.localScale = Vector3.Slerp(startingScale, targetScale, (elapsedTime / ConstructionTime));
 			yield return new WaitForEndOfFrame ();
 		}
+		constructed = true;
 	}
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-        if (other.gameObject.GetComponent<Projectile>() && other.gameObject.GetComponent<Projectile>().teamID == GetComponent<AI>().team)
-            return;
+		if(other.gameObject.tag == "Bullet")
+			return;
 		if(placing)
 		{
 			print ("dont place plz");
