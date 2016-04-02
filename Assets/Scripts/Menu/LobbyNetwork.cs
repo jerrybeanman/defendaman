@@ -174,7 +174,7 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("hud_test");
+				Application.LoadLevel("tron_theme");
 				break;
 			}	
 			

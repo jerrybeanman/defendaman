@@ -85,7 +85,8 @@ public class Building:MonoBehaviour {
 		{
 			if (attack.teamID == team)
 				return;
-			health-=10;
+			float damage = other.GetComponent<Trigger>().damage;
+			health -= damage;
 		}
 		notifydeath();
 	}
