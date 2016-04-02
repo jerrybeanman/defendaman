@@ -9,13 +9,20 @@ public class InputManager : MonoBehaviour {
 		// Only detects game inputs when we are not in chat mode
 		if(!GameData.InputBlocked)
 		{
-
 			VirtualStartGame();
 			ConsumeItem();
-			HUDToogles();
+			HUDToggles();
 		}
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Check for start game on windows
+    --
+    --	Interface:  void VirtualStartGame()
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	private void VirtualStartGame()
 	{
 		// Simulate non-networked start of game as Gunner class on client 
@@ -43,6 +50,15 @@ public class InputManager : MonoBehaviour {
 		}
 	}
 
+
+	/*----------------------------------------------------------------------------
+    --	Check items hotkey
+    --
+    --	Interface:  void ConsumeItem()
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	private void ConsumeItem()
 	{
 		if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -82,7 +98,15 @@ public class InputManager : MonoBehaviour {
 		}
 	}
 
-	private void HUDToogles()
+	/*----------------------------------------------------------------------------
+    --	Check for HUD event toogles
+    --
+    --	Interface:  void HUDToogles()
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	private void HUDToggles()
 	{
 		
 		if(Input.GetKeyDown(KeyCode.M))

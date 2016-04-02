@@ -9,8 +9,9 @@ using System.Collections.Generic;
 
 public enum UICode
 {
-	Chat 		= 1,
-	Building 	= 2
+	Chat 				= 1,
+	BuildingCreation 	= 2,
+	BuildingDestruction = 3
 }
 
 public class HUD_Manager : MonoBehaviour {
@@ -165,7 +166,7 @@ public class HUD_Manager : MonoBehaviour {
 		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, (int)UICode.Chat);
 		// Subscribe building creation to the UDP network
-		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.Building);
+		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.BuildingCreation);
 	}
 
 	// Called once per frame
@@ -492,6 +493,7 @@ public class HUD_Manager : MonoBehaviour {
            b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
             Debug.Log("Instant turret 1");
         }
+		b1.GetComponent<Building>().notifycreation();
 	}
 
 	/*----------------------------------------------------------------------------
@@ -542,7 +544,7 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.eulerAngles.z.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
-			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
+			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingCreation, packetData, Protocol.NA);
 			Send(packet);
 		}else
 		{
