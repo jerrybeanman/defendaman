@@ -8,16 +8,20 @@ public enum SpecialCase { GunnerSpecial = 1 }
 public class GunnerClass : RangedClass
 {
     int[] distance = new int[2] { 12, 12 };
-    int[] speed = new int[2] { 200, 300 };
+    int[] speed = new int[2] { 300, 300 };
     Rigidbody2D bullet;
     Rigidbody2D laser;
     Camera mainCamera;
     Camera visionCamera;
     Camera hiddenCamera;
-    float zoomOut = 14;
+    float zoomOut = 11;
     float zoomIn;
     bool inSpecial;
     bool fired;
+
+	// added by jerry
+	private DynamicLight FOVCone;
+	private DynamicLight FOVConeHidden;
 
     new void Start()
     {
@@ -51,6 +55,10 @@ public class GunnerClass : RangedClass
             Inventory.instance.AddItem(6);
             Inventory.instance.AddItem(7);
         }
+
+		FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
+		FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
+
     }
 
     //attacks return time it takes to execute
@@ -92,7 +100,12 @@ public class GunnerClass : RangedClass
             {
                 if (mainCamera.orthographicSize < zoomOut)
                 {
-					//raise it
+					FOVCone.LightRadius++;
+					FOVConeHidden.LightRadius++;
+					FOVCone.RangeAngle -= 2.5f;
+					FOVConeHidden.RangeAngle -= 2.5f;
+					
+
                     mainCamera.orthographicSize += .1f;
                     visionCamera.orthographicSize += .1f;
                     hiddenCamera.orthographicSize += .1f;
@@ -112,6 +125,11 @@ public class GunnerClass : RangedClass
             if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
             {
 				//lower it
+				FOVCone.LightRadius -= 2;
+				FOVConeHidden.LightRadius -= 2;
+				FOVCone.RangeAngle += 2.5f;
+				FOVConeHidden.RangeAngle += 2.5f;
+
                 mainCamera.orthographicSize -= .2f;
                 visionCamera.orthographicSize -= .2f;
                 hiddenCamera.orthographicSize -= .2f;
