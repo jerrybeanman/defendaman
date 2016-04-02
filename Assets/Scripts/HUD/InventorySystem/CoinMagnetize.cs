@@ -19,7 +19,7 @@ public class CoinMagnetize : MonoBehaviour {
 	Vector3 currentPosition;
 	float dist = 15f;
 	float velocity = 10f;
-	float acceleration = 1.1f;
+	float acceleration = 1.2f;
 
 	// Use this for initialization
 	void Start () {
