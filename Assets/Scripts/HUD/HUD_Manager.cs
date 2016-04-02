@@ -350,12 +350,11 @@ public class HUD_Manager : MonoBehaviour {
 			// Assign team attribute so ally cannot damage the building 
 			shop.Selected.Building.GetComponent<Building>().team = GameManager.instance.player.GetComponent<BaseClass>().team;
 
-			// Let the building know that it is currently being placed
-			shop.Selected.Building.GetComponent<Building>().placing = true;
-
-
 			// Instantitate the selected building at where the mouse is 
 			shop.Selected.Building = (GameObject)Instantiate(shop.Selected.Building, cursorPosition, Quaternion.identity);
+
+			// Let the building know that it is currently being placed
+			shop.Selected.Building.GetComponent<Building>().placing = true;
 
 			// Make sprite a bit transparent 
 			shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f, 0.3f);
@@ -434,6 +433,17 @@ public class HUD_Manager : MonoBehaviour {
 	}
 
 	float curRot = 0;
+	/*----------------------------------------------------------------------------
+    --	Coroutine used to smootly animate an object's rotation
+    --
+	--	Interface:  IEnumerator Rotate(object[] parms)
+	--					-parms[0]: The angle in degrees to rotate by
+	--					-parms[1]: The game object to rotate
+	--					-parms[2]: Time it takes for the rotation to finish
+    --
+    --	programmer: Jerry Jia
+    --	@return: IEnumerator type for seconds to wait till next instruction
+	------------------------------------------------------------------------------*/
 	IEnumerator Rotate(object[] parms)
 	{
 		float elapsedTime = 0.0f;
@@ -451,6 +461,16 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Subscriber function to NetworkingManager, recieves events when Building
+    --  is created 
+    --
+	--	Interface:  void UpdateBuildingCallBack(JSONClass data)
+	--					-JSONClass data: JSON object recieved back
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void UpdateBuildingCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
@@ -473,6 +493,7 @@ public class HUD_Manager : MonoBehaviour {
             Debug.Log("Instant turret 1");
         }
 	}
+
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
@@ -491,6 +512,7 @@ public class HUD_Manager : MonoBehaviour {
 		// Check if it is a valid location to place the building 
 		if(!CheckValidLocation(building))
 			return false;
+
 
 		// Set the color transparency 
 		shop.Selected.Building.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
@@ -585,8 +607,10 @@ public class HUD_Manager : MonoBehaviour {
 		float distance_from_player = Vector3.Distance(player, building.transform.position);
 		if(distance_from_player > 8)
 			return false;
+		if(building.GetComponent<Building>().collidercounter==0)
+			return building.GetComponent<Building>().placeble;
+		return false;
 
-		return 	building.GetComponent<Building>().placeble;
 	}
 
 	/*----------------------------------------------------------------------------

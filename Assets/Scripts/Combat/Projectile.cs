@@ -63,7 +63,12 @@ public abstract class Projectile : Trigger
         }
         //Otherwise, its a wall or some solid
 
-        if (--pierce < 0) {
+		if(other.tag == "HealthBar")
+		{
+			return;
+		}
+        if (--pierce < 0) 
+		{
             Destroy(gameObject);
         }
     }

@@ -4,14 +4,14 @@ using System;
 
 public class Building:MonoBehaviour {
 	
-	public enum BuildingType{Empty,Armory,Wall,Watchtower,Turret};
+	public enum BuildingType{Empty,Armory,Wall,Watchtower,Turret, Alchemist};
 
 	public BuildingType type;
 
 	public float health = 100;
 
 	public int team;
-
+	public int collidercounter=0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
 
@@ -20,19 +20,21 @@ public class Building:MonoBehaviour {
 	SpriteRenderer spriteRenderer;
 
 	[HideInInspector]
-	public bool placing = false;
+	public bool placing = true;
 	[HideInInspector]
-	public bool placeble = true;
+	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
 
 	// Use this for initialization
 	void Start () 
 	{
+		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());
 
+		placeble = false;
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
@@ -56,14 +58,25 @@ public class Building:MonoBehaviour {
 		constructed = true;
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Called when an collidable object enters the bounding box
+    --
+    --	Interface: 	void OnTriggerEnter2D(Collider2D other)
+    --					-Collider2D other: Other collider that entered 
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) 
 	{
+
 		if(other.gameObject.tag == "Bullet")
 			return;
 		if(placing)
 		{
-			print ("dont place plz");
+			collidercounter++;
 			placeble = false;
+
 		}
 		if(health<=0)
 			Destroy(gameObject);
@@ -77,10 +90,20 @@ public class Building:MonoBehaviour {
 		notifydeath();
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Called when an collidable object leaves the bounding box of it's BoxCollider2D
+    --
+    --	Interface: 	void OnTriggerExit2D(Collider2D other)
+    --					-Collider2D other: Other collider that left 
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
 		if(placing)
 		{
+			collidercounter--;
 			placeble = true;
 			print ("place plzzz");
 		}

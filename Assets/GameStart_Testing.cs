@@ -18,10 +18,6 @@ public class GameStart_Testing : MonoBehaviour {
 			Destroy(gameObject);   		
         networkingManager = GetComponent<NetworkingManager>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-    }
 
     public void StartOfGame()
     {
@@ -31,19 +27,21 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.LobbyData.Clear();
 
         int i = 1;
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = i++, TeamID = 2 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Wizard, PlayerID = i++, TeamID = 2 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        /*
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
+        */
 
         GameData.MyPlayer = GameData.LobbyData[myID];
         if (GameData.MyPlayer == null)
