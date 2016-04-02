@@ -86,26 +86,7 @@ class Resource : MonoBehaviour {
 		} 
 	}
 
-    /*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: 	OnTriggerEnter2D
-    -- DATE: 		March 30, 2016
-    -- REVISIONS: 	March 31 - Use network updating logic
-    -- DESIGNER:  	Krystle Bulalakaw
-    -- PROGRAMMER: 	Krystle Bulalakaw
-    -- INTERFACE: 	OnTriggerEnter2D(Collider2D other)
-    --					Collider2D other - the object that triggered the collision box
-    -- RETURNS: 	void.
-    -- NOTES:
-    -- Triggered when the resource object's collision box is triggered by a Collider 2D object (player attack)
-    -- Decreases the resource amount by damage dealt to it.
-    ----------------------------------------------------------------------------------------------------------------------*/
-    void OnTriggerEnter2D(Collider2D other) {
-		// Prevents health bar trigger
-		if (other.GetComponent<Trigger>() != null) {
-			float damage = other.GetComponent<Trigger>().damage;
-			SendResourceTakenMessage((int)damage);
-		} 
-	}
+
 
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	DropGold
@@ -128,7 +109,8 @@ class Resource : MonoBehaviour {
         int instance_id = WorldItemManager.Instance.GenerateWorldItemId();
         int gold_id = 2;
 
-        WorldItemManager.Instance.CreateWorldItem(instance_id, gold_id, amount, x + offsetX, y + offsetY);
+        GameObject go = WorldItemManager.Instance.CreateWorldItem(instance_id, gold_id, amount, x + offsetX, y + offsetY);
+		go.AddComponent<CoinMagnetize>();
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -204,7 +186,7 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates a message to send to the server to indicate that a resource was taken.
     ----------------------------------------------------------------------------------------------------------------------*/
-    void SendResourceTakenMessage(int amount) {
+    public void SendResourceTakenMessage(int amount) {
 		List<Pair<string, string>> msg = CreateResourceTakenMessage(amount);
 		SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_TAKEN);
 	}
