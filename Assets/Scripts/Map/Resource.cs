@@ -144,7 +144,7 @@ class Resource : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     public List<Pair<string, string>> CreateResourceTakenMessage(int amt) {
 		List<Pair<string, string>> _message = CreateResourcePositionMessage();
-		_message.Add(new Pair<string, string>("ResourceAmountTaken", amt.ToString()));
+		_message.Add(new Pair<string, string>(NetworkKeyString.Amount, amt.ToString()));
 		
 		return _message;
 	}
