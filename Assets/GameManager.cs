@@ -166,18 +166,24 @@ public class GameManager : MonoBehaviour {
                 hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
 				// These are the FOV & peripheral vision occlusion masks
                 var lightingFOV = ((Transform)Instantiate(lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lightingFOV.transform.parent = createdPlayer.transform;
                 lightingFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
                 lightingFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
                 lightingFOV.transform.Translate(0, 0, 8);
+
                 var lightingPeripheral = ((Transform)Instantiate(lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lightingPeripheral.transform.parent = createdPlayer.transform;
                 lightingPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
                 lightingPeripheral.transform.Translate(0, 0, 8);
+
 				// These are the FOV & peripheral vision stencil masks
 				var hiderLayerFOV = ((Transform)Instantiate(hiderFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				hiderLayerFOV.transform.parent = createdPlayer.transform;
 				hiderLayerFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 				hiderLayerFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 				hiderLayerFOV.transform.Translate(0, 0, 8);
 				var hiderLayerPeripheral = ((Transform)Instantiate(hiderPeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				hiderLayerPeripheral.transform.parent = createdPlayer.transform;
 				hiderLayerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 				hiderLayerPeripheral.transform.Translate(0, 0, 8);
                 if (myPlayer == playerData.Value.PlayerID)
@@ -217,17 +223,39 @@ public class GameManager : MonoBehaviour {
 		NetworkingManager.StartGame();
     }
 
+	/*----------------------------------------------------------------------------
+    --	Recursively sets all child object's material to mat
+    --
+    --	Interface:  void SetMaterialRecursively(GameObject obj, Material mat)
+    --					-GameObject obj: Base / parent game object
+    --					-Material mat  : Target material
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void SetMaterialRecursively(GameObject obj, Material mat)
 	{
 		SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
 		if(sr != null)
 			sr.material = mat;
 
+		// Goes through child
 		foreach( Transform child in obj.transform )
 		{
 			SetMaterialRecursively(child.gameObject, mat);
 		}
 	}
+
+	/*----------------------------------------------------------------------------
+    --	Recursively sets all child object's material to mat
+    --
+    --	Interface:  void SetMaterialRecursively(GameObject obj, Material mat)
+    --					-GameObject obj: Base / parent game object
+    --					-Material mat  : Target material
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void SetLayerRecursively(GameObject obj, string name)
 	{
 		obj.layer = LayerMask.NameToLayer(name);
