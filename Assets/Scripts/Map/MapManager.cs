@@ -9,6 +9,7 @@ public class MapManager : MonoBehaviour {
     const int RESOURCE_AMOUNT = 100;
     const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
     const int RESPAWN_TIME = 30;        //  in seconds
+	const int RESOURCE_Z = -10;
     /* A set of constant map update event types. */
     public enum EventType 
     {
@@ -224,7 +225,7 @@ public class MapManager : MonoBehaviour {
         // The sprite is set randomly from a range of sprites (assigned in Unity Editor).
 		JSONArray resources = message[NetworkKeyString.MapResources].AsArray;
         for (int i = 0; i < resources.Count; i++) {
-			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, -2), Quaternion.identity) as GameObject;
+			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, RESOURCE_Z), Quaternion.identity) as GameObject;
 			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
 			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
 			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
