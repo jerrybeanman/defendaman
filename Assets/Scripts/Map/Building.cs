@@ -58,6 +58,15 @@ public class Building:MonoBehaviour {
 		constructed = true;
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Called when an collidable object enters the bounding box
+    --
+    --	Interface: 	void OnTriggerEnter2D(Collider2D other)
+    --					-Collider2D other: Other collider that entered 
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 
@@ -66,7 +75,6 @@ public class Building:MonoBehaviour {
 		if(placing)
 		{
 			collidercounter++;
-			print ("dont place");
 			placeble = false;
 
 		}
@@ -82,6 +90,15 @@ public class Building:MonoBehaviour {
 		notifydeath();
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Called when an collidable object leaves the bounding box of it's BoxCollider2D
+    --
+    --	Interface: 	void OnTriggerExit2D(Collider2D other)
+    --					-Collider2D other: Other collider that left 
+    --
+    --	programmer: Jerry Jia, Thomas Yu
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
 		if(placing)
