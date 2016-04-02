@@ -43,7 +43,7 @@ public class WorldItemData : MonoBehaviour
 		// set material to stencil masked
 		gameObject.GetComponent<SpriteRenderer> ().material = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
         _player_id = GameData.MyPlayer.PlayerID;
-        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
     }
 	
