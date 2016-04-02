@@ -36,9 +36,15 @@ public class WizardClass : RangedClass
 
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+
+        au_simple_attack = Resources.Load("Music/Weapons/magegirl_staff_primary") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/magegirl_staff_secondary") as AudioClip;
+
     }
 
-	public WizardClass()
+
+
+    public WizardClass()
 	{
         this._className = "Wizard";
         this._classDescription = "Wingardium Leviosa. No, not leviosAA, leviOsa.";

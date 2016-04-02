@@ -44,6 +44,9 @@ public class NinjaClass : MeleeClass
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
+
+        au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/ninjaboi_sword_teleport") as AudioClip;
     }
 
     public NinjaClass()

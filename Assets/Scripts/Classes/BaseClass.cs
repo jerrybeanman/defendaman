@@ -23,6 +23,10 @@ public abstract class BaseClass : MonoBehaviour {
     private int allyKingID;
     private int enemyKingID;
 
+    public AudioSource au_attack;
+    public AudioClip au_simple_attack;
+    public AudioClip au_special_attack;
+
     protected void Start ()
     {
         var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
@@ -42,9 +46,14 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
+        au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
+        au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
+
+
     }
-	
-	public string ClassName
+
+    public string ClassName
 	{
 		get { return this._className; }
 		set { this._className = value;}
@@ -162,11 +171,13 @@ public abstract class BaseClass : MonoBehaviour {
 
     public virtual float basicAttack(Vector2 dir)
     {
+        au_attack.PlayOneShot(au_simple_attack);
         return cooldowns[0];
     }
 
     public virtual float specialAttack(Vector2 dir)
     {
+        au_attack.PlayOneShot(au_special_attack);
         return cooldowns[1];
     }
 
@@ -192,6 +203,7 @@ public abstract class BaseClass : MonoBehaviour {
 
     public void StartAttackAnimation()
     {
+        
         gameObject.GetComponent<Animator>().SetBool("attacking", true);
     }
 
