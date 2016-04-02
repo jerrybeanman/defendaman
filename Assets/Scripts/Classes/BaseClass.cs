@@ -20,7 +20,7 @@ public abstract class BaseClass : MonoBehaviour {
 	private HealthBar healthBar;
     protected void Start ()
     {
-        var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
+        var networkingManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkingManager>();
         yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
@@ -115,10 +115,8 @@ public abstract class BaseClass : MonoBehaviour {
             print(NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP));
             
             return;
-        } else {
-            Debug.Log("Attack was null");
         }
-    }
+	}
 
     void receiveAttackFromServer(JSONClass playerData)
     {
