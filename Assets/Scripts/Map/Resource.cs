@@ -27,9 +27,8 @@ class Resource : MonoBehaviour {
 	public int instanceId {get; set;}
 	public bool trigger_entered {get; set;}
 	public Animator animator {get; set;}
-	private int _gold_id;
 	
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	Start
     -- DATE: 		March 24, 2016
     -- REVISIONS: 	N/A
@@ -44,7 +43,7 @@ class Resource : MonoBehaviour {
 		animator = GetComponent<Animator>();
 	}
 	
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	Update
     -- DATE: 		March 24, 2016
     -- REVISIONS: 	N/A
@@ -59,7 +58,7 @@ class Resource : MonoBehaviour {
 	void Update () {
 	}
 	
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	DecreaseAmount
     -- DATE: 		March 24, 2016
     -- REVISIONS: 	N/A
@@ -101,12 +100,12 @@ class Resource : MonoBehaviour {
     -- Triggered when the resource object's collision box is triggered by a Collider 2D object (player attack)
     -- Decreasea the resource amount by some number.
     ----------------------------------------------------------------------------------------------------------------------*/
-	void OnTriggerEnter2D(Collider2D other) {
+    void OnTriggerEnter2D(Collider2D other) {
 		// TODO: drop gold based on damage done
 		SendResourceTakenMessage(10);
 	}
 
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	DropGold
     -- DATE: 		March 30, 2016
     -- REVISIONS: 	N/A
@@ -143,14 +142,14 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates the message to send to the server that a resource was taken.
     ----------------------------------------------------------------------------------------------------------------------*/
-	public List<Pair<string, string>> CreateResourceTakenMessage(int amt) {
+    public List<Pair<string, string>> CreateResourceTakenMessage(int amt) {
 		List<Pair<string, string>> _message = CreateResourcePositionMessage();
 		_message.Add(new Pair<string, string>("ResourceAmountTaken", amt.ToString()));
 		
 		return _message;
 	}
 
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	CreateResourceDepletedMessage
     -- DATE: 		April 1, 2016
     -- REVISIONS: 	N/A
@@ -161,7 +160,7 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates the message to send to the server of its X and Y position.
     ----------------------------------------------------------------------------------------------------------------------*/
-	public List<Pair<string, string>> CreateResourcePositionMessage() {
+    public List<Pair<string, string>> CreateResourcePositionMessage() {
 		List<Pair<string, string>> _message = new List<Pair<string, string>>();
 		
 		_message.Add(new Pair<string, string>(NetworkKeyString.XPos, x.ToString()));
@@ -170,7 +169,7 @@ class Resource : MonoBehaviour {
 		return _message;
 	}
 
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	SendMessageToServer
     -- DATE: 		April 1, 2016
     -- REVISIONS: 	N/A
@@ -181,16 +180,16 @@ class Resource : MonoBehaviour {
     --                      int eventType                  - the map event type
     -- RETURNS: 	List<Pair<string, string>>   - List of map event data 
     -- NOTES:
-    -- Creates the message to send to the server of its X and Y position.
+    -- Sends a message to the server via Networking Manager's send_next_packet call.
     ----------------------------------------------------------------------------------------------------------------------*/
-	void SendMessageToServer(List<Pair<string, string>> msg, int eventType) {
+    void SendMessageToServer(List<Pair<string, string>> msg, int eventType) {
 		var packet = NetworkingManager.send_next_packet(DataType.Environment, eventType, msg, Protocol.TCP);
 		string temp = "[" + packet + "]"; // Wrap JSON child into array
 		// Fakes network data updates for local testing. Comment this line when actually testing on network.
-		// NetworkingManager.instance.update_data(temp);
+		NetworkingManager.instance.update_data(temp);
 	}
 
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	SendResourceTakenMessage
     -- DATE: 		April 1, 2016
     -- REVISIONS: 	N/A
@@ -202,12 +201,12 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates a message to send to the server to indicate that a resource was taken.
     ----------------------------------------------------------------------------------------------------------------------*/
-	void SendResourceTakenMessage(int amount) {
+    void SendResourceTakenMessage(int amount) {
 		List<Pair<string, string>> msg = CreateResourceTakenMessage(amount);
 		SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_TAKEN);
 	}
-	
-	/*------------------------------------------------------------------------------------------------------------------
+
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	SendResourceDepletedMessage
     -- DATE: 		April 1, 2016
     -- REVISIONS: 	N/A
@@ -218,12 +217,12 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates a message to send to the server to indicate that a resource was depleted.
     ----------------------------------------------------------------------------------------------------------------------*/
-	void SendResourceDepletedMessage() {
+    void SendResourceDepletedMessage() {
 		List<Pair<string, string>> msg = CreateResourcePositionMessage();
 		SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
 	}
-	
-	/*------------------------------------------------------------------------------------------------------------------
+
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	SendResourceRespawnMessage
     -- DATE: 		April 1, 2016
     -- REVISIONS: 	N/A
@@ -234,7 +233,7 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates a message to send to the server to indicate that a resource was depleted.
     ----------------------------------------------------------------------------------------------------------------------*/
-	void SendResourceRespawnMessage() {
+    void SendResourceRespawnMessage() {
 		List<Pair<string, string>> msg = CreateResourcePositionMessage();
 		SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_RESPAWN);
 	}
