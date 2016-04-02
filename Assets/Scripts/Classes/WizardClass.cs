@@ -45,6 +45,7 @@ public class WizardClass : RangedClass
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
+
         //Starting item kit
         if (playerID == GameData.MyPlayer.PlayerID)
         {
@@ -53,7 +54,14 @@ public class WizardClass : RangedClass
             Inventory.instance.AddItem(6);
             Inventory.instance.AddItem(7);
         }
+
+        //add wizard attack sound clip
+        au_simple_attack = Resources.Load("Music/Weapons/magegirl_staff_primary") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/magegirl_staff_secondary") as AudioClip;
+
+
     }
+
 
     /*---------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: basicAttack
