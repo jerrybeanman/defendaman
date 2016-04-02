@@ -11,6 +11,8 @@
 --
 --  REVISIONS:      March 29, 2016
 --                      Added teleportation animation
+--                  March 31, 2016
+--                      Add attack sound   - Eunwon Moon
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
 --
@@ -55,7 +57,7 @@ public class NinjaClass : MeleeClass
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
-        
+
         //Starting item kit
         if(playerID == GameData.MyPlayer.PlayerID)
         {
@@ -64,6 +66,11 @@ public class NinjaClass : MeleeClass
             Inventory.instance.AddItem(6);
             Inventory.instance.AddItem(7);
         }
+
+        //ninja attack sound
+        au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/ninjaboi_sword_teleport") as AudioClip;
+
     }
 
     //attacks return time it takes to execute
