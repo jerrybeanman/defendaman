@@ -390,7 +390,7 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Respawn it
 		StartCoroutine(ExplodeAndDestroy(temp));
-		StartCoroutine(RespawnAfterTime(temp, 10, RESOURCE_AMOUNT));
+		StartCoroutine(RespawnAfterTime(temp, 30, RESOURCE_AMOUNT));
 	}
 
 	/*------------------------------------------------------------------------------------------------------------------

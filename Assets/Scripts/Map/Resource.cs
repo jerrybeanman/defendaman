@@ -27,6 +27,7 @@ class Resource : MonoBehaviour {
 	public int instanceId {get; set;}
 	public bool trigger_entered {get; set;}
 	public Animator animator {get; set;}
+	private int _gold_id;
 	
 	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	Start
@@ -123,9 +124,11 @@ class Resource : MonoBehaviour {
 		float offset = 1.5f;
 		float offsetX = Random.Range (-offset, offset);
 		float offsetY = Random.Range (-offset, offset);
-		WorldItemManager.Instance.CreateWorldItem(100, 2, amount, x + offsetX, y + offsetY);
+
+		//WorldItemManager.Instance.CreateWorldItem(_gold_id++, 2, amount, x + offsetX, y + offsetY);
+		WorldItemManager.Instance.CreateWorldItem(WorldItemManager.Instance.GenerateWorldItemId(), 2, amount, x + offsetX, y + offsetY);
 	}
-	
+
 	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	CreateResourceTakenMessage
     -- DATE: 		March 30, 2016
@@ -184,7 +187,7 @@ class Resource : MonoBehaviour {
 		var packet = NetworkingManager.send_next_packet(DataType.Environment, eventType, msg, Protocol.TCP);
 		string temp = "[" + packet + "]"; // Wrap JSON child into array
 		// Fakes network data updates for local testing. Comment this line when actually testing on network.
-		NetworkingManager.instance.update_data(temp);
+		// NetworkingManager.instance.update_data(temp);
 	}
 
 	/*------------------------------------------------------------------------------------------------------------------
