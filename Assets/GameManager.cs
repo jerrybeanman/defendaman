@@ -166,18 +166,24 @@ public class GameManager : MonoBehaviour {
                 hpBar.gameObject.layer = LayerMask.NameToLayer("Allies");
 				// These are the FOV & peripheral vision occlusion masks
                 var lightingFOV = ((Transform)Instantiate(lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lightingFOV.transform.parent = createdPlayer.transform;
                 lightingFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
                 lightingFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
                 lightingFOV.transform.Translate(0, 0, 8);
+
                 var lightingPeripheral = ((Transform)Instantiate(lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				lightingPeripheral.transform.parent = createdPlayer.transform;
                 lightingPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
                 lightingPeripheral.transform.Translate(0, 0, 8);
+
 				// These are the FOV & peripheral vision stencil masks
 				var hiderLayerFOV = ((Transform)Instantiate(hiderFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				hiderLayerFOV.transform.parent = createdPlayer.transform;
 				hiderLayerFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 				hiderLayerFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 				hiderLayerFOV.transform.Translate(0, 0, 8);
 				var hiderLayerPeripheral = ((Transform)Instantiate(hiderPeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
+				hiderLayerPeripheral.transform.parent = createdPlayer.transform;
 				hiderLayerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 				hiderLayerPeripheral.transform.Translate(0, 0, 8);
                 if (myPlayer == playerData.Value.PlayerID)

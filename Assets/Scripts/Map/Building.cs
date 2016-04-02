@@ -29,6 +29,7 @@ public class Building:MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());

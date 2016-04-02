@@ -92,6 +92,7 @@ public class GunnerClass : RangedClass
             {
                 if (mainCamera.orthographicSize < zoomOut)
                 {
+					//raise it
                     mainCamera.orthographicSize += .1f;
                     visionCamera.orthographicSize += .1f;
                     hiddenCamera.orthographicSize += .1f;
@@ -110,6 +111,7 @@ public class GunnerClass : RangedClass
             }
             if (mainCamera.orthographicSize > zoomIn && !Input.GetMouseButton(1))
             {
+				//lower it
                 mainCamera.orthographicSize -= .2f;
                 visionCamera.orthographicSize -= .2f;
                 hiddenCamera.orthographicSize -= .2f;
