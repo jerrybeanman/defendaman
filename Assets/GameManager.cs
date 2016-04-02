@@ -223,17 +223,39 @@ public class GameManager : MonoBehaviour {
 		NetworkingManager.StartGame();
     }
 
+	/*----------------------------------------------------------------------------
+    --	Recursively sets all child object's material to mat
+    --
+    --	Interface:  void SetMaterialRecursively(GameObject obj, Material mat)
+    --					-GameObject obj: Base / parent game object
+    --					-Material mat  : Target material
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void SetMaterialRecursively(GameObject obj, Material mat)
 	{
 		SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
 		if(sr != null)
 			sr.material = mat;
 
+		// Goes through child
 		foreach( Transform child in obj.transform )
 		{
 			SetMaterialRecursively(child.gameObject, mat);
 		}
 	}
+
+	/*----------------------------------------------------------------------------
+    --	Recursively sets all child object's material to mat
+    --
+    --	Interface:  void SetMaterialRecursively(GameObject obj, Material mat)
+    --					-GameObject obj: Base / parent game object
+    --					-Material mat  : Target material
+    --
+    --	progrbammer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void SetLayerRecursively(GameObject obj, string name)
 	{
 		obj.layer = LayerMask.NameToLayer(name);
