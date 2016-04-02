@@ -54,10 +54,9 @@ public class GunnerClass : RangedClass
             Inventory.instance.AddItem(5, 5);
             Inventory.instance.AddItem(6);
             Inventory.instance.AddItem(7);
-        }
-
-		FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
-		FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
+			FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
+			FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
+		}
 
     }
 
@@ -127,8 +126,8 @@ public class GunnerClass : RangedClass
 				//lower it
 				FOVCone.LightRadius -= 2;
 				FOVConeHidden.LightRadius -= 2;
-				FOVCone.RangeAngle += 2.5f;
-				FOVConeHidden.RangeAngle += 2.5f;
+				FOVCone.RangeAngle += 5;
+				FOVConeHidden.RangeAngle += 5;
 
                 mainCamera.orthographicSize -= .2f;
                 visionCamera.orthographicSize -= .2f;
