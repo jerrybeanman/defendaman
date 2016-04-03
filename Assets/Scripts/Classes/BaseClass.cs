@@ -42,6 +42,11 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
+
+        if (playerID == allyKingID || playerID == enemyKingID)
+        {
+            gameObject.AddComponent<AmanSelfBuff>();
+        }
         
 		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
