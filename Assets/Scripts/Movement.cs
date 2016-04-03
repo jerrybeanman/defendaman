@@ -11,8 +11,8 @@ public class Movement : MonoBehaviour
     public float speed;
     movestyle movestyles;
     float midX, midY;
-    BaseClass.PlayerBaseStat ClassStat;
-
+    public BaseClass.PlayerBaseStat ClassStat;
+	Animator anim;
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-
+		anim = gameObject.GetComponent<Animator>();
         ClassStat = GetComponent<BaseClass>().ClassStat;
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
@@ -34,7 +34,6 @@ public class Movement : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(rb2d.position + vec * (float)distance, -Vector2.up, 0.0001f);
         if (hit.collider != null)
         {
-            Debug.Log("Collision on blink");
             return false;
         }
         return true;
@@ -52,33 +51,38 @@ public class Movement : MonoBehaviour
         }
         Debug.Log("Mouse distnace: " + mouseDistance + " Real Distance: " + distance);
         Vector2 vec = updateCoordinates(angle);
-        if(checkEnd(vec, distance))
-        {
-            //rb2d.MovePosition(rb2d.position + vec * distance);
-            rb2d.position = rb2d.position + vec * distance;
-              //  (rb2d.position + vec * distance);
-            
-        }
-        //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
-        else
-        {
+		var layerMask = (1 << 8);
+		RaycastHit2D hit2 = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
+		if(hit2.collider != null && hit2.collider.gameObject.tag == "Building" && hit2.collider.gameObject.GetComponent<Building>().team != GameData.MyPlayer.TeamID){
+			rb2d.position = rb2d.position + vec * (hit2.distance - 0.1f);
+		}
+		else{
+			if(checkEnd(vec, distance))
+	        {
+	            //rb2d.MovePosition(rb2d.position + vec * distance);
+	            rb2d.position = rb2d.position + vec * distance;
+	              //  (rb2d.position + vec * distance);
+	            
+	        }
+	        //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
+	        else
+	        {
 
-            //return false;
-            var layerMask = (1 << 8);
-            RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
-            //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
-            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
+	            //return false;
+	            RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
+	            //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+	            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
 
-            Debug.Log("Vector Distance: " + hit.distance);
+	            Debug.Log("Vector Distance: " + hit.distance);
 
-        }
-
+	        }
+		}
         return true;
     }
     void Update()
     {
         speed = ClassStat.MoveSpeed;
-		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBLocked)
+		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBlocked)
             movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
         if (movestyles == movestyle.absolute)
@@ -96,11 +100,11 @@ public class Movement : MonoBehaviour
         // animation trigger test
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
-            gameObject.GetComponent<Animator>().SetBool("moving", true);
+            anim.SetBool("moving", true);
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
         {
-            gameObject.GetComponent<Animator>().SetBool("moving", false);
+            anim.SetBool("moving", false);
         }
     }
     void sendToServer(double x, double y)
@@ -204,23 +208,23 @@ public class Movement : MonoBehaviour
         bool moveDown = false;
         bool vMoved = false;
         Vector2 ret = new Vector2();
-        if (Input.GetKey(up) && !GameData.InputBLocked)
+        if (Input.GetKey(up) && !GameData.InputBlocked)
         {
             angleFacing += 0;
             vMoved = true;
         }
-        else if (Input.GetKey(down) && !GameData.InputBLocked)
+        else if (Input.GetKey(down) && !GameData.InputBlocked)
         {
             vMoved = true;
             moveDown = true;
             angleFacing += 180;
         }
-		if (Input.GetKey(left) && !GameData.InputBLocked)
+		if (Input.GetKey(left) && !GameData.InputBlocked)
         {
             angleHorz += 90;
             hMoved = true;
         }
-		if (Input.GetKey(right) && !GameData.InputBLocked)
+		if (Input.GetKey(right) && !GameData.InputBlocked)
         {
             angleHorz += -90;
             hMoved = true;
@@ -265,11 +269,6 @@ public class Movement : MonoBehaviour
         Vector2 position = new Vector2((float)xMod, (float)yMod);
 
         return position;
-    }
-
-    void OnCollisonExit2D(Collision2D collision)
-    {
-
     }
 
     public void setAbs()

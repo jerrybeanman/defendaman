@@ -2,7 +2,6 @@
 
 using namespace Networking;
 using namespace json11;
-extern std::map<int, Player>           _PlayerTable;
 
 /**
  * Initialize server socket and address
@@ -54,10 +53,10 @@ int ServerTCP::InitializeSocket(short port)
  */
 int ServerTCP::Accept(Player * player)
 {
-    unsigned int        ClientLen = sizeof(player->connection);
+    unsigned int        ClientLen = sizeof(player->tcp_connection);
 
     /* Accepts a connection from the client */
-    if ((player->socket = accept(_TCPAcceptingSocket, (struct sockaddr *)&player->connection, &ClientLen)) == -1)
+    if ((player->socket = accept(_TCPAcceptingSocket, (struct sockaddr *)&player->tcp_connection, &ClientLen)) == -1)
     {
         std::cerr << "Accept() failed with errno" << errno << std::endl;
         return -1;
@@ -68,9 +67,13 @@ int ServerTCP::Accept(Player * player)
     player->team = 0;
 
     //Add player to list
-    int id = getPlayerId(inet_ntoa(player->connection.sin_addr));
+    int id = getPlayerId(inet_ntoa(player->tcp_connection.sin_addr));
+    std::cout << "id:" << id << std::endl;
     player->id = id;
-    _PlayerTable.insert(std::pair<int, Player>(id, *player));
+    _PlayerTable->insert(std::pair<int, Player>(id, *player));
+
+    std::string temp(inet_ntoa(player->tcp_connection.sin_addr));
+    _Connections->push_back(temp);
 
     newPlayer = *player;
     return player->id;
@@ -110,7 +113,7 @@ void * ServerTCP::Receive()
        {
          if (BytesRead == 0)
           break;
-          
+
          bytesToRead -= BytesRead;
          bp += BytesRead;
        }
@@ -131,7 +134,12 @@ void * ServerTCP::Receive()
           this->ServerTCP::Broadcast(buf);
 
           //Remove player from player list
-          _PlayerTable.erase(tmpPlayer.id);
+          std::cerr << "Player:" << inet_ntoa(tmpPlayer.tcp_connection.sin_addr) << std::endl;
+          _Connections->erase(std::remove(_Connections->begin(),
+                                          _Connections->end(),
+                                          inet_ntoa(tmpPlayer.tcp_connection.sin_addr)),
+                             _Connections->end());
+          _PlayerTable->erase(tmpPlayer.id);
 
           return 0;
       	}
@@ -157,7 +165,7 @@ void * ServerTCP::Receive()
 void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
-  for(const auto &pair : _PlayerTable)
+  for(const auto &pair : (*_PlayerTable))
   {
     tmpPlayer = pair.second;
     if(send(tmpPlayer.socket, message, PACKETLEN, 0) == -1)
@@ -210,39 +218,39 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
     //Player joining team request
     case TeamChangeRequest:
       std::cout << "Team change: " << json[TeamID].int_value() << std::endl;
-      _PlayerTable[player.id].team = json[TeamID].int_value();
+      (*_PlayerTable)[player.id].team = json[TeamID].int_value();
       this->ServerTCP::Broadcast(buffer);
       break;
 
     //Player joining class request
     case ClassChangeRequest:
       std::cout << "Class change: " << json[ClassID].int_value() << std::endl;
-      _PlayerTable [player.id].playerClass = json[ClassID].int_value();
+      (*_PlayerTable)[player.id].playerClass = json[ClassID].int_value();
       this->ServerTCP::Broadcast(buffer);
       break;
 
     //Player making a ready request
     case ReadyRequest:
       std::cout << "Ready change: " << (json[Ready].int_value() ? "ready" : "not ready") << std::endl;
-      _PlayerTable[player.id].isReady = (json[Ready].int_value() ? true : false);
+      (*_PlayerTable)[player.id].isReady = (json[Ready].int_value() ? true : false);
       this->ServerTCP::Broadcast(buffer);
       break;
 
     //New Player has joined lobby
     case PlayerJoinedLobby:
   	  std::cout << "New Player Change: " << json[UserName].string_value() << std::endl;
-  	  strcpy(_PlayerTable[player.id].username, json[UserName].string_value().c_str());
+  	  strcpy((*_PlayerTable)[player.id].username, json[UserName].string_value().c_str());
 
   	  //Send player a table of players
   	  sendToClient(player, constructPlayerTable().c_str());
 
       //Create packet and send to everyone
-      this->ServerTCP::Broadcast(UpdateID(_PlayerTable[player.id]).c_str());
+      this->ServerTCP::Broadcast(UpdateID((*_PlayerTable)[player.id]).c_str());
       break;
 
     case PlayerLeftLobby:
       std::cout << "Player: " << json[PlayerID].int_value() << " has left the lobby" << std::endl;
-      _PlayerTable.erase(json[PlayerID].int_value());
+      _PlayerTable->erase(json[PlayerID].int_value());
       this->ServerTCP::Broadcast(buffer);
       write(_sockPair[0], "2", PACKETLEN);
       break;
@@ -275,7 +283,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
 bool ServerTCP::AllPlayersReady()
 {
   Player tmpPlayer;
-  for(const auto &pair : _PlayerTable)
+  for(const auto &pair : (*_PlayerTable))
   {
     tmpPlayer = pair.second;
     if(tmpPlayer.isReady == false)
@@ -298,7 +306,7 @@ bool ServerTCP::AllPlayersReady()
 std::string ServerTCP::constructPlayerTable()
 {
 	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : [";
-	for (auto it = _PlayerTable.begin(); it != _PlayerTable.end();)
+	for (auto it = _PlayerTable->begin(); it != _PlayerTable->end();)
 	{
 		std::string tempUserName((it->second).username);
 		packet += "{";
@@ -307,7 +315,7 @@ std::string ServerTCP::constructPlayerTable()
 		packet += ", \"TeamID\": " +  std::to_string((it->second).team);
 		packet += ", \"ClassID\" : " + std::to_string((it->second).playerClass);
 		packet += ", \"Ready\" : " + std::to_string(Server::isReadyToInt(it->second));
-		packet += (++it == _PlayerTable.end() ? "}" : "},");
+		packet += (++it == _PlayerTable->end() ? "}" : "},");
 	}
 	packet +=    "]";
   packet += "}]";
@@ -352,20 +360,7 @@ std::string ServerTCP::generateMapSeed()
  */
 std::map<int, Player> ServerTCP::getPlayerTable()
 {
-  return _PlayerTable;
-}
-
-/**
- * [ServerTCP::getPlayerId description]
- * @author ???
- * @date   2016-03-11
- * @param  ipString   [description]
- * @return            [description]
- */
-int ServerTCP::getPlayerId(std::string ipString)
-{
-  std::size_t index = ipString.find_last_of(".");
-  return stoi(ipString.substr(index+1));
+  return (*_PlayerTable);
 }
 
 /**

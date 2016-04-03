@@ -19,7 +19,7 @@ for fail does not work
 public enum DataType
 {
     Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
-    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15
+    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15, StatUpdate = 16
 }
 
 public enum Protocol
@@ -85,15 +85,23 @@ public class NetworkingManager : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        string packet;
-
         if (GameData.GameStart) {
+            string packet;
+
+            //Needs to be reaplced with one "get data" call
             while ((packet = receive_data_tcp()) != "[]")
                 update_data(packet);
 
+            //Needs to be replaced with one "get data" call
             while ((packet = receive_data_udp()) != "[]")
                 update_data(packet);
-
+            
+            //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.
+            //So 23 "get data from client code" calls per frame, so the overhead of going from
+            //unmanaged to managed code is invoked 23 times for UDP, instead of just once
+            //and having that c++ call get all the data in one go and return one big merged string.
+            //i.e. instead of rapid returns of [{a},{b}], [{c}]... etc 23 times, have it merge them
+            // and return one big [{a}, {b}, {c}, {d}...]
 
             send_data();
         }
@@ -143,12 +151,10 @@ public class NetworkingManager : MonoBehaviour
 
     public void update_data(string JSONGameState)
     {
-        JSONArray gameObjects = null;
-        try {
-            gameObjects = JSON.Parse(JSONGameState).AsArray;
-        } catch (Exception e) {
-            Debug.Log(e.ToString());
-            return;
+        JSONArray gameObjects = gameObjects = JSON.Parse(JSONGameState).AsArray;
+        if (gameObjects == null || JSONGameState == "[]")
+        {
+            Debug.Log("[ERROR] NetworkingManager.update_data received a packet that is null");
         }
         foreach (var node in gameObjects.Children)
         {
@@ -158,7 +164,7 @@ public class NetworkingManager : MonoBehaviour
 
             if (dataType == (int)DataType.Environment)
             {
-                GameObject.Find("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
+                GameObject.FindGameObjectWithTag("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
             }
 
             if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
@@ -263,7 +269,7 @@ public class NetworkingManager : MonoBehaviour
 			//Cant send empty packets to server, inefficient and may crash
 			if (tcp != "[]")
             	TCP_Send(tcp, tcp.Length);
-            // (GameData.GameState == GameState.Playing)
+            if (udp != "[]")
                 UDP_SendData(udp, udp.Length);
         }
         if (tcp != "[]")
@@ -310,7 +316,7 @@ public class NetworkingManager : MonoBehaviour
 
         if (protocol == Protocol.UDP)
         {
-            if (GameManager.instance.player != null)
+            if (GameManager.instance.player != null && GameData.MyPlayer != null)
             {
                 //Add player data
                 var memberItems = new List<Pair<string, string>>();
@@ -320,6 +326,8 @@ public class NetworkingManager : MonoBehaviour
                 memberItems.Add(new Pair<string, string>("rotationW", GameManager.instance.player.transform.rotation.w.ToString()));
                 
                 send_next_packet(DataType.Player, GameData.MyPlayer.PlayerID, memberItems, protocol);
+            } else {
+                return "[]";
             }
         }
 
@@ -349,11 +357,11 @@ public class NetworkingManager : MonoBehaviour
         if (protocol == Protocol.NA)
             sending += "[";
         sending += "{";
-        sending += "\"DataType\" : " + (int)type + ", \"ID\" : " + id + ",";
+        sending += "\"DataType\":" + (int)type + ",\"ID\":" + id + ",";
 
         foreach (var pair in memersToSend)
         {
-            sending += " \"" + pair.first + "\" : " + pair.second + ",";
+            sending += "\"" + pair.first + "\":" + pair.second + ",";
         }
         //if (protocol != Protocol.NA)
         //    sending = sending.Remove(1, 1);

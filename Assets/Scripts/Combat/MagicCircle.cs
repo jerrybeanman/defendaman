@@ -13,9 +13,9 @@
 --
 --  REVISIONS:      (Date and Description)
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Magic Circle that the 
@@ -39,9 +39,9 @@ public class MagicCircle : Area
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: void Start(void)
     --
@@ -51,11 +51,11 @@ public class MagicCircle : Area
     -- Function that's called when the circle is created - this function initializes the start position of the circle, and 
     -- removes the circle after 3 seconds
     ---------------------------------------------------------------------------------------------------------------------*/
-    void Start()
+    new void Start()
     {
 		transform.position = new Vector3(transform.position.x, transform.position.y, -2);
         startPos = transform.position;
-        Invoke("removeCircle", duration);
+        Destroy(gameObject, duration);
 		if(teamID == GameData.MyPlayer.TeamID)
 		{
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyCircle;
@@ -64,26 +64,25 @@ public class MagicCircle : Area
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: removeCircle
+    -- FUNCTION: OnTriggerEnter2D
     --
-    -- DATE: March 16, 2016
+    -- DATE: April 2, 2016
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Allen Tsang
     --
-    -- INTERFACE: void removeCircle(void)
+    -- INTERFACE: protected override void OnTriggerStay2D(Collider2D other)
+    --                  Collider2D other: The collider of the object that we hit
     --
     -- RETURNS: void
     --
     -- NOTES:
-    -- Function that's called when the object needs to be removed - this function removes the magic circle.
+    -- Empty method, implemented because of inherited abstract method.
     ---------------------------------------------------------------------------------------------------------------------*/
-    void removeCircle() {
-        Destroy(gameObject);
-    }
+    protected override void OnTriggerEnter2D(Collider2D other) { }
 
     /*---------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: OnTriggerStay2D
@@ -92,9 +91,9 @@ public class MagicCircle : Area
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: protected override void OnTriggerStay2D(Collider2D other)
     --                  Collider2D other: The collider of the object that we hit
@@ -145,9 +144,9 @@ public class MagicCircle : Area
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: protected override void OnTriggerExit2D(Collider2D other)
     --                  Collider2D other: The collider of the object that we hit
