@@ -95,7 +95,6 @@ public class Building:MonoBehaviour {
 			float damage = other.GetComponent<Trigger>().damage;
 			health -= damage;
 		}
-		notifydeath();
 	}
 
 	/*----------------------------------------------------------------------------
