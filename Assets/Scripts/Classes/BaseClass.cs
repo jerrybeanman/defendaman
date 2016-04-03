@@ -164,7 +164,7 @@ public abstract class BaseClass : MonoBehaviour {
         Debug.Log("This distance is " + distance);
         if (Vector2.Distance(temp, playerLoc) < 13)
         {
-            au_attack.volume = (15 - distance) / 30;
+            au_attack.volume = (15 - distance) / 40;
             au_attack.PlayOneShot(au_simple_attack);
         }
         return cooldowns[0];
@@ -176,7 +176,7 @@ public abstract class BaseClass : MonoBehaviour {
         float distance = Vector2.Distance(temp, playerLoc);
         if (Vector2.Distance(temp, playerLoc) < 13)
         {
-            au_attack.volume = (15 - distance) /30;
+            au_attack.volume = (15 - distance) /40;
             au_attack.PlayOneShot(au_special_attack);
         }
         return cooldowns[1];
