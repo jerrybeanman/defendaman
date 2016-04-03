@@ -18,7 +18,7 @@ using System;
 --      void OnTriggerExit2D(Collider2D other)
 --
 -- DATE:		05/03/2016
--- REVISIONS:	(V1.0)
+-- REVISIONS:	03/04/2016 - Conditions for pickup (gold vs non-gold) - Krystle
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
@@ -45,7 +45,7 @@ public class WorldItemData : MonoBehaviour
         _player_id = GameData.MyPlayer.PlayerID;
         _world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
-    }
+	}
 	
 	/* 
      * Update is called once per frame.
@@ -60,13 +60,18 @@ public class WorldItemData : MonoBehaviour
 	void Update () {
         if (trigger_entered)
         {
+			// Items other than gold must be manually picked up
+			if (item.id != 2 && !Input.GetKeyDown(KeyCode.F)) {
+				return;
+			}
+
             if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id))
             {
                 // Send Network message
                 List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
                 NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 
-            _tooltip.Deactivate();
+				_tooltip.Deactivate();
 
             // Prevent that a pickup event was received
             //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
@@ -77,8 +82,7 @@ public class WorldItemData : MonoBehaviour
             {
                 StartCoroutine(Inventory.instance.DisplayInventoryFullError());
             }
-            
-        }
+        } 
     }
 
     /* 

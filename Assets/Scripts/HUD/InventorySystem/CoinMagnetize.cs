@@ -9,8 +9,8 @@ using System.Collections;
 --		void Start()
 --		void Update()
 --
--- DATE:		02/04/2016
--- REVISIONS:	N/A
+-- DATE:		April 2, 2016
+-- REVISIONS:   April 3 - Tweaked velocity - Krystle
 -- DESIGNER:	Bulalakaw
 -- PROGRAMMER:  Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
@@ -18,8 +18,8 @@ public class CoinMagnetize : MonoBehaviour {
 	GameObject target;
 	Vector3 currentPosition;
 	float dist = 15f;
-	float velocity = 10f;
-	float acceleration = 1.2f;
+	float velocity = 4f;
+	float acceleration = 1.08f;
 
 	// Use this for initialization
 	void Start () {
