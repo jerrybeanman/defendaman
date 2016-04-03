@@ -753,7 +753,6 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void UpdatePlayerHealth(float Dmg)
 	{
-        print("here: " + Dmg);
 		if((Dmg < 0 && playerProfile.Health.fillAmount <= 0) || (Dmg > 0 && playerProfile.Health.fillAmount >= 1))
 			return;
 		playerProfile.Health.fillAmount += Dmg;

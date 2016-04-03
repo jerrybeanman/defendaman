@@ -46,7 +46,6 @@ public class GameManager : MonoBehaviour {
     public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat)
     {
         var damage = (ClassStat.CurrentHp - newHP);
-        ClassStat.CurrentHp -= damage;
         if (GameData.MyPlayer.PlayerID == playerID)
         {
             HUD_Manager.instance.UpdatePlayerHealth(-(damage/ClassStat.MaxHp));

@@ -195,15 +195,11 @@ public abstract class BaseClass : MonoBehaviour {
             set {
                 if (_playerID == GameData.AllyKingID)
                 {
-                    Debug.Log(value);
-                    //Debug.Log(_playerID + " " + -(value - _currentHp));
-                    HUD_Manager.instance.UpdateAllyKingHealth(-(value - _currentHp));
+                    HUD_Manager.instance.UpdateAllyKingHealth(-((_currentHp - value) / MaxHp));
                 }
                 else if (_playerID == GameData.EnemyKingID)
                 {
-                    Debug.Log(value);
-                    //Debug.Log(_playerID + " " + -(value - _currentHp));
-                    HUD_Manager.instance.UpdateEnemyKingHealth(-(value - _currentHp));
+                    HUD_Manager.instance.UpdateEnemyKingHealth(-((_currentHp - value) / MaxHp));
                 }
                 _currentHp = (value > MaxHp) ? MaxHp : value;
 				_healthBar.UpdateHealth(MaxHp, CurrentHp);
