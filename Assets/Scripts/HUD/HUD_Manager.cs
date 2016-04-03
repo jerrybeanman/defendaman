@@ -165,8 +165,11 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, (int)UICode.Chat);
-		// Subscribe building creation to the UDP network
-		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.BuildingCreation);
+		// Subscribe building creation to the TCP network
+		NetworkingManager.Subscribe(UpdateBuildingCreationCallBack, DataType.UI, (int)UICode.BuildingCreation);
+		// Subscribe building destruction to the TCP network
+		NetworkingManager.Subscribe(UpdateBuildingDestructionCallBack, DataType.UI, (int)UICode.BuildingDestruction);
+		
 	}
 
 	// Called once per frame
@@ -475,7 +478,7 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	void UpdateBuildingCallBack(JSONClass data)
+	private void UpdateBuildingCreationCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
@@ -499,6 +502,12 @@ public class HUD_Manager : MonoBehaviour {
 		b1.GetComponent<Building>().notifycreation();
 	}
 
+	private void UpdateBuildingDestructionCallBack(JSONClass data)
+	{
+		Vector3 Key = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
+		Destroy(GameData.Buildings[Key].gameObject);
+		GameData.Buildings.Remove(Key);
+	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
