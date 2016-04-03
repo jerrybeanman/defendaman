@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, aman = 4}
 public enum GameState { Playing, Dying, Dead, Won, Lost}
@@ -70,4 +71,29 @@ public class GameData
     //Pair of x/y spawn points where index+1 is teamid
     public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();
     public static Pair<int, int> aiSpawn = new Pair<int, int>(10, 10);
+
+
+    private static int _allyTeamKillCount = 0;
+    public static int AllyTeamKillCount
+    {
+        get
+        {
+            return _allyTeamKillCount;
+        }
+        set
+        {
+            _allyTeamKillCount = value;
+            GameObject.Find("Ally Score").GetComponent<Text>().text = value.ToString();
+        }
+    }
+    private static int _enemyTeamKillCount = 0;
+    public static int EnemyTeamKillCount {
+        get {
+            return _enemyTeamKillCount;
+        }
+        set {
+            _enemyTeamKillCount = value;
+            GameObject.Find("Enemy Score").GetComponent<Text>().text = value.ToString();
+        }
+    }
 }

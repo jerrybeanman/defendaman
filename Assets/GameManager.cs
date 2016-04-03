@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour {
     public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat)
     {
         var damage = (ClassStat.CurrentHp - newHP);
+        ClassStat.CurrentHp -= damage;
         if (GameData.MyPlayer.PlayerID == playerID)
         {
             HUD_Manager.instance.UpdatePlayerHealth(-(damage/ClassStat.MaxHp));
@@ -62,7 +63,7 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if (playerID == GameData.AllyKingID)
+        /*if (playerID == GameData.AllyKingID)
         {
             HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0)
@@ -74,17 +75,17 @@ public class GameManager : MonoBehaviour {
             HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0)
                 GameWon();
-        }
+        }*/
     }
 
     private static void PlayerDied()
     {
+        GameData.EnemyTeamKillCount++;
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         GameData.PlayerPosition.Remove(GameData.MyPlayer.PlayerID);
         GameData.GameState = GameState.Dying;
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
-        GameData.MyPlayer = null;
         instance.player = null;
     }
 
@@ -108,17 +109,14 @@ public class GameManager : MonoBehaviour {
 
         foreach (var playerData in GameData.LobbyData)
         {
-			Debug.Log("[DEBUG] Size: " + GameData.TeamSpawnPoints.Count + " On team: " + playerData.Value.TeamID );
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
             switch (playerData.Value.ClassType)
             {
                 case ClassType.Ninja:
-					Debug.Log("Added ninja");
                     createdPlayer.AddComponent<NinjaClass>();
                     break;
 				case ClassType.Gunner:
-					Debug.Log("Added gunner");
                     createdPlayer.AddComponent<GunnerClass>();
                     break;
                 case ClassType.Wizard:

@@ -61,6 +61,9 @@ public class GameStart_Testing : MonoBehaviour {
         else
 		    Application.LoadLevel("EngineTeam_master");
 
+        GameData.AllyTeamKillCount = 0;
+        GameData.EnemyTeamKillCount = 0;
+
         // Update the stat boost a player gets from a compatible equipped weapon
         //Inventory.instance.UpdateWeaponStats();
     }

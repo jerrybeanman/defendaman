@@ -70,6 +70,10 @@ public class PlayerReceiveUpdates : MonoBehaviour {
 
     void died(JSONClass packet)
     {
+        if (GameData.LobbyData[playerID].TeamID == GameData.MyPlayer.TeamID)
+            GameData.EnemyTeamKillCount++;
+        else
+            GameData.AllyTeamKillCount++;
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
         GameData.PlayerPosition.Remove(playerID);
         Destroy(gameObject);

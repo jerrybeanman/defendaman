@@ -39,7 +39,6 @@ public class HealthBar : MonoBehaviour
 
     public void UpdateHealth(float MaxHp, float CurrentHp)
     {
-		Debug.Log("Current:" + CurrentHp + " Max: " + MaxHp);
 		holder.transform.localScale = new Vector3(CurrentHp / MaxHp, holder.transform.localScale.y, holder.transform.localScale.z);
     }
 }
