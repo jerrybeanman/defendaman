@@ -74,10 +74,12 @@ public class NinjaClass : MeleeClass
     }
 
     //attacks return time it takes to execute
-    public override float basicAttack(Vector2 dir)
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-        base.basicAttack(dir);
+        base.basicAttack(dir, playerLoc);
 
         attackSword.damage = ClassStat.AtkPower;
 
@@ -108,9 +110,12 @@ public class NinjaClass : MeleeClass
     -- Function that's called when the Ninja uses the right click special attack (Teleport). If the ninja is debuffed he
     -- cannot teleport, but the cooldown will still be used since he tried to.
     ---------------------------------------------------------------------------------------------------------------------*/
-    public override float specialAttack(Vector2 dir)
+    public override float specialAttack(Vector2 dir,Vector2 playerLoc = default(Vector2))
     {
-        base.specialAttack(dir);
+        if(playerLoc == default(Vector2))
+            playerLoc = dir;
+
+        base.specialAttack(dir, playerLoc);
 
         teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
         Destroy(teleportInstance, 1);

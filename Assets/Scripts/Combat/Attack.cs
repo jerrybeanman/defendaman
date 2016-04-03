@@ -31,7 +31,10 @@ public class Attack : MonoBehaviour {
             attackReady = false;
             //var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             var dir = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            float delay = player.basicAttack(dir);
+
+            Vector2 playerLoc = (Vector2)GameData.PlayerPosition[GameData.MyPlayer.PlayerID];
+            //Vector2 eunwon = gameObject.GetComponent<>
+            float delay = player.basicAttack(dir, playerLoc);
             Invoke("enableAttack", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {
                 new Pair<string, string>("Attack", "0"),
@@ -48,7 +51,8 @@ public class Attack : MonoBehaviour {
             specialReady = false;
             //var dir = ((Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position)).normalized;
             var dir = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            float delay = player.specialAttack(dir);
+            Vector2 playerLoc = (Vector2)GameData.PlayerPosition[GameData.MyPlayer.PlayerID];
+            float delay = player.specialAttack(dir, playerLoc);
             Invoke("enableSpecial", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {
                 new Pair<string, string>("Attack", "1"),
