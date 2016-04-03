@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class Area : Trigger
 {
-    void Start()
+    protected void Start()
     {
         if (teamID != GameData.MyPlayer.TeamID)
         {
@@ -11,10 +11,5 @@ public abstract class Area : Trigger
             gameObject.layer = LayerMask.NameToLayer("HiddenThings");
             gameObject.GetComponent<SpriteRenderer>().material = hiddenMat;
         }
-    }
-
-    protected override void OnTriggerEnter2D(Collider2D other)
-    {
-
     }
 }
