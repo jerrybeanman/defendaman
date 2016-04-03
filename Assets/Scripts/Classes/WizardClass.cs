@@ -45,10 +45,10 @@ public class WizardClass : RangedClass
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
-
-        //Starting item kit
+        //Player specific initialization
         if (playerID == GameData.MyPlayer.PlayerID)
         {
+            //Starting item kit
             Inventory.instance.AddItem(1);
             Inventory.instance.AddItem(5, 5);
             Inventory.instance.AddItem(6);

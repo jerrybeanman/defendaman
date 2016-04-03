@@ -49,11 +49,12 @@ public class GunnerClass : RangedClass
 		visionCamera = GameObject.Find("Camera FOV").GetComponent<Camera>();
 		hiddenCamera = GameObject.Find("Camera Enemies").GetComponent<Camera>();
 		NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
-		
-		//Starting item kit
-		if (playerID == GameData.MyPlayer.PlayerID)
+
+        //Player specific initialization
+        if (playerID == GameData.MyPlayer.PlayerID)
 		{
-			Inventory.instance.AddItem(1);
+            //Starting item kit
+            Inventory.instance.AddItem(1);
 			Inventory.instance.AddItem(5, 5);
 			Inventory.instance.AddItem(6);
 			Inventory.instance.AddItem(7);
