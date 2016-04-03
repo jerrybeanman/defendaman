@@ -72,8 +72,7 @@ public class GunnerClass : RangedClass
 
 
     //attacks return time it takes to execute
-    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
-
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2)) 
     {
         if (playerLoc == default(Vector2))
             playerLoc = dir;
@@ -195,6 +194,7 @@ public class GunnerClass : RangedClass
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));
         EndAttackAnimation();
         CancelInvoke("EndAttackAnimation");
+        inSpecial = false;
     }
 
     void fireFromServer(JSONClass packet)
