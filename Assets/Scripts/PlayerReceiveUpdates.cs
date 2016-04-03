@@ -25,14 +25,26 @@ public class PlayerReceiveUpdates : MonoBehaviour {
     }
 
     void update_position(JSONClass player) {
-        if (pos_changed(player["x"].AsFloat, player["y"].AsFloat))
+		Vector3 position = new Vector3(player["x"].AsFloat, player["y"].AsFloat, -10f);
+		if (pos_changed(player["x"].AsFloat, player["y"].AsFloat))
+			gameObject.GetComponent<Animator>().SetBool("moving", true);
+		else
+			gameObject.GetComponent<Animator>().SetBool("moving", false);
+		transform.position = position;
+		Quaternion rotation = new Quaternion(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat);
+		transform.rotation = rotation;
+		GameData.PlayerPosition[playerID] = position;
+		lastPosition = transform.position;
+
+		//TODO: Figure out why this commented below was not working
+        /*if (pos_changed(player["x"].AsFloat, player["y"].AsFloat))
             animator.SetBool("moving", true);
         else
             animator.SetBool("moving", false);
         transform.position.Set(player["x"].AsFloat, player["y"].AsFloat, -10f);
         transform.rotation.Set(0, 0, player["rotationZ"].AsFloat, player["rotationW"].AsFloat);
         GameData.PlayerPosition[playerID] = transform.position;
-        lastPosition = transform.position;
+        lastPosition = transform.position;*/
     }
 
     bool pos_changed(float newX, float newY)

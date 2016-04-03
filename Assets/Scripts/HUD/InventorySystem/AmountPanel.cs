@@ -15,7 +15,7 @@ public class AmountPanel : MonoBehaviour {
     private WorldItemManager _world_item_manager;
 
     void Start () {
-        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _amount_panel = GameObject.Find("Amount Panel");
         _amt_input_field = GameObject.Find("Amount InputField");
         _error_text = _amount_panel.transform.Find("Error Text").GetComponent<Text>();

@@ -16,14 +16,16 @@ public abstract class BaseClass : MonoBehaviour {
     private int yourPlayerID;
     private int allyKingID;
     private int enemyKingID;
+    
+	private HealthBar healthBar;
 
     public AudioSource au_attack;
     public AudioClip au_simple_attack;
     public AudioClip au_special_attack;
-
+    
     protected void Start ()
     {
-        var networkingManager = GameObject.Find("GameManager").GetComponent<NetworkingManager>();
+        var networkingManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkingManager>();
         yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
@@ -40,8 +42,9 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
-
-        _classStat = new PlayerBaseStat(playerID);
+        
+		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
 
         //add audio component
         au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
@@ -56,18 +59,18 @@ public abstract class BaseClass : MonoBehaviour {
         {
             if (this._classStat == null)
             {
-                this._classStat = new PlayerBaseStat(playerID);
+                this._classStat = new PlayerBaseStat(playerID, healthBar);
             }
             return this._classStat;
         }
 
 		protected set
 		{
-			this._classStat.CurrentHp = value.CurrentHp;
-			this._classStat.MaxHp = value.MaxHp;
-			this._classStat.MoveSpeed = value.MoveSpeed;
-			this._classStat.AtkPower = value.AtkPower;
-            this._classStat.Defense = value.Defense;
+			this._classStat.CurrentHp 	= value.CurrentHp;
+			this._classStat.MaxHp 		= value.MaxHp;
+			this._classStat.MoveSpeed 	= value.MoveSpeed;
+			this._classStat.AtkPower 	= value.AtkPower;
+            this._classStat.Defense 	= value.Defense;
 		}
 	}
 
@@ -122,10 +125,8 @@ public abstract class BaseClass : MonoBehaviour {
             print(NetworkingManager.send_next_packet(DataType.Hit, GameData.MyPlayer.PlayerID, memersToSend, Protocol.UDP));
             
             return;
-        } else {
-            Debug.Log("Attack was null");
         }
-    }
+	}
 
     void receiveAttackFromServer(JSONClass playerData)
     {
@@ -177,11 +178,13 @@ public abstract class BaseClass : MonoBehaviour {
     [System.Serializable]
 	public class PlayerBaseStat
 	{
-        public PlayerBaseStat(int id)
+        public PlayerBaseStat(int id, HealthBar healthBar)
         {
             _playerID = id;
+			_healthBar = healthBar;
         }
 
+		private HealthBar _healthBar;
         private int _playerID;
         private float _currentHp;
 		public float CurrentHp {
@@ -190,7 +193,9 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-                _currentHp = (value > MaxHp) ? MaxHp : value;
+				
+				_currentHp = (value > MaxHp) ? MaxHp : value;
+				_healthBar.UpdateHealth(MaxHp, CurrentHp);
             }
         }
 		public float MaxHp;

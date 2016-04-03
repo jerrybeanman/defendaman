@@ -33,7 +33,6 @@ public class Attack : MonoBehaviour {
             var dir = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Vector2 playerLoc = (Vector2)GameData.PlayerPosition[GameData.MyPlayer.PlayerID];
-            //Vector2 eunwon = gameObject.GetComponent<>
             float delay = player.basicAttack(dir, playerLoc);
             Invoke("enableAttack", delay);
             NetworkingManager.send_next_packet(DataType.Trigger, player.playerID, new List<Pair<string, string>> {

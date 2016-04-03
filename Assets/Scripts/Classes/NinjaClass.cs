@@ -69,7 +69,7 @@ public class NinjaClass : MeleeClass
 
         //ninja attack sound
         au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
-        au_special_attack = Resources.Load("Music/Weapons/ninjaboi_sword_teleport") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/ninjaboi_teleport") as AudioClip;
 
     }
 

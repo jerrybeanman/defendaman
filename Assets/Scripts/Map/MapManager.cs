@@ -19,17 +19,18 @@ public class MapManager : MonoBehaviour {
     private const string INCR = "incr";
     private const string DECR = "decr";
     /* How many walls will line the outside to not give an image of an empty world around the edges */
-    const int OUTERWALL_THICKNESS = 24; //(Camera size + gunnerclass.cs max zoom out)/2
+    const int RESOURCE_AMOUNT = 100;
+    const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
+    const int RESPAWN_TIME = 30;        //  in seconds
     /* A set of constant map update event types. */
     public enum EventType 
     {
         CREATE_MAP = 0,
         RESOURCE_TAKEN = 1,
         RESOURCE_DEPLETED = 2,
-        ITEM_DROPPED = 3,
-        ITEM_PICKEDUP = 4,
-        BUILDING_HIT = 5,
-        BUILDING_DSTR = 6,
+		RESOURCE_RESPAWN = 3,
+        BUILDING_HIT = 4,
+        BUILDING_DSTR = 5,
     };
     /* ID of map update event, i.e. its event type. */
     private EventType _id;
@@ -57,16 +58,16 @@ public class MapManager : MonoBehaviour {
 
     // Resource Objects, Game Objects, Sprites
     private List<GameObject> _mapResources = new List<GameObject>();
-	public GameObject mapResource;
-	public List<Sprite> _resourceSprites;
+    public GameObject mapResource;
+    public List<Sprite> _resourceSprites;
 
     //variables used for buildings
     public List<GameObject> buildingsCreated;
-	public List<Vector2>  wallList;
-	public List<Vector2>  ArmoryList;
-	Vector3 lastFramePosition;
-	Vector3 dragStartPosition;
-	int overlayFlag = 1;
+    public List<Vector2>  wallList;
+    public List<Vector2>  ArmoryList;
+    Vector3 lastFramePosition;
+    Vector3 dragStartPosition;
+    int overlayFlag = 1;
 
     // Object Pooling
     private GameObject[] _pooledObjects;
@@ -75,16 +76,43 @@ public class MapManager : MonoBehaviour {
     public static float cameraDistance;
     public float frustumHeight, frustumWidth;
 
-    //
-    // METHOD DEFINITIONS
-    //
     /**
-	 * Use this for initialization.
-	 */
+     * Use this for initialization.
+     */
     void Start() {
     }
 
-    /**
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	Update
+    -- DATE: 		February 16, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	Update(void)
+    -- RETURNS: 	void.
+    -- NOTES:
+    -- Called once per frame.
+    -- Check the objects currently in view and update object pool.
+    -- Checks the list of resources and respawns after some time them if they are depleted.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    void Update() {
+		check_object_pool ();
+	}
+	
+	/**
+	 * Deserialize JSON string into 2D int array.
+	 */
+	private int[,] parse_string_map(string map) {
+		// _map = json.deserialization<int>(map)
+		return _map;
+	}
+	
+	/* Serialize 2D int array into JSON string. */
+	private string parse_int_map(int[][] map) {
+		return _string_map;
+	}
+	
+	/**
      * Find the camera distance used to calculate the camera view frustum.
      * Create the list of pooled objects and deactivate them.
      * Perform initial object pool check.
@@ -104,13 +132,19 @@ public class MapManager : MonoBehaviour {
         check_object_pool();
     }
 
-    /**
-	 * Utilizes object pooling to only render map tiles which are within the camera's
-	 * view frustum.
-	 * 
-	 * Iterate through the list of pooled objects. If the object is in the camera, set it to 
-	 * active. Else, set it to inactive.
-	 */
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: check_object_pool
+    -- DATE: February 16, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Krystle Bulalakaw
+    -- INTERFACE: void check_object_pool()
+    -- RETURNS: void.
+    -- NOTES:
+    -- Render map tiles which are within the camera's view frustum.
+    -- Iterate through the list of pooled objects. If the object is in the camera, set it to 
+    -- active. Else, set it to inactive.
+    ----------------------------------------------------------------------------------------------------------------------*/
     private void check_object_pool() {
 		if (GameData.GameStart) {
 	        cameraPosition = mainCamera.GetComponent<Transform>().position;
@@ -134,38 +168,10 @@ public class MapManager : MonoBehaviour {
 		}
     }
 
-	/*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: 	Update
-    -- DATE: 		February 16, 2016
-    -- REVISIONS: 	N/A
-    -- DESIGNER:  	Krystle Bulalakaw
-    -- PROGRAMMER: 	Krystle Bulalakaw
-    -- INTERFACE: 	Update(void)
-    -- RETURNS: 	void.
-    -- NOTES:
-    -- Called once per frame. Check the objects currently in view and update object pool.
-    ----------------------------------------------------------------------------------------------------------------------*/
-    void Update() {
-		check_object_pool ();
-	}
-
-    /**
-	 * Deserialize JSON string into 2D int array.
-	 */
-    private int[,] parse_string_map(string map) {
-        // _map = json.deserialization<int>(map)
-        return _map;
-    }
-
-    /* Serialize 2D int array into JSON string. */
-    private string parse_int_map(int[][] map) {
-        return _string_map;
-    }
-
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: handle_event
     -- DATE: February 16, 2016
-    -- REVISIONS: N/A
+    -- REVISIONS: March 31 - Add RESOURCE_TAKEN event processing
     -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
     -- PROGRAMMER: Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
     -- INTERFACE: void handle_event(int id, JSONClass message)
@@ -183,15 +189,14 @@ public class MapManager : MonoBehaviour {
                 instantiate_pool();
                 break;
             case EventType.RESOURCE_TAKEN:
-				// TODO: decrease resources left
+                ProcessResourceTakenEvent(message);
                 break;
             case EventType.RESOURCE_DEPLETED:
-				// TODO: trigger depleted animation
+				ProcessResourceDepletedEvent(message);
                 break;
-            case EventType.ITEM_DROPPED:
-                break;
-            case EventType.ITEM_PICKEDUP:
-                break;
+			case EventType.RESOURCE_RESPAWN:
+				ProcessResourceRespawnEvent(message);
+				break;
             case EventType.BUILDING_HIT:
                 break;
             case EventType.BUILDING_DSTR:
@@ -199,7 +204,7 @@ public class MapManager : MonoBehaviour {
         }
     }
 
-	/*------------------------------------------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	create_map
     -- DATE: 		February 16, 2016
     -- REVISIONS: 	N/A
@@ -239,38 +244,30 @@ public class MapManager : MonoBehaviour {
                 _mapScenery[x, y] = mapSceneryX[y].AsInt;
         }
 
-		// Instantiates resource objects and adds them to list.
-		// Creates resource game objects on the map. It goes through the list of resources from the JSON message and instantiates them based on 
-		// their X and Y positions, which were pre-generated and assigned by the server. 
-		// The sprite is set randomly from a range of sprites (assigned in Unity Editor).
+        // Instantiates resource objects and adds them to list.
+        // Creates resource game objects on the map. It goes through the list of resources from the JSON message and instantiates them based on 
+        // their X and Y positions, which were pre-generated and assigned by the server. 
+        // The sprite is set randomly from a range of sprites (assigned in Unity Editor).
         JSONArray resources = message["mapResources"].AsArray;
         for (int i = 0; i < resources.Count; i++) {
 			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, -2), Quaternion.identity) as GameObject;
 			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
 			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
 			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
-			temp.GetComponent<Resource>().amount = 5;
-			Debug.Log ("Adding resource at (" + temp.GetComponent<Resource>().x + ", " + temp.GetComponent<Resource>().y + ") Amount: " + temp.GetComponent<Resource>().amount);
+			temp.GetComponent<Resource>().amount = RESOURCE_AMOUNT;
 			_mapResources.Add (temp);
 		}
 	}
 
-   
+
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: draw_map
-    --
     -- DATE: February 19, 2016
-    --
     -- REVISIONS: N/A
-    --
     -- DESIGNER: Thomas Yu
-    --
     -- PROGRAMMER: Thomas Yu, Jaegar Sarauer
-    --
     -- INTERFACE: void draw_map()
-    --
     -- RETURNS: void.
-    --
     -- NOTES:
     -- This function places sprites on the terrain. Currently it checks the value of the 2d array and if the array is 0, 
     -- it randomly generates one of two types of grass. If the array value is 1, it randomly generates oneof two types of 
@@ -305,4 +302,122 @@ public class MapManager : MonoBehaviour {
                 }
             }
         }
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: ProcessResourceTakenEvent
+    -- DATE: March 31, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Krystle Bulalakaw
+    -- INTERFACE: void ProcessResourceTakenEvent(JSONClass message)
+    --                                JSONClass message - the message received from the server
+    -- RETURNS: void.
+    -- NOTES:
+    -- This function processes the message received from the server that a resource was taken.
+    -- Using the X, Y, and Amount parsed from the message, find the Resource in the list and decrease its amount.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    public void ProcessResourceTakenEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		int amount = message["ResourceAmountTaken"].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Decrease its amount
+		temp.GetComponent<Resource>().DecreaseAmount(amount);
 	}
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: ProcessResourceDepletedEvent
+    -- DATE: April 1, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Krystle Bulalakaw
+    -- INTERFACE: void ProcessResourceDepletedEvent(JSONClass message)
+    --                                JSONClass message - the message received from the server
+    -- RETURNS: void.
+    -- NOTES:
+    -- This function processes the message received from the server that a resource was depleted.
+    -- Using the X and Y parsed from the message, find the Resource in the list and explode/deactivate it.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    public void ProcessResourceDepletedEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Explode/destroy it
+		StartCoroutine(ExplodeAndDestroy(temp));
+	}
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: ProcessResourceRespawnEvent
+    -- DATE: April 1, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Krystle Bulalakaw
+    -- INTERFACE: void ProcessResourceRespawnEvent(JSONClass message)
+    --                                JSONClass message - the message received from the server
+    -- RETURNS: void.
+    -- NOTES:
+    -- This function processes the message received from the server to respawn a resource.
+    -- Using the X and Y parsed from the message, respawn a resource after some time.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    public void ProcessResourceRespawnEvent(JSONClass message) {
+		int xPos = message[NetworkKeyString.XPos].AsInt;
+		int yPos = message[NetworkKeyString.YPos].AsInt;
+		
+		// Find the Resource in the list with these X and Y positions
+		GameObject temp = _mapResources.Find(go => 
+		                                     go.GetComponent<Resource>().x == xPos &&
+		                                     go.GetComponent<Resource>().y == yPos);
+		// Respawn it
+		StartCoroutine(ExplodeAndDestroy(temp));
+		StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
+	}
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	ExplodeAndDestroy
+    -- DATE: 		March 30, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	ExplodeAndDestory()
+    -- RETURNS: 	IEnumerator - generic enumerator used to run a coroutine alongside Update()
+    -- NOTES:
+    -- Plays the explosion animation on resource depletion, waits for animation to complete, then destroys the gameobject.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    IEnumerator ExplodeAndDestroy(GameObject go) {
+		go.GetComponent<Resource>().animator.SetTrigger("Depleted");
+		// TODO: get animation clip length
+		yield return new WaitForSeconds(0.267f);
+		go.SetActive(false);
+	}
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: IEnumerator RespawnAfterTime
+    -- DATE: March 31, 2016
+    -- REVISIONS: N/A
+    -- DESIGNER: Jaegar Sarauer, Krystle Bulalakaw
+    -- PROGRAMMER: Krystle Bulalakaw
+    -- INTERFACE: IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount)
+    -                   GameObject go - Resource Game Object instance
+    --                  int seconds   - number of seconds to wait before respawning resource
+    --                  int amount    - amount of resource to respawn
+    -- RETURNS: void.
+    -- NOTES:
+    -- Waits some number of seconds then sets a random Tree sprite, replenishes the resource amount, and activates
+    -- the Game Object instance.
+    ----------------------------------------------------------------------------------------------------------------------*/
+	IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount) {
+		yield return new WaitForSeconds(seconds);
+
+		go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
+		go.GetComponent<Resource>().amount = amount;
+		go.SetActive(true);
+	}
+}
