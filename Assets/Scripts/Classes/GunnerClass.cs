@@ -49,11 +49,12 @@ public class GunnerClass : RangedClass
 		visionCamera = GameObject.Find("Camera FOV").GetComponent<Camera>();
 		hiddenCamera = GameObject.Find("Camera Enemies").GetComponent<Camera>();
 		NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
-		
-		//Starting item kit
-		if (playerID == GameData.MyPlayer.PlayerID)
+
+        //Player specific initialization
+        if (playerID == GameData.MyPlayer.PlayerID)
 		{
-			Inventory.instance.AddItem(1);
+            //Starting item kit
+            Inventory.instance.AddItem(1);
 			Inventory.instance.AddItem(5, 5);
 			Inventory.instance.AddItem(6);
 			Inventory.instance.AddItem(7);
@@ -67,16 +68,19 @@ public class GunnerClass : RangedClass
         //add gunboi attack sound
         au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
-
     }
-	
-	//attacks return time it takes to execute
-    public override float basicAttack(Vector2 dir)
+
+
+    //attacks return time it takes to execute
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+
     {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         if (inSpecial)
             return 0f;
-        base.basicAttack(dir);
+        base.basicAttack(dir, playerLoc);
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
@@ -88,11 +92,14 @@ public class GunnerClass : RangedClass
 
         return cooldowns[0];
     }
-	
-	public override float specialAttack(Vector2 dir)
+
+
+    public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-        base.specialAttack(dir);
+        base.specialAttack(dir, playerLoc);
 
         this.dir = dir;
         inSpecial = true;

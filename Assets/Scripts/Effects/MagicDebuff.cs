@@ -32,7 +32,9 @@ public class MagicDebuff : Buff {
 
     bool appliedspeedbuff = false;
 
-    void Start() {
+    new void Start()
+    {
+        base.Start();
         magnitude = 0;
         duration = 150;
         applyrate = 0;
