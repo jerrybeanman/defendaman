@@ -270,6 +270,15 @@ public abstract class BaseClass : MonoBehaviour {
             Debug.Log(ClassStat.MoveSpeed);
             StartCoroutine(Debuff(damage, armour, speed, duration));
         }
+
+        if (playerID == GameData.AllyKingID)
+        {
+            HUD_Manager.instance.UpdateAllyKingHealth(-health);
+        }
+        else if (playerID == GameData.EnemyKingID)
+        {
+            HUD_Manager.instance.UpdateEnemyKingHealth(-health);
+        }
     }
 
     IEnumerator Debuff(int damage, int armour, int speed, int duration)
