@@ -8,7 +8,7 @@ public abstract class Effect : MonoBehaviour
     public int magnitude;
     public int duration;
 
-    public Effect()
+    protected void Start()
     {
         player = gameObject.GetComponent<BaseClass>();
     }

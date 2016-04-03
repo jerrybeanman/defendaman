@@ -32,7 +32,9 @@ public class AmanSelfBuff : Buff {
     BaseClass target;
     Rigidbody2D area;
 
-    void Start() {
+    new void Start()
+    {
+        base.Start();
         target = gameObject.GetComponent<BaseClass>();
         target.ClassStat.MaxHp += hpBuff;
         target.ClassStat.CurrentHp += hpBuff;

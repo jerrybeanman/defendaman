@@ -30,8 +30,9 @@ public class AmanTeamBuff : Buff
     int speedBuff = 1;
     BaseClass target;
 
-    void Start()
+    new void Start()
     {
+        base.Start();
         target = gameObject.GetComponent<BaseClass>();
         target.ClassStat.AtkPower += attackBuff;
         target.ClassStat.Defense += defenseBuff;
