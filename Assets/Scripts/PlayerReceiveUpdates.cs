@@ -86,8 +86,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         var duration = packet["Duration"].AsInt;
 
         baseClass.UsePotion(damage, armour, health, speed, duration);
-
-        GetComponentInChildren<HealthBar>().UpdateHealth(baseClass.ClassStat.MaxHp, baseClass.ClassStat.CurrentHp);
+        
     }
 
     void new_stats(JSONClass packet)

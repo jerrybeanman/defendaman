@@ -195,8 +195,15 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-				
-				_currentHp = (value > MaxHp) ? MaxHp : value;
+                if (_playerID == GameData.AllyKingID)
+                {
+                    HUD_Manager.instance.UpdateAllyKingHealth(-(value - _currentHp));
+                }
+                else if (_playerID == GameData.EnemyKingID)
+                {
+                    HUD_Manager.instance.UpdateEnemyKingHealth(-(value - _currentHp));
+                }
+                _currentHp = (value > MaxHp) ? MaxHp : value;
 				_healthBar.UpdateHealth(MaxHp, CurrentHp);
             }
         }
@@ -269,15 +276,6 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.MoveSpeed += speed;
             Debug.Log(ClassStat.MoveSpeed);
             StartCoroutine(Debuff(damage, armour, speed, duration));
-        }
-
-        if (playerID == GameData.AllyKingID)
-        {
-            HUD_Manager.instance.UpdateAllyKingHealth(-health);
-        }
-        else if (playerID == GameData.EnemyKingID)
-        {
-            HUD_Manager.instance.UpdateEnemyKingHealth(-health);
         }
     }
 
