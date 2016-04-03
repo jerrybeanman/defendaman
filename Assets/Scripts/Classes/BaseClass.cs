@@ -83,14 +83,16 @@ public abstract class BaseClass : MonoBehaviour {
             float reduction = (30 / (ClassStat.Defense + 30));
             finaldamage = damage * reduction;
         }
-        
+
+        print("Final damage:" + finaldamage);
+        GameManager.instance.PlayerTookDamage(playerID, ClassStat.CurrentHp - finaldamage, ClassStat);
         ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
         {
+            print("doDamage over max");
             ClassStat.CurrentHp -= Math.Abs(ClassStat.MaxHp-ClassStat.CurrentHp);
         }
-
-        GameManager.instance.PlayerTookDamage(playerID, finaldamage, ClassStat);
+        
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
@@ -155,9 +157,9 @@ public abstract class BaseClass : MonoBehaviour {
     {
         Vector2 temp = new Vector2(GameData.PlayerPosition[GameData.MyPlayer.PlayerID].x, GameData.PlayerPosition[GameData.MyPlayer.PlayerID].y);
         float distance = Vector2.Distance(temp, playerLoc);
-        Debug.Log("MY LOCATION x: " + temp.x + " y: " + temp.y);
+        /*Debug.Log("MY LOCATION x: " + temp.x + " y: " + temp.y);
         Debug.Log("Player loc  x: " + playerLoc.x + " y: " + playerLoc.y); 
-        Debug.Log("This distance is " + distance);
+        Debug.Log("This distance is " + distance);*/
         if (Vector2.Distance(temp, playerLoc) < 13)
         {
             au_attack.volume = (15 - distance) / 10 ;
@@ -193,12 +195,14 @@ public abstract class BaseClass : MonoBehaviour {
             set {
                 if (_playerID == GameData.AllyKingID)
                 {
-                    Debug.Log(_playerID + " " + -(value - _currentHp));
+                    Debug.Log(value);
+                    //Debug.Log(_playerID + " " + -(value - _currentHp));
                     HUD_Manager.instance.UpdateAllyKingHealth(-(value - _currentHp));
                 }
                 else if (_playerID == GameData.EnemyKingID)
                 {
-                    Debug.Log(_playerID + " " + -(value - _currentHp));
+                    Debug.Log(value);
+                    //Debug.Log(_playerID + " " + -(value - _currentHp));
                     HUD_Manager.instance.UpdateEnemyKingHealth(-(value - _currentHp));
                 }
                 _currentHp = (value > MaxHp) ? MaxHp : value;

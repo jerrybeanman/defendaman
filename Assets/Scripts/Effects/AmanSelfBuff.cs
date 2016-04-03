@@ -37,7 +37,6 @@ public class AmanSelfBuff : Buff {
         base.Start();
         target = gameObject.GetComponent<BaseClass>();
         target.ClassStat.MaxHp += hpBuff;
-        target.ClassStat.CurrentHp += hpBuff;
         target.ClassStat.AtkPower += attackBuff;
         target.ClassStat.Defense += defenseBuff;
         target.ClassStat.MoveSpeed += speedBuff;
