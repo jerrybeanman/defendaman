@@ -20,10 +20,6 @@ public class MapManager : MonoBehaviour {
         BUILDING_HIT = 4,
         BUILDING_DSTR = 5,
     };
-    /* ID of map update event, i.e. its event type. */
-    private EventType _id;
-    /* 2D string array containing map values. */
-    private string _string_map;
     /* 2D int array containing map values. */
     private int[,] _map;
     /* 2D int array containing map scenery values. */
@@ -64,10 +60,17 @@ public class MapManager : MonoBehaviour {
     public static float cameraDistance;
     public float frustumHeight, frustumWidth;
 
+	// Sound components
+	public AudioSource audioSource;
+	public AudioClip audioExplode;
+
     /**
      * Use this for initialization.
      */
     void Start() {
+		// Add sound component for explosion
+		audioSource = (AudioSource) gameObject.AddComponent<AudioSource>();
+		audioExplode = Resources.Load ("Music/Tree/pop") as AudioClip;
     }
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -351,7 +354,6 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Respawn it
-		StartCoroutine(ExplodeAndDestroy(temp));
 		StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
 	}
 
@@ -368,6 +370,8 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     IEnumerator ExplodeAndDestroy(GameObject go) {
 		go.GetComponent<Resource>().animator.SetTrigger("Depleted");
+		//Play explosion sound
+		audioSource.PlayOneShot (audioExplode);
 		// TODO: get animation clip length
 		yield return new WaitForSeconds(0.267f);
 		go.SetActive(false);
