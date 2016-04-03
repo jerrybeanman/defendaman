@@ -11,7 +11,7 @@
 --
 --  REVISIONS:      (Date and Description)
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
 --  PROGRAMMER:     Hank Lo, Allen Tsang
 --
@@ -70,9 +70,9 @@ public class WizardClass : RangedClass
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float basicAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
@@ -107,9 +107,9 @@ public class WizardClass : RangedClass
     -- REVISIONS:
     --      - March 17, 2016: Fixed instantiation to work through networking
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float specialAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
