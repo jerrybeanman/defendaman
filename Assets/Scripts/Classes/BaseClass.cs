@@ -42,15 +42,17 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
+
+        if (playerID == allyKingID || playerID == enemyKingID)
+        {
+            gameObject.AddComponent<AmanSelfBuff>();
+        }
         
 		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
 
         //add audio component
         au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
-        //add default attack sound as a gunboi
-        au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
-        au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
     }
 
     public PlayerBaseStat ClassStat
@@ -198,8 +200,15 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-				
-				_currentHp = (value > MaxHp) ? MaxHp : value;
+                if (_playerID == GameData.AllyKingID)
+                {
+                    HUD_Manager.instance.UpdateAllyKingHealth(-(value - _currentHp));
+                }
+                else if (_playerID == GameData.EnemyKingID)
+                {
+                    HUD_Manager.instance.UpdateEnemyKingHealth(-(value - _currentHp));
+                }
+                _currentHp = (value > MaxHp) ? MaxHp : value;
 				_healthBar.UpdateHealth(MaxHp, CurrentHp);
             }
         }

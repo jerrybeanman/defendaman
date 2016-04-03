@@ -86,6 +86,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         var duration = packet["Duration"].AsInt;
 
         baseClass.UsePotion(damage, armour, health, speed, duration);
+        
     }
 
     void new_stats(JSONClass packet)
