@@ -114,7 +114,15 @@ public class HUD_Manager : MonoBehaviour {
 		public List<Buildable>	Items;	
 		// Currently selected item
 		public Buildable		Selected = null;										
-	}										
+	}
+	[System.Serializable]
+	public class PlayerDP
+	{
+		public Sprite				GunnerDP;
+		public Sprite				NinjaDP;
+		public Sprite				MageDP;
+		public Image				Container;
+	}
 	#endregion
 
 	// Singleton object
@@ -133,6 +141,7 @@ public class HUD_Manager : MonoBehaviour {
 	public Text					timer;
 	public GameObject			placementRange;
 	public GameObject			statsPanel;
+	public PlayerDP				playerDp;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -159,7 +168,7 @@ public class HUD_Manager : MonoBehaviour {
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
 			Destroy(gameObject);   			
 	}
-
+	
 	// Called on start of game
 	void Start()
 	{
@@ -169,7 +178,18 @@ public class HUD_Manager : MonoBehaviour {
 		NetworkingManager.Subscribe(UpdateBuildingCreationCallBack, DataType.UI, (int)UICode.BuildingCreation);
 		// Subscribe building destruction to the TCP network
 		NetworkingManager.Subscribe(UpdateBuildingDestructionCallBack, DataType.UI, (int)UICode.BuildingDestruction);
-		
+		switch(GameData.MyPlayer.ClassType)
+		{
+			case ClassType.Gunner: 
+				playerDp.Container.sprite = playerDp.GunnerDP;
+				break;
+			case ClassType.Wizard:
+				playerDp.Container.sprite = playerDp.MageDP;
+				break;
+			case ClassType.Ninja:
+				playerDp.Container.sprite = playerDp.GunnerDP;
+				break;
+		}
 	}
 
 	// Called once per frame

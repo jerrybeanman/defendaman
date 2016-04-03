@@ -37,7 +37,7 @@ public class PlayerData
     public int PlayerID = -1;
     public string Username { get; set; }
     public int TeamID { get; set; }
-    public ClassType ClassType { get ; set; }
+	public ClassType ClassType = ClassType.Gunner;
     public bool Ready = false;
     public Dictionary<string, int> Resources = new Dictionary<string, int>()
     {
