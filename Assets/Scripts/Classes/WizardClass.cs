@@ -80,10 +80,12 @@ public class WizardClass : RangedClass
     -- NOTES:
     -- Function that's called when the wizard uses the left click attack
     ---------------------------------------------------------------------------------------------------------------------*/
-    public override float basicAttack(Vector2 dir)
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-        base.basicAttack(dir);
+        base.basicAttack(dir, playerLoc);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
         attack.AddForce(dir * speed[0]);
@@ -117,9 +119,11 @@ public class WizardClass : RangedClass
     -- NOTES:
     -- Function that's called when the wizard uses the right click special attack (magic circle)
     ---------------------------------------------------------------------------------------------------------------------*/
-    public override float specialAttack(Vector2 dir)
+    public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        base.specialAttack(dir);
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
+        base.specialAttack(dir,playerLoc);
 
         //Vector2 mousePos = Input.mousePosition;
         //mousePos = Camera.main.ScreenToWorldPoint(mousePos);
