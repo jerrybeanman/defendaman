@@ -19,22 +19,19 @@ public class ButtonSound : MonoBehaviour {
 	void Start () {
         
 	    gameObject.AddComponent<AudioSource>();
-        //source.clip = Sound;
-        source.playOnAwake = false;
-        /*
-        backSound = (AudioClip) Resources.Load("../Sounds/UI/ui_back.wav");
 
-        startSound = (AudioClip)Resources.Load("/Assets/Sounds/UI/ui_start.wav");
-        readySound = (AudioClip)Resources.Load("/Assets/Sounds/UI/ui_ready.wav");
-        clickSound = (AudioClip)Resources.Load("/Sounds/UI/ui_click.wav");
-*/
+        source.playOnAwake = false;
+
+        backSound = (AudioClip)Resources.Load("Music/UI/ui_back");
+
+
+        startSound = (AudioClip)Resources.Load("Music/UI/ui_start");
+        readySound = (AudioClip)Resources.Load("Music/UI/ui_ready");
+        clickSound = (AudioClip)Resources.Load("Music/UI/ui_click");
+
     }
-    /*
-	public void PlaySound() {
-        source.PlayOneShot(Sound);
-        //Sleep(1);
-    }
-    */
+
+
     public void startSoundPlay()
     {
         source.clip = startSound;
