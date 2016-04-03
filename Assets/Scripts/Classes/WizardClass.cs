@@ -58,8 +58,6 @@ public class WizardClass : RangedClass
         //add wizard attack sound clip
         au_simple_attack = Resources.Load("Music/Weapons/magegirl_staff_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/magegirl_staff_secondary") as AudioClip;
-
-
     }
 
 

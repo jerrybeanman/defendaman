@@ -68,7 +68,6 @@ public class GunnerClass : RangedClass
         //add gunboi attack sound
         au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
-
     }
 	
 	//attacks return time it takes to execute

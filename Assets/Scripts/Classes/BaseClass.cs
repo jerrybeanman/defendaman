@@ -48,9 +48,6 @@ public abstract class BaseClass : MonoBehaviour {
 
         //add audio component
         au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
-        //add default attack sound as a gunboi
-        au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
-        au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
     }
 
     public PlayerBaseStat ClassStat
