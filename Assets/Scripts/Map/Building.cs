@@ -25,10 +25,12 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
+	public bool playerlocker=false;
 
 	// Use this for initialization
 	void Start () 
 	{
+		playerlocker=false;
 		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
@@ -69,14 +71,14 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-		print ("Enter tag is: " + other.gameObject.tag);
 		if(other.gameObject.tag == "Bullet")
 			return;
-		if(placing && other.gameObject.tag!="Untagged" )
+		if(placing && other.gameObject.tag != "Untagged" )
 		{
+
 			collidercounter++;
 
-			print ("Being increased" + collidercounter);
+			print ("Enter Tag is :" + other.gameObject.tag + "increasedm Counter= " + collidercounter);
 			placeble = false;
 
 		}
@@ -104,12 +106,11 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
-		print ("Enter tag is: " + other.gameObject.tag);
-		if(placing && other.gameObject.tag!="Untagged"  )
+		if(placing && other.gameObject.tag != "Untagged" )
 		{
 			collidercounter--;
 			placeble = true;
-			print (collidercounter);
+			print ("Exit Tag is :" + other.gameObject.tag + "Decreased, counter= " + collidercounter);
 		}
 	}
 

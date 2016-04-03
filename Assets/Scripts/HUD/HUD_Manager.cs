@@ -369,6 +369,8 @@ public class HUD_Manager : MonoBehaviour {
 
 			// Display placement area on HUD
 			placementRange.SetActive(true);
+
+
 		}
 	}
 
@@ -611,7 +613,7 @@ public class HUD_Manager : MonoBehaviour {
 		if(distance_from_player > 8)
 			return false;
 		if(building.GetComponent<Building>().collidercounter==0)
-			return building.GetComponent<Building>().placeble;
+			return true;
 		return false;
 
 	}
