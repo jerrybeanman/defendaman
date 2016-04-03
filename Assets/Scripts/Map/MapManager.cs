@@ -351,7 +351,6 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Respawn it
-		StartCoroutine(ExplodeAndDestroy(temp));
 		StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
 	}
 

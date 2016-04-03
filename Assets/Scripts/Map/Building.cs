@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class Building:MonoBehaviour {
 	
@@ -25,16 +26,18 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
+	public bool playerlocker=false;
 
 	// Use this for initialization
 	void Start () 
 	{
+		playerlocker=false;
 		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());
 
-		placeble = false;
+		placeble = true;
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
@@ -69,17 +72,21 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-
 		if(other.gameObject.tag == "Bullet")
 			return;
-		if(placing)
+		if(placing && other.gameObject.tag != "Untagged" )
 		{
+
 			collidercounter++;
+
+			print ("Enter Tag is :" + other.gameObject.tag + "increasedm Counter= " + collidercounter);
 			placeble = false;
 
 		}
 		if(health<=0)
-			Destroy(gameObject);
+		{
+			notifydeath();
+		}
 		var attack = other.gameObject.GetComponent<Trigger>();
 		if (attack != null)
 		{
@@ -88,7 +95,6 @@ public class Building:MonoBehaviour {
 			float damage = other.GetComponent<Trigger>().damage;
 			health -= damage;
 		}
-		notifydeath();
 	}
 
 	/*----------------------------------------------------------------------------
@@ -102,20 +108,43 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
-		if(placing)
+		if(placing && other.gameObject.tag != "Untagged" )
 		{
 			collidercounter--;
 			placeble = true;
-			print ("place plzzz");
+			print ("Exit Tag is :" + other.gameObject.tag + "Decreased, counter= " + collidercounter);
 		}
 	}
 
-	public void notifycreation(){
-		//????
+	public void notifycreation()
+	{
+		GameData.Buildings.Add(transform.position, this);
 	}
+
 	public void	notifydeath()
 	{
-		//?
+		// Send the packet, with Team ID, user name, and the message input
+		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
+		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
+		packetData.Add(new Pair<string, string>(NetworkKeyString.YPos, transform.position.y.ToString()));
+		packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, transform.position.z.ToString()));
+		
+		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.NA);
+		Send(packet);
+	}
+
+	/*----------------------------------------------------------------------------
+    --  Wrapper for NetworkingManager.TCP_Send to use for chat system
+	--	Interface: private static void Send(string packet)
+	--
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	private static void Send(string packet)
+	{
+		if(NetworkingManager.TCP_Send(packet, 256) < 0)
+			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
 	}
 	
 }
