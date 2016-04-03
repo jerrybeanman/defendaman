@@ -9,11 +9,6 @@ public class TreeCollider : MonoBehaviour {
 	void Start () {
 		tree = gameObject.GetComponentInParent<Resource>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
 	/*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	OnTriggerEnter2D
@@ -32,7 +27,10 @@ public class TreeCollider : MonoBehaviour {
 		// Prevents health bar trigger
 		if (other.GetComponent<Trigger>() != null) {
 			float damage = other.GetComponent<Trigger>().damage;
-			tree.SendResourceTakenMessage((int)damage);
-		} 
+            if (damage != 0)
+            {
+                tree.SendResourceTakenMessage((int)damage);
+            }
+        } 
 	}
 }

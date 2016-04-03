@@ -42,15 +42,17 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == enemyKingID)
                 HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
         }
+
+        if (playerID == allyKingID || playerID == enemyKingID)
+        {
+            gameObject.AddComponent<AmanSelfBuff>();
+        }
         
 		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
 
         //add audio component
         au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
-        //add default attack sound as a gunboi
-        au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
-        au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
     }
 
     public PlayerBaseStat ClassStat
@@ -133,14 +135,16 @@ public abstract class BaseClass : MonoBehaviour {
         if (playerData["ID"].AsInt == GameData.MyPlayer.PlayerID)
             return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
+        Vector2 playerLoc = (Vector2)GameData.PlayerPosition[playerData["ID"].AsInt];
+      
         switch (playerData["Attack"].AsInt)
         {
             case 0:
-                basicAttack(directionOfAttack);
+                basicAttack(directionOfAttack, playerLoc);
                 //Regular attack
                 break;
             case 1:
-                specialAttack(directionOfAttack);
+                specialAttack(directionOfAttack, playerLoc);
                 //Regular special attack
                 break;
             case 2:
@@ -151,15 +155,25 @@ public abstract class BaseClass : MonoBehaviour {
         }
     }
 
-    public virtual float basicAttack(Vector2 dir)
+    public virtual float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        au_attack.PlayOneShot(au_simple_attack);
+        Vector2 temp = new Vector2(GameData.PlayerPosition[GameData.MyPlayer.PlayerID].x, GameData.PlayerPosition[GameData.MyPlayer.PlayerID].y);
+        float distance = Vector2.Distance(temp, playerLoc);
+        Debug.Log("MY LOCATION x: " + temp.x + " y: " + temp.y);
+        Debug.Log("Player loc  x: " + playerLoc.x + " y: " + playerLoc.y); 
+        Debug.Log("This distance is " + distance);
+        if (Vector2.Distance(temp, playerLoc) < 13)
+        {
+            au_attack.volume = (15 - distance) / 10 ;
+            au_attack.PlayOneShot(au_simple_attack);
+        }
         return cooldowns[0];
     }
 
-    public virtual float specialAttack(Vector2 dir)
+    public virtual float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        au_attack.PlayOneShot(au_special_attack);
+        if (Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]) < 10)
+            au_attack.PlayOneShot(au_special_attack);
         return cooldowns[1];
     }
 
