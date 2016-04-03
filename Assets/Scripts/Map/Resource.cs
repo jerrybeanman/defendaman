@@ -169,7 +169,9 @@ class Resource : MonoBehaviour {
 		var packet = NetworkingManager.send_next_packet(DataType.Environment, eventType, msg, Protocol.TCP);
 		string temp = "[" + packet + "]"; // Wrap JSON child into array
 		// Fakes network data updates for local testing. Comment this line when actually testing on network.
-		NetworkingManager.instance.update_data(temp);
+		if (Application.platform != RuntimePlatform.LinuxPlayer) {
+		    NetworkingManager.instance.update_data(temp);
+		}
 	}
 
     /*------------------------------------------------------------------------------------------------------------------

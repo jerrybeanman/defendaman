@@ -76,10 +76,10 @@ public class WorldItemData : MonoBehaviour
             // Prevent that a pickup event was received
             //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
                 // Pretend that a pickup event was received
-                _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-            }
-            else
-            {
+				if (Application.platform != RuntimePlatform.LinuxPlayer) {
+                    _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+				}
+            } else {
                 StartCoroutine(Inventory.instance.DisplayInventoryFullError());
             }
         } 
