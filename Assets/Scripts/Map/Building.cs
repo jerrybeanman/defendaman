@@ -34,7 +34,7 @@ public class Building:MonoBehaviour {
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());
 
-		placeble = false;
+		placeble = true;
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
@@ -69,12 +69,14 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-
+		print ("Enter tag is: " + other.gameObject.tag);
 		if(other.gameObject.tag == "Bullet")
 			return;
-		if(placing)
+		if(placing && other.gameObject.tag!="Untagged" )
 		{
 			collidercounter++;
+
+			print ("Being increased" + collidercounter);
 			placeble = false;
 
 		}
@@ -102,11 +104,12 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
-		if(placing)
+		print ("Enter tag is: " + other.gameObject.tag);
+		if(placing && other.gameObject.tag!="Untagged"  )
 		{
 			collidercounter--;
 			placeble = true;
-			print ("place plzzz");
+			print (collidercounter);
 		}
 	}
 

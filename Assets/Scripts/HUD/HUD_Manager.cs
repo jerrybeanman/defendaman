@@ -362,7 +362,8 @@ public class HUD_Manager : MonoBehaviour {
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
-
+			shop.Selected.Building.GetComponent<Building>().collidercounter = 0;
+			print ("BUILDING value is " + shop.Selected.Building.GetComponent<Building>().collidercounter);
 			// Set current rotation value to be zero
 			curRot = 0;
 
@@ -558,7 +559,7 @@ public class HUD_Manager : MonoBehaviour {
                 Debug.Log("Instant turret 2");
             }
         }
-
+	
 		Destroy(building);
 		return true;
  	}
