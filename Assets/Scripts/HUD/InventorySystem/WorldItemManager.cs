@@ -63,7 +63,7 @@ public class WorldItemManager : MonoBehaviour
     /*
      * Creates a world item
      */
-    public void CreateWorldItem(int world_item_id, int item_id, int amt, float pos_x, float pos_y)
+    public GameObject CreateWorldItem(int world_item_id, int item_id, int amt, float pos_x, float pos_y)
     {
         Item item = _item_manager.FetchItemById(item_id);
         GameObject _item = Instantiate(world_item);
@@ -72,6 +72,8 @@ public class WorldItemManager : MonoBehaviour
         _item.GetComponent<WorldItemData>().amount = amt;
         _item.GetComponent<SpriteRenderer>().sprite = item.world_sprite;
         _item.transform.position = new Vector3(pos_x, pos_y, -5);
+
+		return _item;
     }
 
 

@@ -58,7 +58,7 @@ public class WorldItemData : MonoBehaviour
      * - the amount
      */
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
+        if (trigger_entered)
         {
             if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id))
             {
