@@ -24,6 +24,12 @@ public class NetworkKeyString
     public static string YRot       = "YRot";
     public static string ZRot       = "ZRot";
 	public static string BuildType  = "BuildType";
+	public static string Amount     = "Amount";
+	public static string MapWidth   = "mapWidth";
+	public static string MapHeight  = "mapHeight";
+	public static string MapIds     = "mapIDs";
+	public static string MapScenery = "mapSceneryIDs";
+	public static string MapResources = "mapResources";
 }
 
 public class PlayerData 

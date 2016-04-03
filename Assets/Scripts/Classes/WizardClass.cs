@@ -11,7 +11,7 @@
 --
 --  REVISIONS:      (Date and Description)
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
 --  PROGRAMMER:     Hank Lo, Allen Tsang
 --
@@ -45,10 +45,10 @@ public class WizardClass : RangedClass
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
-
-        //Starting item kit
+        //Player specific initialization
         if (playerID == GameData.MyPlayer.PlayerID)
         {
+            //Starting item kit
             Inventory.instance.AddItem(1);
             Inventory.instance.AddItem(5, 5);
             Inventory.instance.AddItem(6);
@@ -58,8 +58,6 @@ public class WizardClass : RangedClass
         //add wizard attack sound clip
         au_simple_attack = Resources.Load("Music/Weapons/magegirl_staff_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/magegirl_staff_secondary") as AudioClip;
-
-
     }
 
 
@@ -70,9 +68,9 @@ public class WizardClass : RangedClass
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float basicAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
@@ -109,9 +107,9 @@ public class WizardClass : RangedClass
     -- REVISIONS:
     --      - March 17, 2016: Fixed instantiation to work through networking
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float specialAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
@@ -135,7 +133,7 @@ public class WizardClass : RangedClass
         Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
         attack.GetComponent<MagicCircle>().playerID = playerID;
         attack.GetComponent<MagicCircle>().teamID = team;
-        attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
+        attack.GetComponent<MagicCircle>().damage = 0;
 
         return cooldowns[1];
     }
