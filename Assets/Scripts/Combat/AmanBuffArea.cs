@@ -12,7 +12,7 @@ public class AmanBuffArea : Area
             var buff = other.gameObject.GetComponent<AmanTeamBuff>();
             if (buff != null)
             {
-                buff.duration = 150;
+                buff.duration = 75;
             }
             else
             {
