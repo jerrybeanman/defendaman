@@ -565,7 +565,7 @@ public class HUD_Manager : MonoBehaviour {
 
 
 		// Indicate that the item has been successfully bought and placed 
-		ItemBought = false;
+		ItemBought = false; 
 
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
