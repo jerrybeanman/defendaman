@@ -264,7 +264,7 @@ public class HUD_Manager : MonoBehaviour {
 					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
-					Send(NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.NA));
+					NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.TCP);
 				}
 
 				// Clear out the chat window
@@ -397,6 +397,9 @@ public class HUD_Manager : MonoBehaviour {
 			placementRange.SetActive(true);
 
 
+		}else
+		{
+			print ("cant buy");
 		}
 	}
 
@@ -563,9 +566,6 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Indicate that the item has been successfully bought and placed 
 		ItemBought = false;
-
-		// Add selected building to the list of created buildings
-		mapManager.buildingsCreated.Add(building);
 
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
