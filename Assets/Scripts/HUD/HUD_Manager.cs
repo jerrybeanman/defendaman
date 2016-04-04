@@ -203,6 +203,7 @@ public class HUD_Manager : MonoBehaviour {
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
+
 			// Have the item hover over our mouse 
 			CheckBuildingPlacement(shop.Selected.Building);
 
@@ -365,7 +366,7 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null && !ItemBought)
+		if(shop.Selected.Option != null && !ItemBought && GameData.MyPlayer.Resources[Constants.GOLD_RES] >= shop.Selected.Building.GetComponent<Building>().cost)
 		{
 			// Indicates that an item has been bought
 			ItemBought = true;
