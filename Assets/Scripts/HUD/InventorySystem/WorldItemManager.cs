@@ -60,6 +60,8 @@ public class WorldItemManager : MonoBehaviour
         CreateWorldItem(101, 1, 1, 35, 25);
         // CreateWorldItem(102, 2, 1, 36, 30); // commented out because gold makes sound whenever created
         // CreateWorldItem(103, 2, 100, 30, 20);
+        CreateWorldItem(1050, 4, 1, 67, 104);
+        //CreateWorldItem(102, 3, 1, 67, 104);
         CreateWorldItem(104, 0, 1, 36, 20);
 
 		// Add sound component for pickup
@@ -85,7 +87,6 @@ public class WorldItemManager : MonoBehaviour
 			audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
 			audioSource.PlayOneShot (audioDrop);
 		}
-
 		return _item;
     }
 
@@ -103,6 +104,13 @@ public class WorldItemManager : MonoBehaviour
             itemPacket["PosX"].AsInt, itemPacket["PosY"].AsInt);
     }
 
+    public IEnumerator WaitSmallDelayBeforeReceivePickupPacket(JSONClass itemPacket)
+    {
+        Debug.Log("WaitSmallDelayBeforeReceivePickupPacket called");
+        yield return new WaitForSeconds(0.05f);
+        ReceiveItemPickupPacket(itemPacket);
+    }
+
     /*
      * Processes a pick up message from the server.
      * Adds item to the player's inventory if the player id matches the player id in the message.
@@ -114,15 +122,17 @@ public class WorldItemManager : MonoBehaviour
         if (GameData.MyPlayer.PlayerID == player_id)
         {
             _inventory.AddItem(item_id, amt);
+            GameData.ItemCollided = false;
         }
 
-		// Play gold pickup sound
-		if (item_id == 2) {
+        // Play gold pickup sound
+        if (item_id == 2) {
 			audioPickup = Resources.Load ("Music/Inventory/gold_pickup") as AudioClip;
 			audioSource.PlayOneShot (audioPickup);
 		}
 
         DestroyWorldItem(world_item_id);
+        
     }
 
     /*
@@ -197,13 +207,12 @@ public class WorldItemManager : MonoBehaviour
 
 
     //int world_item_id, int player_id, int item_id, int amt
-    public List<Pair<string, string>> CreatePickupItemNetworkMessage(int world_item_id, int item_id, int amt)
+    public List<Pair<string, string>> CreatePickupItemNetworkMessage(int world_item_id, int player_id, int item_id, int amt)
     {
         List<Pair<string, string>> _pickup_item_message = new List<Pair<string, string>>();
-        int _player_id = GameData.MyPlayer.PlayerID;
 
         _pickup_item_message.Add(new Pair<string, string>("WorldItemId", world_item_id.ToString()));
-        _pickup_item_message.Add(new Pair<string, string>("PlayerId", _player_id.ToString()));
+        _pickup_item_message.Add(new Pair<string, string>("PlayerId", player_id.ToString()));
         _pickup_item_message.Add(new Pair<string, string>("ItemId", item_id.ToString()));
         _pickup_item_message.Add(new Pair<string, string>("Amount", amt.ToString()));
 
