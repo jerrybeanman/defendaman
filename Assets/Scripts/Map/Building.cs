@@ -9,16 +9,31 @@ public class Building:MonoBehaviour {
 
 	public BuildingType type;
 
-	public float health = 100;
+	public float MaxHp  = 100;
+	public float health;
+	public int 	 cost;
+	public float Health
+	{
+		get
+		{
+			return health;
+		}
+		set
+		{
+			health = value;
+			healthBar.UpdateHealth(MaxHp, health);
+		}
+	}
 
 	public int team;
-	public int collidercounter=0;
+	public int collidercounter = 0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
-
+	public HealthBar healthBar;
+	
 	public float ConstructionTime = 2f;
 
-	SpriteRenderer spriteRenderer;
+	private SpriteRenderer spriteRenderer;
 
 	[HideInInspector]
 	public bool placing = true;
@@ -26,11 +41,12 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
-	public bool playerlocker=false;
+	public bool playerlocker =false;
 
 	// Use this for initialization
 	void Start () 
 	{
+		health = MaxHp;
 		playerlocker=false;
 		collidercounter=0;
 		if(!placing)
@@ -83,17 +99,23 @@ public class Building:MonoBehaviour {
 			placeble = false;
 
 		}
-		if(health<=0)
-		{
-			notifydeath();
-		}
+
 		var attack = other.gameObject.GetComponent<Trigger>();
 		if (attack != null)
 		{
 			if (attack.teamID == team)
 				return;
 			float damage = other.GetComponent<Trigger>().damage;
-			health -= damage;
+			Health -= damage;
+		}
+
+		if(health<=0)
+		{
+			if (Application.platform == RuntimePlatform.LinuxPlayer)
+			{
+				notifydeath();
+			}else
+				Destroy(gameObject);
 		}
 	}
 
@@ -126,25 +148,10 @@ public class Building:MonoBehaviour {
 		// Send the packet, with Team ID, user name, and the message input
 		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.YPos, transform.position.y.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, transform.position.z.ToString()));
 		
-		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.NA);
-		Send(packet);
-	}
-
-	/*----------------------------------------------------------------------------
-    --  Wrapper for NetworkingManager.TCP_Send to use for chat system
-	--	Interface: private static void Send(string packet)
-	--
-    --	programmer: Jerry Jia
-    --	@return: void
-	------------------------------------------------------------------------------*/
-	private static void Send(string packet)
-	{
-		if(NetworkingManager.TCP_Send(packet, 256) < 0)
-			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
-	}
-	
+		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
+        NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
+    }
 }

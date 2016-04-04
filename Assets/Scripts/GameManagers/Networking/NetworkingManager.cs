@@ -83,17 +83,24 @@ public class NetworkingManager : MonoBehaviour
 		}
     }
 
+    public void ResetConnections()
+    {
+        TCP_DisposeClient(TCPClient);
+        UDP_DisposeClient(UDPClient);
+        TCPClient = TCP_CreateClient();
+    }
+
     // Update is called once per frame
     void Update() {
         if (GameData.GameStart) {
             string packet;
 
             //Needs to be reaplced with one "get data" call
-            while ((packet = receive_data_tcp()) != "[]")
+            while ((packet = receive_data_tcp()).Length > 8)
                 update_data(packet);
 
             //Needs to be replaced with one "get data" call
-            while ((packet = receive_data_udp()) != "[]")
+            while ((packet = receive_data_udp()).Length > 8)
                 update_data(packet);
             
             //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.
@@ -155,6 +162,7 @@ public class NetworkingManager : MonoBehaviour
         if (gameObjects == null || JSONGameState == "[]")
         {
             Debug.Log("[ERROR] NetworkingManager.update_data received a packet that is null");
+            return;
         }
         foreach (var node in gameObjects.Children)
         {
@@ -267,14 +275,14 @@ public class NetworkingManager : MonoBehaviour
         if (Application.platform == RuntimePlatform.LinuxPlayer)
         {
 			//Cant send empty packets to server, inefficient and may crash
-			if (tcp != "[]")
+			if (tcp.Length > 8)
             	TCP_Send(tcp, tcp.Length);
-            if (udp != "[]")
+            if (udp.Length > 8)
                 UDP_SendData(udp, udp.Length);
         }
-        if (tcp != "[]")
+        if (tcp.Length > 8)
             lastTCP = tcp;
-        if (udp != "[]")
+        if (udp.Length > 8)
             lastUDP = udp;
     }
 

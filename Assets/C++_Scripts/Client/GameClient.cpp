@@ -51,8 +51,8 @@ void * GameClient::Recv()
     while(1)
     {
         length = sizeof(serverAddr);
-        char *message = (char *) malloc(PACKETLEN * sizeof(char));
-        bytesRead = recvfrom(serverSocket, message, PACKETLEN, 0, (struct sockaddr *)&serverAddr, &length);
+        char *message = (char *) malloc(PACKETLEN_UDP * sizeof(char));
+        bytesRead = recvfrom(serverSocket, message, PACKETLEN_UDP, 0, (struct sockaddr *)&serverAddr, &length);
         if (bytesRead < 0 && errno != 11)
         {
           printf("recv() failed with errno: %d\n", errno);
@@ -100,7 +100,7 @@ char* GameClient::GetData()
 {
   if (CBPackets.Count != 0)
   {
-    memset(currentData, 0, PACKETLEN);
+    memset(currentData, 0, PACKETLEN_UDP);
     CBPop(&CBPackets, currentData);
     printf("GameClient::GetData: %s\n", currentData);
   } else
