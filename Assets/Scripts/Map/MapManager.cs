@@ -200,7 +200,7 @@ public class MapManager : MonoBehaviour {
 		print (message.ToString ());
         _mapWidth = message[NetworkKeyString.MapWidth].AsInt;
         _mapHeight = message[NetworkKeyString.MapHeight].AsInt;
-        _map = new int[_mapWidth  + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
+        _map = new int[_mapWidth + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
         _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message[NetworkKeyString.MapIds].AsArray;
@@ -228,10 +228,10 @@ public class MapManager : MonoBehaviour {
         // The sprite is set randomly from a range of sprites (assigned in Unity Editor).
 		JSONArray resources = message[NetworkKeyString.MapResources].AsArray;
         for (int i = 0; i < resources.Count; i++) {
-			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, RESOURCE_Z), Quaternion.identity) as GameObject;
+			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt + OUTERWALL_THICKNESS, resources[i][1].AsInt + OUTERWALL_THICKNESS, RESOURCE_Z), Quaternion.identity) as GameObject;
 			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
-			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
-			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
+			temp.GetComponent<Resource>().x = resources[i][0].AsInt + OUTERWALL_THICKNESS;
+			temp.GetComponent<Resource>().y = resources[i][1].AsInt + OUTERWALL_THICKNESS;
 			temp.GetComponent<Resource>().amount = RESOURCE_AMOUNT;
 			_mapResources.Add (temp);
 		}
