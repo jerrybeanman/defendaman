@@ -56,7 +56,8 @@ public class Fireball : Projectile
             var burn = other.gameObject.GetComponent<Burn>();
             if (burn == null)
             {
-                other.gameObject.AddComponent<Burn>();
+                burn = other.gameObject.AddComponent<Burn>();
+                burn.damage = damage;
             }
             else
             {
