@@ -43,6 +43,8 @@ namespace Networking
 
 			std::string generateMapSeed();
 
+			int getPlayerId(std::string ipString);
+
 			std::map<int, Player> getPlayerTable();
 
             std::string constructPlayerTable();

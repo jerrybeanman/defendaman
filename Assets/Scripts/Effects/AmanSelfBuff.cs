@@ -10,10 +10,12 @@
 --  DATE:           April 2, 2016
 --
 --  REVISIONS:      (Date and Description)
+--                  April 4th: Hank Lo
+--                      - Numbers balancing; removed majority of self stat buffs, increased hp buff
 --
---  DESIGNERS:      Allen Tsang
+--  DESIGNERS:      Allen Tsang, Hank Lo
 --
---  PROGRAMMER:     Allen Tsang
+--  PROGRAMMER:     Allen Tsang, Hank Lo
 --
 --  NOTES:
 --  This class contains the logic that relates to the Aman Self Buff Class.
@@ -25,10 +27,7 @@ using UnityEngine.EventSystems;
 
 public class AmanSelfBuff : Buff {
     
-    int hpBuff = 200;
-    int attackBuff = 5;
-    int defenseBuff = 5;
-    int speedBuff = 1;
+    int hpBuff = 2000;
     BaseClass target;
     Rigidbody2D area;
 
@@ -37,10 +36,6 @@ public class AmanSelfBuff : Buff {
         base.Start();
         target = gameObject.GetComponent<BaseClass>();
         target.ClassStat.MaxHp += hpBuff;
-        target.ClassStat.CurrentHp += hpBuff;
-        target.ClassStat.AtkPower += attackBuff;
-        target.ClassStat.Defense += defenseBuff;
-        target.ClassStat.MoveSpeed += speedBuff;
 
         area = (Rigidbody2D)Resources.Load("Prefabs/AmanBuffArea", typeof(Rigidbody2D));
     }
