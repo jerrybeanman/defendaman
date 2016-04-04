@@ -10,6 +10,8 @@
 --  DATE:           March 9, 2016
 --
 --  REVISIONS:      (Date and Description)
+--                   April 4th: Hank Lo
+--                      - Numbers balancing
 --
 --  DESIGNERS:      Hank Lo
 --
@@ -26,14 +28,16 @@ using UnityEngine.EventSystems;
 
 public class MagicBuff : Buff {
 
-    int speedbuff = 5;
+    int speedbuff = 3;
     int atkbuff = 5;
-    int defbuf = 8;
+    int defbuf = 5;
     int applyrate;
 
     bool appliedspeedbuff = false;
 
-    void Start() {
+    new void Start()
+    {
+        base.Start();
         magnitude = 0;
         duration = 150;
         applyrate = 0;

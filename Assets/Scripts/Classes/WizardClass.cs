@@ -10,8 +10,10 @@
 --  DATE:           March 9, 2016
 --
 --  REVISIONS:      (Date and Description)
+--                   April 4th: Hank Lo
+--                      - Numbers balancing
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
 --  PROGRAMMER:     Hank Lo, Allen Tsang
 --
@@ -31,24 +33,26 @@ public class WizardClass : RangedClass
     new void Start()
     {
         cooldowns = new float[2] { 0.5f, 6 };
+
+        healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
+        _classStat.MaxHp = 1000;
+        _classStat.MoveSpeed = 11;
+        _classStat.AtkPower = 25;
+        _classStat.Defense = 20;
+
         base.Start();
 
-        _classStat.MaxHp = 100;
-        _classStat.CurrentHp = _classStat.MaxHp;
-        _classStat.MoveSpeed = 8;
-        _classStat.AtkPower = 3;
-        _classStat.Defense = 5;
-        
         fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
         magicCircle = (Rigidbody2D)Resources.Load("Prefabs/MagicCircle", typeof(Rigidbody2D));
 
         var controller = Resources.Load("Controllers/magegirl") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
-
-        //Starting item kit
+        //Player specific initialization
         if (playerID == GameData.MyPlayer.PlayerID)
         {
+            //Starting item kit
             Inventory.instance.AddItem(1);
             Inventory.instance.AddItem(5, 5);
             Inventory.instance.AddItem(6);
@@ -58,8 +62,6 @@ public class WizardClass : RangedClass
         //add wizard attack sound clip
         au_simple_attack = Resources.Load("Music/Weapons/magegirl_staff_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/magegirl_staff_secondary") as AudioClip;
-
-
     }
 
 
@@ -70,9 +72,9 @@ public class WizardClass : RangedClass
     --
     -- REVISIONS: None
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float basicAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
@@ -107,11 +109,12 @@ public class WizardClass : RangedClass
     -- DATE: March 9, 2016
     --
     -- REVISIONS:
-    --      - March 17, 2016: Fixed instantiation to work through networking
+    --      - March 17, 2016: Fixed instantiation to work through networking - Carson
+    --      - Aprile 4, 2016: Added check for silence for magic circle - Hank
     --
-    -- DESIGNER: Hank Lo
+    -- DESIGNER: Hank Lo, Allen Tsang
     --
-    -- PROGRAMMER: Hank Lo
+    -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: float specialAttack(Vector2 dir)
     --              dir: a vector2 object which shows the direction of the attack
@@ -123,19 +126,16 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        if (playerLoc == default(Vector2))
-            playerLoc = dir;
-        base.specialAttack(dir,playerLoc);
+        if (!silenced) {
+            if (playerLoc == default(Vector2))
+                playerLoc = dir;
+            base.specialAttack(dir,playerLoc);
 
-        //Vector2 mousePos = Input.mousePosition;
-        //mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        //var distance = (dir - (Vector2) transform.position).magnitude;
-        //Vector2 endp = (Vector2) transform.position + (distance * dir);
-
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
-        attack.GetComponent<MagicCircle>().playerID = playerID;
-        attack.GetComponent<MagicCircle>().teamID = team;
-        attack.GetComponent<MagicCircle>().damage = ClassStat.AtkPower * 0;
+            Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
+            attack.GetComponent<MagicCircle>().playerID = playerID;
+            attack.GetComponent<MagicCircle>().teamID = team;
+            attack.GetComponent<MagicCircle>().damage = 0;
+        }
 
         return cooldowns[1];
     }

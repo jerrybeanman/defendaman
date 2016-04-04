@@ -13,6 +13,8 @@
 --                      Added teleportation animation
 --                  March 31, 2016
 --                      Add attack sound   - Eunwon Moon
+--                   April 4, 2016: Hank Lo
+--                      - Numbers balancing
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
 --
@@ -35,14 +37,16 @@ public class NinjaClass : MeleeClass
     new void Start()
     {
         cooldowns = new float[2] { 0.95f, 2 };
+
+        healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
+        _classStat.MaxHp = 1300;
+        _classStat.MoveSpeed = 12;
+        _classStat.AtkPower = 30;
+        _classStat.Defense = 60;
+
         base.Start();
 
-        _classStat.MaxHp = 150;
-        _classStat.CurrentHp = _classStat.MaxHp;
-        _classStat.MoveSpeed = 12;
-        _classStat.AtkPower = 20;
-        _classStat.Defense = 5;
-        
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
         teleport = (GameObject)Resources.Load("Prefabs/NinjaTeleport", typeof(GameObject));
 
@@ -58,9 +62,10 @@ public class NinjaClass : MeleeClass
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
-        //Starting item kit
-        if(playerID == GameData.MyPlayer.PlayerID)
+        //Player specific initialization
+        if (playerID == GameData.MyPlayer.PlayerID)
         {
+            //Starting item kit
             Inventory.instance.AddItem(1);
             Inventory.instance.AddItem(5, 5);
             Inventory.instance.AddItem(6);
@@ -70,7 +75,6 @@ public class NinjaClass : MeleeClass
         //ninja attack sound
         au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/ninjaboi_teleport") as AudioClip;
-
     }
 
     //attacks return time it takes to execute
@@ -112,15 +116,15 @@ public class NinjaClass : MeleeClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir,Vector2 playerLoc = default(Vector2))
     {
-        if(playerLoc == default(Vector2))
-            playerLoc = dir;
+        if (!silenced) {
+            if(playerLoc == default(Vector2))
+                playerLoc = dir;
 
-        base.specialAttack(dir, playerLoc);
+            base.specialAttack(dir, playerLoc);
 
-        teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
-        Destroy(teleportInstance, 1);
-
-        if (gameObject.GetComponent<MagicDebuff>() == null) {
+            teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
+            Destroy(teleportInstance, 1);
+        
             var movement = gameObject.GetComponent<Movement>();
             if (movement != null)
                 movement.doBlink(10f);
