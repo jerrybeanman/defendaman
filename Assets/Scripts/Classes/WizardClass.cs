@@ -126,7 +126,7 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        if (gameObject.GetComponent<MagicDebuff>() == null) {
+        if (!silenced) {
             if (playerLoc == default(Vector2))
                 playerLoc = dir;
             base.specialAttack(dir,playerLoc);
