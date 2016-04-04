@@ -884,4 +884,9 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		Debug.Log ("Upgrade weapon here");
 	}
+	public void AddPotion(String potionType)
+	{
+		Debug.Log (potionType + " Potion");
+		Debug.Log ("Add potion here");
+	}
 }
