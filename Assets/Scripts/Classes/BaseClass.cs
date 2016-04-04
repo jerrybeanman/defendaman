@@ -193,16 +193,20 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-                if (_playerID == GameData.AllyKingID)
+                float damage;
+                if ((damage = _currentHp - value) != 0)
                 {
-                    HUD_Manager.instance.UpdateAllyKingHealth(-((_currentHp - value) / MaxHp));
+                    if (_playerID == GameData.AllyKingID)
+                    {
+                        HUD_Manager.instance.UpdateAllyKingHealth(-(damage / MaxHp));
+                    }
+                    else if (_playerID == GameData.EnemyKingID)
+                    {
+                        HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / MaxHp));
+                    }
+                    _currentHp = (value > MaxHp) ? MaxHp : value;
+                    _healthBar.UpdateHealth(MaxHp, CurrentHp);
                 }
-                else if (_playerID == GameData.EnemyKingID)
-                {
-                    HUD_Manager.instance.UpdateEnemyKingHealth(-((_currentHp - value) / MaxHp));
-                }
-                _currentHp = (value > MaxHp) ? MaxHp : value;
-				_healthBar.UpdateHealth(MaxHp, CurrentHp);
             }
         }
         private float _maxHP;
