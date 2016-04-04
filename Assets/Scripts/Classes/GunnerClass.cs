@@ -87,7 +87,7 @@ public class GunnerClass : RangedClass
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
-        attack.AddForce(dir * speed[0]);//was newdir
+        attack.AddForce(dir * speed[0]); //was newdir
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
@@ -95,7 +95,6 @@ public class GunnerClass : RangedClass
 
         return cooldowns[0];
     }
-
 
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
@@ -131,9 +130,9 @@ public class GunnerClass : RangedClass
 					FOVCone.RangeAngle -= 2.5f;
 					FOVConeHidden.RangeAngle -= 2.5f;
 					
-					mainCamera.orthographicSize += .07f;
-					visionCamera.orthographicSize += .07f;
-					hiddenCamera.orthographicSize += .07f;
+					mainCamera.orthographicSize += .1f;
+					visionCamera.orthographicSize += .1f;
+					hiddenCamera.orthographicSize += .1f;
 
 					// Safe guard check
 					if(_classStat.MoveSpeed > 0)

@@ -36,9 +36,6 @@ public class AmanSelfBuff : Buff {
         base.Start();
         target = gameObject.GetComponent<BaseClass>();
         target.ClassStat.MaxHp += hpBuff;
-        target.ClassStat.AtkPower += attackBuff;
-        target.ClassStat.Defense += defenseBuff;
-        target.ClassStat.MoveSpeed += speedBuff;
 
         area = (Rigidbody2D)Resources.Load("Prefabs/AmanBuffArea", typeof(Rigidbody2D));
     }
