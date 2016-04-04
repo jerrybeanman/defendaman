@@ -70,9 +70,23 @@ public class PlayerReceiveUpdates : MonoBehaviour {
 
     void died(JSONClass packet)
     {
+        if (GameData.LobbyData[playerID].TeamID == GameData.MyPlayer.TeamID)
+            GameData.EnemyTeamKillCount++;
+        else
+            GameData.AllyTeamKillCount++;
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
         GameData.PlayerPosition.Remove(playerID);
         Destroy(gameObject);
+
+        if (playerID == GameData.AllyKingID)
+        {
+            GameManager.instance.GameLost();
+        }
+
+        if (playerID == GameData.EnemyKingID)
+        {
+            GameManager.instance.GameWon();
+        }
     }
 
     void use_potion(JSONClass packet)
@@ -86,6 +100,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         var duration = packet["Duration"].AsInt;
 
         baseClass.UsePotion(damage, armour, health, speed, duration);
+        
     }
 
     void new_stats(JSONClass packet)

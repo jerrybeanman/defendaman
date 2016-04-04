@@ -69,26 +69,38 @@ Revision History:
 **********************************************************/
 void * LobbyClient::Recv()
 {
-    int bytesRead;
+    int bytesRead = 0;
+    char* bp;
+    char *message = (char *) malloc(PACKETLEN);
+    memset(message, 0, PACKETLEN);
     while(1)
     {
+	bp = message;
         int bytesToRead = PACKETLEN;
-        char *message = (char *) malloc(PACKETLEN);
-        memset(message, 0, PACKETLEN);
-        while((bytesRead = recv(serverSocket, message, bytesToRead, 0)) < PACKETLEN)
+        while((bytesRead = recv(serverSocket, bp, bytesToRead, 0)) < PACKETLEN)
         {
+	    if (bytesRead == 0)
+		break;
+
             if(bytesRead < 0)
             {
                 printf("recv() failed with errno: %d\n", errno);
+    		free(message);
                 return (void *)errno;
             }
-            message += bytesRead;
+	    printf("IN LOBBYCLIENT: RECV Message : %s - BytesRead : %d - BytesToRead: %d\n", bp, bytesRead, bytesToRead);
+            bp += bytesRead;
             bytesToRead -= bytesRead;
+	    if(bytesToRead == 0)
+	    {
+		break;
+	    }
         }
+	printf("Received: %s\n", message);
         // push message to queue
         CBPushBack(&CBPackets, message);
-        free(message);
     }
+    free(message);
     return NULL;
 }
 
@@ -111,6 +123,7 @@ Revision History:
 **********************************************************/
 int LobbyClient::Send(char * message, int size)
 {
+    printf("Sending: %s of size: %d\n", message, size);
     if (send(serverSocket, message, size, 0) == -1)
     {
         std::cerr << "send() failed with errno: " << errno << std::endl;

@@ -112,9 +112,19 @@ public class HUD_Manager : MonoBehaviour {
 		public GameObject 		MainPanel;
 		// Purchasable items
 		public List<Buildable>	Items;	
+
+		[HideInInspector]
 		// Currently selected item
 		public Buildable		Selected = null;										
-	}										
+	}
+	[System.Serializable]
+	public class PlayerDP
+	{
+		public Sprite				GunnerDP;
+		public Sprite				NinjaDP;
+		public Sprite				MageDP;
+		public Image				Container;
+	}
 	#endregion
 
 	// Singleton object
@@ -133,6 +143,7 @@ public class HUD_Manager : MonoBehaviour {
 	public Text					timer;
 	public GameObject			placementRange;
 	public GameObject			statsPanel;
+	public PlayerDP				playerDp;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -159,7 +170,7 @@ public class HUD_Manager : MonoBehaviour {
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
 			Destroy(gameObject);   			
 	}
-
+	
 	// Called on start of game
 	void Start()
 	{
@@ -169,7 +180,18 @@ public class HUD_Manager : MonoBehaviour {
 		NetworkingManager.Subscribe(UpdateBuildingCreationCallBack, DataType.UI, (int)UICode.BuildingCreation);
 		// Subscribe building destruction to the TCP network
 		NetworkingManager.Subscribe(UpdateBuildingDestructionCallBack, DataType.UI, (int)UICode.BuildingDestruction);
-		
+		switch(GameData.MyPlayer.ClassType)
+		{
+			case ClassType.Gunner: 
+				playerDp.Container.sprite = playerDp.GunnerDP;
+				break;
+			case ClassType.Wizard:
+				playerDp.Container.sprite = playerDp.MageDP;
+				break;
+			case ClassType.Ninja:
+				playerDp.Container.sprite = playerDp.GunnerDP;
+				break;
+		}
 	}
 
 	// Called once per frame
@@ -181,6 +203,7 @@ public class HUD_Manager : MonoBehaviour {
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
+
 			// Have the item hover over our mouse 
 			CheckBuildingPlacement(shop.Selected.Building);
 
@@ -241,7 +264,7 @@ public class HUD_Manager : MonoBehaviour {
 					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
-					Send(NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.NA));
+					NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.TCP);
 				}
 
 				// Clear out the chat window
@@ -343,8 +366,10 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null && !ItemBought)
+		if(shop.Selected.Option != null && !ItemBought && GameData.MyPlayer.Resources[Constants.GOLD_RES] >= shop.Selected.Building.GetComponent<Building>().cost)
 		{
+			Inventory.instance.UseResources(Constants.GOLD_RES, shop.Selected.Building.GetComponent<Building>().cost);
+
 			// Indicates that an item has been bought
 			ItemBought = true;
 
@@ -374,6 +399,9 @@ public class HUD_Manager : MonoBehaviour {
 			placementRange.SetActive(true);
 
 
+		}else
+		{
+			print ("cant buy");
 		}
 	}
 
@@ -505,8 +533,12 @@ public class HUD_Manager : MonoBehaviour {
 	private void UpdateBuildingDestructionCallBack(JSONClass data)
 	{
 		Vector3 Key = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
-		Destroy(GameData.Buildings[Key].gameObject);
-		GameData.Buildings.Remove(Key);
+        //If the building exists, destroy it
+        if (GameData.Buildings.ContainsKey(Key))
+        {
+            Destroy(GameData.Buildings[Key].gameObject);
+            GameData.Buildings.Remove(Key);
+        }
 	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
@@ -535,10 +567,7 @@ public class HUD_Manager : MonoBehaviour {
 
 
 		// Indicate that the item has been successfully bought and placed 
-		ItemBought = false;
-
-		// Add selected building to the list of created buildings
-		mapManager.buildingsCreated.Add(building);
+		ItemBought = false; 
 
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
@@ -564,7 +593,7 @@ public class HUD_Manager : MonoBehaviour {
 			testBuild.GetComponent<Building>().placing = false;
             if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
             {//
-                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 15);
+                testBuild.GetComponent<AI>().instantTurret(2, 40, 2, 15, 15);
 
                 //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
                 Debug.Log("Instant turret 2");

@@ -1,17 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 public class WeaponUpgrade : MonoBehaviour {
 
 	private Inventory _inventory;
-
 	public void upgrade(){
-		Item i1 ;
+		Dictionary<string, int> MyResources = GameData.MyPlayer.Resources;
 		_inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
 		switch(GameData.MyPlayer.ClassType)
 		{
-
 			case ClassType.Gunner:
+			print (MyResources);
 				switch(_inventory.inventory_item_list[0].id){
 					//If stick, upgrade to slingshot
 					case 1:
