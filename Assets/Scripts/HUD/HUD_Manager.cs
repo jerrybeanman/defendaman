@@ -590,7 +590,7 @@ public class HUD_Manager : MonoBehaviour {
 			testBuild.GetComponent<Building>().placing = false;
             if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
             {//
-                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 15);
+                testBuild.GetComponent<AI>().instantTurret(2, 40, 2, 15, 15);
 
                 //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
                 Debug.Log("Instant turret 2");

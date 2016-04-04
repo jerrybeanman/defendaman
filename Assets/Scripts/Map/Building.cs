@@ -9,10 +9,23 @@ public class Building:MonoBehaviour {
 
 	public BuildingType type;
 
-	public float health = 100;
+	public float MaxHp  = 100;
+	public float health;
+	public float Health
+	{
+		get
+		{
+			return health;
+		}
+		set
+		{
+			health = value;
+			healthBar.UpdateHealth(MaxHp, health);
+		}
+	}
 
 	public int team;
-	public int collidercounter=0;
+	public int collidercounter = 0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
 
@@ -27,10 +40,12 @@ public class Building:MonoBehaviour {
 	[HideInInspector]
 	public bool constructed = false;
 	public bool playerlocker=false;
+	public HealthBar healthBar;
 
 	// Use this for initialization
 	void Start () 
 	{
+		health = MaxHp;
 		playerlocker=false;
 		collidercounter=0;
 		if(!placing)
