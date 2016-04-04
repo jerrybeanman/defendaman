@@ -98,7 +98,7 @@ public class GunnerClass : RangedClass
         if (playerLoc == default(Vector2))
             playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-        base.specialAttack(dir, playerLoc);
+        base.specialAttack(dir,default(Vector2));
 
         this.dir = dir;
         inSpecial = true;
@@ -135,6 +135,7 @@ public class GunnerClass : RangedClass
 				dir = (gameObject.transform.rotation * Vector3.right);
 				inSpecial = false;
 				fire();
+                playspecialSound(playerID);
 				var member = new List<Pair<string, string>>();
 				member.Add(new Pair<string, string>("playerID", playerID.ToString()));
 				NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
@@ -202,6 +203,17 @@ public class GunnerClass : RangedClass
         if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
         {
             fire();
+        }
+    }
+    void playspecialSound(int PlayerID)
+    {
+        Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
+        Vector2 temp = new Vector2(GameData.PlayerPosition[GameData.MyPlayer.PlayerID].x, GameData.PlayerPosition[GameData.MyPlayer.PlayerID].y);
+        float distance = Vector2.Distance(temp, playerLoc);
+        if (Vector2.Distance(temp, playerLoc) < 13)
+        {
+            au_attack.volume = (15 - distance) / 40;
+            au_attack.PlayOneShot(au_special_attack);
         }
     }
 }
