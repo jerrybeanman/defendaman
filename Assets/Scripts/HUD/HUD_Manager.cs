@@ -203,6 +203,7 @@ public class HUD_Manager : MonoBehaviour {
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
+
 			// Have the item hover over our mouse 
 			CheckBuildingPlacement(shop.Selected.Building);
 
@@ -365,7 +366,7 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null && !ItemBought)
+		if(shop.Selected.Option != null && !ItemBought && GameData.MyPlayer.Resources[Constants.GOLD_RES] >= shop.Selected.Building.GetComponent<Building>().cost)
 		{
 			// Indicates that an item has been bought
 			ItemBought = true;
@@ -396,6 +397,9 @@ public class HUD_Manager : MonoBehaviour {
 			placementRange.SetActive(true);
 
 
+		}else
+		{
+			print ("cant buy");
 		}
 	}
 
@@ -561,10 +565,7 @@ public class HUD_Manager : MonoBehaviour {
 
 
 		// Indicate that the item has been successfully bought and placed 
-		ItemBought = false;
-
-		// Add selected building to the list of created buildings
-		mapManager.buildingsCreated.Add(building);
+		ItemBought = false; 
 
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
