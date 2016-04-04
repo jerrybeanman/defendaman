@@ -130,20 +130,6 @@ public class Building:MonoBehaviour {
 		packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, transform.position.z.ToString()));
 		
 		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
-		Send(packet);
-	}
-
-	/*----------------------------------------------------------------------------
-    --  Wrapper for NetworkingManager.TCP_Send to use for chat system
-	--	Interface: private static void Send(string packet)
-	--
-    --	programmer: Jerry Jia
-    --	@return: void
-	------------------------------------------------------------------------------*/
-	private static void Send(string packet)
-	{
-		if(NetworkingManager.TCP_Send(packet, 256) < 0)
-			Debug.Log("[Debug]: SelectTeam(): Packet sending failed\n");
-	}
-	
+        NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
+    }
 }

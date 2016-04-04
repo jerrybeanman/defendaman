@@ -267,14 +267,14 @@ public class NetworkingManager : MonoBehaviour
         if (Application.platform == RuntimePlatform.LinuxPlayer)
         {
 			//Cant send empty packets to server, inefficient and may crash
-			if (tcp != "[]")
+			if (tcp.Length > 8)
             	TCP_Send(tcp, tcp.Length);
-            if (udp != "[]")
+            if (udp.Length > 8)
                 UDP_SendData(udp, udp.Length);
         }
-        if (tcp != "[]")
+        if (tcp.Length > 8)
             lastTCP = tcp;
-        if (udp != "[]")
+        if (udp.Length > 8)
             lastUDP = udp;
     }
 
