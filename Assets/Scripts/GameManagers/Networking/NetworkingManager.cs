@@ -155,6 +155,7 @@ public class NetworkingManager : MonoBehaviour
         if (gameObjects == null || JSONGameState == "[]")
         {
             Debug.Log("[ERROR] NetworkingManager.update_data received a packet that is null");
+            return;
         }
         foreach (var node in gameObjects.Children)
         {

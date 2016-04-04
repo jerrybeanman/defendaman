@@ -61,20 +61,6 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-
-        /*if (playerID == GameData.AllyKingID)
-        {
-            HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
-            if (ClassStat.CurrentHp <= 0)
-                GameLost();
-        }
-
-        if (playerID == GameData.EnemyKingID)
-        {
-            HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / ClassStat.MaxHp));
-            if (ClassStat.CurrentHp <= 0)
-                GameWon();
-        }*/
     }
 
     public void PlayerDied()
@@ -86,6 +72,15 @@ public class GameManager : MonoBehaviour {
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
         instance.player = null;
+        if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
+        {
+            GameLost();
+        }
+
+        if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID)
+        {
+            GameWon();
+        }
     }
 
     public void StartGame(int seed)
@@ -274,13 +269,13 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void GameWon()
+    public void GameWon()
     {
         GameData.GameState = GameState.Won;
         Debug.Log("You have won");
     }
 
-    private void GameLost()
+    public void GameLost()
     {
         GameData.GameState = GameState.Lost;
         Debug.Log("You have lost");
@@ -288,15 +283,17 @@ public class GameManager : MonoBehaviour {
 
     void OnGUI()
     {
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 60;
         switch (GameData.GameState)
         {
             case GameState.Won:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!");
-                Invoke("ReturnToMenu", 2f);
+                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!", style);
+                Invoke("ReturnToMenu", 5f);
                 break;
             case GameState.Lost:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!");
-                Invoke("ReturnToMenu", 2f);
+                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!", style);
+                Invoke("ReturnToMenu", 5f);
                 break;
             default:
                 break;
