@@ -399,9 +399,21 @@ public class GameManager : MonoBehaviour {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
-        GameData.PlayerPosition.Clear();
+        GameData.aiSpawn = null;
+        GameData.AllyKingID = -1;
+        GameData.EnemyKingID = -1;
+        GameData.AllyTeamKillCount = 0;
+        GameData.EnemyTeamKillCount = 0;
         GameData.GameStart = false;
+        GameData.InputBlocked = false;
+        GameData.IP = "192.168.0.";
+        GameData.ItemCollided = false;
+        GameData.KeyBlocked = false;
+        GameData.MouseBlocked = false;
+        GameData.Seed = 0;
         GameData.TeamSpawnPoints.Clear();
+        GameData.PlayerPosition.Clear();
+        GameData.MyPlayer = null;
         Destroy(instance);
         Application.LoadLevel("MenuScene");
     }
