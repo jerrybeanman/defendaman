@@ -89,12 +89,12 @@
     "title": "Damage Potion",
 		"description": "Temporary damage boost.",
     "stats": {
-      "damage": 5,
+      "damage": 25,
       "armor": 0,
 			"health": 0,
 			"speed": 0
     },
-		"duration": 5,
+		"duration": 60,
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
@@ -107,11 +107,11 @@
 		"description": "Temporary armor boost.",
     "stats": {
       "damage": 0,
-      "armor": 5,
+      "armor": 40,
 			"health": 0,
 			"speed": 0
     },
-		"duration": 5,
+		"duration": 30,
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
