@@ -99,7 +99,7 @@ public class GunnerClass : RangedClass
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
 
-    	if (gameObject.GetComponent<MagicDebuff>() == null) {
+    	if (!silenced) {
 	        if (playerLoc == default(Vector2))
 	            playerLoc = dir;
 	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
@@ -117,7 +117,7 @@ public class GunnerClass : RangedClass
     // hank april 4, added check for magic debuff, added autoshot at max range
 	void Update()
 	{
-		if (gameObject.GetComponent<MagicDebuff>() != null) {
+		if (silenced) {
 			inSpecial = false;
 			StartCoroutine(ZoomIn());
 		}

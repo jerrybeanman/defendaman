@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------
---  SOURCE FILE:    MagicDebff.cs
+--  SOURCE FILE:    MagicDebuff.cs
 --
 --  PROGRAM:        Linux Game
 --
@@ -11,7 +11,7 @@
 --
 --  REVISIONS:      (Date and Description)
 --                   April 4, 2016: Hank Lo
---                      - Numbers balancing
+--                      - Numbers balancing, silence implemention
 --
 --  DESIGNERS:      Hank Lo
 --
@@ -49,6 +49,7 @@ public class MagicDebuff : Buff {
         {
             player.ClassStat.MoveSpeed -= speeddebuff;
             appliedspeedbuff = true;
+            player.silenced = true;
         }
         if ((applyrate % 30) == 0) 
         {
@@ -65,6 +66,7 @@ public class MagicDebuff : Buff {
             player.ClassStat.AtkPower += (magnitude * atkdebuff);
             player.ClassStat.Defense += (magnitude * defdebuf);
             player.ClassStat.MoveSpeed += speeddebuff;
+            player.silenced = false;
             Destroy(this);
         }
     }
