@@ -18,6 +18,8 @@ namespace Networking
 
           void Broadcast(const char* message, sockaddr_in * excpt = NULL) override;
 
+          void SetPlayerList(std::map<int, Player> players);
+
           static void * CreateClientManager(void * server);
 
           void PrepareSelect();
