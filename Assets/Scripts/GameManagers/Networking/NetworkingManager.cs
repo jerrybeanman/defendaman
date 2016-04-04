@@ -89,11 +89,11 @@ public class NetworkingManager : MonoBehaviour
             string packet;
 
             //Needs to be reaplced with one "get data" call
-            while ((packet = receive_data_tcp()) != "[]")
+            while ((packet = receive_data_tcp()).Length > 8)
                 update_data(packet);
 
             //Needs to be replaced with one "get data" call
-            while ((packet = receive_data_udp()) != "[]")
+            while ((packet = receive_data_udp()).Length > 8)
                 update_data(packet);
             
             //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.

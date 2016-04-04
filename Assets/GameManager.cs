@@ -3,6 +3,7 @@ using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 //Carson
 public class GameManager : MonoBehaviour {
@@ -97,11 +98,9 @@ public class GameManager : MonoBehaviour {
 
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
-      //  GameData.TeamSpawnPoints.Clear();
-        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(0,0));
-        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(2,2));
+        
 
-        foreach (var playerData in GameData.LobbyData)
+        foreach (var playerData in GameData.LobbyData.OrderBy(x => x.Key))
         {
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
