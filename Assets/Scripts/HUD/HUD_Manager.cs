@@ -639,7 +639,7 @@ public class HUD_Manager : MonoBehaviour {
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
 		float distance_from_player = Vector3.Distance(player, building.transform.position);
-		if(distance_from_player > 8)
+		if(distance_from_player > 8 || distance_from_player <= 2  )
 			return false;
 		if(building.GetComponent<Building>().collidercounter==0)
 			return true;

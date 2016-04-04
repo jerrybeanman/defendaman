@@ -31,14 +31,16 @@ public class WizardClass : RangedClass
     new void Start()
     {
         cooldowns = new float[2] { 0.5f, 6 };
-        base.Start();
 
+        healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
         _classStat.MaxHp = 100;
-        _classStat.CurrentHp = _classStat.MaxHp;
         _classStat.MoveSpeed = 8;
         _classStat.AtkPower = 3;
         _classStat.Defense = 5;
-        
+
+        base.Start();
+
         fireball = (Rigidbody2D)Resources.Load("Prefabs/Fireball", typeof(Rigidbody2D));
         magicCircle = (Rigidbody2D)Resources.Load("Prefabs/MagicCircle", typeof(Rigidbody2D));
 

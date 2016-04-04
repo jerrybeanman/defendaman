@@ -29,14 +29,17 @@ public class GunnerClass : RangedClass
 	new void Start()
 	{
 		cooldowns = new float[2] { 0.2f, 5f };
-		base.Start();
-		
-		_classStat.MaxHp = 150;
-		_classStat.CurrentHp = _classStat.MaxHp;
+
+        healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
+        _classStat.MaxHp = 150;
 		_classStat.MoveSpeed = BaseSpeed;
 		_classStat.AtkPower = 20;
 		_classStat.Defense = 5;
-		inSpecial = false;
+
+        base.Start();
+
+        inSpecial = false;
 		fired = false;
 		
 		bullet = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
@@ -72,8 +75,7 @@ public class GunnerClass : RangedClass
 
 
     //attacks return time it takes to execute
-    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
-
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2)) 
     {
         if (playerLoc == default(Vector2))
             playerLoc = dir;
@@ -125,7 +127,9 @@ public class GunnerClass : RangedClass
 					visionCamera.orthographicSize += .1f;
 					hiddenCamera.orthographicSize += .1f;
 
-					_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
+					// Safe guard check
+					if(_classStat.MoveSpeed > 0)
+						_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
 				}
 
 				MapManager.cameraDistance = -mainCamera.orthographicSize;
@@ -196,6 +200,7 @@ public class GunnerClass : RangedClass
         member.Add(new Pair<string, string>("playerID", playerID.ToString()));
         EndAttackAnimation();
         CancelInvoke("EndAttackAnimation");
+        inSpecial = false;
     }
 
     void fireFromServer(JSONClass packet)

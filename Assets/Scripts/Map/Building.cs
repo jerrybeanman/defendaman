@@ -74,7 +74,7 @@ public class Building:MonoBehaviour {
 	{
 		if(other.gameObject.tag == "Bullet")
 			return;
-		if(placing && other.gameObject.tag != "Untagged" )
+		if(placing && other.gameObject.tag != "Untagged" && other.gameObject.tag != "Player" )
 		{
 
 			collidercounter++;
@@ -108,7 +108,7 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
-		if(placing && other.gameObject.tag != "Untagged" )
+		if(placing && other.gameObject.tag != "Untagged" && other.gameObject.tag != "Player" )
 		{
 			collidercounter--;
 			placeble = true;

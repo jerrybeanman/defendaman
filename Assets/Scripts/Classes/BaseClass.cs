@@ -13,11 +13,10 @@ public abstract class BaseClass : MonoBehaviour {
 
     public int team;
     public int playerID;
-    private int yourPlayerID;
     private int allyKingID;
     private int enemyKingID;
     
-	private HealthBar healthBar;
+	protected HealthBar healthBar;
 
     public AudioSource au_attack;
     public AudioClip au_simple_attack;
@@ -26,53 +25,51 @@ public abstract class BaseClass : MonoBehaviour {
     protected void Start ()
     {
         var networkingManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkingManager>();
-        yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
 
         NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
 
-        if (playerID == yourPlayerID)
+        if (playerID == GameData.MyPlayer.PlayerID)
         {
             HUD_Manager.instance.subSkill.CoolDown = cooldowns[0];
             HUD_Manager.instance.mainSkill.CoolDown = cooldowns[1];
             HUD_Manager.instance.playerProfile.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-            if (playerID == allyKingID)
-                HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-            if (playerID == enemyKingID)
-                HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            print("Our health:" + HUD_Manager.instance.playerProfile.Health.fillAmount);
+        }
+
+        if (playerID == allyKingID)
+        {
+            HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            print("Ally king:" + HUD_Manager.instance.allyKing.Health.fillAmount);
+        }
+
+        if (playerID == enemyKingID)
+        {
+            HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            print("Enemy king:" + HUD_Manager.instance.enemyKing.Health.fillAmount);
         }
 
         if (playerID == allyKingID || playerID == enemyKingID)
         {
             gameObject.AddComponent<AmanSelfBuff>();
         }
-        
-		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
-        _classStat = new PlayerBaseStat(playerID, healthBar);
 
         //add audio component
-        au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
+        au_attack = gameObject.AddComponent<AudioSource>();
     }
 
     public PlayerBaseStat ClassStat
 	{
-		get
-        {
-            if (this._classStat == null)
-            {
-                this._classStat = new PlayerBaseStat(playerID, healthBar);
+		get {
+            if (_classStat == null) {
+                _classStat = new PlayerBaseStat(playerID, healthBar);
             }
-            return this._classStat;
+            return _classStat;
         }
 
-		protected set
-		{
-			this._classStat.CurrentHp 	= value.CurrentHp;
-			this._classStat.MaxHp 		= value.MaxHp;
-			this._classStat.MoveSpeed 	= value.MoveSpeed;
-			this._classStat.AtkPower 	= value.AtkPower;
-            this._classStat.Defense 	= value.Defense;
+		protected set {
+            _classStat = value;
 		}
 	}
 
@@ -86,20 +83,21 @@ public abstract class BaseClass : MonoBehaviour {
             float reduction = (30 / (ClassStat.Defense + 30));
             finaldamage = damage * reduction;
         }
-        
+
+        print("Final damage:" + finaldamage);
+        GameManager.instance.PlayerTookDamage(playerID, ClassStat.CurrentHp - finaldamage, ClassStat);
         ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
         {
-            ClassStat.CurrentHp = ClassStat.MaxHp;
+            print("doDamage over max");
+            ClassStat.CurrentHp -= Math.Abs(ClassStat.MaxHp-ClassStat.CurrentHp);
         }
-
-        //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
-
-        GameManager.instance.PlayerTookDamage(playerID, finaldamage, ClassStat);
+        
 
         if (ClassStat.CurrentHp <= 0.0f)
         {
             //death
+            Debug.Log(playerID + " Died");
             NetworkingManager.Unsubscribe(DataType.Player, playerID);
             Destroy(gameObject);
         }
@@ -159,9 +157,9 @@ public abstract class BaseClass : MonoBehaviour {
     {
         Vector2 temp = new Vector2(GameData.PlayerPosition[GameData.MyPlayer.PlayerID].x, GameData.PlayerPosition[GameData.MyPlayer.PlayerID].y);
         float distance = Vector2.Distance(temp, playerLoc);
-        Debug.Log("MY LOCATION x: " + temp.x + " y: " + temp.y);
+        /*Debug.Log("MY LOCATION x: " + temp.x + " y: " + temp.y);
         Debug.Log("Player loc  x: " + playerLoc.x + " y: " + playerLoc.y); 
-        Debug.Log("This distance is " + distance);
+        Debug.Log("This distance is " + distance);*/
         if (Vector2.Distance(temp, playerLoc) < 13)
         {
             au_attack.volume = (15 - distance) / 10 ;
@@ -195,12 +193,29 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-				
-				_currentHp = (value > MaxHp) ? MaxHp : value;
+                if (_playerID == GameData.AllyKingID)
+                {
+                    HUD_Manager.instance.UpdateAllyKingHealth(-((_currentHp - value) / MaxHp));
+                }
+                else if (_playerID == GameData.EnemyKingID)
+                {
+                    HUD_Manager.instance.UpdateEnemyKingHealth(-((_currentHp - value) / MaxHp));
+                }
+                _currentHp = (value > MaxHp) ? MaxHp : value;
 				_healthBar.UpdateHealth(MaxHp, CurrentHp);
             }
         }
-		public float MaxHp;
+        private float _maxHP;
+		public float MaxHp
+        {
+            get {
+                return _maxHP;
+            }
+            set {
+                _maxHP = value;
+                _currentHp = value;
+            }
+        }
 		public float MoveSpeed;
         private float _atkPower;
 		public float AtkPower
