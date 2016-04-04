@@ -111,13 +111,20 @@ public class LobbyNetwork : MonoBehaviour {
         {
             case NetworkCode.TeamChangeRequest:
             {
+				Debug.Log("[Debug]: TeamChangeRequest" + raw);
+			
 				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;
-
+				PrintData();
+			
                 break;
             }
             case NetworkCode.ClassChangeRequest:
             {
+				Debug.Log("[Debug]: ClassChangeRequest" + raw);
+			
 				GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)packet[NetworkKeyString.ClassID].AsInt;
+				PrintData();
+			
 				break;
             }
             case NetworkCode.ReadyRequest:
@@ -159,22 +166,27 @@ public class LobbyNetwork : MonoBehaviour {
 
                     print("[Debug] UpdatePlayerList()" + playerData[NetworkKeyString.TeamID].AsBool);
                 }
+				PrintData();
+			
                 break;
             }
 			case NetworkCode.PlayerLeftLobby:
 			{
 				GameData.LobbyData.Remove(PlayerPacketID);
+				PrintData();
 				break;
 			}
             case NetworkCode.GameStart:
             {
 				RecievedData = "Player: " + PlayerPacketID + " has started the game!";
-                break;
+				PrintData();
+                
+				break;
             }
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("hud_test");
+				Application.LoadLevel("tron_theme");
 				break;
 			}	
 			

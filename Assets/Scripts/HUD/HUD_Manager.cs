@@ -9,8 +9,9 @@ using System.Collections.Generic;
 
 public enum UICode
 {
-	Chat 		= 1,
-	Building 	= 2
+	Chat 				= 1,
+	BuildingCreation 	= 2,
+	BuildingDestruction = 3
 }
 
 public class HUD_Manager : MonoBehaviour {
@@ -164,8 +165,11 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, (int)UICode.Chat);
-		// Subscribe building creation to the UDP network
-		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.Building);
+		// Subscribe building creation to the TCP network
+		NetworkingManager.Subscribe(UpdateBuildingCreationCallBack, DataType.UI, (int)UICode.BuildingCreation);
+		// Subscribe building destruction to the TCP network
+		NetworkingManager.Subscribe(UpdateBuildingDestructionCallBack, DataType.UI, (int)UICode.BuildingDestruction);
+		
 	}
 
 	// Called once per frame
@@ -361,12 +365,15 @@ public class HUD_Manager : MonoBehaviour {
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
-
+			shop.Selected.Building.GetComponent<Building>().collidercounter = 0;
+			print ("BUILDING value is " + shop.Selected.Building.GetComponent<Building>().collidercounter);
 			// Set current rotation value to be zero
 			curRot = 0;
 
 			// Display placement area on HUD
 			placementRange.SetActive(true);
+
+
 		}
 	}
 
@@ -433,6 +440,17 @@ public class HUD_Manager : MonoBehaviour {
 	}
 
 	float curRot = 0;
+	/*----------------------------------------------------------------------------
+    --	Coroutine used to smootly animate an object's rotation
+    --
+	--	Interface:  IEnumerator Rotate(object[] parms)
+	--					-parms[0]: The angle in degrees to rotate by
+	--					-parms[1]: The game object to rotate
+	--					-parms[2]: Time it takes for the rotation to finish
+    --
+    --	programmer: Jerry Jia
+    --	@return: IEnumerator type for seconds to wait till next instruction
+	------------------------------------------------------------------------------*/
 	IEnumerator Rotate(object[] parms)
 	{
 		float elapsedTime = 0.0f;
@@ -450,7 +468,17 @@ public class HUD_Manager : MonoBehaviour {
 		}
 	}
 
-	void UpdateBuildingCallBack(JSONClass data)
+	/*----------------------------------------------------------------------------
+    --	Subscriber function to NetworkingManager, recieves events when Building
+    --  is created 
+    --
+	--	Interface:  void UpdateBuildingCallBack(JSONClass data)
+	--					-JSONClass data: JSON object recieved back
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
+	private void UpdateBuildingCreationCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
@@ -471,6 +499,14 @@ public class HUD_Manager : MonoBehaviour {
            b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
             Debug.Log("Instant turret 1");
         }
+		b1.GetComponent<Building>().notifycreation();
+	}
+
+	private void UpdateBuildingDestructionCallBack(JSONClass data)
+	{
+		Vector3 Key = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
+		Destroy(GameData.Buildings[Key].gameObject);
+		GameData.Buildings.Remove(Key);
 	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
@@ -520,7 +556,7 @@ public class HUD_Manager : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.YRot, building.transform.rotation.y.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.ZRot, building.transform.eulerAngles.z.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.BuildType, ((int)buildType).ToString()));
-			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Building, packetData, Protocol.NA);
+			var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingCreation, packetData, Protocol.NA);
 			Send(packet);
 		}else
 		{
@@ -534,7 +570,7 @@ public class HUD_Manager : MonoBehaviour {
                 Debug.Log("Instant turret 2");
             }
         }
-
+	
 		Destroy(building);
 		return true;
  	}
@@ -583,10 +619,12 @@ public class HUD_Manager : MonoBehaviour {
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
 		float distance_from_player = Vector3.Distance(player, building.transform.position);
-		if(distance_from_player > 8)
+		if(distance_from_player > 8 || distance_from_player <= 2  )
 			return false;
+		if(building.GetComponent<Building>().collidercounter==0)
+			return true;
+		return false;
 
-		return 	building.GetComponent<Building>().placeble;
 	}
 
 	/*----------------------------------------------------------------------------

@@ -151,8 +151,6 @@ public class MenuScript : MonoBehaviour {
 
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
-			Debug.Log ("PlayerUsername: " + p.Username);
-
             if (p.Ready)
             {
                 ready++;

@@ -42,7 +42,7 @@ public class ItemMenu : MonoBehaviour
     {
         _item_menu = GameObject.Find("Item Menu"); 
         _item_menu.SetActive(false);
-        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+		_world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _amount_panel = GameObject.Find("Inventory").GetComponent<AmountPanel>();
         _use_btn = _item_menu.transform.FindChild("Use Button").gameObject;
         _item_menu_rt = _item_menu.GetComponent<RectTransform>();
@@ -131,7 +131,9 @@ public class ItemMenu : MonoBehaviour
             NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
 
             // Pretend that a drop message was received
-            _world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+			if (Application.platform != RuntimePlatform.LinuxPlayer) {
+				_world_item_manager.ReceiveItemDropPacket(_world_item_manager.ConvertListToJSONClass(msg));
+			}
         }
         GameData.MouseBlocked = false;
         Deactivate();

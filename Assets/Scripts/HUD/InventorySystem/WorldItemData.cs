@@ -18,7 +18,7 @@ using System;
 --      void OnTriggerExit2D(Collider2D other)
 --
 -- DATE:		05/03/2016
--- REVISIONS:	(V1.0)
+-- REVISIONS:	03/04/2016 - Conditions for pickup (gold vs non-gold) - Krystle
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
@@ -43,9 +43,9 @@ public class WorldItemData : MonoBehaviour
 		// set material to stencil masked
 		gameObject.GetComponent<SpriteRenderer> ().material = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
         _player_id = GameData.MyPlayer.PlayerID;
-        _world_item_manager = GameObject.Find("GameManager").GetComponent<WorldItemManager>();
+        _world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
-    }
+	}
 	
 	/* 
      * Update is called once per frame.
@@ -58,27 +58,31 @@ public class WorldItemData : MonoBehaviour
      * - the amount
      */
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
+        if (trigger_entered)
         {
+			// Items other than gold must be manually picked up
+			if (item.id != 2 && !Input.GetKeyDown(KeyCode.F)) {
+				return;
+			}
+
             if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id))
             {
                 // Send Network message
                 List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
                 NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 
-            _tooltip.Deactivate();
+				_tooltip.Deactivate();
 
             // Prevent that a pickup event was received
             //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
                 // Pretend that a pickup event was received
-                _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-            }
-            else
-            {
+				if (Application.platform != RuntimePlatform.LinuxPlayer) {
+                    _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+				}
+            } else {
                 StartCoroutine(Inventory.instance.DisplayInventoryFullError());
             }
-            
-        }
+        } 
     }
 
     /* 
