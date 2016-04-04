@@ -505,13 +505,11 @@ public class HUD_Manager : MonoBehaviour {
 	private void UpdateBuildingDestructionCallBack(JSONClass data)
 	{
 		Vector3 Key = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
+        //If the building exists, destroy it
         if (GameData.Buildings.ContainsKey(Key))
         {
             Destroy(GameData.Buildings[Key].gameObject);
             GameData.Buildings.Remove(Key);
-        } else
-        {
-            Debug.Log("[DEBUG] HUD_Manager-UpdateBuildingDestructionCallback: Invalid key");
         }
 	}
 	/*----------------------------------------------------------------------------
