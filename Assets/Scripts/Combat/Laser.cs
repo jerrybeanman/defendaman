@@ -14,6 +14,11 @@ public class Laser : Projectile
 
     protected override void OnTriggerEnter2D(Collider2D other)
     {
+		// ignore health bar
+		if(other.gameObject.tag == "HealthBar")
+		{
+			return;
+		}
         //If its a player or an AI, ignore it, otherwise destroy itself
         var player = other.gameObject.GetComponent<BaseClass>();
         if (player != null && teamID == player.team)

@@ -20,7 +20,7 @@ public class GunnerClass : RangedClass
 	bool fired;
 	
 	// added by jerry
-	public	float 		 slowPercentage = 5;	// Speed to slow by when in special attack mode. Stacks up.
+	public	float 		 slowPercentage = 1;	// Speed to slow by when in special attack mode. Stacks up.
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
 	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
 	private float		 BaseSpeed = 10;		// Stores the base move speed
@@ -127,7 +127,9 @@ public class GunnerClass : RangedClass
 					visionCamera.orthographicSize += .1f;
 					hiddenCamera.orthographicSize += .1f;
 
-					_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
+					// Safe guard check
+					if(_classStat.MoveSpeed > 0)
+						_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
 				}
 
 				MapManager.cameraDistance = -mainCamera.orthographicSize;
@@ -158,6 +160,7 @@ public class GunnerClass : RangedClass
 	{
 		// Set speed back to base speed
 		_classStat.MoveSpeed = BaseSpeed;
+
 		// Wait a bit so we can see that 360 quickscope
 		yield return new WaitForSeconds(1);
 
