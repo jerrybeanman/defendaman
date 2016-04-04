@@ -137,9 +137,6 @@ public class GunnerClass : RangedClass
 					visionCamera.orthographicSize += .1f;
 					hiddenCamera.orthographicSize += .1f;
 
-					// Safe guard check
-					if(_classStat.MoveSpeed > 0)
-						_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
 				} else {
 					dir = (gameObject.transform.rotation * Vector3.right);
 					inSpecial = false;
@@ -176,8 +173,6 @@ public class GunnerClass : RangedClass
 	------------------------------------------------------------------------------*/
 	IEnumerator ZoomIn()
 	{
-		// Set speed back to base speed
-		_classStat.MoveSpeed = BaseSpeed;
 
 		// Wait a bit so we can see that 360 quickscope
 		yield return new WaitForSeconds(1);

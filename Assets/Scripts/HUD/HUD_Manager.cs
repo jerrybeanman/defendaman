@@ -368,6 +368,8 @@ public class HUD_Manager : MonoBehaviour {
 		// If nothing is currently selected, do nothing 
 		if(shop.Selected.Option != null && !ItemBought && GameData.MyPlayer.Resources[Constants.GOLD_RES] >= shop.Selected.Building.GetComponent<Building>().cost)
 		{
+			Inventory.instance.UseResources(Constants.GOLD_RES, shop.Selected.Building.GetComponent<Building>().cost);
+
 			// Indicates that an item has been bought
 			ItemBought = true;
 
