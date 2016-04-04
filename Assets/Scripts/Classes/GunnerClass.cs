@@ -209,7 +209,7 @@ public class GunnerClass : RangedClass
         laserAttack.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         // Hank changed this for balance issues - charging damage with the new numbers won't work out
-        laserAttack.damage = ClassStat.AtkPower * 1.5;
+        laserAttack.damage = ClassStat.AtkPower * 1.5f;
         laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
         laserAttack.pierce = 10;
 
