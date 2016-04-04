@@ -126,11 +126,10 @@ public class Building:MonoBehaviour {
 		// Send the packet, with Team ID, user name, and the message input
 		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
-		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.YPos, transform.position.y.ToString()));
 		packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, transform.position.z.ToString()));
 		
-		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.NA);
+		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
 		Send(packet);
 	}
 
