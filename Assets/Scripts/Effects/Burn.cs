@@ -3,16 +3,32 @@ using System.Collections;
 
 public class Burn : Debuff
 {
-    void Start()
+    float damage;
+    Resource tree;
+
+    new void Start()
     {
+        base.Start();
+        damage = 10;
         duration = 150;
+        if (player == null)
+        {
+            tree = gameObject.GetComponent<Resource>();
+        }
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
         if(duration % 25 == 0) {
-            player.doDamage(10f, true);
+            if (player != null)
+            {
+                player.doDamage(damage, true);
+            }
+            else if (tree != null)
+            {
+                tree.SendResourceTakenMessage((int)damage);
+            }
         }
     }
 }

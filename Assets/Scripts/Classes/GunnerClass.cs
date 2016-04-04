@@ -49,11 +49,12 @@ public class GunnerClass : RangedClass
 		visionCamera = GameObject.Find("Camera FOV").GetComponent<Camera>();
 		hiddenCamera = GameObject.Find("Camera Enemies").GetComponent<Camera>();
 		NetworkingManager.Subscribe(fireFromServer, DataType.SpecialCase, (int)SpecialCase.GunnerSpecial);
-		
-		//Starting item kit
-		if (playerID == GameData.MyPlayer.PlayerID)
+
+        //Player specific initialization
+        if (playerID == GameData.MyPlayer.PlayerID)
 		{
-			Inventory.instance.AddItem(1);
+            //Starting item kit
+            Inventory.instance.AddItem(1);
 			Inventory.instance.AddItem(5, 5);
 			Inventory.instance.AddItem(6);
 			Inventory.instance.AddItem(7);
@@ -63,38 +64,48 @@ public class GunnerClass : RangedClass
 			FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
 			movement 		= gameObject.GetComponent<Movement>();
 		}
-		
-	}
-	
-	//attacks return time it takes to execute
-	public override float basicAttack(Vector2 dir)
-	{
-		dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-		if (inSpecial)
-			return 0f;
-		base.basicAttack(dir);
-		var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
-		
-		Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
-		attack.AddForce(dir * speed[0]);//was newdir
-		attack.GetComponent<BasicRanged>().playerID = playerID;
-		attack.GetComponent<BasicRanged>().teamID = team;
-		attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
-		attack.GetComponent<BasicRanged>().maxDistance = distance[0];
-		
-		return cooldowns[0];
-	}
-	
-	public override float specialAttack(Vector2 dir)
-	{
-		dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-		base.specialAttack(dir);
-		
-		this.dir = dir;
-		inSpecial = true;
-		
-		return cooldowns[1];
-	}
+
+        //add gunboi attack sound
+        au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
+        au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
+    }
+
+
+    //attacks return time it takes to execute
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+
+    {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
+        if (inSpecial)
+            return 0f;
+        base.basicAttack(dir, playerLoc);
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
+
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
+        attack.AddForce(dir * speed[0]);//was newdir
+        attack.GetComponent<BasicRanged>().playerID = playerID;
+        attack.GetComponent<BasicRanged>().teamID = team;
+        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
+        attack.GetComponent<BasicRanged>().maxDistance = distance[0];
+
+        return cooldowns[0];
+    }
+
+
+    public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+    {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
+        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
+        base.specialAttack(dir, playerLoc);
+
+        this.dir = dir;
+        inSpecial = true;
+
+        return cooldowns[1];
+    }
 	
 	Vector2 dir;
 	void Update()
@@ -138,7 +149,7 @@ public class GunnerClass : RangedClass
     --
     --	Interface:  IEnumerator ZoomIn()
     --
-    --	programmer: Jerry Jia, Carson Roscoe, Allan Tsang
+    --	programmer: Jerry Jia, Carson Roscoe, Allen Tsang
     --	@return: number of seconds to wait before executing next instruction
 	------------------------------------------------------------------------------*/
 	IEnumerator ZoomIn()
@@ -167,29 +178,30 @@ public class GunnerClass : RangedClass
 	}
 
 	void fire()
-	{
-		var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
-		
-		Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
-		attack.AddForce(dir * speed[0]);
-		var laserAttack = attack.GetComponent<Laser>();
-		laserAttack.playerID = playerID;
-		laserAttack.teamID = team;
-		var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
-		laserAttack.damage = ClassStat.AtkPower * zoomRatio;
-		laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
-		laserAttack.pierce = 10;
-		
-		var member = new List<Pair<string, string>>();
-		member.Add(new Pair<string, string>("playerID", playerID.ToString()));
-		EndAttackAnimation();
-		CancelInvoke("EndAttackAnimation");
-	}
-	void fireFromServer(JSONClass packet)
-	{
-		if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
-		{
-			fire();
-		}
-	}
+    {
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
+
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
+        attack.AddForce(dir * speed[0]);
+        var laserAttack = attack.GetComponent<Laser>();
+        laserAttack.playerID = playerID;
+        laserAttack.teamID = team;
+        var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
+        laserAttack.damage = ClassStat.AtkPower * zoomRatio;
+        laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
+        laserAttack.pierce = 10;
+
+        var member = new List<Pair<string, string>>();
+        member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+        EndAttackAnimation();
+        CancelInvoke("EndAttackAnimation");
+    }
+
+    void fireFromServer(JSONClass packet)
+    {
+        if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
+        {
+            fire();
+        }
+    }
 }

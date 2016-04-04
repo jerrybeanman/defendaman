@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour {
 		{
 			VirtualStartGame();
 			ConsumeItem();
-			HUDToogles();
+			HUDToggles();
 		}
 	}
 
@@ -101,12 +101,12 @@ public class InputManager : MonoBehaviour {
 	/*----------------------------------------------------------------------------
     --	Check for HUD event toogles
     --
-    --	Interface:  void HUDToogles()
+    --	Interface:  void HUDToggles()
     --
     --	progrbammer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	private void HUDToogles()
+	private void HUDToggles()
 	{
 		
 		if(Input.GetKeyDown(KeyCode.M))

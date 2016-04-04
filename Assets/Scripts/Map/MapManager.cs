@@ -5,23 +5,11 @@ using System;
 using System.Collections.Generic;
 
 public class MapManager : MonoBehaviour {
-    // 
-    // VARIABLE DECLARATIONS
-    //
-    /* Constant string variables for building/parsing JSON. */
-    private const string ID = "id";
-    private const string DATA = "data";
-    private const string MAP = "map";
-    private const string RESOURCE = "resource";
-    private const string ITEM = "item";
-    private const string BUILDING = "building";
-    private const string TRANSACTION = "transaction";
-    private const string INCR = "incr";
-    private const string DECR = "decr";
     /* How many walls will line the outside to not give an image of an empty world around the edges */
     const int RESOURCE_AMOUNT = 100;
     const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
     const int RESPAWN_TIME = 30;        //  in seconds
+	const int RESOURCE_Z = -10;
     /* A set of constant map update event types. */
     public enum EventType 
     {
@@ -32,10 +20,6 @@ public class MapManager : MonoBehaviour {
         BUILDING_HIT = 4,
         BUILDING_DSTR = 5,
     };
-    /* ID of map update event, i.e. its event type. */
-    private EventType _id;
-    /* 2D string array containing map values. */
-    private string _string_map;
     /* 2D int array containing map values. */
     private int[,] _map;
     /* 2D int array containing map scenery values. */
@@ -76,10 +60,17 @@ public class MapManager : MonoBehaviour {
     public static float cameraDistance;
     public float frustumHeight, frustumWidth;
 
+	// Sound components
+	public AudioSource audioSource;
+	public AudioClip audioExplode;
+
     /**
      * Use this for initialization.
      */
     void Start() {
+		// Add sound component for explosion
+		audioSource = (AudioSource) gameObject.AddComponent<AudioSource>();
+		audioExplode = Resources.Load ("Music/Tree/pop") as AudioClip;
     }
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -97,19 +88,6 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     void Update() {
 		check_object_pool ();
-	}
-	
-	/**
-	 * Deserialize JSON string into 2D int array.
-	 */
-	private int[,] parse_string_map(string map) {
-		// _map = json.deserialization<int>(map)
-		return _map;
-	}
-	
-	/* Serialize 2D int array into JSON string. */
-	private string parse_int_map(int[][] map) {
-		return _string_map;
 	}
 	
 	/**
@@ -207,8 +185,8 @@ public class MapManager : MonoBehaviour {
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	create_map
     -- DATE: 		February 16, 2016
-    -- REVISIONS: 	N/A
-    --it  DESIGNER: 	Jaegar Sarauer, Krystle Bulalakaw
+    -- REVISIONS: 	April 2, 2016  -  Use static string variables
+    -- DESIGNER: 	Jaegar Sarauer, Krystle Bulalakaw
     -- PROGRAMMER: 	Jaegar Sarauer, Thomas Yu, Krystle Bulalakaw
     -- INTERFACE: 	create_map(JSONClass message)
     --					JSONClass message	the message in JSON for map creation, containing map data
@@ -220,12 +198,12 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     private void create_map(JSONClass message) {
 		print (message.ToString ());
-        _mapWidth = message["mapWidth"].AsInt;
-        _mapHeight = message["mapHeight"].AsInt;
+        _mapWidth = message[NetworkKeyString.MapWidth].AsInt;
+        _mapHeight = message[NetworkKeyString.MapHeight].AsInt;
         _map = new int[_mapWidth  + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
         _mapScenery = new int[_mapWidth, _mapHeight];
 
-        JSONArray mapArrays = message["mapIDs"].AsArray;
+        JSONArray mapArrays = message[NetworkKeyString.MapIds].AsArray;
 
         for (int x = 0; x < _mapWidth + (OUTERWALL_THICKNESS * 2); x++) {
             JSONArray mapX = mapArrays[x - OUTERWALL_THICKNESS].AsArray;
@@ -236,7 +214,7 @@ public class MapManager : MonoBehaviour {
                     _map[x, y] = 0; //outer wall edges
         }
 
-        JSONArray mapSceneryArrays = message["mapSceneryIDs"].AsArray;
+		JSONArray mapSceneryArrays = message[NetworkKeyString.MapScenery].AsArray;
         
         for (int x = 0; x < _mapWidth; x++) {
             JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
@@ -248,9 +226,9 @@ public class MapManager : MonoBehaviour {
         // Creates resource game objects on the map. It goes through the list of resources from the JSON message and instantiates them based on 
         // their X and Y positions, which were pre-generated and assigned by the server. 
         // The sprite is set randomly from a range of sprites (assigned in Unity Editor).
-        JSONArray resources = message["mapResources"].AsArray;
+		JSONArray resources = message[NetworkKeyString.MapResources].AsArray;
         for (int i = 0; i < resources.Count; i++) {
-			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, -2), Quaternion.identity) as GameObject;
+			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, RESOURCE_Z), Quaternion.identity) as GameObject;
 			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
 			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
 			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
@@ -319,7 +297,7 @@ public class MapManager : MonoBehaviour {
     public void ProcessResourceTakenEvent(JSONClass message) {
 		int xPos = message[NetworkKeyString.XPos].AsInt;
 		int yPos = message[NetworkKeyString.YPos].AsInt;
-		int amount = message["ResourceAmountTaken"].AsInt;
+		int amount = message[NetworkKeyString.Amount].AsInt;
 		
 		// Find the Resource in the list with these X and Y positions
 		GameObject temp = _mapResources.Find(go => 
@@ -376,7 +354,6 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Respawn it
-		StartCoroutine(ExplodeAndDestroy(temp));
 		StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
 	}
 
@@ -393,6 +370,8 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     IEnumerator ExplodeAndDestroy(GameObject go) {
 		go.GetComponent<Resource>().animator.SetTrigger("Depleted");
+		//Play explosion sound
+		audioSource.PlayOneShot (audioExplode);
 		// TODO: get animation clip length
 		yield return new WaitForSeconds(0.267f);
 		go.SetActive(false);
