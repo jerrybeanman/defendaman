@@ -11,6 +11,7 @@ public class Burn : Debuff
         base.Start();
         // .8 scaling ratio based on the attack value of the mage - this attack does true damage, apr4th, hank
         damage *= 0.8f;
+
         duration = 150;
         if (player == null)
         {

@@ -87,7 +87,7 @@ public class GunnerClass : RangedClass
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
 
         Rigidbody2D attack = (Rigidbody2D)Instantiate(bullet, startPosition, transform.rotation);
-        attack.AddForce(dir * speed[0]);//was newdir
+        attack.AddForce(dir * speed[0]); //was newdir
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
@@ -96,14 +96,16 @@ public class GunnerClass : RangedClass
         return cooldowns[0];
     }
 
-
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+
     	if (gameObject.GetComponent<MagicDebuff>() == null) {
 	        if (playerLoc == default(Vector2))
 	            playerLoc = dir;
 	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
+            playerLoc = default(Vector2);
 	        base.specialAttack(dir, playerLoc);
+
 
 	        this.dir = dir;
 	        inSpecial = true;
@@ -196,7 +198,7 @@ public class GunnerClass : RangedClass
 	void fire()
     {
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
-
+                        playspecialSound(playerID);
         Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
         var laserAttack = attack.GetComponent<Laser>();
@@ -213,6 +215,7 @@ public class GunnerClass : RangedClass
         EndAttackAnimation();
         CancelInvoke("EndAttackAnimation");
         inSpecial = false;
+
     }
 
     void fireFromServer(JSONClass packet)
@@ -220,6 +223,18 @@ public class GunnerClass : RangedClass
         if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
         {
             fire();
+        }
+    }
+
+
+    void playspecialSound(int PlayerID)
+    {
+        Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
+        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
+        if (distance < 13)
+        {
+            au_attack.volume = (15 - distance) / 40;
+            au_attack.PlayOneShot(au_special_attack);
         }
     }
 }
