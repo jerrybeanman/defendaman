@@ -8,7 +8,7 @@ public enum SpecialCase { GunnerSpecial = 1 }
 public class GunnerClass : RangedClass
 {
 	int[] distance = new int[2] { 12, 12 };
-	int[] speed = new int[2] { 300, 300 };
+	int[] speed = new int[2] { 300, 400 };
 	Rigidbody2D bullet;
 	Rigidbody2D laser;
 	Camera mainCamera;
@@ -18,6 +18,7 @@ public class GunnerClass : RangedClass
 	float zoomIn;
 	bool inSpecial;
 	bool fired;
+	Vector2 dir;
 	
 	// added by jerry
 	public	float 		 slowPercentage = 1;	// Speed to slow by when in special attack mode. Stacks up.
@@ -28,14 +29,14 @@ public class GunnerClass : RangedClass
 	
 	new void Start()
 	{
-		cooldowns = new float[2] { 0.2f, 5f };
+		cooldowns = new float[2] { 0.2f, 10f };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
-        _classStat.MaxHp = 150;
+        _classStat.MaxHp = 1100;
 		_classStat.MoveSpeed = BaseSpeed;
-		_classStat.AtkPower = 20;
-		_classStat.Defense = 5;
+		_classStat.AtkPower = 40;
+		_classStat.Defense = 30;
 
         base.Start();
 
@@ -98,20 +99,27 @@ public class GunnerClass : RangedClass
 
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        if (playerLoc == default(Vector2))
-            playerLoc = dir;
-        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-        base.specialAttack(dir, playerLoc);
+    	if (gameObject.GetComponent<MagicDebuff>() == null) {
+	        if (playerLoc == default(Vector2))
+	            playerLoc = dir;
+	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
+	        base.specialAttack(dir, playerLoc);
 
-        this.dir = dir;
-        inSpecial = true;
+	        this.dir = dir;
+	        inSpecial = true;
+	    }
 
         return cooldowns[1];
     }
 	
-	Vector2 dir;
+    // hank april 4, added check for magic debuff, added autoshot at max range
 	void Update()
 	{
+		if (gameObject.GetComponent<MagicDebuff>() != null) {
+			inSpecial = false;
+			StartCoroutine(ZoomIn());
+		}
+
 		if (playerID == GameData.MyPlayer.PlayerID)
 		{
 			if (inSpecial && Input.GetMouseButton(1))
@@ -123,13 +131,21 @@ public class GunnerClass : RangedClass
 					FOVCone.RangeAngle -= 2.5f;
 					FOVConeHidden.RangeAngle -= 2.5f;
 					
-					mainCamera.orthographicSize += .1f;
-					visionCamera.orthographicSize += .1f;
-					hiddenCamera.orthographicSize += .1f;
+					mainCamera.orthographicSize += .07f;
+					visionCamera.orthographicSize += .07f;
+					hiddenCamera.orthographicSize += .07f;
 
 					// Safe guard check
 					if(_classStat.MoveSpeed > 0)
 						_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
+				} else {
+					dir = (gameObject.transform.rotation * Vector3.right);
+					inSpecial = false;
+					fire();
+					var member = new List<Pair<string, string>>();
+					member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+					NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
+					StartCoroutine(ZoomIn());
 				}
 
 				MapManager.cameraDistance = -mainCamera.orthographicSize;
@@ -192,7 +208,8 @@ public class GunnerClass : RangedClass
         laserAttack.playerID = playerID;
         laserAttack.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
-        laserAttack.damage = ClassStat.AtkPower * zoomRatio;
+        // Hank changed this for balance issues - charging damage with the new numbers won't work out
+        laserAttack.damage = ClassStat.AtkPower * 1.5f;
         laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
         laserAttack.pierce = 10;
 
