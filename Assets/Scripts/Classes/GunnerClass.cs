@@ -104,6 +104,7 @@ public class GunnerClass : RangedClass
 	        if (playerLoc == default(Vector2))
 	            playerLoc = dir;
 	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
+            playerLoc = default(Vector2);
 	        base.specialAttack(dir, playerLoc);
 
 
@@ -133,9 +134,9 @@ public class GunnerClass : RangedClass
 					FOVCone.RangeAngle -= 2.5f;
 					FOVConeHidden.RangeAngle -= 2.5f;
 					
-					mainCamera.orthographicSize += .07f;
-					visionCamera.orthographicSize += .07f;
-					hiddenCamera.orthographicSize += .07f;
+					mainCamera.orthographicSize += .1f;
+					visionCamera.orthographicSize += .1f;
+					hiddenCamera.orthographicSize += .1f;
 
 					// Safe guard check
 					if(_classStat.MoveSpeed > 0)
@@ -158,7 +159,6 @@ public class GunnerClass : RangedClass
 				dir = (gameObject.transform.rotation * Vector3.right);
 				inSpecial = false;
 				fire();
-                playspecialSound(playerID);
 				var member = new List<Pair<string, string>>();
 				member.Add(new Pair<string, string>("playerID", playerID.ToString()));
 				NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
@@ -204,7 +204,7 @@ public class GunnerClass : RangedClass
 	void fire()
     {
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
-
+                        playspecialSound(playerID);
         Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
         var laserAttack = attack.GetComponent<Laser>();
@@ -212,7 +212,7 @@ public class GunnerClass : RangedClass
         laserAttack.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
         // Hank changed this for balance issues - charging damage with the new numbers won't work out
-        laserAttack.damage = ClassStat.AtkPower * 1.5;
+        laserAttack.damage = ClassStat.AtkPower * 1.5f;
         laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
         laserAttack.pierce = 10;
 
@@ -221,6 +221,7 @@ public class GunnerClass : RangedClass
         EndAttackAnimation();
         CancelInvoke("EndAttackAnimation");
         inSpecial = false;
+
     }
 
     void fireFromServer(JSONClass packet)
@@ -235,7 +236,7 @@ public class GunnerClass : RangedClass
     void playspecialSound(int PlayerID)
     {
         Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
-        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]));
+        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
         if (distance < 13)
         {
             au_attack.volume = (15 - distance) / 40;
