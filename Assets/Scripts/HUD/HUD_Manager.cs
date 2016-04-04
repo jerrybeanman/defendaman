@@ -112,6 +112,8 @@ public class HUD_Manager : MonoBehaviour {
 		public GameObject 		MainPanel;
 		// Purchasable items
 		public List<Buildable>	Items;	
+
+		[HideInInspector]
 		// Currently selected item
 		public Buildable		Selected = null;										
 	}
