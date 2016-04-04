@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Threading;
 public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, aman = 4}
 public enum GameState { Playing, Dying, Dead, Won, Lost}
 public enum BuildingType { Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5}
@@ -67,7 +67,7 @@ public class GameData
     public static int 			EnemyKingID 	{ get; set; }
     public static int 			AllyKingID 		{ get; set; }
     public static bool 			MouseBlocked 	{ get; set; }
-
+    public static bool          ItemCollided    = false;
               
     public static Dictionary<int, Vector3> PlayerPosition = new Dictionary<int, Vector3>();   
 
