@@ -98,17 +98,23 @@ public class Building:MonoBehaviour {
 			placeble = false;
 
 		}
-		if(health<=0)
-		{
-			notifydeath();
-		}
+
 		var attack = other.gameObject.GetComponent<Trigger>();
 		if (attack != null)
 		{
 			if (attack.teamID == team)
 				return;
 			float damage = other.GetComponent<Trigger>().damage;
-			health -= damage;
+			Health -= damage;
+		}
+
+		if(health<=0)
+		{
+			if (Application.platform == RuntimePlatform.LinuxPlayer)
+			{
+				notifydeath();
+			}else
+				Destroy(gameObject);
 		}
 	}
 
