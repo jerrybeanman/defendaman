@@ -15,6 +15,7 @@
 #include "CircularBuffer.h"
 
 #define PACKETLEN    4096
+#define PACKETLEN_UDP 512
 #define MAXPACKETS   10
 
 namespace Networking

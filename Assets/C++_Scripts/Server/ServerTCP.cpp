@@ -113,6 +113,9 @@ void * ServerTCP::Receive()
 
          bytesToRead -= BytesRead;
          bp += BytesRead;
+         if(bytesToRead == 0) {
+           break;
+         }
        }
 
         /* recv() failed */
@@ -137,7 +140,6 @@ void * ServerTCP::Receive()
           return 0;
       	}
         //Handle Data Received
-        std::cout << "Received: " << buf << std::endl;
         this->ServerTCP::CheckServerRequest(tmpPlayer, buf);
         //memset(buf, 0, PACKETLEN);
     }
@@ -159,12 +161,10 @@ void * ServerTCP::Receive()
 void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
-  std::cerr << "Inside Broadcast" << std::endl;
   for(const auto &pair : _PlayerTable)
   {
     tmpPlayer = pair.second;
 
-    std::cerr << "BROADCASTING: " << message << std::endl;
     if(send(tmpPlayer.socket, message, PACKETLEN, 0) == -1)
     {
       std::cerr << "Broadcast() failed for player id: " << pair.first << std::endl;
@@ -302,7 +302,6 @@ bool ServerTCP::AllPlayersReady()
  */
 std::string ServerTCP::constructPlayerTable()
 {
-  std::cout << "WE ARE INSIDE CONSTRUCT PLAYER TABLE" << std::endl;
 	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : [";
 	for (auto it = _PlayerTable.begin(); it != _PlayerTable.end();)
 	{
@@ -318,7 +317,6 @@ std::string ServerTCP::constructPlayerTable()
 	packet +=    "]";
   packet += "}]";
 
-  std::cout << "THIS IS OUR PACKET THAT WE ARE SENDING" << packet << std::endl;
 	return packet;
 }
 
@@ -332,7 +330,6 @@ std::string ServerTCP::constructPlayerTable()
 std::string ServerTCP::UpdateID(const Player& player)
 {
    char buf[PACKETLEN];
-   std::cout << player.username << std::endl;
    sprintf(buf, "[{\"DataType\" : 6, \"ID\" : 4, \"PlayerID\" : %d, \"UserName\" : \"%s\"}]", player.id, player.username);
    std::string temp(buf);
    return temp;

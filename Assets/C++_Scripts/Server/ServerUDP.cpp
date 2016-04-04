@@ -120,7 +120,7 @@ void * ServerUDP::Receive()
     {
       if (FD_ISSET(_UDPReceivingSocket, &rset))
       {
-        nvalue = recvfrom(_UDPReceivingSocket, buf, PACKETLEN, 0, (sockaddr *)&Client, &ClientLen);
+        nvalue = recvfrom(_UDPReceivingSocket, buf, PACKETLEN_UDP, 0, (sockaddr *)&Client, &ClientLen);
         if (nvalue == 0)
         {
           free(buf);
@@ -200,7 +200,7 @@ void ServerUDP::Broadcast(const char* message, sockaddr_in * excpt)
     if(excpt != NULL && strcmp(inet_ntoa ((it->second).connection.sin_addr), inet_ntoa(excpt->sin_addr)) == 0)
       continue;
 
-    if(sendto(_UDPReceivingSocket, message, PACKETLEN, 0, (sockaddr *)&((it->second).connection), sizeof(sockaddr_in)) == -1)
+    if(sendto(_UDPReceivingSocket, message, PACKETLEN_UDP, 0, (sockaddr *)&((it->second).connection), sizeof(sockaddr_in)) == -1)
     {
       fprintf(stderr, "Failed to send to [%s]\n", inet_ntoa ((it->second).connection.sin_addr));
       perror("ServerUDP::Broadcast");
