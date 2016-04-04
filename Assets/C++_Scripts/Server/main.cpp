@@ -2,8 +2,7 @@
 #include "ServerTCP.h"
 #include "ServerUDP.h"
 using namespace Networking;
-std::map<int, Player>     _PlayerTable;
-std::vector<std::string>  _Connections;
+
 int rc;
 
 int main()
@@ -12,22 +11,12 @@ int main()
   ServerTCP serverTCP;
   ServerUDP serverUDP;
 
-  serverTCP.SetPlayerList(&_PlayerTable);
-  serverUDP.SetPlayerList(&_PlayerTable);
-
-  serverTCP.SetConnectionList(&_Connections);
-  serverUDP.SetConnectionList(&_Connections);
-
   if((rc = serverUDP.InitializeSocket(8000)) != 0)
   {
       std::cerr << "UDP Server initialization failed." << std::endl;
       return 1;
   }
   std::cerr << "UDP Server initialized." << std::endl;
-  if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &serverUDP) < 0)
-  {
-      std::cerr << "thread creation failed" << std::endl;
-  }
 
   if((rc = serverTCP.InitializeSocket(7000)) != 0)
   {
@@ -54,11 +43,14 @@ int main()
       {
         std::cerr << "thread creation failed" << std::endl;
       }
-
-      std::cerr << "Map size is: " << _PlayerTable.size() << std::endl;
-      for(std::vector<std::string>::const_iterator it = _Connections.begin(); it != _Connections.end(); ++it)
+      if (gameRunning == false)
       {
-        std::cerr << "Player:" << *it << std::endl;
+        std::cout << "UDP thread creation" << std::endl;
+        if(pthread_create(&udpThread, NULL, &ServerUDP::CreateClientManager, (void *) &serverUDP) < 0)
+        {
+            std::cerr << "thread creation failed" << std::endl;
+        }
+        gameRunning = true;
       }
   }
 	return 0;

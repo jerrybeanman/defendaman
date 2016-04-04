@@ -20,10 +20,6 @@ public class MapManager : MonoBehaviour {
         BUILDING_HIT = 4,
         BUILDING_DSTR = 5,
     };
-    /* ID of map update event, i.e. its event type. */
-    private EventType _id;
-    /* 2D string array containing map values. */
-    private string _string_map;
     /* 2D int array containing map values. */
     private int[,] _map;
     /* 2D int array containing map scenery values. */
@@ -64,10 +60,17 @@ public class MapManager : MonoBehaviour {
     public static float cameraDistance;
     public float frustumHeight, frustumWidth;
 
+	// Sound components
+	public AudioSource audioSource;
+	public AudioClip audioExplode;
+
     /**
      * Use this for initialization.
      */
     void Start() {
+		// Add sound component for explosion
+		audioSource = (AudioSource) gameObject.AddComponent<AudioSource>();
+		audioExplode = Resources.Load ("Music/Tree/pop") as AudioClip;
     }
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -197,7 +200,7 @@ public class MapManager : MonoBehaviour {
 		print (message.ToString ());
         _mapWidth = message[NetworkKeyString.MapWidth].AsInt;
         _mapHeight = message[NetworkKeyString.MapHeight].AsInt;
-        _map = new int[_mapWidth  + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
+        _map = new int[_mapWidth + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
         _mapScenery = new int[_mapWidth, _mapHeight];
 
         JSONArray mapArrays = message[NetworkKeyString.MapIds].AsArray;
@@ -225,10 +228,10 @@ public class MapManager : MonoBehaviour {
         // The sprite is set randomly from a range of sprites (assigned in Unity Editor).
 		JSONArray resources = message[NetworkKeyString.MapResources].AsArray;
         for (int i = 0; i < resources.Count; i++) {
-			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt, resources[i][1].AsInt, RESOURCE_Z), Quaternion.identity) as GameObject;
+			GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt + OUTERWALL_THICKNESS, resources[i][1].AsInt + OUTERWALL_THICKNESS, RESOURCE_Z), Quaternion.identity) as GameObject;
 			mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
-			temp.GetComponent<Resource>().x = resources[i][0].AsInt;
-			temp.GetComponent<Resource>().y = resources[i][1].AsInt;
+			temp.GetComponent<Resource>().x = resources[i][0].AsInt + OUTERWALL_THICKNESS;
+			temp.GetComponent<Resource>().y = resources[i][1].AsInt + OUTERWALL_THICKNESS;
 			temp.GetComponent<Resource>().amount = RESOURCE_AMOUNT;
 			_mapResources.Add (temp);
 		}
@@ -351,7 +354,6 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Respawn it
-		StartCoroutine(ExplodeAndDestroy(temp));
 		StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
 	}
 
@@ -368,6 +370,8 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     IEnumerator ExplodeAndDestroy(GameObject go) {
 		go.GetComponent<Resource>().animator.SetTrigger("Depleted");
+		//Play explosion sound
+		audioSource.PlayOneShot (audioExplode);
 		// TODO: get animation clip length
 		yield return new WaitForSeconds(0.267f);
 		go.SetActive(false);

@@ -20,7 +20,7 @@ public class GunnerClass : RangedClass
 	bool fired;
 	
 	// added by jerry
-	public	float 		 slowPercentage = 5;	// Speed to slow by when in special attack mode. Stacks up.
+	public	float 		 slowPercentage = 1;	// Speed to slow by when in special attack mode. Stacks up.
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
 	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
 	private float		 BaseSpeed = 10;		// Stores the base move speed
@@ -29,14 +29,17 @@ public class GunnerClass : RangedClass
 	new void Start()
 	{
 		cooldowns = new float[2] { 0.2f, 5f };
-		base.Start();
-		
-		_classStat.MaxHp = 150;
-		_classStat.CurrentHp = _classStat.MaxHp;
+
+        healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
+        _classStat.MaxHp = 150;
 		_classStat.MoveSpeed = BaseSpeed;
 		_classStat.AtkPower = 20;
 		_classStat.Defense = 5;
-		inSpecial = false;
+
+        base.Start();
+
+        inSpecial = false;
 		fired = false;
 		
 		bullet = (Rigidbody2D)Resources.Load("Prefabs/SmallBullet", typeof(Rigidbody2D));
@@ -124,7 +127,9 @@ public class GunnerClass : RangedClass
 					visionCamera.orthographicSize += .1f;
 					hiddenCamera.orthographicSize += .1f;
 
-					_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
+					// Safe guard check
+					if(_classStat.MoveSpeed > 0)
+						_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
 				}
 
 				MapManager.cameraDistance = -mainCamera.orthographicSize;
@@ -156,6 +161,7 @@ public class GunnerClass : RangedClass
 	{
 		// Set speed back to base speed
 		_classStat.MoveSpeed = BaseSpeed;
+
 		// Wait a bit so we can see that 360 quickscope
 		yield return new WaitForSeconds(1);
 
@@ -205,12 +211,13 @@ public class GunnerClass : RangedClass
             fire();
         }
     }
+
+
     void playspecialSound(int PlayerID)
     {
         Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
-        Vector2 temp = new Vector2(GameData.PlayerPosition[GameData.MyPlayer.PlayerID].x, GameData.PlayerPosition[GameData.MyPlayer.PlayerID].y);
-        float distance = Vector2.Distance(temp, playerLoc);
-        if (Vector2.Distance(temp, playerLoc) < 13)
+        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]));
+        if (distance < 13)
         {
             au_attack.volume = (15 - distance) / 40;
             au_attack.PlayOneShot(au_special_attack);
