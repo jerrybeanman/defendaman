@@ -11,6 +11,7 @@ public class Building:MonoBehaviour {
 
 	public float MaxHp  = 100;
 	public float health;
+	public int 	 cost;
 	public float Health
 	{
 		get
@@ -28,10 +29,11 @@ public class Building:MonoBehaviour {
 	public int collidercounter = 0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
-
+	public HealthBar healthBar;
+	
 	public float ConstructionTime = 2f;
 
-	SpriteRenderer spriteRenderer;
+	private SpriteRenderer spriteRenderer;
 
 	[HideInInspector]
 	public bool placing = true;
@@ -39,8 +41,7 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
-	public bool playerlocker=false;
-	public HealthBar healthBar;
+	public bool playerlocker =false;
 
 	// Use this for initialization
 	void Start () 
