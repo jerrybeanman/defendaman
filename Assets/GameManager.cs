@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour {
         }*/
     }
 
-    private static void PlayerDied()
+    public void PlayerDied()
     {
         GameData.EnemyTeamKillCount++;
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);

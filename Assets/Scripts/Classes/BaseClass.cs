@@ -94,11 +94,9 @@ public abstract class BaseClass : MonoBehaviour {
         }
         
 
-        if (ClassStat.CurrentHp <= 0.0f)
+        if (ClassStat.CurrentHp <= 0.0f && playerID == GameData.MyPlayer.PlayerID)
         {
-            //death
-            Debug.Log(playerID + " Died");
-            NetworkingManager.Unsubscribe(DataType.Player, playerID);
+            GameManager.instance.PlayerDied();
             Destroy(gameObject);
         }
 
