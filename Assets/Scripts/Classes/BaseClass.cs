@@ -21,6 +21,8 @@ public abstract class BaseClass : MonoBehaviour {
     public AudioSource au_attack;
     public AudioClip au_simple_attack;
     public AudioClip au_special_attack;
+
+    public bool silenced = false;
     
     protected void Start ()
     {

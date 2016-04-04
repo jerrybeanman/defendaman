@@ -51,33 +51,50 @@ public class Movement : MonoBehaviour
         }
         Debug.Log("Mouse distnace: " + mouseDistance + " Real Distance: " + distance);
         Vector2 vec = updateCoordinates(angle);
-		var layerMask = (1 << 8);
-		RaycastHit2D hit2 = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
-		if(hit2.collider != null && hit2.collider.gameObject.tag == "Building" && hit2.collider.gameObject.GetComponent<Building>().team != GameData.MyPlayer.TeamID){
-			rb2d.position = rb2d.position + vec * (hit2.distance - 0.1f);
-		}
-		else{
-			if(checkEnd(vec, distance))
-	        {
-	            //rb2d.MovePosition(rb2d.position + vec * distance);
-	            rb2d.position = rb2d.position + vec * distance;
-	              //  (rb2d.position + vec * distance);
-	            
-	        }
-	        //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
-	        else
-	        {
+        var layerMask = (1 << 10);
+        layerMask = ~layerMask;
+        var secondMask = (1 << 8);
+        secondMask |= (1 << 10);
+        secondMask = ~secondMask;
+        RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
 
-	            //return false;
-	            RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
-	            //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
-	            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
+        if (hit.collider != null && hit.collider.gameObject.tag == "Building" && hit.collider.gameObject.GetComponent<Building>().team != GameData.MyPlayer.TeamID)
+        {
+            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
+        }
+        //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+        else {
+            if (checkEnd(vec, distance))
+            {
+                //rb2d.MovePosition(rb2d.position + vec * distance);
+                rb2d.position = rb2d.position + vec * distance;
+                //  (rb2d.position + vec * distance);
 
-	            Debug.Log("Vector Distance: " + hit.distance);
+            }
+            //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
+            else
+            {
 
-	        }
-		}
+                //return false;
+                // var layerMask = (1 << 8);
+                Debug.Log("Doing second cast");
+                for (int i = 100; i >= 0; i -= 5)
+                {
+                    float x = distance * i / 100.0f;
+                    Debug.Log(x);
+                    if (checkEnd(vec, x))
+                    {
+                        rb2d.position = rb2d.position + vec * x;
+                        Debug.Log("Doing half blink");
+                        return true;
+
+                    }
+                }
+
+            }
+        }
         return true;
+         
     }
     void Update()
     {
