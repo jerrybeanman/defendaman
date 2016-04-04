@@ -80,7 +80,7 @@ public abstract class BaseClass : MonoBehaviour {
 
         if (!trueDamage)
         {
-            float reduction = (30 / (ClassStat.Defense + 30));
+            float reduction = (100 / (ClassStat.Defense + 100));
             finaldamage = damage * reduction;
         }
 

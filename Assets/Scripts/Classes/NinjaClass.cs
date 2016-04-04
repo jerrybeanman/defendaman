@@ -13,6 +13,8 @@
 --                      Added teleportation animation
 --                  March 31, 2016
 --                      Add attack sound   - Eunwon Moon
+--                   April 4, 2016: Hank Lo
+--                      - Numbers balancing
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
 --
@@ -38,10 +40,10 @@ public class NinjaClass : MeleeClass
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
-        _classStat.MaxHp = 150;
+        _classStat.MaxHp = 1300;
         _classStat.MoveSpeed = 12;
-        _classStat.AtkPower = 20;
-        _classStat.Defense = 5;
+        _classStat.AtkPower = 30;
+        _classStat.Defense = 60;
 
         base.Start();
 
