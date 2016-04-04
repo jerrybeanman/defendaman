@@ -128,7 +128,7 @@ public class WorldItemData : MonoBehaviour
 			{
 				int player_id = GameData.MyPlayer.PlayerID;
 				List<Pair<string, string>> msg = new List<Pair<string, string>>();
-				WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, _player_id, item.id, amount);
+				//WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, player_id, item.id, amount);
 				msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
 				NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 				
