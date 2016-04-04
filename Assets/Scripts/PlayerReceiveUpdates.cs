@@ -77,6 +77,16 @@ public class PlayerReceiveUpdates : MonoBehaviour {
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
         GameData.PlayerPosition.Remove(playerID);
         Destroy(gameObject);
+
+        if (playerID == GameData.AllyKingID)
+        {
+            GameManager.instance.GameLost();
+        }
+
+        if (playerID == GameData.EnemyKingID)
+        {
+            GameManager.instance.GameWon();
+        }
     }
 
     void use_potion(JSONClass packet)

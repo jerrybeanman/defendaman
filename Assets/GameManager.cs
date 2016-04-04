@@ -3,6 +3,7 @@ using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 //Carson
 public class GameManager : MonoBehaviour {
@@ -61,23 +62,9 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-
-        /*if (playerID == GameData.AllyKingID)
-        {
-            HUD_Manager.instance.UpdateAllyKingHealth(-(damage / ClassStat.MaxHp));
-            if (ClassStat.CurrentHp <= 0)
-                GameLost();
-        }
-
-        if (playerID == GameData.EnemyKingID)
-        {
-            HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / ClassStat.MaxHp));
-            if (ClassStat.CurrentHp <= 0)
-                GameWon();
-        }*/
     }
 
-    private static void PlayerDied()
+    public void PlayerDied()
     {
         GameData.EnemyTeamKillCount++;
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
@@ -86,6 +73,15 @@ public class GameManager : MonoBehaviour {
         ColourizeScreen.instance.PlayerDied();
         Debug.Log("You have died");
         instance.player = null;
+        if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
+        {
+            GameLost();
+        }
+
+        if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID)
+        {
+            GameWon();
+        }
     }
 
     public void StartGame(int seed)
@@ -102,11 +98,9 @@ public class GameManager : MonoBehaviour {
 
 
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
-      //  GameData.TeamSpawnPoints.Clear();
-        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(0,0));
-        //GameData.TeamSpawnPoints.Add(new Pair<int,int>(2,2));
+        
 
-        foreach (var playerData in GameData.LobbyData)
+        foreach (var playerData in GameData.LobbyData.OrderBy(x => x.Key))
         {
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
@@ -274,13 +268,13 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void GameWon()
+    public void GameWon()
     {
         GameData.GameState = GameState.Won;
         Debug.Log("You have won");
     }
 
-    private void GameLost()
+    public void GameLost()
     {
         GameData.GameState = GameState.Lost;
         Debug.Log("You have lost");
@@ -288,15 +282,17 @@ public class GameManager : MonoBehaviour {
 
     void OnGUI()
     {
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 60;
         switch (GameData.GameState)
         {
             case GameState.Won:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!");
-                Invoke("ReturnToMenu", 2f);
+                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!", style);
+                Invoke("ReturnToMenu", 5f);
                 break;
             case GameState.Lost:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!");
-                Invoke("ReturnToMenu", 2f);
+                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!", style);
+                Invoke("ReturnToMenu", 5f);
                 break;
             default:
                 break;

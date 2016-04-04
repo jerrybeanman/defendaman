@@ -94,11 +94,9 @@ public abstract class BaseClass : MonoBehaviour {
         }
         
 
-        if (ClassStat.CurrentHp <= 0.0f)
+        if (ClassStat.CurrentHp <= 0.0f && playerID == GameData.MyPlayer.PlayerID)
         {
-            //death
-            Debug.Log(playerID + " Died");
-            NetworkingManager.Unsubscribe(DataType.Player, playerID);
+            GameManager.instance.PlayerDied();
             Destroy(gameObject);
         }
 
@@ -145,9 +143,6 @@ public abstract class BaseClass : MonoBehaviour {
                 specialAttack(directionOfAttack, playerLoc);
                 //Regular special attack
                 break;
-            case 2:
-                //Aman special attack
-                break;
             default:
                 break;
         }
@@ -155,11 +150,11 @@ public abstract class BaseClass : MonoBehaviour {
 
     public virtual float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+        if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
+            return cooldowns[0];
         Vector2 temp = new Vector2(GameData.PlayerPosition[GameData.MyPlayer.PlayerID].x, GameData.PlayerPosition[GameData.MyPlayer.PlayerID].y);
         float distance = Vector2.Distance(temp, playerLoc);
-        /*Debug.Log("MY LOCATION x: " + temp.x + " y: " + temp.y);
-        Debug.Log("Player loc  x: " + playerLoc.x + " y: " + playerLoc.y); 
-        Debug.Log("This distance is " + distance);*/
+
         if (Vector2.Distance(temp, playerLoc) < 13)
         {
             au_attack.volume = (15 - distance) / 10 ;
@@ -170,6 +165,8 @@ public abstract class BaseClass : MonoBehaviour {
 
     public virtual float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+        if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
+            return cooldowns[1];
         if (Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]) < 10)
             au_attack.PlayOneShot(au_special_attack);
         return cooldowns[1];
