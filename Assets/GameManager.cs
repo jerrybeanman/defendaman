@@ -301,6 +301,7 @@ public class GameManager : MonoBehaviour {
 
     void ReturnToMenu()
     {
+        NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
         GameData.PlayerPosition.Clear();
