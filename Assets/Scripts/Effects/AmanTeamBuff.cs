@@ -10,10 +10,12 @@
 --  DATE:           April 2, 2016
 --
 --  REVISIONS:      (Date and Description)
+--                  April 4th: Hank Lo
+--                      - Numbers balancing
 --
---  DESIGNERS:      Allen Tsang
+--  DESIGNERS:      Allen Tsang, Hank Lo
 --
---  PROGRAMMER:     Allen Tsang
+--  PROGRAMMER:     Allen Tsang, Hank Lo
 --
 --  NOTES:
 --  This class contains the logic that relates to the Aman Team Buff Class.
@@ -25,9 +27,9 @@ using UnityEngine.EventSystems;
 
 public class AmanTeamBuff : Buff
 {
-    int attackBuff = 5;
-    int defenseBuff = 5;
-    int speedBuff = 1;
+    int attackBuff = 10;
+    int defenseBuff = 10;
+    int speedBuff = 2;
     BaseClass target;
 
     new void Start()
