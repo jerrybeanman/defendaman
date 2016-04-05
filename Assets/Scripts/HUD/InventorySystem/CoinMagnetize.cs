@@ -96,7 +96,7 @@ public class CoinMagnetize : MonoBehaviour {
     public List<Pair<string, string>> CreateMagnetizeMessage(int playerId) {
         List<Pair<string, string>> _message = new List<Pair<string, string>>();
         _message.Add(new Pair<string, string>(NetworkKeyString.PlayerID, playerId.ToString()));
-        _message.Add(new Pair<string, string>(NetworkKeyString.ItemID, world_item_id.ToString()));
+        _message.Add(new Pair<string, string>(NetworkKeyString.WorldItemID, world_item_id.ToString()));
         return _message;
     }
 

@@ -111,7 +111,8 @@ public class WorldItemManager : MonoBehaviour
 
     public void ReceiveItemMagnetizePacket(JSONClass itemPacket)
     {
-        ProcessMagnetizeEvent(itemPacket[(NetworkKeyString.PlayerID)].AsInt, itemPacket[(NetworkKeyString.ItemID)].AsInt);
+        ProcessMagnetizeEvent(itemPacket[(NetworkKeyString.PlayerID)].AsInt, 
+                              itemPacket[(NetworkKeyString.WorldItemID)].AsInt);
     }
 
     public IEnumerator WaitSmallDelayBeforeReceivePickupPacket(JSONClass itemPacket)
