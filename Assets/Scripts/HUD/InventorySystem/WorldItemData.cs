@@ -81,7 +81,16 @@ public class WorldItemData : MonoBehaviour
 						msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
 						NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 						StartCoroutine(NeverReceivedPickupMessageBack());
-					}
+
+                        // Pretend that a pickup event was received
+                        //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+                        // Pretend that a pickup event was received
+                        if (Application.platform != RuntimePlatform.LinuxPlayer)
+                        {
+                            //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+                            StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
+                        }
+                    }
 				}
 				/*
                 else if (item.id == 2)
@@ -93,7 +102,7 @@ public class WorldItemData : MonoBehaviour
                 }*/
 				
 				_tooltip.Deactivate();
-				
+				/*
 				// Pretend that a pickup event was received
 				//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
 				// Pretend that a pickup event was received
@@ -101,7 +110,7 @@ public class WorldItemData : MonoBehaviour
 				{
 					//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
 					StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
-				}
+				}*/
 			}
 			else
 			{
@@ -128,8 +137,10 @@ public class WorldItemData : MonoBehaviour
 			{
 				int player_id = GameData.MyPlayer.PlayerID;
 				List<Pair<string, string>> msg = new List<Pair<string, string>>();
-				WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, _player_id, item.id, amount);
+				//WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, player_id, item.id, amount);
 				msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
+                Debug.Log("world item id: " + world_item_id + " player_id: " + player_id
+                    + " item.id " + item.id + " amount: " + amount);
 				NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 				
 				_tooltip.Deactivate();

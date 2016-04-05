@@ -3,7 +3,7 @@ using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
 
-enum ItemUpdate { Pickup = 1, Drop = 2, Magnetize = 3 }
+enum ItemUpdate { Pickup = 1, Drop = 2, Create = 3, Magnetize = 4 }
 /*-----------------------------------------------------------------------------
 -- WorldItemManager.cs - Script attached to GameManager game object
 --                       responsible for managing world items.
@@ -52,6 +52,7 @@ public class WorldItemManager : MonoBehaviour
     {
         NetworkingManager.Subscribe(ReceiveItemPickupPacket, DataType.Item, (int)ItemUpdate.Pickup);
         NetworkingManager.Subscribe(ReceiveItemDropPacket, DataType.Item, (int)ItemUpdate.Drop);
+        NetworkingManager.Subscribe(ReceiveCreateWorldItemPacket, DataType.Item, (int)ItemUpdate.Create);
         NetworkingManager.Subscribe(ReceiveItemMagnetizePacket, DataType.Item, (int)ItemUpdate.Magnetize);
 
         _item_manager = GetComponent<ItemManager>();
@@ -93,6 +94,17 @@ public class WorldItemManager : MonoBehaviour
 			audioSource.PlayOneShot (audioDrop);
 		}
 		return _item;
+    }
+
+    public void ReceiveCreateWorldItemPacket(JSONClass itemPacket)
+    {
+        GameObject go = CreateWorldItem(itemPacket["WorldItemId"].AsInt, itemPacket["ItemId"].AsInt, 
+            itemPacket["Amount"].AsInt, itemPacket["PosX"].AsFloat, itemPacket["PosY"].AsFloat);
+        Debug.Log(itemPacket["PosX"].AsFloat + " Y: " + itemPacket["PosY"].AsFloat);
+        if (itemPacket["ItemId"].AsInt == 2)
+        {
+            go.AddComponent<CoinMagnetize>();
+        }
     }
 
 
@@ -256,5 +268,18 @@ public class WorldItemManager : MonoBehaviour
         _pickup_item_message.Add(new Pair<string, string>("Amount", amt.ToString()));
 
         return _pickup_item_message;
+    }
+
+    public List<Pair<string, string>> CreateWorldItemNetworkMessage(int world_item_id, int item_id, int amt, float pos_x, float pos_y)
+    {
+        List<Pair<string, string>> _create_item_message = new List<Pair<string, string>>();
+
+        _create_item_message.Add(new Pair<string, string>("WorldItemId", world_item_id.ToString()));
+        _create_item_message.Add(new Pair<string, string>("ItemId", item_id.ToString()));
+        _create_item_message.Add(new Pair<string, string>("Amount", amt.ToString()));
+        _create_item_message.Add(new Pair<string, string>("PosX", pos_x.ToString()));
+        _create_item_message.Add(new Pair<string, string>("PosY", pos_y.ToString()));
+
+        return _create_item_message;
     }
 }

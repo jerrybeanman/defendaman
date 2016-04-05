@@ -298,12 +298,16 @@ public class MapManager : MonoBehaviour {
 		int xPos = message[NetworkKeyString.XPos].AsInt;
 		int yPos = message[NetworkKeyString.YPos].AsInt;
 		int amount = message[NetworkKeyString.Amount].AsInt;
-		
+        int playerId = message[NetworkKeyString.PlayerID].AsInt;		
 		// Find the Resource in the list with these X and Y positions
 		GameObject temp = _mapResources.Find(go => 
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 		// Decrease its amount
+        if(GameData.MyPlayer.PlayerID == playerId)
+        {
+            temp.GetComponent<Resource>().DropGold(amount);
+        }
 		temp.GetComponent<Resource>().DecreaseAmount(amount);
 	}
 
