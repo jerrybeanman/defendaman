@@ -1,0 +1,287 @@
+fileFormatVersion: 2
+guid: e0648d8244dc5f14993f9afbeb2ec6cc
+timeCreated: 1456920304
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: ninjaboi_sword_defendaman_256_grid_template_v3_0
+    21300002: ninjaboi_sword_defendaman_256_grid_template_v3_1
+    21300004: ninjaboi_sword_defendaman_256_grid_template_v3_2
+    21300006: ninjaboi_sword_defendaman_256_grid_template_v3_3
+    21300008: ninjaboi_sword_defendaman_256_grid_template_v3_4
+    21300010: ninjaboi_sword_defendaman_256_grid_template_v3_5
+    21300012: ninjaboi_sword_defendaman_256_grid_template_v3_6
+    21300014: ninjaboi_sword_defendaman_256_grid_template_v3_7
+    21300016: ninjaboi_sword_defendaman_256_grid_template_v3_8
+    21300018: ninjaboi_sword_defendaman_256_grid_template_v3_9
+    21300020: ninjaboi_sword_defendaman_256_grid_template_v3_10
+    21300022: ninjaboi_sword_defendaman_256_grid_template_v3_11
+    21300024: ninjaboi_sword_defendaman_256_grid_template_v3_12
+    21300026: ninjaboi_sword_defendaman_256_grid_template_v3_13
+    21300028: ninjaboi_sword_defendaman_256_grid_template_v3_14
+    21300030: ninjaboi_sword_defendaman_256_grid_template_v3_15
+    21300032: ninjaboi_sword_defendaman_256_grid_template_v3_16
+    21300034: ninjaboi_sword_defendaman_256_grid_template_v3_17
+    21300036: ninjaboi_sword_defendaman_256_grid_template_v3_18
+    21300038: ninjaboi_sword_defendaman_256_grid_template_v3_19
+    21300040: ninjaboi_sword_defendaman_256_grid_template_v3_20
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_0
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 2565
+        width: 283
+        height: 280
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_1
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 2563
+        width: 274
+        height: 336
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_2
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 2565
+        width: 236
+        height: 366
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_3
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 2565
+        width: 154
+        height: 385
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_4
+      rect:
+        serializedVersion: 2
+        x: 1538
+        y: 2561
+        width: 102
+        height: 416
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_5
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 1997
+        width: 167
+        height: 414
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_6
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 1995
+        width: 214
+        height: 416
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_7
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 1999
+        width: 272
+        height: 412
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_8
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 1997
+        width: 350
+        height: 315
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_9
+      rect:
+        serializedVersion: 2
+        x: 1278
+        y: 1999
+        width: 381
+        height: 277
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_10
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 1694
+        width: 442
+        height: 204
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_11
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 1687
+        width: 485
+        height: 130
+      alignment: 9
+      pivot: {x: .0214412101, y: .566125512}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_12
+      rect:
+        serializedVersion: 2
+        x: 1192
+        y: 1530
+        width: 480
+        height: 268
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_13
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 1031
+        width: 298
+        height: 269
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_14
+      rect:
+        serializedVersion: 2
+        x: 935
+        y: 1151
+        width: 388
+        height: 63
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_15
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 680
+        width: 368
+        height: 151
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_16
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 656
+        width: 271
+        height: 292
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_17
+      rect:
+        serializedVersion: 2
+        x: 1759
+        y: 622
+        width: 166
+        height: 359
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_18
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 130
+        width: 47
+        height: 393
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_19
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 136
+        width: 154
+        height: 365
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ninjaboi_sword_defendaman_256_grid_template_v3_20
+      rect:
+        serializedVersion: 2
+        x: 1425
+        y: 153
+        width: 283
+        height: 280
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

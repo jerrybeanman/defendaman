@@ -1,0 +1,47 @@
+[
+  {
+    "id": 0,
+    "title": "Steel Gloves",
+    "value": 6,
+    "stats": {
+      "weaponDamage": 1,
+      "defence": 4,
+      "strengthRatio": 1,
+      "penetration": 1
+    },
+    "description": "Gloves made from steel. Yea.",
+    "stackable": false,
+    "rarity": 2,
+    "slug": "cursorGauntlet_blue"
+  },
+  {
+    "id": 1,
+    "title": "The Great Stick",
+    "value": 543,
+    "stats": {
+      "weaponDamage": 56,
+      "defence": 0,
+      "strengthRatio": 2,
+      "penetration": 7
+    },
+    "description": "It's a stick and that's pretty great.",
+    "stackable": true,
+    "rarity": 6,
+    "slug": "cursorSword_gold"
+  },
+  {
+    "id": 2,
+    "title": "The Bigger Great Stick",
+    "value": 543,
+    "stats": {
+      "weaponDamage": 76,
+      "defence": 0,
+      "strengthRatio": 3,
+      "penetration": 10
+    },
+    "description": "It's a bigger stick and that's even more great.",
+    "stackable": true,
+    "rarity": 8,
+    "slug": "cursorSword_silver"
+  }
+]

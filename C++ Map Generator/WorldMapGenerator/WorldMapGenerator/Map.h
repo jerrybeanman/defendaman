@@ -6,6 +6,9 @@
 #include <cmath>
 #include <stdio.h>
 #include <string>
+#include <deque>
+#include <vector>
+#include "AStarPoint.h"
 
 class Map {
 	public:
@@ -16,19 +19,13 @@ class Map {
 		for (int i = 0; i < mapWidth; ++i)
 			mapBase[i] = new int[mapHeight];
 
+		mapScenery = new int*[mapWidth];
+		for (int i = 0; i < mapWidth; ++i)
+			mapScenery[i] = new int[mapHeight];
+
 		tempLayer = new int*[mapWidth];
 		for (int i = 0; i < mapWidth; ++i)
 			tempLayer[i] = new int[mapHeight];
-
-		/*
-		This is a list of object ids that will be possible to be generated at the beginning of the game.
-		Expect these ID's to start at 0 and go to the end of the list. The top value, of the baseSceneryMax
-		will be added to them.
-		This will cause index 0 of the objectIDList to start at 199, and increasing from there.
-		*/
-		objectIDList = new int[1];
-		for (int i = 1; i <= 1; i++)
-		objectIDList[i - 1] = i + baseSceneryMax; //Spawn point for a team.
 
 		resetMap (tempLayer, -1);
 	};
@@ -39,11 +36,15 @@ class Map {
 
 	int ** getMapBase ();
 
+	int ** getMapScenery ();
+
 	int ** getMapTemp ();
 
 	void buildMapBase ();
 
 	int randomizeSeed ();
+
+	int randomizeSeed (int seed);
 
 	int getMapSeed ();
 
@@ -61,17 +62,23 @@ class Map {
 
 	void createBaseScenery ();
 
+	void createTopScenery (int sceneryChance);
+
 	void drawMap (int ** mapArray);
 
 	void joinMaps (int ** baseMap, int ** topMap);
 
-	std::string ConvertToJSONString (int ** map);
+	std::string ConvertToJSONString ();
 
 	std::string intToString (int n);
 
 	void createSpawnPoints (int ** map, int teams);
 
-	void validateSpawns (int ** map, int ** spawnPoints, int teams);
+	bool validateSpawns (int ** map, int ** spawnPoints, int teams);
+
+	std::deque<AStarPoint> aStarPath (int startX, int startY, int endX, int endY);
+
+	void createResources (int ** mapCheck, int ** mapApply, int resourceAmount);
 
 	~Map () {
 		delete[] mapBase;
@@ -84,12 +91,17 @@ class Map {
 	const int baseWallMax = 99;
 	const int baseSceneryDefault = 100;
 	const int baseSceneryMax = 199;
+	const int spawnPointID = 200;
+	const int sceneryDefault = 201;
+	const int sceneryMax = 214;
+	int mapSeed;
 
 	private:
 	int mapWidth;
 	int mapHeight;
-	int mapSeed;
 	int ** mapBase;
+	int ** mapScenery;
+	std::vector<std::pair<int, int>> mapResources;
 	int ** tempLayer;
 	int baseWallChance;
 	int * objectIDList;

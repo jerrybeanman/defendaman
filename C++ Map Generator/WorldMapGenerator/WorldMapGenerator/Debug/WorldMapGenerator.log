@@ -1,15 +1,10 @@
-﻿Build started 2016-02-27 6:02:26 PM.
+﻿Build started 2016-03-30 1:11:33 PM.
      1>Project "D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\WorldMapGenerator\WorldMapGenerator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp Map.cpp
-         Map.cpp
-     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\map.cpp(24): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\map.cpp(184): warning C4018: '<': signed/unsigned mismatch
-     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\map.cpp(186): warning C4018: '<': signed/unsigned mismatch
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp
          Application.cpp
-     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(8): warning C4018: '<': signed/unsigned mismatch
      1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(10): warning C4018: '<': signed/unsigned mismatch
-         Generating Code...
+     1>d:\documents\github\defendaman\c++ map generator\worldmapgenerator\worldmapgenerator\application.cpp(12): warning C4018: '<': signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Documents\GitHub\defendaman\C++ Map Generator\WorldMapGenerator\Debug\WorldMapGenerator.lib" /MACHINE:X86 Debug\Resource.res
          Debug\Application.obj
@@ -19,4 +14,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.61
+Time Elapsed 00:00:00.97

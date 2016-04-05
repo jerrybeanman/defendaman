@@ -5,15 +5,14 @@ using System.Collections;
 public class Movement : MonoBehaviour
 {
     enum movestyle { absolute, relative };
-    public float moveSpeed = 5;
     Vector2 looking;
     private Rigidbody2D rb2d;
     string up, down, left, right;
-    public float speed = 5;
+    public float speed;
     movestyle movestyles;
     float midX, midY;
-
-
+    public BaseClass.PlayerBaseStat ClassStat;
+	Animator anim;
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -24,14 +23,67 @@ public class Movement : MonoBehaviour
         left = "a";
         right = "d";
         movestyles = movestyle.relative;
-
-
+		anim = gameObject.GetComponent<Animator>();
+        ClassStat = GetComponent<BaseClass>().ClassStat;
+        GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
+    //Checks if the end teleport point is valid, or if it is in a wall
+    bool checkEnd(Vector2 vec, double distance)
+    {
 
+        RaycastHit2D hit = Physics2D.Raycast(rb2d.position + vec * (float)distance, -Vector2.up, 0.0001f);
+        if (hit.collider != null)
+        {
+            return false;
+        }
+        return true;
+    }
+    //Call to blink. distance is the max range of the blink, in world coordinates
+    public bool doBlink(float distance) {
+        Vector2 mousePos = Input.mousePosition;
+        double angle = getInfo();
+        double mouseDistance = getDistance(mousePos);
+      
+        if (mouseDistance < distance)
+        {
+            distance = (float)mouseDistance;
+          
+        }
+        Debug.Log("Mouse distnace: " + mouseDistance + " Real Distance: " + distance);
+        Vector2 vec = updateCoordinates(angle);
+		var layerMask = (1 << 8);
+		RaycastHit2D hit2 = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
+		if(hit2.collider != null && hit2.collider.gameObject.tag == "Building" && hit2.collider.gameObject.GetComponent<Building>().team != GameData.MyPlayer.TeamID){
+			rb2d.position = rb2d.position + vec * (hit2.distance - 0.1f);
+		}
+		else{
+			if(checkEnd(vec, distance))
+	        {
+	            //rb2d.MovePosition(rb2d.position + vec * distance);
+	            rb2d.position = rb2d.position + vec * distance;
+	              //  (rb2d.position + vec * distance);
+	            
+	        }
+	        //Uncomment return false to not have half blinks -- blinks that take you up to a wall. 
+	        else
+	        {
+
+	            //return false;
+	            RaycastHit2D hit = Physics2D.Raycast(rb2d.position, vec, distance, layerMask);
+	            //rb2d.MovePosition(rb2d.position + vec * (hit.distance - 0.1f));
+	            rb2d.position = rb2d.position + vec * (hit.distance - 0.1f);
+
+	            Debug.Log("Vector Distance: " + hit.distance);
+
+	        }
+		}
+        return true;
+    }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Equals))
-            movestyles = movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute;
+        speed = ClassStat.MoveSpeed;
+		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBlocked)
+            movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
         if (movestyles == movestyle.absolute)
         {
@@ -43,7 +95,17 @@ public class Movement : MonoBehaviour
         }
         //Will need to send some info to server every update
         sendToServer(rb2d.position.x, rb2d.position.y);
+        GameData.PlayerPosition[GameData.MyPlayer.PlayerID] = transform.position;
 
+        // animation trigger test
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        {
+            anim.SetBool("moving", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            anim.SetBool("moving", false);
+        }
     }
     void sendToServer(double x, double y)
     {
@@ -60,7 +122,10 @@ public class Movement : MonoBehaviour
     //absolute movement, just rotate and move
     void absMove()
     {
-        rb2d.MovePosition(rb2d.position + new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed * Time.fixedDeltaTime);
+        Vector2 moving = getMovement(90);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
+
+        //rb2d.MovePosition(rb2d.position + new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed * Time.fixedDeltaTime);
         double looking = getInfo();
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
     }
@@ -69,7 +134,7 @@ public class Movement : MonoBehaviour
     {
         double looking = getInfo();
         Vector2 moving = getMovement(looking);
-        rb2d.MovePosition(rb2d.position + moving * speed * Time.fixedDeltaTime);
+        rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
 
     }
@@ -89,6 +154,17 @@ public class Movement : MonoBehaviour
         x = mousePos.x - midX;
         y = mousePos.y - midY;
         double modAngle;
+        if(x == 0)
+        {
+            if(y > 0)
+            {
+                return Mathf.PI / 2;
+            }
+            else
+            {
+                return 3 * Mathf.PI / 2;
+            }
+        }
         if (x > 0)
         {
             modAngle = (Mathf.PI * 2 + System.Math.Atan(y / x)) % (Mathf.PI * 2);
@@ -99,6 +175,17 @@ public class Movement : MonoBehaviour
             modAngle = (Mathf.PI + System.Math.Atan(y / x));// % 360;
         }
         return modAngle;
+    }
+    private double getDistance(Vector2 mousePos)
+    {
+        float x, y;
+        x = (Input.mousePosition.x);
+        y = (Input.mousePosition.y);
+        Vector3 mouseposition = Camera.main.ScreenToWorldPoint(new Vector3(x, y, 0));
+        print(mouseposition);
+        x = mouseposition.x - rb2d.position.x;
+        y = mouseposition.y - rb2d.position.y;
+        return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
     }
     //convert rad to degree
     public double getDegree(double angle)
@@ -121,23 +208,23 @@ public class Movement : MonoBehaviour
         bool moveDown = false;
         bool vMoved = false;
         Vector2 ret = new Vector2();
-        if (Input.GetKey(up))
+        if (Input.GetKey(up) && !GameData.InputBlocked)
         {
             angleFacing += 0;
             vMoved = true;
         }
-        else if (Input.GetKey(down))
+        else if (Input.GetKey(down) && !GameData.InputBlocked)
         {
             vMoved = true;
             moveDown = true;
             angleFacing += 180;
         }
-        if (Input.GetKey(left))
+		if (Input.GetKey(left) && !GameData.InputBlocked)
         {
             angleHorz += 90;
             hMoved = true;
         }
-        if (Input.GetKey(right))
+		if (Input.GetKey(right) && !GameData.InputBlocked)
         {
             angleHorz += -90;
             hMoved = true;
@@ -184,9 +271,20 @@ public class Movement : MonoBehaviour
         return position;
     }
 
-    void OnCollisonExit2D(Collision2D collision)
+    public void setAbs()
     {
-
+        movestyles = movestyle.absolute;
+    }
+    public void setRel()
+    {
+        movestyles = movestyle.relative;
+    }
+    public int getInputType()
+    {
+        if (movestyles == movestyle.absolute)
+            return 1;
+        else
+            return 0;
     }
 
 }
