@@ -138,6 +138,7 @@ public class MenuScript : MonoBehaviour {
         int t1_idx = 0;
         int t2_idx = 0;
         int ready = 0;
+        bool readyStatus = false;
 
         foreach (Transform slot in team1_list.transform)
         {
@@ -154,13 +155,14 @@ public class MenuScript : MonoBehaviour {
             if (p.Ready)
             {
                 ready++;
+                readyStatus = true;
             }
-            AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++));
+            AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++), readyStatus);
         }
         ready_count.transform.GetComponent<Text>().text = ready.ToString() + "/" + GameData.LobbyData.Count;
     }
 
-    private void AddToLobby(String name, int team, ClassType class_type, int index)
+    private void AddToLobby(String name, int team, ClassType class_type, int index, bool readyStatus)
     { 
         List<Transform> team_to_set = (team == 1 ? _team1_slots : _team2_slots);
         name = name.ToUpper();
@@ -178,6 +180,15 @@ public class MenuScript : MonoBehaviour {
             }
 
             team_to_set[index].transform.Find("Profile").transform.GetComponent<Image>().sprite = avatar;
+
+            if (readyStatus)
+            {
+                team_to_set[index].transform.Find("ReadyStatus").gameObject.SetActive(true);
+            } else
+            {
+                team_to_set[index].transform.Find("ReadyStatus").gameObject.SetActive(false);
+            }
+
             team_to_set[index].gameObject.SetActive(true);
         }
     }
