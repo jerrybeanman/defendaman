@@ -22,10 +22,10 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for 
-	public 	float 		 chargeTime 		= 1f;
-	public  float 		 targetConeRadius 	= 25f;
-	public  float 		 targetConeAngle  	= 25f;
- 	public	float 		 targetZoomOutRange = 14f;
+	public 	float 		 chargeTime 		= 2f;
+	public  float 		 targetConeRadius 	= 28f;
+	public  float 		 targetConeAngle  	= 20f;
+ 	public	float 		 targetZoomOutRange = 16f;
 	public  float		 zoomInTime 		= 0.5f;
 
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
