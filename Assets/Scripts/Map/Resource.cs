@@ -17,6 +17,7 @@ using System.Collections.Generic;
 --
 -- DATE:		05/03/2016
 -- REVISIONS:	March 31 - Add networking logic
+--              April 5  - Move addition of magnetize component to CreateWorldItem() 
 -- DESIGNER:	Jaegar Sarauer, Krystle Bulalakaw
 -- PROGRAMMER:  Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
@@ -89,7 +90,7 @@ class Resource : MonoBehaviour {
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	DropGold
     -- DATE: 		March 30, 2016
-    -- REVISIONS: 	N/A
+    -- REVISIONS: 	April 5 - Move addition of magnetize component to CreateWorldItem() 
     -- DESIGNER:  	Krystle Bulalakaw
     -- PROGRAMMER: 	Krystle Bulalakaw
     -- INTERFACE: 	DropGold(int amount)
@@ -107,8 +108,7 @@ class Resource : MonoBehaviour {
         int instance_id = WorldItemManager.Instance.GenerateWorldItemId();
         int gold_id = 2;
 
-        GameObject go = WorldItemManager.Instance.CreateWorldItem(instance_id, gold_id, amount, x + offsetX, y + offsetY);
-		go.AddComponent<CoinMagnetize>();
+        WorldItemManager.Instance.CreateWorldItem(instance_id, gold_id, amount, x + offsetX, y + offsetY);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------

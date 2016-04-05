@@ -3,7 +3,7 @@ using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
 
-enum ItemUpdate { Pickup = 1, Drop = 2 }
+enum ItemUpdate { Pickup = 1, Drop = 2, Magnetize = 3 }
 /*-----------------------------------------------------------------------------
 -- WorldItemManager.cs - Script attached to GameManager game object
 --                       responsible for managing world items.
@@ -19,7 +19,8 @@ enum ItemUpdate { Pickup = 1, Drop = 2 }
 --      public void DestroyWorldItem(string world_item_id)
 --
 -- DATE:		05/03/2016
--- REVISIONS:	03/04/2016 - Add sound components for gold
+-- REVISIONS:   03/04/2016 - Add sound components for gold
+--              05/05/2016 - Add magnetize network update
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
@@ -51,6 +52,7 @@ public class WorldItemManager : MonoBehaviour
     {
         NetworkingManager.Subscribe(ReceiveItemPickupPacket, DataType.Item, (int)ItemUpdate.Pickup);
         NetworkingManager.Subscribe(ReceiveItemDropPacket, DataType.Item, (int)ItemUpdate.Drop);
+        NetworkingManager.Subscribe(ReceiveItemMagnetizePacket, DataType.Item, (int)ItemUpdate.Magnetize);
 
         _item_manager = GetComponent<ItemManager>();
         _inventory = GameObject.Find("Inventory").GetComponent<Inventory>();
@@ -64,8 +66,7 @@ public class WorldItemManager : MonoBehaviour
         //CreateWorldItem(102, 3, 1, 67, 104);
         CreateWorldItem(104, 0, 1, 36, 20);
 
-		// Add sound component for pickup
-
+        audioSource = (AudioSource)gameObject.GetComponent<AudioSource>();
     }
 
     /*
@@ -81,9 +82,13 @@ public class WorldItemManager : MonoBehaviour
         _item.GetComponent<SpriteRenderer>().sprite = item.world_sprite;
         _item.transform.position = new Vector3(pos_x, pos_y, -5);
 
-		// Add sound component and gold drop sound
+        // Add gold-specific components
 		if (item_id == 2) {
-			audioSource = (AudioSource) gameObject.GetComponent<AudioSource>();
+            // Magnetization
+            _item.AddComponent<CoinMagnetize>();
+            _item.GetComponent<CoinMagnetize>().world_item_id = world_item_id;
+
+            // Sound component and gold drop sound
 			audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
 			audioSource.PlayOneShot (audioDrop);
 		}
@@ -102,6 +107,11 @@ public class WorldItemManager : MonoBehaviour
         ProcessDropEvent(itemPacket["WorldItemId"].AsInt, itemPacket["PlayerId"].AsInt,
             itemPacket["ItemId"].AsInt, itemPacket["Amount"].AsInt, itemPacket["InvPos"].AsInt,
             itemPacket["PosX"].AsInt, itemPacket["PosY"].AsInt);
+    }
+
+    public void ReceiveItemMagnetizePacket(JSONClass itemPacket)
+    {
+        ProcessMagnetizeEvent(itemPacket[(NetworkKeyString.PlayerID)].AsInt, itemPacket[(NetworkKeyString.ItemID)].AsInt);
     }
 
     public IEnumerator WaitSmallDelayBeforeReceivePickupPacket(JSONClass itemPacket)
@@ -149,6 +159,34 @@ public class WorldItemManager : MonoBehaviour
             _inventory.DestroyInventoryItem(inv_pos, amt);
         }
         CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
+    }
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	ProcessMagnetizeEvent
+    -- DATE: 		April 5, 2016
+    -- REVISIONS: 	N/A
+    -- DESIGNER:  	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- INTERFACE: 	ProcessMagnetizeEvent(int playerId, int world_item_id)
+    --                      int playerId - the player to magnetize the item towards
+    --                      int worldItemId - the world item ID
+    -- RETURNS: 	void.
+    -- NOTES:
+    -- Processes an item magnetize message from the server.
+    -- Finds the world item in the list with the matching world item Id, then gets the CoinMagnetize component of the
+    -- item and assigns the player ID parsed from the message.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    public void ProcessMagnetizeEvent(int playerId, int worldItemId)
+    {
+        GameObject[] _world_items = GameObject.FindGameObjectsWithTag("WorldItem");
+
+        foreach (GameObject _world_item in _world_items)
+        {
+            if (_world_item.GetComponent<WorldItemData>().world_item_id == worldItemId)
+            {
+                _world_item.GetComponent<CoinMagnetize>().playerId = playerId;
+            }
+        }
     }
 
     /*
