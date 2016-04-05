@@ -246,7 +246,7 @@ public class GunnerClass : RangedClass
 			
 			// Interpolate vision cone angle, which narrows angle
 			FOVCone.RangeAngle  = Mathf.Lerp(currentConeAngle, startingRangeAngle, t);
-			FOVConeHidden.RangeAngle = Mathf.Lerp(currentConeAngle, targetConeAngle, t);
+			FOVConeHidden.RangeAngle = Mathf.Lerp(currentConeAngle, startingRangeAngle, t);
 			
 			// Set pooling radius to allow more pooling objects
 			MapManager.cameraDistance = -mainCamera.orthographicSize;
