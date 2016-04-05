@@ -110,17 +110,17 @@ public class GunnerClass : RangedClass
         return cooldowns[0];
     }
 
+    // hank april 4th, added silence
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
 
-    	if (!silenced) {
 	        if (playerLoc == default(Vector2))
 	            playerLoc = dir;
 	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
             playerLoc = default(Vector2);
 	        base.specialAttack(dir, playerLoc);
 
-
+    	if (!silenced) {
 	        this.dir = dir;
 	        inSpecial = true;
 	    }
@@ -131,7 +131,7 @@ public class GunnerClass : RangedClass
     // hank april 4, added check for magic debuff, added autoshot at max range
 	void Update()
 	{
-		if (silenced) {
+		if (silenced && inSpecial) {
 			inSpecial = false;
 			StartCoroutine(ReleaseAttack());
 		}

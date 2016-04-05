@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Burn : Debuff
 {
-    float damage;
+    public float damage;
     Resource tree;
 
     new void Start()

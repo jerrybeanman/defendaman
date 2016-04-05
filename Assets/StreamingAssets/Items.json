@@ -4,8 +4,8 @@
     "title": "Steel Gloves",
     "description": "Gloves made from steel. Yea.",
 		"stats": {
-      "damage": 1,
-      "armor": 4,
+      "damage": 5,
+      "armor": 15,
 			"health": 0,
 			"speed": 0
     },
@@ -21,7 +21,7 @@
     "title": "The Great Stick",
     "description": "It's a stick and that's pretty great.",
 		"stats": {
-      "damage": 56,
+      "damage": 10,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -58,7 +58,7 @@
     "stats": {
       "damage": 0,
       "armor": 0,
-			"health": 5,
+			"health": 100,
 			"speed": 0
     },
 		"duration": -1,
@@ -75,7 +75,7 @@
     "stats": {
       "damage": 0,
       "armor": 0,
-			"health": 10,
+			"health": 300,
 			"speed": 0
     },
 		"duration": -1,
@@ -108,7 +108,7 @@
 		"description": "Temporary armor boost.",
     "stats": {
       "damage": 0,
-      "armor": 40,
+      "armor": 100,
 			"health": 0,
 			"speed": 0
     },
@@ -127,7 +127,7 @@
       "damage": 0,
       "armor": 0,
       "health": 0,
-      "speed": 10
+      "speed": 5
     },
     "duration": 5,
     "classType": -1,
@@ -141,7 +141,7 @@
     "title": "The Greater Stick",
     "description": "It's better than a great stick.",
     "stats": {
-      "damage": 73,
+      "damage": 20,
       "armor": 0,
       "health": 0,
       "speed": 0,
@@ -159,7 +159,7 @@
     "title": "The Greatest Stick",
     "description": "Wow look at this stick.",
     "stats": {
-      "damage": 98,
+      "damage": 30,
       "armor": 0,
       "health": 0,
       "speed": 0,
@@ -177,7 +177,7 @@
     "title": "4th Dimensional Rod",
     "description": "How do I hold this?",
     "stats": {
-      "damage": 114,
+      "damage": 40,
       "armor": 0,
       "health": 0,
       "speed": 0,
@@ -195,7 +195,7 @@
     "title": "Mace of Pain",
     "description": "This hurts to hold.",
     "stats": {
-      "damage": 130,
+      "damage": 50,
       "armor": 0,
       "health": 0,
       "speed": 0,
@@ -213,7 +213,7 @@
     "title": "Slingshot",
     "description": "This is useless...",
 		"stats": {
-      "damage": 4,
+      "damage": 5,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -231,7 +231,7 @@
     "title": "Handgun",
     "description": "Bang! Bang!",
 		"stats": {
-      "damage": 6,
+      "damage": 10,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -249,7 +249,7 @@
     "title": "Two Handguns",
     "description": "This is an inefficent use of ammo.",
 		"stats": {
-      "damage": 8,
+      "damage": 15,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -267,7 +267,7 @@
     "title": "Three Handguns?",
     "description": "Wow I'm glad I have 3 hands.",
 		"stats": {
-      "damage": 11,
+      "damage": 20,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -285,7 +285,7 @@
     "title": "Machine Gun",
     "description": "I'll need three hands to hold this.",
     "stats": {
-      "damage": 15,
+      "damage": 30,
       "armor": 0,
       "health": 0,
       "speed": 0,
@@ -303,7 +303,7 @@
     "title": "Fancy Playing Cards",
     "description": "My magic tricks will cause pain.",
 		"stats": {
-      "damage": 4,
+      "damage": 10,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -321,7 +321,7 @@
     "title": "Magical Wand",
     "description": "This looks like a stick.",
 		"stats": {
-      "damage": 7,
+      "damage": 15,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -339,7 +339,7 @@
     "title": "Magical Shovel",
     "description": "Watch me magically dig your graves.",
 		"stats": {
-      "damage": 10,
+      "damage": 25,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -357,7 +357,7 @@
     "title": "Ball of Fire",
     "description": "This hurts to hold.",
 		"stats": {
-      "damage": 14,
+      "damage": 30,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
@@ -375,7 +375,7 @@
     "title": "Fire Wave",
     "description": "How do you like your enemies cooked?",
 		"stats": {
-      "damage": 20,
+      "damage": 40,
       "armor": 0,
 			"health": 0,
 			"speed": 0,
