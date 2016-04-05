@@ -83,6 +83,13 @@ public class NetworkingManager : MonoBehaviour
 		}
     }
 
+    public void ResetConnections()
+    {
+        TCP_DisposeClient(TCPClient);
+        UDP_DisposeClient(UDPClient);
+        TCPClient = TCP_CreateClient();
+    }
+
     // Update is called once per frame
     void Update() {
         if (GameData.GameStart) {

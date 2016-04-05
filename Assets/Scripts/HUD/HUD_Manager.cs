@@ -368,6 +368,8 @@ public class HUD_Manager : MonoBehaviour {
 		// If nothing is currently selected, do nothing 
 		if(shop.Selected.Option != null && !ItemBought && GameData.MyPlayer.Resources[Constants.GOLD_RES] >= shop.Selected.Building.GetComponent<Building>().cost)
 		{
+			Inventory.instance.UseResources(Constants.GOLD_RES, shop.Selected.Building.GetComponent<Building>().cost);
+
 			// Indicates that an item has been bought
 			ItemBought = true;
 
@@ -565,7 +567,7 @@ public class HUD_Manager : MonoBehaviour {
 
 
 		// Indicate that the item has been successfully bought and placed 
-		ItemBought = false;
+		ItemBought = false; 
 
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
@@ -881,5 +883,10 @@ public class HUD_Manager : MonoBehaviour {
 	public void UpgradeWeapon()
 	{
 		Debug.Log ("Upgrade weapon here");
+	}
+	public void AddPotion(String potionType)
+	{
+		Debug.Log (potionType + " Potion");
+		Debug.Log ("Add potion here");
 	}
 }

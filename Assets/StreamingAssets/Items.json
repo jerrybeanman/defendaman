@@ -24,7 +24,8 @@
       "damage": 56,
       "armor": 0,
 			"health": 0,
-			"speed": 0
+			"speed": 0,
+      "level": 1
     },
 		"duration": -1,
     "classType": 2,
@@ -89,50 +90,302 @@
     "title": "Damage Potion",
 		"description": "Temporary damage boost.",
     "stats": {
-      "damage": 5,
+      "damage": 25,
       "armor": 0,
 			"health": 0,
 			"speed": 0
     },
-		"duration": 5,
+		"duration": 60,
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
     "slug": "red_potion_classic",
 		"worldSlug": "red_potion_classic"
-  }
+  },
 	{
     "id": 6,
     "title": "Armor Potion",
 		"description": "Temporary armor boost.",
     "stats": {
       "damage": 0,
-      "armor": 5,
+      "armor": 40,
 			"health": 0,
 			"speed": 0
     },
-		"duration": 5,
+		"duration": 30,
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
     "slug": "blue_potion_classic",
 		"worldSlug": "blue_potion_classic"
-  }
-	{
+  },
+  {
     "id": 7,
     "title": "Speed Potion",
-		"description": "Temporary speed boost.",
+    "description": "Temporary speed boost.",
     "stats": {
       "damage": 0,
       "armor": 0,
-			"health": 0,
-			"speed": 10
+      "health": 0,
+      "speed": 10
     },
-		"duration": 5,
-		"classType": -1,
+    "duration": 5,
+    "classType": -1,
     "stackable": true,
-		"type": "Consumable",
+    "type": "Consumable",
     "slug": "yellow_portion_classic",
-		"worldSlug": "yellow_portion_classic"
+    "worldSlug": "yellow_portion_classic"
+  },
+  {
+    "id": 8,
+    "title": "The Greater Stick",
+    "description": "It's better than a great stick.",
+    "stats": {
+      "damage": 73,
+      "armor": 0,
+      "health": 0,
+      "speed": 0,
+      "level": 2
+    },
+    "duration": -1,
+    "classType": 2,
+    "stackable": false,
+    "type": "Weapon",
+    "slug": "cursorSword_gold",
+    "worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 9,
+    "title": "The Greatest Stick",
+    "description": "Wow look at this stick.",
+    "stats": {
+      "damage": 98,
+      "armor": 0,
+      "health": 0,
+      "speed": 0,
+      "level": 3
+    },
+    "duration": -1,
+    "classType": 2,
+    "stackable": false,
+    "type": "Weapon",
+    "slug": "cursorSword_gold",
+    "worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 10,
+    "title": "4th Dimensional Rod",
+    "description": "How do I hold this?",
+    "stats": {
+      "damage": 114,
+      "armor": 0,
+      "health": 0,
+      "speed": 0,
+      "level": 4
+    },
+    "duration": -1,
+    "classType": 2,
+    "stackable": false,
+    "type": "Weapon",
+    "slug": "cursorSword_gold",
+    "worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 11,
+    "title": "Mace of Pain",
+    "description": "This hurts to hold.",
+    "stats": {
+      "damage": 130,
+      "armor": 0,
+      "health": 0,
+      "speed": 0,
+      "level": 5
+    },
+    "duration": -1,
+    "classType": 2,
+    "stackable": false,
+    "type": "Weapon",
+    "slug": "cursorSword_gold",
+    "worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 12,
+    "title": "Slingshot",
+    "description": "This is useless...",
+		"stats": {
+      "damage": 4,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 1
+    },
+		"duration": -1,
+    "classType": 1,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 13,
+    "title": "Handgun",
+    "description": "Bang! Bang!",
+		"stats": {
+      "damage": 6,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 2
+    },
+		"duration": -1,
+    "classType": 1,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 14,
+    "title": "Two Handguns",
+    "description": "This is an inefficent use of ammo.",
+		"stats": {
+      "damage": 8,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 3
+    },
+		"duration": -1,
+    "classType": 1,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 15,
+    "title": "Three Handguns?",
+    "description": "Wow I'm glad I have 3 hands.",
+		"stats": {
+      "damage": 11,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 4
+    },
+		"duration": -1,
+    "classType": 1,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 16,
+    "title": "Machine Gun",
+    "description": "I'll need three hands to hold this.",
+    "stats": {
+      "damage": 15,
+      "armor": 0,
+      "health": 0,
+      "speed": 0,
+      "level": 5
+    },
+    "duration": -1,
+    "classType": 1,
+    "stackable": false,
+    "type": "Weapon",
+    "slug": "cursorSword_gold",
+    "worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 17,
+    "title": "Fancy Playing Cards",
+    "description": "My magic tricks will cause pain.",
+		"stats": {
+      "damage": 4,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 1
+    },
+		"duration": -1,
+    "classType": 3,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 18,
+    "title": "Magical Wand",
+    "description": "This looks like a stick.",
+		"stats": {
+      "damage": 7,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 2
+    },
+		"duration": -1,
+    "classType": 3,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 19,
+    "title": "Magical Shovel",
+    "description": "Watch me magically dig your graves.",
+		"stats": {
+      "damage": 10,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 3
+    },
+		"duration": -1,
+    "classType": 3,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 20,
+    "title": "Ball of Fire",
+    "description": "This hurts to hold.",
+		"stats": {
+      "damage": 14,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 4
+    },
+		"duration": -1,
+    "classType": 3,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
+  },
+  {
+    "id": 21,
+    "title": "Fire Wave",
+    "description": "How do you like your enemies cooked?",
+		"stats": {
+      "damage": 20,
+      "armor": 0,
+			"health": 0,
+			"speed": 0,
+      "level": 5
+    },
+		"duration": -1,
+    "classType": 3,
+    "stackable": false,
+		"type": "Weapon",
+    "slug": "cursorSword_gold",
+		"worldSlug": "cursorSword_gold"
   }
 ]

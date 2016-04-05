@@ -10,6 +10,8 @@
 --  DATE:           March 9, 2016
 --
 --  REVISIONS:      (Date and Description)
+--                   April 4th: Hank Lo
+--                      - Numbers balancing
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
 --
@@ -34,10 +36,10 @@ public class WizardClass : RangedClass
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
-        _classStat.MaxHp = 100;
-        _classStat.MoveSpeed = 8;
-        _classStat.AtkPower = 3;
-        _classStat.Defense = 5;
+        _classStat.MaxHp = 1000;
+        _classStat.MoveSpeed = 11;
+        _classStat.AtkPower = 25;
+        _classStat.Defense = 20;
 
         base.Start();
 
@@ -107,7 +109,8 @@ public class WizardClass : RangedClass
     -- DATE: March 9, 2016
     --
     -- REVISIONS:
-    --      - March 17, 2016: Fixed instantiation to work through networking
+    --      - March 17, 2016: Fixed instantiation to work through networking - Carson
+    --      - Aprile 4, 2016: Added check for silence for magic circle - Hank
     --
     -- DESIGNER: Hank Lo, Allen Tsang
     --
@@ -123,19 +126,16 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        if (playerLoc == default(Vector2))
-            playerLoc = dir;
-        base.specialAttack(dir,playerLoc);
+        if (!silenced) {
+            if (playerLoc == default(Vector2))
+                playerLoc = dir;
+            base.specialAttack(dir,playerLoc);
 
-        //Vector2 mousePos = Input.mousePosition;
-        //mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        //var distance = (dir - (Vector2) transform.position).magnitude;
-        //Vector2 endp = (Vector2) transform.position + (distance * dir);
-
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
-        attack.GetComponent<MagicCircle>().playerID = playerID;
-        attack.GetComponent<MagicCircle>().teamID = team;
-        attack.GetComponent<MagicCircle>().damage = 0;
+            Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
+            attack.GetComponent<MagicCircle>().playerID = playerID;
+            attack.GetComponent<MagicCircle>().teamID = team;
+            attack.GetComponent<MagicCircle>().damage = 0;
+        }
 
         return cooldowns[1];
     }
