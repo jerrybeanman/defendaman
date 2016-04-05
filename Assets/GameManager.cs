@@ -420,5 +420,6 @@ public class GameManager : MonoBehaviour {
         Destroy(ColourizeScreen.instance);
         Application.LoadLevel("MenuScene");
         Destroy(instance);
+        Destroy(gameObject);
     }
 }
