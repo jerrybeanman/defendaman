@@ -87,7 +87,6 @@ public class NetworkingManager : MonoBehaviour
     {
         TCP_DisposeClient(TCPClient);
         UDP_DisposeClient(UDPClient);
-        TCPClient = TCP_CreateClient();
     }
 
     // Update is called once per frame
