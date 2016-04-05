@@ -22,11 +22,11 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for 
-	public 	float 		 chargeTime 		= 2f;
+	public 	float 		 chargeTime 		= 1f;
 	public  float 		 targetConeRadius 	= 25f;
-	public  float 		 targetConeAngle  	= 35f;
- 	public	float 		 targetZoomOutRange = 10f;
-	public  float		 zoomInTime 		= 1f;
+	public  float 		 targetConeAngle  	= 25f;
+ 	public	float 		 targetZoomOutRange = 14f;
+	public  float		 zoomInTime 		= 0.5f;
 
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
 	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
@@ -140,7 +140,7 @@ public class GunnerClass : RangedClass
 		{
 			if (inSpecial && Input.GetMouseButton(1))
 			{
-				// ugly check..
+				// ugly check..update sucks lol
 				if(!started)
 					StartCoroutine(ChargeAttack());
 			}
@@ -153,10 +153,19 @@ public class GunnerClass : RangedClass
 	}
 
 	private bool started = false;
+
+	/*----------------------------------------------------------------------------
+    --	Build up laser attack, zooms out camera and adjust vision cone values
+    --  by linear interpolation. 
+    --
+    --	Interface:  IEnumerator ZoomIn()
+    --
+    --	programmer: Jerry Jia
+    --	@return: number of seconds to wait before executing next instruction
+	------------------------------------------------------------------------------*/
 	IEnumerator ChargeAttack()
 	{
 		started = true;
-		print("charge attack()");
 		float elapsedTime = 0;
 		while(inSpecial && elapsedTime < chargeTime)
 		{
@@ -185,15 +194,16 @@ public class GunnerClass : RangedClass
 
 		started = false;
 
-		// elapsedTime has eached chargeTime
+		// elapsedTime has eached chargeTime, release attack
 		if(inSpecial)
 		{
 			yield return StartCoroutine(ReleaseAttack());
 		}
 		yield return null;
 	}
+
 	/*----------------------------------------------------------------------------
-    --	Set speed back to normal, and zooms camera back in
+    --	Releases laser attack, sets camera and vision cones value back to normal
     --
     --	Interface:  IEnumerator ZoomIn()
     --
@@ -202,7 +212,6 @@ public class GunnerClass : RangedClass
 	------------------------------------------------------------------------------*/
 	IEnumerator ReleaseAttack()
 	{
-		print("release attack()");
 		fire();
 		inSpecial = false;
 
