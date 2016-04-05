@@ -74,6 +74,13 @@ public class NetworkingManager : MonoBehaviour
     {
 		if (!GameData.GameStart) 
 		{
+            var gameManager = GameObject.Find("GameManager") as GameObject;
+            var networkManager = GameObject.Find("NetworkingServer") as GameObject;
+            if (gameManager != null && networkManager != null)
+            {
+                Destroy(GameManager.instance);
+                Destroy(gameManager);
+            }
 			try {
 				TCPClient = TCP_CreateClient();
 			} catch (Exception)
@@ -85,7 +92,7 @@ public class NetworkingManager : MonoBehaviour
 
     public void ResetConnections()
     {
-        TCP_DisposeClient(TCPClient);
+        TCP_DisposeClient(TCPClient); 
         UDP_DisposeClient(UDPClient);
     }
 
