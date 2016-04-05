@@ -78,7 +78,7 @@ class Resource : MonoBehaviour {
 		}
 
 		this.amount -= decreaseAmount;
-		DropGold(decreaseAmount);
+		//DropGold(decreaseAmount);
 
 		if (this.amount == 0) {
 			SendResourceDepletedMessage();
@@ -91,7 +91,8 @@ class Resource : MonoBehaviour {
     -- DATE: 		March 30, 2016
     -- REVISIONS: 	N/A
     -- DESIGNER:  	Krystle Bulalakaw
-    -- PROGRAMMER: 	Krystle Bulalakaw
+    -- P
+    ROGRAMMER: 	Krystle Bulalakaw
     -- INTERFACE: 	DropGold(int amount)
     --					int amount - amount of gold to drop
     -- RETURNS: 	void.
@@ -100,16 +101,26 @@ class Resource : MonoBehaviour {
     -- Its X and Y position is offset so that it doesn't drop in the same spot every time, and so it is easier to pick
     -- up (not right in the center of the tree).
     ----------------------------------------------------------------------------------------------------------------------*/
-    private void DropGold(int amount) {
+    public void DropGold(int amount) {
 		float offset = 1.5f;
 		float offsetX = Random.Range (-offset, offset);
 		float offsetY = Random.Range (-offset, offset);
         int instance_id = WorldItemManager.Instance.GenerateWorldItemId();
         int gold_id = 2;
 
-        GameObject go = WorldItemManager.Instance.CreateWorldItem(instance_id, gold_id, amount, x + offsetX, y + offsetY);
-		go.AddComponent<CoinMagnetize>();
-	}
+        List<Pair<string, string>> msg =
+                WorldItemManager.Instance.CreateWorldItemNetworkMessage(instance_id, gold_id, 
+                amount, x + offsetX, y + offsetY);
+        NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Create, msg, Protocol.UDP);
+
+        // Pretend that a drop message was received
+        if (Application.platform != RuntimePlatform.LinuxPlayer)
+        {
+            WorldItemManager.Instance.ReceiveCreateWorldItemPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg));
+        }
+        //GameObject go = WorldItemManager.Instance.CreateWorldItem(instance_id, gold_id, amount, x + offsetX, y + offsetY);
+        //go.AddComponent<CoinMagnetize>();
+    }
 
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	CreateResourceTakenMessage
@@ -128,6 +139,7 @@ class Resource : MonoBehaviour {
     public List<Pair<string, string>> CreateResourceTakenMessage(int amt) {
 		List<Pair<string, string>> _message = CreateResourcePositionMessage();
 		_message.Add(new Pair<string, string>(NetworkKeyString.Amount, amt.ToString()));
+        _message.Add(new Pair<string, string>(NetworkKeyString.PlayerID, GameData.MyPlayer.PlayerID.ToString()));
 		
 		return _message;
 	}
