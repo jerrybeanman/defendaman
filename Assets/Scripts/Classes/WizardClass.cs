@@ -90,8 +90,9 @@ public class WizardClass : RangedClass
             playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir, playerLoc);
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.75f), transform.position.y + (dir.y * 1.75f), -5);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
         attack.GetComponent<Fireball>().playerID = playerID;
         attack.GetComponent<Fireball>().teamID = team;
