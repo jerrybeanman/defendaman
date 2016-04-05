@@ -126,11 +126,12 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        if (!silenced) {
-            if (playerLoc == default(Vector2))
-                playerLoc = dir;
-            base.specialAttack(dir,playerLoc);
 
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
+        base.specialAttack(dir,playerLoc);
+        
+        if (!silenced) {
             Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
             attack.GetComponent<MagicCircle>().playerID = playerID;
             attack.GetComponent<MagicCircle>().teamID = team;
