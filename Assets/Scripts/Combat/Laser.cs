@@ -37,7 +37,6 @@ public class Laser : Projectile
         var ai = other.gameObject.GetComponent<AI>();
         if (ai != null && teamID == ai.team)
         {
-
             //Ignore team AIs
             return;
         }

@@ -56,7 +56,6 @@ public abstract class Projectile : Trigger
         var ai = other.gameObject.GetComponent<AI>();
         if (ai != null && teamID == ai.team)
         {
-
             //Ignore team AIs
             return;
         }
