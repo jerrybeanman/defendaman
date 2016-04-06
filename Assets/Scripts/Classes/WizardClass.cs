@@ -128,9 +128,11 @@ public class WizardClass : RangedClass
         
         if (!silenced) {
             Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
-            attack.GetComponent<MagicCircle>().playerID = playerID;
-            attack.GetComponent<MagicCircle>().teamID = team;
-            attack.GetComponent<MagicCircle>().damage = 0;
+            var instance = attack.GetComponent<MagicCircle>();
+            instance.playerID = playerID;
+            instance.teamID = team;
+            instance.damage = 0;
+            instance.duration = 5;
         }
 
         return cooldowns[1];
