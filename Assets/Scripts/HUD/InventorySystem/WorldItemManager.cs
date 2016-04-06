@@ -18,7 +18,7 @@ enum ItemUpdate { Pickup = 1, Drop = 2, Create = 3, Magnetize = 4 }
 --          int item_id, int amt, int inv_pos, Vector3 position)
 --      public void ProcessMagnetizeEvent(int playerId, int worldItemId)
 --      public void DestroyWorldItem(string world_item_id)
---      void ToggleAutoLootable(int world_item_id)
+--      void DisableAutoLootable(int world_item_id)
 --
 -- DATE:        05/03/2016
 -- REVISIONS:   03/04/2016 - Add sound components for gold - Krystle
