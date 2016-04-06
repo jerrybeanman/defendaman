@@ -22,7 +22,7 @@
     "description": "It's a stick and that's pretty great.",
 		"stats": {
       "damage": 10,
-      "armor": 0,
+      "armor": 5,
 			"health": 0,
 			"speed": 0,
       "level": 1
@@ -108,7 +108,7 @@
 		"description": "Temporary armor boost.",
     "stats": {
       "damage": 0,
-      "armor": 100,
+      "armor": 75,
 			"health": 0,
 			"speed": 0
     },
@@ -127,9 +127,9 @@
       "damage": 0,
       "armor": 0,
       "health": 0,
-      "speed": 5
+      "speed": 2
     },
-    "duration": 5,
+    "duration": 45,
     "classType": -1,
     "stackable": true,
     "type": "Consumable",
@@ -141,8 +141,8 @@
     "title": "The Greater Stick",
     "description": "It's better than a great stick.",
     "stats": {
-      "damage": 20,
-      "armor": 0,
+      "damage": 15,
+      "armor": 10,
       "health": 0,
       "speed": 0,
       "level": 2
@@ -159,8 +159,8 @@
     "title": "The Greatest Stick",
     "description": "Wow look at this stick.",
     "stats": {
-      "damage": 30,
-      "armor": 0,
+      "damage": 20,
+      "armor": 10,
       "health": 0,
       "speed": 0,
       "level": 3
@@ -177,8 +177,8 @@
     "title": "4th Dimensional Rod",
     "description": "How do I hold this?",
     "stats": {
-      "damage": 40,
-      "armor": 0,
+      "damage": 22,
+      "armor": 24,
       "health": 0,
       "speed": 0,
       "level": 4
@@ -195,8 +195,8 @@
     "title": "Mace of Pain",
     "description": "This hurts to hold.",
     "stats": {
-      "damage": 50,
-      "armor": 0,
+      "damage": 24,
+      "armor": 15,
       "health": 0,
       "speed": 0,
       "level": 5
@@ -249,8 +249,8 @@
     "title": "Two Handguns",
     "description": "This is an inefficent use of ammo.",
 		"stats": {
-      "damage": 15,
-      "armor": 0,
+      "damage": 35,
+      "armor": 5,
 			"health": 0,
 			"speed": 0,
       "level": 3
@@ -267,8 +267,8 @@
     "title": "Three Handguns?",
     "description": "Wow I'm glad I have 3 hands.",
 		"stats": {
-      "damage": 20,
-      "armor": 0,
+      "damage": 35,
+      "armor": 10,
 			"health": 0,
 			"speed": 0,
       "level": 4
@@ -285,8 +285,8 @@
     "title": "Machine Gun",
     "description": "I'll need three hands to hold this.",
     "stats": {
-      "damage": 30,
-      "armor": 0,
+      "damage": 40,
+      "armor": 10,
       "health": 0,
       "speed": 0,
       "level": 5
@@ -303,8 +303,8 @@
     "title": "Fancy Playing Cards",
     "description": "My magic tricks will cause pain.",
 		"stats": {
-      "damage": 10,
-      "armor": 0,
+      "damage": 2,
+      "armor": 2,
 			"health": 0,
 			"speed": 0,
       "level": 1
@@ -321,10 +321,10 @@
     "title": "Magical Wand",
     "description": "This looks like a stick.",
 		"stats": {
-      "damage": 15,
-      "armor": 0,
+      "damage": 4,
+      "armor": 4,
 			"health": 0,
-			"speed": 0,
+			"speed": 1,
       "level": 2
     },
 		"duration": -1,
@@ -339,10 +339,10 @@
     "title": "Magical Shovel",
     "description": "Watch me magically dig your graves.",
 		"stats": {
-      "damage": 25,
-      "armor": 0,
+      "damage": 15,
+      "armor": 15,
 			"health": 0,
-			"speed": 0,
+			"speed": 2,
       "level": 3
     },
 		"duration": -1,
@@ -358,9 +358,9 @@
     "description": "This hurts to hold.",
 		"stats": {
       "damage": 30,
-      "armor": 0,
+      "armor": 30,
 			"health": 0,
-			"speed": 0,
+			"speed": 3,
       "level": 4
     },
 		"duration": -1,
@@ -375,10 +375,10 @@
     "title": "Fire Wave",
     "description": "How do you like your enemies cooked?",
 		"stats": {
-      "damage": 40,
-      "armor": 0,
+      "damage": 50,
+      "armor": 50,
 			"health": 0,
-			"speed": 0,
+			"speed": 4,
       "level": 5
     },
 		"duration": -1,
