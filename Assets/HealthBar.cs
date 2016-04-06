@@ -50,7 +50,7 @@ public class HealthBar : MonoBehaviour
 	void LateUpdate()
 	{
 		transform.rotation = Quaternion.Euler(0, 0, 0);
-		transform.position = new Vector3(transform.parent.position.x, transform.parent.position.y + 1, isBuilding ? -20 : -10);
+		transform.position = new Vector3(transform.parent.position.x, transform.parent.position.y + 1, isBuilding ? -30 : -10);
 	}
 
     public void UpdateHealth(float MaxHp, float CurrentHp)

@@ -5,32 +5,37 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
-public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, aman = 4}
-public enum GameState { Playing, Dying, Dead, Won, Lost}
-public enum BuildingType { Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5}
+public enum ClassType 		{ Gunner = 1, Ninja = 2, Wizard = 3, aman = 4 }
+public enum GameState 		{ Playing, Dying, Dead, Won, Lost }
+public enum BuildingType 	{ Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5 }
+public enum Themes			{ Grass = 1, Tron = 2 }
+
 // Lobby message key fields 
 public class NetworkKeyString
 {
-	public static string PlayerID 		= "PlayerID";
-	public static string TeamID			= "TeamID";
-	public static string ClassID		= "ClassID";
-	public static string Ready			= "Ready";
-	public static string StartGame 		= "StartGame";
-	public static string UserName   	= "UserName";
-	public static string Message		= "Message";
-    public static string XPos       	= "XPos";
-    public static string YPos       	= "YPos";
-    public static string ZPos       	= "ZPos";
-    public static string XRot       	= "XRot";
-    public static string YRot       	= "YRot";
-    public static string ZRot       	= "ZRot";
-	public static string BuildType  	= "BuildType";
-	public static string Amount     	= "Amount";
-	public static string MapWidth   	= "mapWidth";
-	public static string MapHeight  	= "mapHeight";
-	public static string MapIds    	 	= "mapIDs";
-	public static string MapScenery 	= "mapSceneryIDs";
-	public static string MapResources 	= "mapResources";
+    public static string PlayerID       = "PlayerID";
+    public static string TeamID         = "TeamID";
+    public static string ClassID        = "ClassID";
+	public static string AmanID			= "AmanID";
+    public static string WorldItemID    = "WorldItemID";
+    public static string Ready          = "Ready";
+	public static string Theme			= "Theme";
+    public static string StartGame      = "StartGame";
+    public static string UserName       = "UserName";
+    public static string Message        = "Message";
+    public static string XPos           = "XPos";
+    public static string YPos           = "YPos";
+    public static string ZPos           = "ZPos";
+    public static string XRot           = "XRot";
+    public static string YRot           = "YRot";
+    public static string ZRot           = "ZRot";
+    public static string BuildType      = "BuildType";
+    public static string Amount         = "Amount";
+    public static string MapWidth       = "mapWidth";
+    public static string MapHeight      = "mapHeight";
+    public static string MapIds         = "mapIDs";
+    public static string MapScenery     = "mapSceneryIDs";
+    public static string MapResources   = "mapResources";
 }
 
 public class PlayerData 
@@ -47,7 +52,8 @@ public class PlayerData
     public Dictionary<string, int> WeaponStats = new Dictionary<string, int>()
     {
         { Constants.DAMAGE_STAT, 0},
-        { Constants.ARMOR_STAT, 0}
+        { Constants.ARMOR_STAT, 0},
+        { Constants.SPEED_STAT, 0}
     };
     //public bool King { get; set; }
 }
@@ -56,8 +62,6 @@ public class GameData
 {
 	// Blocks all in game keyboard inputs
 	public static bool 			InputBlocked 	 = false;
-	// Blocks mouse inputs for combat
-	public static bool 			KeyBlocked 		 = false;
 
 
     public static Dictionary<int,PlayerData> LobbyData = new Dictionary<int, PlayerData>();
@@ -79,6 +83,7 @@ public class GameData
     public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();
     public static Pair<int, int> aiSpawn = new Pair<int, int>(10, 10);
 
+	public static Themes		CurrentTheme	= Themes.Grass;
 
     private static int _allyTeamKillCount = 0;
     public static int AllyTeamKillCount
@@ -94,7 +99,8 @@ public class GameData
         }
     }
     private static int _enemyTeamKillCount = 0;
-    public static int EnemyTeamKillCount {
+    public static int EnemyTeamKillCount 
+	{
         get {
             return _enemyTeamKillCount;
         }

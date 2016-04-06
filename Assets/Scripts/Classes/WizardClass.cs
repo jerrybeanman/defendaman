@@ -21,7 +21,6 @@
 --  This class contains the logic that relates to the Wizard Class.
 ---------------------------------------------------------------------------------------*/
 using UnityEngine;
-using System.Collections;
 
 public class WizardClass : RangedClass
 {
@@ -32,7 +31,7 @@ public class WizardClass : RangedClass
 
     new void Start()
     {
-        cooldowns = new float[2] { 0.5f, 6 };
+        cooldowns = new float[2] { 0.5f, 5 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
@@ -90,15 +89,14 @@ public class WizardClass : RangedClass
             playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir, playerLoc);
+        var startPosition = new Vector3(transform.position.x + (dir.x * 1.75f), transform.position.y + (dir.y * 1.75f), -5);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, transform.position, transform.rotation);
+        Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
         attack.GetComponent<Fireball>().playerID = playerID;
         attack.GetComponent<Fireball>().teamID = team;
         attack.GetComponent<Fireball>().damage = ClassStat.AtkPower;
         attack.GetComponent<Fireball>().maxDistance = distance[0];
-
-		print (attack.GetComponent<Fireball>().playerID);
 		
         return cooldowns[0];
     }
@@ -110,7 +108,7 @@ public class WizardClass : RangedClass
     --
     -- REVISIONS:
     --      - March 17, 2016: Fixed instantiation to work through networking - Carson
-    --      - Aprile 4, 2016: Added check for silence for magic circle - Hank
+    --      - April 4, 2016: Added check for silence for magic circle - Hank
     --
     -- DESIGNER: Hank Lo, Allen Tsang
     --
@@ -126,11 +124,12 @@ public class WizardClass : RangedClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        if (gameObject.GetComponent<MagicDebuff>() == null) {
-            if (playerLoc == default(Vector2))
-                playerLoc = dir;
-            base.specialAttack(dir,playerLoc);
 
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
+        base.specialAttack(dir,playerLoc);
+        
+        if (!silenced) {
             Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
             attack.GetComponent<MagicCircle>().playerID = playerID;
             attack.GetComponent<MagicCircle>().teamID = team;

@@ -14,27 +14,38 @@ public class GunnerClass : RangedClass
 	Camera mainCamera;
 	Camera visionCamera;
 	Camera hiddenCamera;
-	float zoomOut = 11;
 	float zoomIn;
 	bool inSpecial;
 	bool fired;
 	Vector2 dir;
 	
-	// added by jerry
-	public	float 		 slowPercentage = 1;	// Speed to slow by when in special attack mode. Stacks up.
+	//---added by jerry---//
+
+	// values for 
+	public  float 		 holdTime			= 2f;
+	public 	float 		 chargeTime 		= 3f;
+	public  float 		 targetConeRadius 	= 28f;
+	public  float 		 targetConeAngle  	= 20f;
+ 	public	float 		 targetZoomOutRange = 16f;
+	public  float		 zoomInTime 		= 0.5f;
+
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
 	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
-	private float		 BaseSpeed = 10;		// Stores the base move speed
 	private DynamicLight FOVConeHidden;
-	
+
+	// keep track of starting speed
+	private float startingOrthographicSize;
+	private float startingConeRadius;
+	private float startingRangeAngle;
+
 	new void Start()
 	{
-		cooldowns = new float[2] { 0.2f, 10f };
+		cooldowns = new float[2] { 0.2f, 8f };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
         _classStat.MaxHp = 1100;
-		_classStat.MoveSpeed = BaseSpeed;
+		_classStat.MoveSpeed = 10;
 		_classStat.AtkPower = 40;
 		_classStat.Defense = 30;
 
@@ -67,11 +78,16 @@ public class GunnerClass : RangedClass
 			FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
 			FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
 			movement 		= gameObject.GetComponent<Movement>();
+
+			startingOrthographicSize = mainCamera.orthographicSize;
+			startingConeRadius 		 = FOVCone.LightRadius;
+			startingRangeAngle 		 = FOVCone.RangeAngle;
 		}
 
         //add gunboi attack sound
         au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
+        au_gunner_charge = Resources.Load("Music/Weapons/gunboi_gun_charge") as AudioClip;
     }
 
 
@@ -96,17 +112,18 @@ public class GunnerClass : RangedClass
         return cooldowns[0];
     }
 
+    // hank april 4th, added silence
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
 
-    	if (gameObject.GetComponent<MagicDebuff>() == null) {
 	        if (playerLoc == default(Vector2))
 	            playerLoc = dir;
 	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
             playerLoc = default(Vector2);
 	        base.specialAttack(dir, playerLoc);
+            playspecialCharge(playerID);
 
-
+        if (!silenced) {
 	        this.dir = dir;
 	        inSpecial = true;
 	    }
@@ -117,93 +134,167 @@ public class GunnerClass : RangedClass
     // hank april 4, added check for magic debuff, added autoshot at max range
 	void Update()
 	{
-		if (gameObject.GetComponent<MagicDebuff>() != null) {
+		if (silenced && inSpecial) {
 			inSpecial = false;
-			StartCoroutine(ZoomIn());
+			StartCoroutine(ReleaseAttack());
 		}
 
 		if (playerID == GameData.MyPlayer.PlayerID)
 		{
 			if (inSpecial && Input.GetMouseButton(1))
 			{
-				if (mainCamera.orthographicSize < zoomOut)
-				{
-					FOVCone.LightRadius++;
-					FOVConeHidden.LightRadius++;
-					FOVCone.RangeAngle -= 2.5f;
-					FOVConeHidden.RangeAngle -= 2.5f;
-					
-					mainCamera.orthographicSize += .1f;
-					visionCamera.orthographicSize += .1f;
-					hiddenCamera.orthographicSize += .1f;
-
-					// Safe guard check
-					if(_classStat.MoveSpeed > 0)
-						_classStat.MoveSpeed -= slowPercentage / _classStat.MoveSpeed;
-				} else {
-					dir = (gameObject.transform.rotation * Vector3.right);
-					inSpecial = false;
-					fire();
-					var member = new List<Pair<string, string>>();
-					member.Add(new Pair<string, string>("playerID", playerID.ToString()));
-					NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
-					StartCoroutine(ZoomIn());
-				}
-
-				MapManager.cameraDistance = -mainCamera.orthographicSize;
+				// ugly check..update sucks lol
+				if(!started)
+					StartCoroutine(ChargeAttack());
 			}
 			
 			if (inSpecial && !Input.GetMouseButton(1))
 			{
-				dir = (gameObject.transform.rotation * Vector3.right);
-				inSpecial = false;
-				fire();
-				var member = new List<Pair<string, string>>();
-				member.Add(new Pair<string, string>("playerID", playerID.ToString()));
-				NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
-				StartCoroutine(ZoomIn());
+				StartCoroutine(ReleaseAttack());
 			}
 		}
 	}
 
+	private bool started = false;
+
 	/*----------------------------------------------------------------------------
-    --	Set speed back to normal, and zooms camera back in
+    --	Build up laser attack, zooms out camera and adjust vision cone values
+    --  by linear interpolation. 
     --
     --	Interface:  IEnumerator ZoomIn()
     --
-    --	programmer: Jerry Jia, Carson Roscoe, Allen Tsang
+    --	programmer: Jerry Jia
     --	@return: number of seconds to wait before executing next instruction
 	------------------------------------------------------------------------------*/
-	IEnumerator ZoomIn()
+	IEnumerator ChargeAttack()
 	{
-		// Set speed back to base speed
-		_classStat.MoveSpeed = BaseSpeed;
+		started = true;
+		float elapsedTime = 0;
 
-		// Wait a bit so we can see that 360 quickscope
-		yield return new WaitForSeconds(1);
+		// Show charge bar
+		HUD_Manager.instance.chargeBar.Holder.SetActive(true);
 
-		// TODO:: Fix all these magic numbers after...
-		while(mainCamera.orthographicSize > zoomIn)
+		while(inSpecial && elapsedTime < chargeTime)
 		{
-			// Zooms the vision cone back in and adjust angle back to original
-			FOVCone.LightRadius -= 2;
-			FOVConeHidden.LightRadius -= 2;
-			FOVCone.RangeAngle += 5;
-			FOVConeHidden.RangeAngle += 5;
+			elapsedTime += Time.deltaTime;
 
-			// Zooms camera back in
-			mainCamera.orthographicSize -= .2f;
-			visionCamera.orthographicSize -= .2f;
-			hiddenCamera.orthographicSize -= .2f;
+			// linear interpolation value
+			float t = elapsedTime / chargeTime;
+
+			// interpolate camera size, which zooms out
+			mainCamera.orthographicSize = Mathf.Lerp(startingOrthographicSize, targetZoomOutRange, t);
+			visionCamera.orthographicSize = Mathf.Lerp(startingOrthographicSize, targetZoomOutRange, t);
+			hiddenCamera.orthographicSize = Mathf.Lerp(startingOrthographicSize, targetZoomOutRange, t);
+
+			// Interpolate vision cone radius, which expands range
+			FOVCone.LightRadius = Mathf.Lerp(startingConeRadius, targetConeRadius, t);
+			FOVConeHidden.LightRadius = Mathf.Lerp(startingConeRadius, targetConeRadius, t);
+
+			// Interpolate vision cone angle, which narrows angle
+			FOVCone.RangeAngle  = Mathf.Lerp(startingRangeAngle, targetConeAngle, t);
+			FOVConeHidden.RangeAngle = Mathf.Lerp(startingRangeAngle, targetConeAngle, t);
+
+			HUD_Manager.instance.chargeBar.Bar.fillAmount = Mathf.Lerp(0, 1, t);
+
+			// Set pooling radius to allow more pooling objects
 			MapManager.cameraDistance = -mainCamera.orthographicSize;
-			yield return null;
+			yield return new WaitForEndOfFrame ();
 		}
+
+		if(inSpecial)
+		{
+			HUD_Manager.instance.chargeBar.Holder.GetComponent<Animator>().SetTrigger("play");
+		}
+		// Reset value to be used again
+		elapsedTime = 0;
+		while(inSpecial && elapsedTime < holdTime)
+		{
+			elapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
+
+		// elapsedTime has eached chargeTime, release attack
+		if(inSpecial)
+		{
+			yield return StartCoroutine(ReleaseAttack());
+		}
+		started = false;
+		yield return null;
 	}
 
+	/*----------------------------------------------------------------------------
+    --	Releases laser attack, sets camera and vision cones value back to normal
+    --
+    --	Interface:  IEnumerator ZoomIn()
+    --
+    --	programmer: Jerry Jia
+    --	@return: number of seconds to wait before executing next instruction
+	------------------------------------------------------------------------------*/
+	IEnumerator ReleaseAttack()
+	{
+		fire();
+
+		HUD_Manager.instance.chargeBar.Holder.GetComponent<Animator>().Stop();
+
+		inSpecial = false;
+
+		// Send packet to indicate fire
+		SendLaserPacket();
+
+		// Wait a bit so we can see the beautiful quickscope
+		yield return new WaitForSeconds(1);
+
+		float elapsedTime = 0;
+
+		// Retrieve current values in special attack mode 
+		float currentZoomOutRange 	= mainCamera.orthographicSize;
+		float currentConeRadius 	= FOVCone.LightRadius;
+		float currentConeAngle		= FOVCone.RangeAngle;
+		float currentFillAmount 	= HUD_Manager.instance.chargeBar.Bar.fillAmount;
+		while(elapsedTime < zoomInTime)
+		{
+			elapsedTime += Time.deltaTime;
+			
+			// linear interpolation value
+			float t = elapsedTime / zoomInTime;
+			
+			// interpolate camera size, which zooms in
+			mainCamera.orthographicSize = Mathf.Lerp(currentZoomOutRange, startingOrthographicSize, t);
+			visionCamera.orthographicSize = Mathf.Lerp(currentZoomOutRange, startingOrthographicSize, t);
+			hiddenCamera.orthographicSize = Mathf.Lerp(currentZoomOutRange, startingOrthographicSize, t);
+			
+			// Interpolate vision cone radius, which shrinks range
+			FOVCone.LightRadius = Mathf.Lerp(currentConeRadius, startingConeRadius, t);
+			FOVConeHidden.LightRadius = Mathf.Lerp(currentConeRadius, startingConeRadius, t);
+			
+			// Interpolate vision cone angle, which narrows angle
+			FOVCone.RangeAngle  = Mathf.Lerp(currentConeAngle, startingRangeAngle, t);
+			FOVConeHidden.RangeAngle = Mathf.Lerp(currentConeAngle, startingRangeAngle, t);
+
+			HUD_Manager.instance.chargeBar.Bar.fillAmount = Mathf.Lerp(currentFillAmount, 0, t);
+			// Set pooling radius to allow more pooling objects
+			MapManager.cameraDistance = -mainCamera.orthographicSize;
+			yield return new WaitForEndOfFrame ();
+		}
+
+		HUD_Manager.instance.chargeBar.Holder.SetActive(false);
+		yield return null;
+		
+	}
+
+	void SendLaserPacket()
+	{
+		var member = new List<Pair<string, string>>();
+		member.Add(new Pair<string, string>("playerID", playerID.ToString()));
+		NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
+	}
 	void fire()
     {
+		dir = (gameObject.transform.rotation * Vector3.right);
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
-                        playspecialSound(playerID);
+            au_attack.Stop();
+            playspecialSound(playerID);
+            
         Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
         var laserAttack = attack.GetComponent<Laser>();
@@ -240,6 +331,16 @@ public class GunnerClass : RangedClass
         {
             au_attack.volume = (15 - distance) / 40;
             au_attack.PlayOneShot(au_special_attack);
+        }
+    }
+    void playspecialCharge(int PlayerID)
+    {
+        Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
+        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
+        if (distance < 13)
+        {
+            au_attack.volume = (15 - distance) / 40;
+            au_attack.PlayOneShot(au_gunner_charge);
         }
     }
 }

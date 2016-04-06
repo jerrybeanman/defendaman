@@ -59,8 +59,12 @@ public class MagicCircle : Area
 		if(teamID == GameData.MyPlayer.TeamID)
 		{
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyCircle;
+			gameObject.GetComponent<ParticleSystem>().startColor = new Color(0f, 0f, 1f, 0.4f);
 		}else
+		{
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyCircle;
+			gameObject.GetComponent<ParticleSystem>().startColor = new Color(1f, 0f, 0f, 0.4f);
+		}
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
