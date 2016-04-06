@@ -75,7 +75,7 @@ public class WorldItemData : MonoBehaviour
                 if (_first_collision) {
 	                _first_collision = false;
 	                msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-	                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+	                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.TCP);
 	                StartCoroutine(NeverReceivedPickupMessageBack());
 
                     // Pretend that a pickup event was received
@@ -105,7 +105,7 @@ public class WorldItemData : MonoBehaviour
                 int player_id = GameData.MyPlayer.PlayerID;
                 List<Pair<string, string>> msg = new List<Pair<string, string>>();
                 msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.TCP);
 
                 _tooltip.Deactivate();
 
