@@ -107,9 +107,8 @@ public class Building:MonoBehaviour {
 				return;
 
             //check for melee multihit, ignore if already in set
-            if (attack is Melee)
-                if (!((Melee)attack).targets.Add(gameObject))
-                    return;
+            if (attack is Melee && !((Melee)attack).targets.Add(gameObject))
+                return;
 
             Health -= attack.damage;
 		}
