@@ -79,6 +79,7 @@ public class ItemManager : MonoBehaviour {
                                         _item_data[i]["classType"].AsInt,
                                         bool.Parse(_item_data[i]["stackable"]),
                                         _item_data[i]["type"],
+                                        _item_data[i]["cost"].AsInt,
                                         _item_data[i]["slug"],
                                         _item_data[i]["worldSlug"]));
         }
@@ -112,6 +113,7 @@ public class Item
     public int classType { get; set; }
     public bool stackable { get; set; }
     public string type { get; set; }
+    public int cost { get; set; }
     public Sprite sprite { get; set; }
     public Sprite world_sprite { get; set; }
 
@@ -120,7 +122,7 @@ public class Item
      */
     public Item(int id, string title, string description, int damage, int armor, 
         int health, int speed, int duration, int classType, bool stackable, 
-        string type, string slug, string world_slug)
+        string type, int cost, string slug, string world_slug)
     {
         this.id = id;
         this.title = title;
@@ -133,6 +135,7 @@ public class Item
         this.classType = classType;
         this.stackable = stackable;
         this.type = type;
+        this.cost = cost;
         this.sprite = Resources.Load<Sprite>("Sprites/Items/" + slug);
         this.world_sprite = Resources.Load<Sprite>("Sprites/Items/" + world_slug);
     }
