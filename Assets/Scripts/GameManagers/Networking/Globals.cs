@@ -52,7 +52,8 @@ public class PlayerData
     public Dictionary<string, int> WeaponStats = new Dictionary<string, int>()
     {
         { Constants.DAMAGE_STAT, 0},
-        { Constants.ARMOR_STAT, 0}
+        { Constants.ARMOR_STAT, 0},
+        { Constants.SPEED_STAT, 0}
     };
     //public bool King { get; set; }
 }

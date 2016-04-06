@@ -178,7 +178,7 @@ extern "C" void UDP_DisposeClient(GameClient* client)
 {
 	if(client != NULL)
 	{
-		delete client;
+		closeSocket(client->serverSocket);
 		client = NULL;
 	}
 }

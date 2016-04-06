@@ -19,7 +19,8 @@ for fail does not work
 public enum DataType
 {
     Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
-    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15, StatUpdate = 16
+    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15, StatUpdate = 16,
+    GameOver = 17
 }
 
 public enum Protocol
@@ -58,6 +59,7 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr UDPClient { get; private set; }
 
 	public static NetworkingManager instance;
+    private bool sendThisFrame = true;
 
     #endregion
 
@@ -108,7 +110,7 @@ public class NetworkingManager : MonoBehaviour
             //Needs to be replaced with one "get data" call
             while ((packet = receive_data_udp()).Length > 8)
                 update_data(packet);
-            
+
             //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.
             //So 23 "get data from client code" calls per frame, so the overhead of going from
             //unmanaged to managed code is invoked 23 times for UDP, instead of just once
@@ -116,7 +118,13 @@ public class NetworkingManager : MonoBehaviour
             //i.e. instead of rapid returns of [{a},{b}], [{c}]... etc 23 times, have it merge them
             // and return one big [{a}, {b}, {c}, {d}...]
 
-            send_data();
+            if (sendThisFrame)
+            {
+                send_data();
+                sendThisFrame = false;
+            } else {
+                sendThisFrame = true;
+            }
         }
     }
     
@@ -428,9 +436,9 @@ public class NetworkingManager : MonoBehaviour
     
     void OnGUI()
     {
-        GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
-        GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
-        GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
+        //GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
+        //GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
+        //GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
     }
 
  	   #endregion
