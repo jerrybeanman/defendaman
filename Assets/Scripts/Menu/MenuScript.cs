@@ -272,7 +272,7 @@ public class MenuScript : MonoBehaviour {
         int t1_idx = 0;
         int t2_idx = 0;
         int ready = 0;
-        bool readyStatus = false;
+		bool readyStatus;
 
         // start off by disabling all player slots in each team
         foreach (Transform slot in team1_list.transform)
@@ -288,6 +288,7 @@ public class MenuScript : MonoBehaviour {
         // check the current lobby data values and update the player slots
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
+			readyStatus = false;
             if (p.Ready)
             {
                 ready++;
@@ -323,8 +324,8 @@ public class MenuScript : MonoBehaviour {
     {
         List<Transform> team_to_set = (team == 1 ? _team1_slots : _team2_slots);
         name = name.ToUpper();
-        Sprite avatar = _default_avatar;
-
+        // Sprite avatar = _default_avatar;
+		Sprite avatar = _gunner_avatar;
         if (index <= 12)
         {
             team_to_set[index].transform.Find("Name").transform.GetComponent<Text>().text = name;
@@ -622,6 +623,11 @@ public class MenuScript : MonoBehaviour {
         string name = _GetInputText("NameInput");
         _host_ip = _GetInputText("IPInput");
 		GameData.IP = _host_ip;
+		if(Application.platform != RuntimePlatform.LinuxPlayer)
+		{
+            _SwitchMenu(MenuStates.Lobby);
+			return;
+		}
         // TODO: validate player name and IP addr
         if (!(name.Length == 0) && !(_host_ip.Length == 0))
         {

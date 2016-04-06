@@ -11,26 +11,27 @@ public enum BuildingType { Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upg
 // Lobby message key fields 
 public class NetworkKeyString
 {
-	public static string PlayerID 		= "PlayerID";
-	public static string TeamID			= "TeamID";
-	public static string ClassID		= "ClassID";
-	public static string Ready			= "Ready";
-	public static string StartGame 		= "StartGame";
-	public static string UserName   	= "UserName";
-	public static string Message		= "Message";
-    public static string XPos       	= "XPos";
-    public static string YPos       	= "YPos";
-    public static string ZPos       	= "ZPos";
-    public static string XRot       	= "XRot";
-    public static string YRot       	= "YRot";
-    public static string ZRot       	= "ZRot";
-	public static string BuildType  	= "BuildType";
-	public static string Amount     	= "Amount";
-	public static string MapWidth   	= "mapWidth";
-	public static string MapHeight  	= "mapHeight";
-	public static string MapIds    	 	= "mapIDs";
-	public static string MapScenery 	= "mapSceneryIDs";
-	public static string MapResources 	= "mapResources";
+    public static string PlayerID       = "PlayerID";
+    public static string TeamID         = "TeamID";
+    public static string ClassID        = "ClassID";
+    public static string WorldItemID    = "WorldItemID";
+    public static string Ready          = "Ready";
+    public static string StartGame      = "StartGame";
+    public static string UserName       = "UserName";
+    public static string Message        = "Message";
+    public static string XPos           = "XPos";
+    public static string YPos           = "YPos";
+    public static string ZPos           = "ZPos";
+    public static string XRot           = "XRot";
+    public static string YRot           = "YRot";
+    public static string ZRot           = "ZRot";
+    public static string BuildType      = "BuildType";
+    public static string Amount         = "Amount";
+    public static string MapWidth       = "mapWidth";
+    public static string MapHeight      = "mapHeight";
+    public static string MapIds         = "mapIDs";
+    public static string MapScenery     = "mapSceneryIDs";
+    public static string MapResources   = "mapResources";
 }
 
 public class PlayerData 
@@ -38,7 +39,7 @@ public class PlayerData
     public int PlayerID = -1;
     public string Username { get; set; }
     public int TeamID { get; set; }
-	public ClassType ClassType = ClassType.Gunner;
+	public ClassType ClassType;
     public bool Ready = false;
     public Dictionary<string, int> Resources = new Dictionary<string, int>()
     {

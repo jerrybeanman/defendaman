@@ -116,12 +116,13 @@ public class NinjaClass : MeleeClass
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir,Vector2 playerLoc = default(Vector2))
     {
+        
+        if(playerLoc == default(Vector2))
+            playerLoc = dir;
+
+        base.specialAttack(dir, playerLoc);
+        
         if (!silenced) {
-            if(playerLoc == default(Vector2))
-                playerLoc = dir;
-
-            base.specialAttack(dir, playerLoc);
-
             teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
             Destroy(teleportInstance, 1);
         

@@ -414,7 +414,10 @@ public class GameManager : MonoBehaviour {
         GameData.TeamSpawnPoints.Clear();
         GameData.PlayerPosition.Clear();
         GameData.MyPlayer = null;
-        Destroy(instance);
+        Destroy(NetworkingManager.instance);
+        Destroy(Inventory.instance);
+        Destroy(WorldItemManager.Instance);
+        Destroy(ColourizeScreen.instance);
         Application.LoadLevel("MenuScene");
     }
 }
