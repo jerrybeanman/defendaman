@@ -100,7 +100,6 @@ public class WorldItemManager : MonoBehaviour
     {
         GameObject go = CreateWorldItem(itemPacket["WorldItemId"].AsInt, itemPacket["ItemId"].AsInt, 
             itemPacket["Amount"].AsInt, itemPacket["PosX"].AsFloat, itemPacket["PosY"].AsFloat);
-        Debug.Log(itemPacket["PosX"].AsFloat + " Y: " + itemPacket["PosY"].AsFloat);
         if (itemPacket["ItemId"].AsInt == 2)
         {
             go.AddComponent<Magnetize>();
@@ -129,7 +128,6 @@ public class WorldItemManager : MonoBehaviour
 
     public IEnumerator WaitSmallDelayBeforeReceivePickupPacket(JSONClass itemPacket)
     {
-        Debug.Log("WaitSmallDelayBeforeReceivePickupPacket called");
         yield return new WaitForSeconds(0.05f);
         ReceiveItemPickupPacket(itemPacket);
     }

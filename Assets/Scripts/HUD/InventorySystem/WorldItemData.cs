@@ -72,11 +72,9 @@ public class WorldItemData : MonoBehaviour
 					{
 						GameData.ItemCollided = true;
 						_first_collision = true;
-						Debug.Log("first collision true");
 					}
 					if (_first_collision)
 					{
-						Debug.Log("picking up");
 						_first_collision = false;
 						msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
 						NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
@@ -119,8 +117,6 @@ public class WorldItemData : MonoBehaviour
 				int player_id = GameData.MyPlayer.PlayerID;
 				List<Pair<string, string>> msg = new List<Pair<string, string>>();
 				msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-                Debug.Log("world item id: " + world_item_id + " player_id: " + player_id
-                    + " item.id " + item.id + " amount: " + amount);
 				NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 				
 				_tooltip.Deactivate();
@@ -164,9 +160,7 @@ public class WorldItemData : MonoBehaviour
 	
 	public IEnumerator NeverReceivedPickupMessageBack()
 	{
-		Debug.Log("NeverReceivedPickupMessageBack called");
 		yield return new WaitForSeconds(0.1f);
-		Debug.Log("NeverReceivedPickupMessageBack executed");
 		GameData.ItemCollided = false;
 		_first_collision = false;
 	}

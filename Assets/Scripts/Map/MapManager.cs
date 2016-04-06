@@ -80,7 +80,7 @@ public class MapManager : MonoBehaviour {
     public static float cameraDistance;
     public float frustumHeight, frustumWidth;
 
-	// Sound components
+    // Sound components
     public AudioSource audioSource;
     public AudioClip audioExplode;
 
@@ -97,9 +97,9 @@ public class MapManager : MonoBehaviour {
     -- Initializes the game object.
     ----------------------------------------------------------------------------------------------------------------------*/
     void Start() {
-		// Add sound component for explosion
-		audioSource = (AudioSource) gameObject.AddComponent<AudioSource>();
-		audioExplode = Resources.Load ("Music/Tree/pop") as AudioClip;
+        // Add sound component for explosion
+        audioSource = (AudioSource) gameObject.AddComponent<AudioSource>();
+        audioExplode = Resources.Load ("Music/Tree/pop") as AudioClip;
     }
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -115,8 +115,8 @@ public class MapManager : MonoBehaviour {
     -- Check the objects currently in view and update object pool.
     ----------------------------------------------------------------------------------------------------------------------*/
     void Update() {
-		CheckObjectPool ();
-	}
+        CheckObjectPool ();
+    }
 
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION:   HandleEvent
@@ -144,11 +144,11 @@ public class MapManager : MonoBehaviour {
                 ProcessResourceTakenEvent(message);
                 break;
             case EventType.RESOURCE_DEPLETED:
-				ProcessResourceDepletedEvent(message);
+                ProcessResourceDepletedEvent(message);
                 break;
-			case EventType.RESOURCE_RESPAWN:
-				ProcessResourceRespawnEvent(message);
-				break;
+            case EventType.RESOURCE_RESPAWN:
+                ProcessResourceRespawnEvent(message);
+                break;
         }
     }
 
@@ -167,7 +167,7 @@ public class MapManager : MonoBehaviour {
 	-- Instantiates a Resource game object and adds it to the list.
     ----------------------------------------------------------------------------------------------------------------------*/
     private void CreateMap(JSONClass message) {
-		print (message.ToString ());
+        print (message.ToString ());
         _mapWidth = message[NetworkKeyString.MapWidth].AsInt;
         _mapHeight = message[NetworkKeyString.MapHeight].AsInt;
         _map = new int[_mapWidth + (OUTERWALL_THICKNESS * 2), _mapHeight + (OUTERWALL_THICKNESS * 2)];
@@ -184,14 +184,14 @@ public class MapManager : MonoBehaviour {
                     _map[x, y] = 0; //outer wall edges
         }
 
-		JSONArray mapSceneryArrays = message[NetworkKeyString.MapScenery].AsArray;
+        JSONArray mapSceneryArrays = message[NetworkKeyString.MapScenery].AsArray;
         
         for (int x = 0; x < _mapWidth; x++) {
             JSONArray mapSceneryX = mapSceneryArrays[x].AsArray;
             for (int y = 0; y < _mapHeight; y++)
                 _mapScenery[x, y] = mapSceneryX[y].AsInt;
         }
-	}
+    }
 
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION:   InstantiateResources
@@ -237,9 +237,10 @@ public class MapManager : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     private void DrawMap() {
         if (_map == null) {
-			print ("[DEBUG-map] _map value was null");
+            print ("[DEBUG-map] _map value was null");
             return;
-		}
+        }
+
         for (int x = 0; x < _mapWidth + (OUTERWALL_THICKNESS * 2); x++)
             for (int y = 0; y < _mapHeight + (OUTERWALL_THICKNESS * 2); y++) {
                 //If the 2D array is land
@@ -290,7 +291,8 @@ public class MapManager : MonoBehaviour {
         if(GameData.MyPlayer.PlayerID == playerId) {
             temp.GetComponent<Resource>().DropGold(amount);
         }
-		temp.GetComponent<Resource>().DecreaseAmount(amount);
+
+        temp.GetComponent<Resource>().DecreaseAmount(amount);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -332,15 +334,15 @@ public class MapManager : MonoBehaviour {
     -- Using the X and Y parsed from the message, respawn a resource after some time.
     ----------------------------------------------------------------------------------------------------------------------*/
     public void ProcessResourceRespawnEvent(JSONClass message) {
-		int xPos = message[NetworkKeyString.XPos].AsInt;
-		int yPos = message[NetworkKeyString.YPos].AsInt;
-		
-		// Find the Resource in the list with these X and Y positions
-		GameObject temp = _mapResources.Find(go => 
+        int xPos = message[NetworkKeyString.XPos].AsInt;
+        int yPos = message[NetworkKeyString.YPos].AsInt;
+
+        // Find the Resource in the list with these X and Y positions
+        GameObject temp = _mapResources.Find(go => 
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
-		// Respawn it
-		StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
+        // Respawn it
+        StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -355,10 +357,10 @@ public class MapManager : MonoBehaviour {
     -- Plays the explosion animation, waits for animation to complete, then deactivates the gameobject.
     ----------------------------------------------------------------------------------------------------------------------*/
     IEnumerator ExplodeAndDestroy(GameObject go) {
-		go.GetComponent<Resource>().animator.SetTrigger("Depleted");
-		audioSource.PlayOneShot (audioExplode);
-		yield return new WaitForSeconds(0.267f); // animation length
-		go.SetActive(false);
+        go.GetComponent<Resource>().animator.SetTrigger("Depleted");
+        audioSource.PlayOneShot (audioExplode);
+        yield return new WaitForSeconds(0.267f); // animation length
+        go.SetActive(false);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -377,11 +379,11 @@ public class MapManager : MonoBehaviour {
     -- the Game Object instance.
     ----------------------------------------------------------------------------------------------------------------------*/
 	IEnumerator RespawnAfterTime(GameObject go, int seconds, int amount) {
-		yield return new WaitForSeconds(seconds);
+        yield return new WaitForSeconds(seconds);
 
-		go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
-		go.GetComponent<Resource>().amount = amount;
-		go.SetActive(true);
+        go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
+        go.GetComponent<Resource>().amount = amount;
+        go.SetActive(true);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
