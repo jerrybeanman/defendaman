@@ -9,9 +9,10 @@ public class Building:MonoBehaviour {
 
 	public BuildingType type;
 
-	public float MaxHp  = 100;
+	public float MaxHp;
 	public float health;
 	public int 	 cost;
+	public float ConstructionTime;
 	public float Health
 	{
 		get
@@ -26,12 +27,8 @@ public class Building:MonoBehaviour {
 	}
 
 	public int team;
-	public int collidercounter = 0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
-	public HealthBar healthBar;
-	
-	public float ConstructionTime = 2f;
 
 	private SpriteRenderer spriteRenderer;
 
@@ -41,13 +38,18 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
-	public bool playerlocker =false;
+	[HideInInspector]
+	public int collidercounter = 0;
+	[HideInInspector]
+	public bool playerlocker = false;
+	[HideInInspector]
+	public HealthBar healthBar;
 
 	// Use this for initialization
 	void Start () 
 	{
 		health = MaxHp;
-		playerlocker=false;
+		playerlocker = false;
 		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
@@ -58,6 +60,11 @@ public class Building:MonoBehaviour {
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
+
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			cost = 0;
+		}
 
     }
 
@@ -105,8 +112,12 @@ public class Building:MonoBehaviour {
 		{
 			if (attack.teamID == team)
 				return;
-			float damage = other.GetComponent<Trigger>().damage;
-			Health -= damage;
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee && !((Melee)attack).targets.Add(gameObject))
+                return;
+
+            Health -= attack.damage;
 		}
 
 		if(health<=0)

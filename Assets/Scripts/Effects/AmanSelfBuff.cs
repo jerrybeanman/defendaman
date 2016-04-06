@@ -12,6 +12,8 @@
 --  REVISIONS:      (Date and Description)
 --                  April 4th: Hank Lo
 --                      - Numbers balancing; removed majority of self stat buffs, increased hp buff
+--                  April 5th: Allen Tsang
+--                      - Attached indicator
 --
 --  DESIGNERS:      Allen Tsang, Hank Lo
 --
@@ -30,6 +32,8 @@ public class AmanSelfBuff : Buff {
     int hpBuff = 2000;
     BaseClass target;
     Rigidbody2D area;
+    GameObject indicator;
+    GameObject instance;
 
     new void Start()
     {
@@ -38,6 +42,14 @@ public class AmanSelfBuff : Buff {
         target.ClassStat.MaxHp += hpBuff;
 
         area = (Rigidbody2D)Resources.Load("Prefabs/AmanBuffArea", typeof(Rigidbody2D));
+        //load indicator
+        if (target.playerID == GameData.AllyKingID)
+            indicator = (GameObject)Resources.Load("Prefabs/AllyAmanCircle", typeof(GameObject));
+        else
+            indicator = (GameObject)Resources.Load("Prefabs/EnemyAmanCircle", typeof(GameObject));
+
+        instance = (GameObject)Instantiate(indicator, transform.position, transform.rotation);
+        instance.transform.parent = target.transform;
     }
     
     // Called every physics update
