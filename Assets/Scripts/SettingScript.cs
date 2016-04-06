@@ -5,7 +5,10 @@ public class SettingScript : MonoBehaviour {
 
     public GameObject settings;
 
-
+    void Start()
+    {
+        settings.SetActive(false);
+    }
     // Update is called once per frame
     void Update()
     {
