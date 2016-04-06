@@ -231,7 +231,7 @@ public class WorldItemManager : MonoBehaviour
                 _world_item.GetComponent<Magnetize>().playerId = playerId;
                 if (GameData.MyPlayer.PlayerID != playerId)
                 {
-                    Destroy(this);
+                    Destroy(_world_item.GetComponent<Magnetize>());
                 }
             }
         }
