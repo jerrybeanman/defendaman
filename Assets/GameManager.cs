@@ -368,35 +368,18 @@ public class GameManager : MonoBehaviour {
     public void GameWon()
     {
         GameData.GameState = GameState.Won;
-        Debug.Log("You have won");
+		HUD_Manager.instance.winScreen.Parent.gameObject.SetActive(true);
+		HUD_Manager.instance.winScreen.Parent.SetTrigger("Play");
+		HUD_Manager.instance.winScreen.Child.SetTrigger("Play");
     }
 
     public void GameLost()
     {
         GameData.GameState = GameState.Lost;
-        Debug.Log("You have lost");
     }
+	
 
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 60;
-        switch (GameData.GameState)
-        {
-            case GameState.Won:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!", style);
-                Invoke("ReturnToMenu", 5f);
-                break;
-            case GameState.Lost:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!", style);
-                Invoke("ReturnToMenu", 5f);
-                break;
-            default:
-                break;
-        }
-    }
-
-    void ReturnToMenu()
+   	public void ReturnToMenu()
     {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
