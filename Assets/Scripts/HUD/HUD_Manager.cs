@@ -253,7 +253,6 @@ public class HUD_Manager : MonoBehaviour
 			if(!chat.input.IsInteractable())
 			{
 				// Block all other keyboard inputs
-				GameData.KeyBlocked = true;
 				GameData.InputBlocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
@@ -263,7 +262,6 @@ public class HUD_Manager : MonoBehaviour
 			else
 			{
 				// Unblocck keyboard inputs 
-				GameData.KeyBlocked = false;
 				GameData.InputBlocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
 				 {
@@ -674,6 +672,7 @@ public class HUD_Manager : MonoBehaviour
 	public void DisplayShop()
 	{
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
+		GameData.MouseBlocked = !GameData.MouseBlocked;
 	}
 	
 	/*----------------------------------------------------------------------------

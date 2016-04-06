@@ -61,8 +61,6 @@ public class GameData
 {
 	// Blocks all in game keyboard inputs
 	public static bool 			InputBlocked 	 = false;
-	// Blocks mouse inputs for combat
-	public static bool 			KeyBlocked 		 = false;
 
 
     public static Dictionary<int,PlayerData> LobbyData = new Dictionary<int, PlayerData>();
