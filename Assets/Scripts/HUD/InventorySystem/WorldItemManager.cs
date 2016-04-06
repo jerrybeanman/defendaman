@@ -196,15 +196,11 @@ public class WorldItemManager : MonoBehaviour
         {
             if (_world_item.GetComponent<WorldItemData>().world_item_id == worldItemId)
             {
-<<<<<<< HEAD
                 _world_item.GetComponent<Magnetize>().playerId = playerId;
-=======
                 if (GameData.MyPlayer.PlayerID != playerId)
                 {
                     Destroy(this);
                 }
-                _world_item.GetComponent<CoinMagnetize>().playerId = playerId;
->>>>>>> 255edaeaa905678b1361c799f6a7354d9c2fa847
             }
         }
     }
