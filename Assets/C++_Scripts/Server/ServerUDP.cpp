@@ -1,3 +1,21 @@
+/*------------------------------------------------------------------------------
+
+  SOURCE FILE:              ServerUDP.cpp
+
+  PROGRAM:                  Server
+
+  FUNCTIONS:                int ServerUDP::InitializeSocket(short port)
+                            int ServerUDP::SetSocketOpt()
+                            void * ServerUDP::CreateClientManager(void * server)
+                            void * ServerUDP::Receive()
+                            void ServerUDP::Broadcast(const char* message, sockaddr_in * excpt)
+                            void ServerUDP::PrepareSelect()
+
+  DESIGNER/PROGRAMMER:      Gabriel Lee, Tyler Trepanier-Bracken, Vivek Kalia
+
+  NOTES:                    The UDP Class to handle all UDP data from the game.
+
+-------------------------------------------------------------------------------*/
 #include "ServerUDP.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -5,16 +23,21 @@
 
 using namespace Networking;
 extern std::map<int, Player>           _PlayerTable;
-/*
-	Initialize socket, server address to lookup to, and connect to the server
+/*------------------------------------------------------------------------------
 
-  Programmer: Gabriel Lee
+  FUNCTION:                   InitializeSocket
 
-  Revision:
-    March 9, 2016 - Changed the socket to be non-blocking
+  DESIGNER/PROGRAMMER:        Gabriel Lee
 
-	@return: socket file descriptor
-*/
+  REVISIONS:                  March 9, 2016 - Changed the socket be non-blocking
+
+  INTERFACE:                  int ServerUDP::InitializeSocket(short port)
+
+  RETURNS:                    int : The port file descriptor or an error code
+
+  NOTES:                      Initializes the UDP socket and sock addr in struct
+
+-------------------------------------------------------------------------------*/
 int ServerUDP::InitializeSocket(short port)
 {
   int err = -1;
@@ -48,22 +71,23 @@ int ServerUDP::InitializeSocket(short port)
 
     return 0;
 }
+/*------------------------------------------------------------------------------
 
-/*
-Thread that forever reads in data from all clients.
+  FUNCTION:                   SetSocketOpt
 
-Programmer: Unknown
+  DESIGNER/PROGRAMMER:        Vivek Kalia, Tyler Trepanier-Bracken
 
-Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
-              Added in select functionality
-*/
+  INTERFACE:                  int ServerUDP::SetSocketOpt()
+
+  RETURNS:                    int : -1 for error or 0 for success
+
+  NOTES:                     Sets UDP socket to reuse the same addresses.
+
+-------------------------------------------------------------------------------*/
 int ServerUDP::SetSocketOpt()
 {
 	// set SO_REUSEADDR so port can be resused imemediately after exit, i.e., after CTRL-c
   int flag = 1;
-  struct timeval timeout;
-  timeout.tv_sec = 0;
-  timeout.tv_usec = 45000;
   if (setsockopt (_UDPReceivingSocket, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
 	{
     fatal("setsockopt");
@@ -71,31 +95,38 @@ int ServerUDP::SetSocketOpt()
 	}
 	return 0;
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Creates a child process to handle incoming messages from the new player.
-  Programmer: Tyler Trepanier-Bracken
+  FUNCTION:                   CreateClientManager
 
-	@return: child PDI (0 for child process)
-*/
+  DESIGNER/PROGRAMMER:        Tyler Trepanier-Bracken
+
+  INTERFACE:                  void * ServerUDP::CreateClientManager(void * server)
+
+  RETURNS:                    void * : child PDI (0 for child process)
+
+  NOTES:                      Creates a child process to handle incoming
+                              messages from the new player.
+
+-------------------------------------------------------------------------------*/
 void * ServerUDP::CreateClientManager(void * server)
 {
     return ((ServerUDP *)server)->Receive();
 }
+/*------------------------------------------------------------------------------
 
-/*
-Thread that forever reads in data from all clients.
+  FUNCTION:                   Receive
 
-Programmer: Unknown
+  DESIGNER/PROGRAMMER:        Gabriel Lee, Vivek Kalia, Tyler Trepanier-Bracken
 
-Revisions: Vivek Kalia, Tyler Trepanier-Bracken  2016/03/09
-              Added in select functionality
+  INTERFACE:                  void * ServerUDP::Receive()
 
-           Tyler Trepanier-Bracken  2016/03/09
-              Fine tuned UDP sending and receiving.
+  RETURNS:                    int : The port file descriptor or an error code
 
+  NOTES:                      Thread that forever reads in data from all clients.
+                              using select()
 
-*/
+-------------------------------------------------------------------------------*/
 void * ServerUDP::Receive()
 {
   int nready = 0;                      // Data received indicator.
@@ -133,7 +164,6 @@ void * ServerUDP::Receive()
           fatal("UDP_Server_Recv: recvfrom() failed\n");
           break;
         }
-        //fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
 
         for(int i = 0; i < 24; i++)
         {
@@ -163,11 +193,6 @@ void * ServerUDP::Receive()
           }
 
         }
-        //std::cout << buf << std::endl;
-
-      //TODO: Refactor when the TCP passes over the map to the UDP server,
-      //      will need to place all connections already into the char** "con"
-      //Issue: Accepts random players that haven't been pre-connected.
         Broadcast(buf);
       }
     }
@@ -177,16 +202,22 @@ void * ServerUDP::Receive()
     }
   }
   free(buf);
+  return 0;
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Sends a message to all the clients
+  FUNCTION:                   Broadcast
 
-  Revision:
-  Date       Author           Description
-  2016-03-10 Gabriel Lee      Add functionality to add exception to broadcast
-  2016-03-13 Tyler Trepanier  No longer segfaults when there isn't an excpt
-*/
+  DESIGNER/PROGRAMMER:        Gabriel Lee, Tyler Trepanier
+
+  INTERFACE:                  void ServerUDP::Broadcast
+                              (const char* message, sockaddr_in * excpt)
+
+  RETURNS:                    int : The port file descriptor or an error code
+
+  NOTES:                      Sends a message to all the clients
+
+-------------------------------------------------------------------------------*/
 void ServerUDP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   for(std::map<int, Player>::const_iterator it = _PlayerTable.begin(); it != _PlayerTable.end(); ++it)
@@ -207,21 +238,22 @@ void ServerUDP::Broadcast(const char* message, sockaddr_in * excpt)
     }
   }
 }
-/*
-  Registers the passed in Player list as a class member to be used in broadcasticonst ng UDP packets.
-*/
-void ServerUDP::SetPlayerList(std::map<int, Player> players)
-{
-  _PlayerTable = players;
-}
+/*------------------------------------------------------------------------------
 
-/*
-Prepares the PlayerList with 24 invalid players, required to make sure
-that the socket is set to -1 if the socket is not being used for the
-function SelectRecv.
+  FUNCTION:                   PrepareSelect
 
-Programmer: Vivek Kalia, Tyler Trepanier-Bracken
-*/
+  DESIGNER/PROGRAMMER:        Vivek Kalia, Tyler Trepanier-Bracken
+
+  INTERFACE:                  void ServerUDP::PrepareSelect()
+
+  RETURNS:                    void
+
+  NOTES:                      Prepares the PlayerList with 24 invalid players,
+                              required to make sure that the socket is set to
+                              -1 if the socket is not being used for the
+                              function SelectRecv.
+
+-------------------------------------------------------------------------------*/
 void ServerUDP::PrepareSelect()
 {
     Player _bad;

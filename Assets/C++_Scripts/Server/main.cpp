@@ -1,3 +1,15 @@
+/*------------------------------------------------------------------------------
+
+  SOURCE FILE:                main.cpp
+
+  PROGRAM:                    Server
+
+  DESIGNER/PROGRAMMER:        Martin Minkov, Jerry Jia, Scott Plummer
+
+  NOTES:                      Handles initializing the UDP and TCP sockets
+                              and creating client and game threads.
+
+-------------------------------------------------------------------------------*/
 #include "Server.h"
 #include "ServerTCP.h"
 #include "ServerUDP.h"
