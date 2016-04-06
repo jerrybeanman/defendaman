@@ -74,6 +74,7 @@ public class PlayerReceiveUpdates : MonoBehaviour {
             GameData.EnemyTeamKillCount++;
         else
             GameData.AllyTeamKillCount++;
+
         NetworkingManager.Unsubscribe(DataType.Player, playerID);
         GameData.PlayerPosition.Remove(playerID);
         Destroy(gameObject);

@@ -36,6 +36,7 @@ public class HUD_Manager : MonoBehaviour
 	public ChargeBar			chargeBar;
 	public Stamina				stamina;
 	public ColourizeScreen		colourizeScreen;
+	public WinScreen			winScreen;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -915,6 +916,12 @@ public class HUD_Manager : MonoBehaviour
 	{
 		public Image			ProgressBar;
 		public float			FillTimer;
+	}
+	[System.Serializable]
+	public class WinScreen
+	{
+		public Animator			Parent;
+		public Animator			Child;
 	}
 	#endregion
 }
