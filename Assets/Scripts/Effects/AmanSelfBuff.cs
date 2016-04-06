@@ -33,6 +33,7 @@ public class AmanSelfBuff : Buff {
     BaseClass target;
     Rigidbody2D area;
     GameObject indicator;
+    GameObject instance;
 
     new void Start()
     {
@@ -47,7 +48,8 @@ public class AmanSelfBuff : Buff {
         else
             indicator = (GameObject)Resources.Load("Prefabs/EnemyAmanCircle", typeof(GameObject));
 
-        indicator.transform.parent = target.transform;
+        instance = (GameObject)Instantiate(indicator, transform.position, transform.rotation);
+        instance.transform.parent = target.transform;
     }
     
     // Called every physics update
