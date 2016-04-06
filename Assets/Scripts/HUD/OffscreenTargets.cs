@@ -14,8 +14,6 @@ public class OffscreenTargets : MonoBehaviour
     [Range(0.1f, 1.0f)]
     public float indicator_scale = 1.0f;
 
-    private bool set = false;
-    private Dictionary<int, Image> indicators;
     private Vector3 screenCenter = new Vector3(Screen.width, Screen.height, 0) * .5f;
     private Vector3 offScreen = new Vector3(-100, -100, 0);
 
@@ -29,8 +27,6 @@ public class OffscreenTargets : MonoBehaviour
         offSprite.rectTransform.parent = canvas.transform;
         offSprite.transform.localScale *= indicator_scale;
 
-        indicators = new Dictionary<int, Image>();
-
         centerRect.width = Screen.width / 2;
         centerRect.height = Screen.height / 2;
         centerRect.position = new Vector2(screenCenter.x - centerRect.width / 2, screenCenter.y - centerRect.height / 2);
@@ -39,47 +35,25 @@ public class OffscreenTargets : MonoBehaviour
     // late update is called every frame after Update() finishes
     void LateUpdate()
     {
-        if (!set && GameData.PlayerPosition.Count > 0)
-        {
-            InitIndicators();
-            set = true;
-        }
         PlaceIndicators();
-    }
-
-    void InitIndicators()
-    {
-        foreach(int key in GameData.PlayerPosition.Keys)
-        {
-            Image newSprite;
-            newSprite = Instantiate(OffScreenSprite, offScreen, Quaternion.Euler(new Vector3(0, 0, 0))) as Image;
-            newSprite.rectTransform.parent = canvas.transform;
-            newSprite.transform.localScale *= indicator_scale;
-            indicators.Add(key, newSprite);
-        }
     }
 
     void PlaceIndicators()
     {
-
         Vector3 targetPos;
-        Image indicator;
 
-        foreach (int key in GameData.PlayerPosition.Keys)
+        if (GameData.AllyKingID != -1)
         {
-            if (key == GameData.AllyKingID)
-            {
-                targetPos = GameData.PlayerPosition[key];
-                targetPos = Camera.main.WorldToScreenPoint(targetPos);
+            targetPos = GameData.PlayerPosition[GameData.AllyKingID];
+            targetPos = Camera.main.WorldToScreenPoint(targetPos);
 
-                if (targetPos.z > 0 && targetPos.x < Screen.width &&
-                    targetPos.x > 0 && targetPos.y < Screen.height && targetPos.y > 0)
-                {
-                    offSprite.rectTransform.position = offScreen;   //get rid of the arrow indicator
-                }
-                else {
-                    PlaceOffscreen(targetPos, offSprite);
-                }
+            if (targetPos.z > 0 && targetPos.x < Screen.width &&
+                targetPos.x > 0 && targetPos.y < Screen.height && targetPos.y > 0)
+            {
+                offSprite.rectTransform.position = offScreen;   //get rid of the arrow indicator
+            }
+            else {
+                PlaceOffscreen(targetPos, offSprite);
             }
         }
     }
