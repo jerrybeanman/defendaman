@@ -179,7 +179,7 @@ public class NetworkingManager : MonoBehaviour
 
             if (dataType == (int)DataType.Environment)
             {
-                GameObject.FindGameObjectWithTag("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
+                GameObject.FindGameObjectWithTag("GameManager").GetComponent<MapManager>().HandleEvent(id, obj);// receive_message(obj, id);
             }
 
             if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
