@@ -65,6 +65,7 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
+		"cost": 250,
     "slug": "green_portion_round",
 		"worldSlug": "green_portion_round"
   },
@@ -82,7 +83,8 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "blue_potion_round",
+    "cost": 500,
+		"slug": "blue_potion_round",
 		"worldSlug": "blue_potion_round"
   },
 	{
@@ -99,7 +101,8 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "red_potion_classic",
+    "cost": 700,
+		"slug": "red_potion_classic",
 		"worldSlug": "red_potion_classic"
   },
 	{
@@ -116,7 +119,8 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "blue_potion_classic",
+    "cost": 1000,
+		"slug": "blue_potion_classic",
 		"worldSlug": "blue_potion_classic"
   },
   {
@@ -133,7 +137,8 @@
     "classType": -1,
     "stackable": true,
     "type": "Consumable",
-    "slug": "yellow_portion_classic",
+    "cost": 500,
+		"slug": "yellow_portion_classic",
     "worldSlug": "yellow_portion_classic"
   },
   {

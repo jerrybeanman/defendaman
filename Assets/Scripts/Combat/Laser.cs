@@ -23,28 +23,27 @@ public class Laser : Projectile
         var player = other.gameObject.GetComponent<BaseClass>();
         if (player != null && teamID == player.team)
         {
-            //If it collided with a player
+            //Ignore team players
             return;
         }
 
         var trigger = other.gameObject.GetComponent<Trigger>();
         if (trigger != null && (teamID == trigger.teamID || trigger is Area))
         {
-            //If it collided with another projectile or a sword
+            //Ignore team attacks or areas
             return;
         }
 
         var ai = other.gameObject.GetComponent<AI>();
         if (ai != null && teamID == ai.team)
         {
-
-            //If it collided with AI
+            //Ignore team AIs
             return;
         }
 
         if (other.gameObject.GetComponent<WorldItemData>() != null)
         {
-            //If it collided with items
+            //Ignore items
             return;
         }
         

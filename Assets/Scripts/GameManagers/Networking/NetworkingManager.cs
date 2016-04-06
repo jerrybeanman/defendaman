@@ -104,11 +104,11 @@ public class NetworkingManager : MonoBehaviour
             string packet;
 
             //Needs to be reaplced with one "get data" call
-            while ((packet = receive_data_tcp()).Length > 8)
+            while ((packet = receive_data_tcp()).Length > 4)
                 update_data(packet);
 
             //Needs to be replaced with one "get data" call
-            while ((packet = receive_data_udp()).Length > 8)
+            while ((packet = receive_data_udp()).Length > 4)
                 update_data(packet);
 
             //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.
@@ -118,13 +118,13 @@ public class NetworkingManager : MonoBehaviour
             //i.e. instead of rapid returns of [{a},{b}], [{c}]... etc 23 times, have it merge them
             // and return one big [{a}, {b}, {c}, {d}...]
 
-            if (sendThisFrame)
-            {
+            //if (sendThisFrame)
+            //{
                 send_data();
-                sendThisFrame = false;
-            } else {
-                sendThisFrame = true;
-            }
+            //    sendThisFrame = false;
+            //} else {
+            //    sendThisFrame = true;
+            //}
         }
     }
     
@@ -172,7 +172,12 @@ public class NetworkingManager : MonoBehaviour
 
     public void update_data(string JSONGameState)
     {
-        JSONArray gameObjects = gameObjects = JSON.Parse(JSONGameState).AsArray;
+        JSONArray gameObjects = null;
+        try {
+            gameObjects = gameObjects = JSON.Parse(JSONGameState).AsArray;
+        } catch (Exception e) {
+            Debug.Log("[ERROR: Invalid packet: " + JSONGameState);
+        }
         if (gameObjects == null || JSONGameState == "[]")
         {
             Debug.Log("[ERROR] NetworkingManager.update_data received a packet that is null");
