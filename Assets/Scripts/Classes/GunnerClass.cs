@@ -22,6 +22,7 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for 
+	public  float 		 holdTime			= 2f;
 	public 	float 		 chargeTime 		= 2f;
 	public  float 		 targetConeRadius 	= 28f;
 	public  float 		 targetConeAngle  	= 20f;
@@ -191,6 +192,8 @@ public class GunnerClass : RangedClass
 			MapManager.cameraDistance = -mainCamera.orthographicSize;
 			yield return new WaitForEndOfFrame ();
 		}
+
+		yield return new WaitForSeconds(holdTime);
 
 		started = false;
 

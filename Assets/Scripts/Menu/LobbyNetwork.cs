@@ -190,7 +190,13 @@ public class LobbyNetwork : MonoBehaviour {
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("tron_theme");
+				if(GameData.CurrentTheme == Themes.Grass)
+				{
+					Application.LoadLevel("grass_theme");
+				}else
+				{
+					Application.LoadLevel("tron_theme");
+				}
 				break;
 			}
 

@@ -397,7 +397,7 @@ public class MenuScript : MonoBehaviour {
         map_select_panel.SetActive(false);
         GameData.CurrentTheme = (Themes)theme;
 		LobbyNetwork.SendLobbyData(NetworkCode.ThemeSelection);
-        if (theme == Themes.Grass)
+        if ((Themes)theme == Themes.Grass)
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: GRASSLAND";
         } else
