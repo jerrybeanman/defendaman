@@ -52,7 +52,7 @@ public class Laser : Projectile
         Destroy(instance, 1);
 
         //Otherwise, its a wall or some solid
-        if (--pierce < 0 || other.name == "obstacleTiles(Clone)")
+        if (--pierce < 0 || other.name == "obstacleTiles(Clone)" || other.name == "tron_obstacle(Clone)")
         {
             Destroy(gameObject);
         }
