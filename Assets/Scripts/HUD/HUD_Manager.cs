@@ -264,7 +264,7 @@ public class HUD_Manager : MonoBehaviour
 				// Unblocck keyboard inputs 
 				GameData.InputBlocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
-				 {
+				{
 					// Send the packet, with Team ID, user name, and the message input
 					List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
