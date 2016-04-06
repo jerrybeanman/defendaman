@@ -52,7 +52,8 @@ public class PlayerData
     public Dictionary<string, int> WeaponStats = new Dictionary<string, int>()
     {
         { Constants.DAMAGE_STAT, 0},
-        { Constants.ARMOR_STAT, 0}
+        { Constants.ARMOR_STAT, 0},
+        { Constants.SPEED_STAT, 0}
     };
     //public bool King { get; set; }
 }
@@ -67,8 +68,8 @@ public class GameData
 	public static Dictionary<Vector3, Building> Buildings = new Dictionary<Vector3, Building>();
 
 	public static PlayerData 	MyPlayer		= new PlayerData();
-    public static int 			EnemyKingID 	{ get; set; }
-    public static int 			AllyKingID 		{ get; set; }
+	public static int 			EnemyKingID		= -1;
+    public static int 			AllyKingID 		= -1;
     public static bool 			MouseBlocked 	{ get; set; }
     public static bool          ItemCollided    = false;
               

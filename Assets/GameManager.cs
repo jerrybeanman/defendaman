@@ -79,10 +79,10 @@ public class GameManager : MonoBehaviour {
             } else {
                 if (damage > 0)
                 {
-                    ColourizeScreen.instance.PlayerHurt();
+                    HUD_Manager.instance.colourizeScreen.PlayerHurt();
                 } else if (damage < 0)
                 {
-                    ColourizeScreen.instance.PlayerHealed();
+                    HUD_Manager.instance.colourizeScreen.PlayerHealed();
                 }
             }
         }
@@ -94,16 +94,18 @@ public class GameManager : MonoBehaviour {
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         GameData.PlayerPosition.Remove(GameData.MyPlayer.PlayerID);
         GameData.GameState = GameState.Dying;
-        ColourizeScreen.instance.PlayerDied();
+        HUD_Manager.instance.colourizeScreen.PlayerDied();
         Debug.Log("You have died");
         instance.player = null;
         if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
         {
+            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameLost();
         }
 
         if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID)
         {
+            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameWon();
         }
     }
@@ -366,35 +368,18 @@ public class GameManager : MonoBehaviour {
     public void GameWon()
     {
         GameData.GameState = GameState.Won;
-        Debug.Log("You have won");
+		HUD_Manager.instance.winScreen.Parent.gameObject.SetActive(true);
+		HUD_Manager.instance.winScreen.Parent.SetTrigger("Play");
+		HUD_Manager.instance.winScreen.Child.SetTrigger("Play");
     }
 
     public void GameLost()
     {
         GameData.GameState = GameState.Lost;
-        Debug.Log("You have lost");
     }
+	
 
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 60;
-        switch (GameData.GameState)
-        {
-            case GameState.Won:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!", style);
-                Invoke("ReturnToMenu", 5f);
-                break;
-            case GameState.Lost:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!", style);
-                Invoke("ReturnToMenu", 5f);
-                break;
-            default:
-                break;
-        }
-    }
-
-    void ReturnToMenu()
+   	public void ReturnToMenu()
     {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
@@ -416,7 +401,6 @@ public class GameManager : MonoBehaviour {
         Destroy(NetworkingManager.instance);
         Destroy(Inventory.instance);
         Destroy(WorldItemManager.Instance);
-        Destroy(ColourizeScreen.instance);
         Application.LoadLevel("MenuScene");
     }
 }

@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 /*-----------------------------------------------------------------------------
--- Resource.cs - Script attached to Gold item game objects
---                       responsible for pulling gold towards the player.
+-- Magnetize.cs - Script attached to game objects
+--                       responsible for pulling items towards the player.
 --
 -- FUNCTIONS:
 --      void Start()
@@ -17,7 +17,7 @@ using System.Collections.Generic;
 -- DESIGNER:	Krystle Bulalakaw
 -- PROGRAMMER:  Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
-public class CoinMagnetize : MonoBehaviour {
+public class Magnetize : MonoBehaviour {
     public int playerId = -1;
     public int world_item_id { get; set; }
 	GameObject target;
@@ -46,8 +46,7 @@ public class CoinMagnetize : MonoBehaviour {
         
         if (playerId != -1) {
             Vector3 playerPosition;
-            if (GameData.PlayerPosition.TryGetValue(playerId, out playerPosition))
-            {
+            if (GameData.PlayerPosition.TryGetValue(playerId, out playerPosition)) {
                 transform.position = Vector3.MoveTowards(transform.position, playerPosition, Time.deltaTime * velocity);
                 velocity *= acceleration;
             }
@@ -70,10 +69,8 @@ public class CoinMagnetize : MonoBehaviour {
         int playerId = GameData.MyPlayer.PlayerID; 
 
         if (GameData.PlayerPosition.TryGetValue(playerId, out playerPosition)) {
-            if (Inventory.instance.CheckIfItemCanBeAdded(true, 2))
-            {
-                if (Vector3.Distance(transform.position, playerPosition) < dist)
-                {
+            if (Inventory.instance.CheckIfItemCanBeAdded(true, 2)) {
+                if (Vector3.Distance(transform.position, playerPosition) < dist) {
                     inRange = true;
                     List<Pair<string, string>> msg = CreateMagnetizeMessage(playerId);
                     SendMessageToServer(msg, (int)ItemUpdate.Magnetize);

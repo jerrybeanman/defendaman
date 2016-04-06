@@ -20,7 +20,7 @@ using System;
 -- DATE:        05/03/2016
 -- REVISIONS:   03/04/2016 - Conditions for pickup (gold vs non-gold) - Krystle
 -- DESIGNER:    Joseph Tam-Huang
--- PROGRAMMER:  Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang, Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
 
 public class WorldItemData : MonoBehaviour
@@ -28,7 +28,8 @@ public class WorldItemData : MonoBehaviour
 	public Item item;
 	public int amount;
 	public int world_item_id;
-	bool _trigger_entered = false;
+    public bool autolootable = false;
+    bool _trigger_entered = false;
 	int _player_id;
 	bool _first_collision = false;
 	WorldItemManager _world_item_manager;
@@ -59,65 +60,35 @@ public class WorldItemData : MonoBehaviour
      * - the amount
      */
 	void Update()
-	{
-		// Items other than gold must be manually picked up
-		if (_trigger_entered && item.id != 2 && Input.GetKeyDown(KeyCode.F))
-		{
-			if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id))
-			{
-				int player_id = GameData.MyPlayer.PlayerID;
-				List<Pair<string, string>> msg = new List<Pair<string, string>>();
-				{
-					if (!GameData.ItemCollided)
-					{
-						GameData.ItemCollided = true;
-						_first_collision = true;
-						Debug.Log("first collision true");
-					}
-					if (_first_collision)
-					{
-						Debug.Log("picking up");
-						_first_collision = false;
-						msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-						NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
-						StartCoroutine(NeverReceivedPickupMessageBack());
+    {
+        // Manually pick up items that are not autolootable
+        if (_trigger_entered && !autolootable && Input.GetKeyDown(KeyCode.F)) {
+            if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id)) {
+                int player_id = GameData.MyPlayer.PlayerID;
+                List<Pair<string, string>> msg = new List<Pair<string, string>>();
+                    				
+                if (!GameData.ItemCollided) {
+	                GameData.ItemCollided = true;
+	                _first_collision = true;
+                }
 
-                        // Pretend that a pickup event was received
-                        //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-                        // Pretend that a pickup event was received
-                        if (Application.platform != RuntimePlatform.LinuxPlayer)
-                        {
-                            //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-                            StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
-                        }
+                if (_first_collision) {
+	                _first_collision = false;
+	                msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
+	                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+	                StartCoroutine(NeverReceivedPickupMessageBack());
+
+                    // Pretend that a pickup event was received
+                    if (Application.platform != RuntimePlatform.LinuxPlayer) {
+                        StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
                     }
-				}
-				/*
-                else if (item.id == 2)
-                {
-                    WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, _player_id, item.id, amount);
-                    player_id = -1;
-                    msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-                    NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
-                }*/
-				
-				_tooltip.Deactivate();
-				/*
-				// Pretend that a pickup event was received
-				//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-				// Pretend that a pickup event was received
-				if (Application.platform != RuntimePlatform.LinuxPlayer)
-				{
-					//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-					StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
-				}*/
-			}
-			else
-			{
-				StartCoroutine(Inventory.instance.DisplayInventoryFullError());
-			}
-		}
-	}
+                }
+                _tooltip.Deactivate();
+            } else {
+                StartCoroutine(Inventory.instance.DisplayInventoryFullError());
+            }
+        }
+    }
 	
 	
 	/* 
@@ -126,38 +97,27 @@ public class WorldItemData : MonoBehaviour
      */
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.gameObject.tag == "Player" &&
-		    // other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
-		    other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
-		{
-			_trigger_entered = true;
+		if (other.gameObject.tag == "Player" && other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID) {
+            _trigger_entered = true;
 			
-			// Send item pickup message once if gold 
-			if (item.id == 2 && Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id)) 
-			{
-				int player_id = GameData.MyPlayer.PlayerID;
-				List<Pair<string, string>> msg = new List<Pair<string, string>>();
-				//WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, player_id, item.id, amount);
-				msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-                Debug.Log("world item id: " + world_item_id + " player_id: " + player_id
-                    + " item.id " + item.id + " amount: " + amount);
-				NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
-				
-				_tooltip.Deactivate();
-				
-				// Pretend that a pickup event was received
-				if (Application.platform != RuntimePlatform.LinuxPlayer)
-				{
-					//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-					StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
-				}
-			}
-			else
-			{
-				StartCoroutine(Inventory.instance.DisplayInventoryFullError());
-			}
-		}
-	}
+            // Send item pickup message once if gold 
+			if (autolootable && Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id)) {
+                int player_id = GameData.MyPlayer.PlayerID;
+                List<Pair<string, string>> msg = new List<Pair<string, string>>();
+                msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
+                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+
+                _tooltip.Deactivate();
+
+                // Pretend that a pickup event was received
+                if (Application.platform != RuntimePlatform.LinuxPlayer) {
+                    StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg))); 
+                }
+            } else {
+                StartCoroutine(Inventory.instance.DisplayInventoryFullError());
+            }
+        }
+    }
 	
 	/* 
      * The trigger_entered flag is disabled when the player leaves the
@@ -185,9 +145,7 @@ public class WorldItemData : MonoBehaviour
 	
 	public IEnumerator NeverReceivedPickupMessageBack()
 	{
-		Debug.Log("NeverReceivedPickupMessageBack called");
 		yield return new WaitForSeconds(0.1f);
-		Debug.Log("NeverReceivedPickupMessageBack executed");
 		GameData.ItemCollided = false;
 		_first_collision = false;
 	}
