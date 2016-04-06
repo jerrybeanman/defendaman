@@ -14,6 +14,11 @@ public class Laser : Projectile
 
     protected override void OnTriggerEnter2D(Collider2D other)
     {
+		// ignore health bar
+		if(other.gameObject.tag == "HealthBar")
+		{
+			return;
+		}
         //If its a player or an AI, ignore it, otherwise destroy itself
         var player = other.gameObject.GetComponent<BaseClass>();
         if (player != null && teamID == player.team)
@@ -47,7 +52,7 @@ public class Laser : Projectile
         Destroy(instance, 1);
 
         //Otherwise, its a wall or some solid
-        if (--pierce < 0 || other.name == "obstacleTiles(Clone)")
+        if (--pierce < 0 || other.name == "obstacleTiles(Clone)" || other.name == "tron_obstacle(Clone)")
         {
             Destroy(gameObject);
         }

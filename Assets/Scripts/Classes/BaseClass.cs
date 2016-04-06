@@ -13,64 +13,68 @@ public abstract class BaseClass : MonoBehaviour {
 
     public int team;
     public int playerID;
-    private int yourPlayerID;
     private int allyKingID;
     private int enemyKingID;
     
-	private HealthBar healthBar;
+	protected HealthBar healthBar;
 
     public AudioSource au_attack;
     public AudioClip au_simple_attack;
     public AudioClip au_special_attack;
+    public AudioClip au_special_l;
+    public AudioClip au_failed_special;
+
+    public bool silenced = false;
     
     protected void Start ()
     {
-        var networkingManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkingManager>();
-        yourPlayerID = GameManager.instance.player.GetComponent<BaseClass>().playerID;
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
 
         NetworkingManager.Subscribe(receiveAttackFromServer, DataType.Trigger, playerID);
 
-        if (playerID == yourPlayerID)
+        if (playerID == GameData.MyPlayer.PlayerID)
         {
             HUD_Manager.instance.subSkill.CoolDown = cooldowns[0];
             HUD_Manager.instance.mainSkill.CoolDown = cooldowns[1];
             HUD_Manager.instance.playerProfile.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-            if (playerID == allyKingID)
-                HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
-            if (playerID == enemyKingID)
-                HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            print("Our health:" + HUD_Manager.instance.playerProfile.Health.fillAmount);
         }
-        
-		healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
-        _classStat = new PlayerBaseStat(playerID, healthBar);
+
+        if (playerID == allyKingID)
+        {
+            HUD_Manager.instance.allyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            print("Ally king:" + HUD_Manager.instance.allyKing.Health.fillAmount);
+        }
+
+        if (playerID == enemyKingID)
+        {
+            HUD_Manager.instance.enemyKing.Health.fillAmount = ClassStat.CurrentHp / ClassStat.MaxHp;
+            print("Enemy king:" + HUD_Manager.instance.enemyKing.Health.fillAmount);
+        }
+
+        if (playerID == allyKingID || playerID == enemyKingID)
+        {
+            gameObject.AddComponent<AmanSelfBuff>();
+        }
 
         //add audio component
-        au_attack = (AudioSource)gameObject.AddComponent<AudioSource>();
-        //add default attack sound as a gunboi
-        au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
-        au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
+        au_attack = gameObject.AddComponent<AudioSource>();
+        au_special_l = Resources.Load("Music/Weapons/laugh_cut") as AudioClip;
+        au_failed_special = Resources.Load("Music/Weapons/failed_special_use") as AudioClip;
     }
 
     public PlayerBaseStat ClassStat
 	{
-		get
-        {
-            if (this._classStat == null)
-            {
-                this._classStat = new PlayerBaseStat(playerID, healthBar);
+		get {
+            if (_classStat == null) {
+                _classStat = new PlayerBaseStat(playerID, healthBar);
             }
-            return this._classStat;
+            return _classStat;
         }
 
-		protected set
-		{
-			this._classStat.CurrentHp 	= value.CurrentHp;
-			this._classStat.MaxHp 		= value.MaxHp;
-			this._classStat.MoveSpeed 	= value.MoveSpeed;
-			this._classStat.AtkPower 	= value.AtkPower;
-            this._classStat.Defense 	= value.Defense;
+		protected set {
+            _classStat = value;
 		}
 	}
 
@@ -81,36 +85,40 @@ public abstract class BaseClass : MonoBehaviour {
 
         if (!trueDamage)
         {
-            float reduction = (30 / (ClassStat.Defense + 30));
+            float reduction = (100 / (ClassStat.Defense + 100));
             finaldamage = damage * reduction;
         }
-        
+
+        print("Final damage:" + finaldamage);
+        GameManager.instance.PlayerTookDamage(playerID, ClassStat.CurrentHp - finaldamage, ClassStat);
         ClassStat.CurrentHp -= finaldamage;
         if(ClassStat.CurrentHp > ClassStat.MaxHp)
         {
-            ClassStat.CurrentHp = ClassStat.MaxHp;
+            print("doDamage over max");
+            ClassStat.CurrentHp -= Math.Abs(ClassStat.MaxHp-ClassStat.CurrentHp);
         }
+        
 
-        //Debug.Log(ClassStat.CurrentHp + "/" + ClassStat.MaxHp + " HP");
-
-        GameManager.instance.PlayerTookDamage(playerID, finaldamage, ClassStat);
-
-        if (ClassStat.CurrentHp <= 0.0f)
+        if (ClassStat.CurrentHp <= 0.0f && playerID == GameData.MyPlayer.PlayerID)
         {
-            //death
-            NetworkingManager.Unsubscribe(DataType.Player, playerID);
+            GameManager.instance.PlayerDied();
             Destroy(gameObject);
         }
 
         return finaldamage;
     }
 
+    //Apr 5, added multihit prevention
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
-        if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
-            if (attack.teamID == team || GameData.MyPlayer == null) {
+        if ((attack = other.gameObject.GetComponent<Trigger>()) != null)
+        {
+            if (attack.teamID == team || GameData.MyPlayer == null)
                 return;
-            }
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee && !((Melee)attack).targets.Add(gameObject))
+                return;
 
             var damageTaken = 0f;
             if (playerID == GameData.MyPlayer.PlayerID)
@@ -133,33 +141,68 @@ public abstract class BaseClass : MonoBehaviour {
         if (playerData["ID"].AsInt == GameData.MyPlayer.PlayerID)
             return;
         Vector2 directionOfAttack = new Vector2(playerData["DirectionX"].AsFloat, playerData["DirectionY"].AsFloat);
+        Vector2 playerLoc = (Vector2)GameData.PlayerPosition[playerData["ID"].AsInt];
+      
         switch (playerData["Attack"].AsInt)
         {
             case 0:
-                basicAttack(directionOfAttack);
+                basicAttack(directionOfAttack, playerLoc);
                 //Regular attack
                 break;
             case 1:
-                specialAttack(directionOfAttack);
+                specialAttack(directionOfAttack, playerLoc);
                 //Regular special attack
-                break;
-            case 2:
-                //Aman special attack
                 break;
             default:
                 break;
         }
     }
 
-    public virtual float basicAttack(Vector2 dir)
+    public virtual float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        au_attack.PlayOneShot(au_simple_attack);
+        if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
+            return cooldowns[0];
+
+        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
+
+        if (playerLoc!= default(Vector2) && distance < 13)
+        {
+            au_attack.volume = (15 - distance) / 40;
+            au_attack.PlayOneShot(au_simple_attack);
+        }
         return cooldowns[0];
     }
 
-    public virtual float specialAttack(Vector2 dir)
+    // hank
+    public virtual float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-        au_attack.PlayOneShot(au_special_attack);
+        float distance;
+
+        if (GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID)){
+            if (playerID == GameData.MyPlayer.PlayerID) {
+                if (silenced) {
+                    // play au_special_l
+                    au_attack.volume = .8f;
+                    System.Random rnd = new System.Random();
+                    int playSpecial = rnd.Next(1, 50);
+                    if (playSpecial == 42) {
+                        au_attack.PlayOneShot(au_special_l);
+                    } else {
+                        au_attack.PlayOneShot(au_failed_special);
+                    }
+                }
+            }
+           
+            return cooldowns[1];
+        }
+            
+
+        if (playerLoc != default(Vector2) && 
+            (distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID])) < 13)
+        {
+            au_attack.volume = (15 - distance) / 40;
+            au_attack.PlayOneShot(au_special_attack);
+        }
         return cooldowns[1];
     }
 
@@ -181,12 +224,33 @@ public abstract class BaseClass : MonoBehaviour {
                 return _currentHp;
             }
             set {
-				
-				_currentHp = (value > MaxHp) ? MaxHp : value;
-				_healthBar.UpdateHealth(MaxHp, CurrentHp);
+                float damage;
+                if ((damage = _currentHp - value) != 0)
+                {
+                    if (_playerID == GameData.AllyKingID)
+                    {
+                        HUD_Manager.instance.UpdateAllyKingHealth(-(damage / MaxHp));
+                    }
+                    else if (_playerID == GameData.EnemyKingID)
+                    {
+                        HUD_Manager.instance.UpdateEnemyKingHealth(-(damage / MaxHp));
+                    }
+                    _currentHp = (value > MaxHp) ? MaxHp : value;
+                    _healthBar.UpdateHealth(MaxHp, CurrentHp);
+                }
             }
         }
-		public float MaxHp;
+        private float _maxHP;
+		public float MaxHp
+        {
+            get {
+                return _maxHP;
+            }
+            set {
+                _maxHP = value;
+                _currentHp = value;
+            }
+        }
 		public float MoveSpeed;
         private float _atkPower;
 		public float AtkPower

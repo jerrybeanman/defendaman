@@ -262,5 +262,5 @@ extern "C" char * UDP_GetData(GameClient * client)
 */
 extern "C" int UDP_Send(GameClient * client, char * message, int size)
 {
-	return client->Send(message, size);
+	return client->Send(message, PACKETLEN_UDP);
 }

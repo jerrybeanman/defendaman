@@ -101,7 +101,7 @@ public class InputManager : MonoBehaviour {
 	/*----------------------------------------------------------------------------
     --	Check for HUD event toogles
     --
-    --	Interface:  void HUDToogles()
+    --	Interface:  void HUDToggles()
     --
     --	progrbammer: Jerry Jia
     --	@return: void

@@ -11,28 +11,36 @@ public class GameStart_Testing : MonoBehaviour {
 		//Check if instance already exists
 		if (instance == null)				
 			//if not, set instance to this
-			instance = this;
+			instance = this;				
 		//If instance already exists and it's not this:
 		else if (instance != this)			
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-			Destroy(gameObject);
+			Destroy(gameObject);   		
         networkingManager = GetComponent<NetworkingManager>();
 	}
+	
+	// Update is called once per frame
+	void Update () {
+    }
 
     public void StartOfGame()
     {
 		GameData.GameStart = true;
+        GameData.AllyTeamKillCount = 0;
+        GameData.EnemyTeamKillCount = 0;
 
         GameData.TeamSpawnPoints.Clear();
         GameData.LobbyData.Clear();
 
         int i = 1;
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Gunner, PlayerID = i++, TeamID = 2 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Wizard, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Wizard, PlayerID = i++, TeamID = 2 });
+        /*GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        /*
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 2 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
@@ -40,9 +48,7 @@ public class GameStart_Testing : MonoBehaviour {
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
         GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });
-        */
+        GameData.LobbyData[i] = (new PlayerData { ClassType = ClassType.Ninja, PlayerID = i++, TeamID = 1 });*/
 
         GameData.MyPlayer = GameData.LobbyData[myID];
         if (GameData.MyPlayer == null)
@@ -56,5 +62,8 @@ public class GameStart_Testing : MonoBehaviour {
             GameManager.instance.StartGame(GameData.Seed);
         else
 		    Application.LoadLevel("EngineTeam_master");
+
+        // Update the stat boost a player gets from a compatible equipped weapon
+        //Inventory.instance.UpdateWeaponStats();
     }
 }

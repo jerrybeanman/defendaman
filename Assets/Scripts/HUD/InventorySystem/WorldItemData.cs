@@ -12,40 +12,41 @@ using System;
 --                    come into contact with it.
 --
 -- FUNCTIONS:
---		void Start()
---		void Update ()
---		void OnTriggerEnter2D(Collider2D other)
+--      void Start()
+        void Update ()
+--      void OnTriggerEnter2D(Collider2D other)
 --      void OnTriggerExit2D(Collider2D other)
 --
--- DATE:		05/03/2016
--- REVISIONS:	(V1.0)
--- DESIGNER:	Joseph Tam-Huang
--- PROGRAMMER:  Joseph Tam-Huang
+-- DATE:        05/03/2016
+-- REVISIONS:   03/04/2016 - Conditions for pickup (gold vs non-gold) - Krystle
+-- DESIGNER:    Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang, Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
 
 public class WorldItemData : MonoBehaviour
 {
-    public Item item;
-    public int amount;
-    public int world_item_id;
-    bool trigger_entered = false;
-    int _player_id;
-    WorldItemManager _world_item_manager;
-    private Tooltip _tooltip;
-
-    /*
+	public Item item;
+	public int amount;
+	public int world_item_id;
+	bool _trigger_entered = false;
+	int _player_id;
+	bool _first_collision = false;
+	WorldItemManager _world_item_manager;
+	private Tooltip _tooltip;
+	
+	/*
      * Retrieve the player id
      */
-    void Start ()
-    {
-		gameObject.layer = LayerMask.NameToLayer ("HiddenThings");
-		gameObject.transform.Translate(0,0,9);
+	void Start()
+	{
+		gameObject.layer = LayerMask.NameToLayer("HiddenThings");
+		gameObject.transform.Translate(0, 0, 9);
 		// set material to stencil masked
-		gameObject.GetComponent<SpriteRenderer> ().material = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
-        _player_id = GameData.MyPlayer.PlayerID;
-        _world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
-        _tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
-    }
+		gameObject.GetComponent<SpriteRenderer>().material = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
+		_player_id = GameData.MyPlayer.PlayerID;
+		_world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
+		_tooltip = GameObject.Find("Inventory").GetComponent<Tooltip>();
+	}
 	
 	/* 
      * Update is called once per frame.
@@ -57,65 +58,110 @@ public class WorldItemData : MonoBehaviour
      * - the item id
      * - the amount
      */
-	void Update () {
-        if (Input.GetKeyDown(KeyCode.F) && trigger_entered)
-        {
-            if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id))
-            {
-                // Send Network message
-                List<Pair<string, string>> msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, item.id, amount);
-                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+	void Update()
+	{
+		// Items other than gold must be manually picked up
+		if (_trigger_entered && item.id != 2 && Input.GetKeyDown(KeyCode.F))
+		{
+			if (Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id))
+			{
+				int player_id = GameData.MyPlayer.PlayerID;
+				List<Pair<string, string>> msg = new List<Pair<string, string>>();
+				{
+					if (!GameData.ItemCollided)
+					{
+						GameData.ItemCollided = true;
+						_first_collision = true;
+					}
+					if (_first_collision)
+					{
+						_first_collision = false;
+						msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
+						NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+						StartCoroutine(NeverReceivedPickupMessageBack());
 
-            _tooltip.Deactivate();
-
-            // Prevent that a pickup event was received
-            //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-                // Pretend that a pickup event was received
-                _world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-            }
-            else
-            {
-                StartCoroutine(Inventory.instance.DisplayInventoryFullError());
-            }
-            
-        }
-    }
-
-    /* 
+                        // Pretend that a pickup event was received
+                        if (Application.platform != RuntimePlatform.LinuxPlayer)
+                        {
+                            //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
+                            StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
+                        }
+                    }
+				}
+				
+				_tooltip.Deactivate();
+			}
+			else
+			{
+				StartCoroutine(Inventory.instance.DisplayInventoryFullError());
+			}
+		}
+	}
+	
+	
+	/* 
      * The trigger_entered flag is enabled when the player comes into contact with the
      * collider box of the world item for the first time.
      */
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Player" &&
-            // other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
-            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
-        {
-            trigger_entered = true;
-        }
-    }
-
-    /* 
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		if (other.gameObject.tag == "Player" &&
+		    // other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
+		    other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
+		{
+			_trigger_entered = true;
+			
+			// Send item pickup message once if gold 
+			if (item.id == 2 && Inventory.instance.CheckIfItemCanBeAdded(item.stackable, item.id)) 
+			{
+				int player_id = GameData.MyPlayer.PlayerID;
+				List<Pair<string, string>> msg = new List<Pair<string, string>>();
+				msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
+				NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
+				
+				_tooltip.Deactivate();
+				
+				// Pretend that a pickup event was received
+				if (Application.platform != RuntimePlatform.LinuxPlayer)
+				{
+					StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
+				}
+			}
+			else
+			{
+				StartCoroutine(Inventory.instance.DisplayInventoryFullError());
+			}
+		}
+	}
+	
+	/* 
      * The trigger_entered flag is disabled when the player leaves the
      * collider box of the world item.
      */
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Player" &&
-            //other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
-            other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
-        {
-            trigger_entered = false;
-        }
-    }
-
-    public void OnMouseEnter()
-    {
-        _tooltip.Activate(item, amount);
-    }
-
-    public void OnMouseExit()
-    {
-        _tooltip.Deactivate();
-    }
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.gameObject.tag == "Player" &&
+		    //other.gameObject.GetComponent<BaseClass>().playerID == _player_id) // For testing, since GameData.MyPlayerID not set b4 Start is called
+		    other.gameObject.GetComponent<BaseClass>().playerID == GameData.MyPlayer.PlayerID)
+		{
+			_trigger_entered = false;
+		}
+	}
+	
+	public void OnMouseEnter()
+	{
+		_tooltip.Activate(item, amount);
+	}
+	
+	public void OnMouseExit()
+	{
+		_tooltip.Deactivate();
+	}
+	
+	public IEnumerator NeverReceivedPickupMessageBack()
+	{
+		yield return new WaitForSeconds(0.1f);
+		GameData.ItemCollided = false;
+		_first_collision = false;
+	}
 }

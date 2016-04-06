@@ -50,12 +50,14 @@ public class Fireball : Projectile
     {
         base.OnTriggerEnter2D(other);
         var target = other.gameObject.GetComponent<BaseClass>();
-        if (target != null && teamID != target.team)
+        var tree = other.gameObject.GetComponent<Resource>();
+        if ((target != null && teamID != target.team) || tree != null)
         {
             var burn = other.gameObject.GetComponent<Burn>();
             if (burn == null)
             {
-                other.gameObject.AddComponent<Burn>();
+                burn = other.gameObject.AddComponent<Burn>();
+                burn.damage = damage;
             }
             else
             {

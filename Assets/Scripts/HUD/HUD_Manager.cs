@@ -14,109 +14,8 @@ public enum UICode
 	BuildingDestruction = 3
 }
 
-public class HUD_Manager : MonoBehaviour {
-	#region Classes
-	/**
-	 *  Indicates the player health on bottom left corner of HUD
-	 */
-	[System.Serializable]
-	public class PlayerProfile
-	{
-		public Image 	Health;
-		public Animator HealthAnimator;
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]
-	public class AllyKing
-	{
-		public Image 	Health;
-		public Animator HealthAnimator;
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]
-	public class EnemyKing
-	{
-		public Image 	Health;
-		public Animator HealthAnimator;
-	}
-
-	/**
-	 *  Indicates current currency amount
-	 */
-	[System.Serializable]
-	public class Currency 		
-	{ 
-		public Text  	Amount;						
-		public Animator CurrencyAnimator; 	
-	}
-
-	/**
-	 *  Indicates main skill bar
-	 */
-	[System.Serializable]
-	public class MainSkill 		
-	{ 
-		public Image 	ProgressBar;					
-		public float 	CoolDown; 			
-	}
-	/**
-	 *  Indicates sub skill bar
-	 */
-	[System.Serializable]
-	public class SubSkill 		
-	{ 
-		public Image 	ProgressBar;					
-		public float 	CoolDown; 			
-	}
-	/**
-	 *  Indicates passive skill bar
-	 */
-	[System.Serializable]
-	public class PassiveSkill 	
-	{ 
-		public Image 	ProgressBar;					
-		public float 	CoolDown; 			
-	}
-	/**
-	 *  Indicates the chat panel
-	 */
-	[System.Serializable]
-	public class Chat			
-	{ 
-		// Input field 
-		public InputField input;
-		// Container box for chat messages
-		public GameObject Container; 	
-		public GameObject AllyMessage;			
-		public GameObject EnemyMessage; 	
-	}
-	/**
-	 * Items that can be built in the shop
-	 */
-	[System.Serializable]
-	public class Buildable		
-	{ 
-		public Button Option;						
-		public GameObject Building;			
-	}
-	/**
-	 *  Shop panel
-	 */
-	[System.Serializable]
-	public class Shop			
-	{ 
-		public GameObject 		MainPanel;
-		// Purchasable items
-		public List<Buildable>	Items;	
-		// Currently selected item
-		public Buildable		Selected = null;										
-	}										
-	#endregion
-
+public class HUD_Manager : MonoBehaviour 
+{
 	// Singleton object
 	public static HUD_Manager 	instance; 
 
@@ -133,6 +32,10 @@ public class HUD_Manager : MonoBehaviour {
 	public Text					timer;
 	public GameObject			placementRange;
 	public GameObject			statsPanel;
+	public PlayerDP				playerDp;
+	public ChargeBar			chargeBar;
+	public Stamina				stamina;
+	public ColourizeScreen		colourizeScreen;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -159,14 +62,28 @@ public class HUD_Manager : MonoBehaviour {
 			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
 			Destroy(gameObject);   			
 	}
-
+	
 	// Called on start of game
 	void Start()
 	{
 		// Subscribe our chat system to the TCP network
 		NetworkingManager.Subscribe(UpdateChatCallBack, DataType.UI, (int)UICode.Chat);
-		// Subscribe building creation to the UDP network
-		NetworkingManager.Subscribe(UpdateBuildingCallBack, DataType.UI, (int)UICode.BuildingCreation);
+		// Subscribe building creation to the TCP network
+		NetworkingManager.Subscribe(UpdateBuildingCreationCallBack, DataType.UI, (int)UICode.BuildingCreation);
+		// Subscribe building destruction to the TCP network
+		NetworkingManager.Subscribe(UpdateBuildingDestructionCallBack, DataType.UI, (int)UICode.BuildingDestruction);
+		switch(GameData.MyPlayer.ClassType)
+		{
+			case ClassType.Gunner: 
+				playerDp.Container.sprite = playerDp.GunnerDP;
+				break;
+			case ClassType.Wizard:
+				playerDp.Container.sprite = playerDp.MageDP;
+				break;
+			case ClassType.Ninja:
+				playerDp.Container.sprite = playerDp.NinjaDP;
+				break;
+		}
 	}
 
 	// Called once per frame
@@ -178,6 +95,7 @@ public class HUD_Manager : MonoBehaviour {
 		// If an item has been bought in the shop menu
 		if(ItemBought)
 		{
+
 			// Have the item hover over our mouse 
 			CheckBuildingPlacement(shop.Selected.Building);
 
@@ -196,7 +114,9 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Check if skills are used or not
 		CheckSkillStatus();
-		
+
+		CheckStaminaStatus();
+
 		UpdateTimer();
 	}
 
@@ -219,7 +139,6 @@ public class HUD_Manager : MonoBehaviour {
 			if(!chat.input.IsInteractable())
 			{
 				// Block all other keyboard inputs
-				GameData.KeyBlocked = true;
 				GameData.InputBlocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
@@ -229,16 +148,15 @@ public class HUD_Manager : MonoBehaviour {
 			else
 			{
 				// Unblocck keyboard inputs 
-				GameData.KeyBlocked = false;
 				GameData.InputBlocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
-				 {
+				{
 					// Send the packet, with Team ID, user name, and the message input
 					List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 					packetData.Add(new Pair<string, string>(NetworkKeyString.Message, "\"" + chat.input.text + "\""));
-					Send(NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.NA));
+					NetworkingManager.send_next_packet(DataType.UI, (int)UICode.Chat, packetData, Protocol.TCP);
 				}
 
 				// Clear out the chat window
@@ -274,6 +192,17 @@ public class HUD_Manager : MonoBehaviour {
 			// Char it up slowly corresponding to the cool down timer
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
+		}
+	}
+
+	void CheckStaminaStatus()
+	{
+		// If main skill bar is below full
+		if(stamina.ProgressBar.fillAmount  < 1)
+		{
+			// Char it up slowly corresponding to the cool down timer
+			stamina.ProgressBar.fillAmount += Time.deltaTime / stamina.FillTimer;
+			stamina.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, stamina.ProgressBar.fillAmount);
 		}
 	}
 
@@ -340,8 +269,10 @@ public class HUD_Manager : MonoBehaviour {
 	public void Buy()
 	{
 		// If nothing is currently selected, do nothing 
-		if(shop.Selected.Option != null && !ItemBought)
+		if(shop.Selected.Option != null && !ItemBought && GameData.MyPlayer.Resources[Constants.GOLD_RES] >= shop.Selected.Building.GetComponent<Building>().cost)
 		{
+			Inventory.instance.UseResources(Constants.GOLD_RES, shop.Selected.Building.GetComponent<Building>().cost);
+
 			// Indicates that an item has been bought
 			ItemBought = true;
 
@@ -362,12 +293,18 @@ public class HUD_Manager : MonoBehaviour {
 
 			// Set the collider to false so it cannot collide with player 
 			SetAllCollidersStatus(shop.Selected.Building, false);
-
+			shop.Selected.Building.GetComponent<Building>().collidercounter = 0;
+			print ("BUILDING value is " + shop.Selected.Building.GetComponent<Building>().collidercounter);
 			// Set current rotation value to be zero
 			curRot = 0;
 
 			// Display placement area on HUD
 			placementRange.SetActive(true);
+
+
+		}else
+		{
+			print ("cant buy");
 		}
 	}
 
@@ -472,7 +409,7 @@ public class HUD_Manager : MonoBehaviour {
     --	programmer: Jerry Jia
     --	@return: void
 	------------------------------------------------------------------------------*/
-	void UpdateBuildingCallBack(JSONClass data)
+	private void UpdateBuildingCreationCallBack(JSONClass data)
 	{
 		int team = data[NetworkKeyString.TeamID].AsInt;
 		GameObject building = shop.Items[data[NetworkKeyString.BuildType].AsInt-1].Building;
@@ -496,6 +433,16 @@ public class HUD_Manager : MonoBehaviour {
 		b1.GetComponent<Building>().notifycreation();
 	}
 
+	private void UpdateBuildingDestructionCallBack(JSONClass data)
+	{
+		Vector3 Key = new Vector3(data[NetworkKeyString.XPos].AsFloat, data[NetworkKeyString.YPos].AsFloat, data[NetworkKeyString.ZPos].AsFloat);
+        //If the building exists, destroy it
+        if (GameData.Buildings.ContainsKey(Key))
+        {
+            Destroy(GameData.Buildings[Key].gameObject);
+            GameData.Buildings.Remove(Key);
+        }
+	}
 	/*----------------------------------------------------------------------------
     --	Attempt to place a building to where the mouse is at when an left click 
     --  event is triggered. Assigns the corresponding attributes to the Building
@@ -523,10 +470,7 @@ public class HUD_Manager : MonoBehaviour {
 
 
 		// Indicate that the item has been successfully bought and placed 
-		ItemBought = false;
-
-		// Add selected building to the list of created buildings
-		mapManager.buildingsCreated.Add(building);
+		ItemBought = false; 
 
         //weird merge conflict here (END)
 		placementRange.SetActive(false);
@@ -552,13 +496,13 @@ public class HUD_Manager : MonoBehaviour {
 			testBuild.GetComponent<Building>().placing = false;
             if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
             {//
-                testBuild.GetComponent<AI>().instantTurret(2, 40,1, 15, 15);
+                testBuild.GetComponent<AI>().instantTurret(2, 40, 2, 15, 15);
 
                 //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
                 Debug.Log("Instant turret 2");
             }
         }
-
+	
 		Destroy(building);
 		return true;
  	}
@@ -607,10 +551,10 @@ public class HUD_Manager : MonoBehaviour {
 		//Check if player isn't too far to place building
 		Vector2 player = GameManager.instance.player.transform.position;
 		float distance_from_player = Vector3.Distance(player, building.transform.position);
-		if(distance_from_player > 8)
+		if(distance_from_player > 8 || distance_from_player <= 2  )
 			return false;
 		if(building.GetComponent<Building>().collidercounter==0)
-			return building.GetComponent<Building>().placeble;
+			return true;
 		return false;
 
 	}
@@ -624,6 +568,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void DisplayShop()
 	{
+		GameData.MouseBlocked = false;
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
 	}
 	
@@ -843,4 +788,133 @@ public class HUD_Manager : MonoBehaviour {
 	{
 		Debug.Log ("Upgrade weapon here");
 	}
+	public void AddPotion(String potionType)
+	{
+		Debug.Log (potionType + " Potion");
+		Debug.Log ("Add potion here");
+	}
+
+	#region Classes
+	/**
+	 *  Indicates the player health on bottom left corner of HUD
+	 */
+	[System.Serializable]
+	public class PlayerProfile
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class AllyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class EnemyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	
+	/**
+	 *  Indicates current currency amount
+	 */
+	[System.Serializable]
+	public class Currency 		
+	{ 
+		public Text  	Amount;						
+		public Animator CurrencyAnimator; 	
+	}
+	
+	/**
+	 *  Indicates main skill bar
+	 */
+	[System.Serializable]
+	public class MainSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates sub skill bar
+	 */
+	[System.Serializable]
+	public class SubSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates passive skill bar
+	 */
+	[System.Serializable]
+	public class PassiveSkill 	
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates the chat panel
+	 */
+	[System.Serializable]
+	public class Chat			
+	{ 
+		// Input field 
+		public InputField input;
+		// Container box for chat messages
+		public GameObject Container; 	
+		public GameObject AllyMessage;			
+		public GameObject EnemyMessage; 	
+	}
+	/**
+	 * Items that can be built in the shop
+	 */
+	[System.Serializable]
+	public class Buildable		
+	{ 
+		public Button Option;						
+		public GameObject Building;			
+	}
+	/**
+	 *  Shop panel
+	 */
+	[System.Serializable]
+	public class Shop			
+	{ 
+		public GameObject 		MainPanel;
+		// Purchasable items
+		public List<Buildable>	Items;	
+		
+		[HideInInspector]
+		// Currently selected item
+		public Buildable		Selected = null;										
+	}
+	[System.Serializable]
+	public class PlayerDP
+	{
+		public Sprite			GunnerDP;
+		public Sprite			NinjaDP;
+		public Sprite			MageDP;
+		public Image			Container;
+	}
+	[System.Serializable]
+	public class ChargeBar
+	{
+		public GameObject		Holder;
+		public Image			Bar;
+	}
+	[System.Serializable]
+	public class Stamina
+	{
+		public Image			ProgressBar;
+		public float			FillTimer;
+	}
+	#endregion
 }

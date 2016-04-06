@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class Building:MonoBehaviour {
 	
@@ -8,16 +9,28 @@ public class Building:MonoBehaviour {
 
 	public BuildingType type;
 
-	public float health = 100;
+	public float MaxHp;
+	public float health;
+	public int 	 cost;
+	public float ConstructionTime;
+	public float Health
+	{
+		get
+		{
+			return health;
+		}
+		set
+		{
+			health = value;
+			healthBar.UpdateHealth(MaxHp, health);
+		}
+	}
 
 	public int team;
-	public int collidercounter=0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
 
-	public float ConstructionTime = 2f;
-
-	SpriteRenderer spriteRenderer;
+	private SpriteRenderer spriteRenderer;
 
 	[HideInInspector]
 	public bool placing = true;
@@ -25,20 +38,33 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
+	[HideInInspector]
+	public int collidercounter = 0;
+	[HideInInspector]
+	public bool playerlocker = false;
+	[HideInInspector]
+	public HealthBar healthBar;
 
 	// Use this for initialization
 	void Start () 
 	{
+		health = MaxHp;
+		playerlocker = false;
 		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
 			StartCoroutine(Construct());
 
-		placeble = false;
+		placeble = true;
 		if(GameData.MyPlayer.TeamID == team)
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
+
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			cost = 0;
+		}
 
     }
 
@@ -69,26 +95,39 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-
 		if(other.gameObject.tag == "Bullet")
 			return;
-		if(placing)
+		if(placing && other.gameObject.tag != "Untagged" && other.gameObject.tag != "Player" )
 		{
+
 			collidercounter++;
+
+			print ("Enter Tag is :" + other.gameObject.tag + "increasedm Counter= " + collidercounter);
 			placeble = false;
 
 		}
-		if(health<=0)
-			Destroy(gameObject);
+
 		var attack = other.gameObject.GetComponent<Trigger>();
 		if (attack != null)
 		{
 			if (attack.teamID == team)
 				return;
-			float damage = other.GetComponent<Trigger>().damage;
-			health -= damage;
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee && !((Melee)attack).targets.Add(gameObject))
+                return;
+
+            Health -= attack.damage;
 		}
-		notifydeath();
+
+		if(health<=0)
+		{
+			if (Application.platform == RuntimePlatform.LinuxPlayer)
+			{
+				notifydeath();
+			}else
+				Destroy(gameObject);
+		}
 	}
 
 	/*----------------------------------------------------------------------------
@@ -102,20 +141,28 @@ public class Building:MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	void OnTriggerExit2D(Collider2D other)
 	{
-		if(placing)
+		if(placing && other.gameObject.tag != "Untagged" && other.gameObject.tag != "Player" )
 		{
 			collidercounter--;
 			placeble = true;
-			print ("place plzzz");
+			print ("Exit Tag is :" + other.gameObject.tag + "Decreased, counter= " + collidercounter);
 		}
 	}
 
-	public void notifycreation(){
-		//????
+	public void notifycreation()
+	{
+		GameData.Buildings.Add(transform.position, this);
 	}
+
 	public void	notifydeath()
 	{
-		//?
-	}
-	
+		// Send the packet, with Team ID, user name, and the message input
+		List<Pair<string, string>> packetData = new List<Pair<string, string>>();
+		packetData.Add(new Pair<string, string>(NetworkKeyString.XPos, transform.position.x.ToString()));
+		packetData.Add(new Pair<string, string>(NetworkKeyString.YPos, transform.position.y.ToString()));
+		packetData.Add(new Pair<string, string>(NetworkKeyString.ZPos, transform.position.z.ToString()));
+		
+		var packet = NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
+        NetworkingManager.send_next_packet(DataType.UI, (int)UICode.BuildingDestruction, packetData, Protocol.TCP);
+    }
 }

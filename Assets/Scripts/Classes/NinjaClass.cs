@@ -13,6 +13,8 @@
 --                      Added teleportation animation
 --                  March 31, 2016
 --                      Add attack sound   - Eunwon Moon
+--                   April 4, 2016: Hank Lo
+--                      - Numbers balancing
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
 --
@@ -28,39 +30,41 @@ public class NinjaClass : MeleeClass
 {
     Rigidbody2D sword;
     Rigidbody2D attack;
-    BasicSword attackSword;
     GameObject teleport;
     GameObject teleportInstance;
 
     new void Start()
     {
         cooldowns = new float[2] { 0.95f, 2 };
+
+        healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
+        _classStat = new PlayerBaseStat(playerID, healthBar);
+        _classStat.MaxHp = 1300;
+        _classStat.MoveSpeed = 12;
+        _classStat.AtkPower = 30;
+        _classStat.Defense = 60;
+
         base.Start();
 
-        _classStat.MaxHp = 150;
-        _classStat.CurrentHp = _classStat.MaxHp;
-        _classStat.MoveSpeed = 12;
-        _classStat.AtkPower = 20;
-        _classStat.Defense = 5;
-        
         sword = (Rigidbody2D)Resources.Load("Prefabs/NinjaSword", typeof(Rigidbody2D));
         teleport = (GameObject)Resources.Load("Prefabs/NinjaTeleport", typeof(GameObject));
 
         attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
         attack.GetComponent<BoxCollider2D>().enabled = false;
 
-        attackSword = attack.GetComponent<BasicSword>();
-        attackSword.playerID = playerID;
-        attackSword.teamID = team;
-        attackSword.damage = ClassStat.AtkPower;
+        attackMelee = attack.GetComponent<Melee>();
+        attackMelee.playerID = playerID;
+        attackMelee.teamID = team;
+        attackMelee.damage = ClassStat.AtkPower;
         attack.transform.parent = transform;
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
         gameObject.GetComponent<Animator>().runtimeAnimatorController = controller;
 
-        //Starting item kit
-        if(playerID == GameData.MyPlayer.PlayerID)
+        //Player specific initialization
+        if (playerID == GameData.MyPlayer.PlayerID)
         {
+            //Starting item kit
             Inventory.instance.AddItem(1);
             Inventory.instance.AddItem(5, 5);
             Inventory.instance.AddItem(6);
@@ -69,17 +73,18 @@ public class NinjaClass : MeleeClass
 
         //ninja attack sound
         au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
-        au_special_attack = Resources.Load("Music/Weapons/ninjaboi_sword_teleport") as AudioClip;
-
+        au_special_attack = Resources.Load("Music/Weapons/ninjaboi_teleport") as AudioClip;
     }
 
     //attacks return time it takes to execute
-    public override float basicAttack(Vector2 dir)
+    public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
+        if (playerLoc == default(Vector2))
+            playerLoc = dir;
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-        base.basicAttack(dir);
+        base.basicAttack(dir, playerLoc);
 
-        attackSword.damage = ClassStat.AtkPower;
+        attackMelee.damage = ClassStat.AtkPower;
 
         StartAttackAnimation();
         Invoke("EndAttackAnimation", cooldowns[0] / 2);
@@ -108,14 +113,18 @@ public class NinjaClass : MeleeClass
     -- Function that's called when the Ninja uses the right click special attack (Teleport). If the ninja is debuffed he
     -- cannot teleport, but the cooldown will still be used since he tried to.
     ---------------------------------------------------------------------------------------------------------------------*/
-    public override float specialAttack(Vector2 dir)
+    public override float specialAttack(Vector2 dir,Vector2 playerLoc = default(Vector2))
     {
-        base.specialAttack(dir);
+        
+        if(playerLoc == default(Vector2))
+            playerLoc = dir;
 
-        teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
-        Destroy(teleportInstance, 1);
-
-        if (gameObject.GetComponent<MagicDebuff>() == null) {
+        base.specialAttack(dir, playerLoc);
+        
+        if (!silenced) {
+            teleportInstance = (GameObject)Instantiate(teleport, transform.position, transform.rotation);
+            Destroy(teleportInstance, 1);
+        
             var movement = gameObject.GetComponent<Movement>();
             if (movement != null)
                 movement.doBlink(10f);

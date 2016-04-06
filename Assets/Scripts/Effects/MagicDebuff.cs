@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------
---  SOURCE FILE:    MagicDebff.cs
+--  SOURCE FILE:    MagicDebuff.cs
 --
 --  PROGRAM:        Linux Game
 --
@@ -10,6 +10,8 @@
 --  DATE:           March 9, 2016
 --
 --  REVISIONS:      (Date and Description)
+--                   April 4, 2016: Hank Lo
+--                      - Numbers balancing, silence implemention
 --
 --  DESIGNERS:      Hank Lo
 --
@@ -25,14 +27,16 @@ using UnityEngine.EventSystems;
 
 public class MagicDebuff : Buff {
 
-    int speeddebuff = 5;
-    int atkdebuff = 4;
-    int defdebuf = 6;
+    int speeddebuff = 3;
+    int atkdebuff = 5;
+    int defdebuf = 5;
     int applyrate;
 
     bool appliedspeedbuff = false;
 
-    void Start() {
+    new void Start()
+    {
+        base.Start();
         magnitude = 0;
         duration = 150;
         applyrate = 0;
@@ -45,6 +49,7 @@ public class MagicDebuff : Buff {
         {
             player.ClassStat.MoveSpeed -= speeddebuff;
             appliedspeedbuff = true;
+            player.silenced = true;
         }
         if ((applyrate % 30) == 0) 
         {
@@ -61,6 +66,7 @@ public class MagicDebuff : Buff {
             player.ClassStat.AtkPower += (magnitude * atkdebuff);
             player.ClassStat.Defense += (magnitude * defdebuf);
             player.ClassStat.MoveSpeed += speeddebuff;
+            player.silenced = false;
             Destroy(this);
         }
     }
