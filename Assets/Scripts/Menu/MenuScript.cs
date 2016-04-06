@@ -78,7 +78,6 @@ public class MenuScript : MonoBehaviour {
     private List<GameObject> _menu_order = new List<GameObject>();
 
     private string _host_ip;
-    private int _map_theme = 0; // default grassland theme
 
     private Sprite _default_avatar;
     private Sprite _gunner_avatar;
@@ -91,12 +90,7 @@ public class MenuScript : MonoBehaviour {
 
     private string SendingPacket;
 
-    // testing...
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
-        GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
-    }
+
 
     // testing...
     int t1id = 0;
@@ -173,9 +167,12 @@ public class MenuScript : MonoBehaviour {
             slot.gameObject.SetActive(false);
         }
 
-		//TODO:: lock aman selection toggle if GameData.AllyKingID != GameData.MyPlayer.PlayerID 
+		// NOTE: Unlock/Lock aman panel depending on status recieved over network
+		// TODO: lock aman selection toggle if GameData.AllyKingID != GameData.MyPlayer.PlayerID 
 		//		 unlock aman selection toggle if GamaData.AllyKingID == -1, which indicates aman hasnt been selected or has been "deselected" 
 		//		 put aman "indicator" to the corresponding player on both teams 
+
+		// TODO: Update current theme text/panel
 
         // check the current lobby data values and update the player slots
         foreach (PlayerData p in GameData.LobbyData.Values)
@@ -251,7 +248,7 @@ public class MenuScript : MonoBehaviour {
     --
     -- DESIGNER: Spenser Lee
     --
-    -- PROGRAMMER: Spenser Lee
+    -- PROGRAMMER: Spenser Lee & Jerry Jia
     --
     -- INTERFACE: void SetReady()
     --
@@ -273,7 +270,7 @@ public class MenuScript : MonoBehaviour {
     --
     -- DESIGNER: Spenser Lee
     --
-    -- PROGRAMMER: Spenser Lee
+    -- PROGRAMMER: Spenser Lee & Jerry Jia
     --
     -- INTERFACE: void SetAman()
     --
@@ -285,12 +282,10 @@ public class MenuScript : MonoBehaviour {
     public void SetAman()
     {
 
+		// NOTE:: This can only be called when either the player has already selected to be the aman, which he can deselect it
+		//		  or no one on the team has selected aman. Functionality handled over network
 		GameData.AllyKingID = aman_toggle.isOn ? -1 : GameData.MyPlayer.PlayerID;
 		LobbyNetwork.SendLobbyData(NetworkCode.AmanSelection);
-
-        // TODO: send netowrk message inidcating aman has been set
-        // change class to aman?
-        // aman_toggle.isOn
     }
 
     /*-----------------------------------------------------------------------------------------------------------------
@@ -400,8 +395,9 @@ public class MenuScript : MonoBehaviour {
     public void SelectMap(int theme)
     {
         map_select_panel.SetActive(false);
-        _map_theme = theme;
-        if (theme == 0)
+        GameData.CurrentTheme = (Themes)theme;
+		LobbyNetwork.SendLobbyData(NetworkCode.ThemeSelection);
+        if (theme == Themes.Grass)
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: GRASSLAND";
         } else
@@ -759,5 +755,15 @@ public class MenuScript : MonoBehaviour {
     private string _GetInputText(string input)
 	{
 		return GameObject.Find(input).GetComponent<InputField>().text;
+	}
+
+	// testing...
+	void OnGUI()
+	{
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+			GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
+		}
 	}
 }

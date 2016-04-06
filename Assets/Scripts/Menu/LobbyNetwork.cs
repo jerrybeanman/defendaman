@@ -16,7 +16,8 @@ public enum NetworkCode
 	GameStart 			= 5,
 	UpdatePlayerList	= 6,
 	PlayerLeftLobby		= 7,
-	AmanSelection		= 8
+	AmanSelection		= 8,
+	ThemeSelection		= 9
 }
 
 
@@ -90,13 +91,18 @@ public class LobbyNetwork : MonoBehaviour {
 			SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA);
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA));
 			break;
-
+		
+		// NOTE:: Send packet indicating the team that slected the aman
 		case NetworkCode.AmanSelection:
 			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 			packetData.Add(new Pair<string, string>(NetworkKeyString.AmanID, GameData.AllyKingID.ToString()));
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.AmanSelection, packetData, Protocol.NA));
 			break;
 
+		case NetworkCode.ThemeSelection:
+			packetData.Add(new Pair<string, string>(NetworkKeyString.Theme, ((int)GameData.CurrentTheme).ToString()));
+			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ThemeSelection, packetData, Protocol.NA));
+			break;
 		}
 			
 	}
@@ -187,9 +193,10 @@ public class LobbyNetwork : MonoBehaviour {
 				Application.LoadLevel("tron_theme");
 				break;
 			}
+
+			// NOTE:: Check which team has selected the aman 
 			case NetworkCode.AmanSelection:
 			{
-				// Check which team's aman has been selected 
 				if(packet[NetworkKeyString.TeamID].AsInt == GameData.MyPlayer.TeamID)
 				{
 					GameData.AllyKingID = packet[NetworkKeyString.AmanID].AsInt;
@@ -199,7 +206,9 @@ public class LobbyNetwork : MonoBehaviour {
 				}
 				break;
 			}
-			
+			case NetworkCode.ThemeSelection:
+				GameData.CurrentTheme = (Themes)packet[NetworkKeyString.Theme].AsInt;
+				break;
         }
 	}
 

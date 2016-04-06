@@ -5,9 +5,11 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
-public enum ClassType { Gunner = 1, Ninja = 2, Wizard = 3, aman = 4}
-public enum GameState { Playing, Dying, Dead, Won, Lost}
-public enum BuildingType { Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5}
+public enum ClassType 		{ Gunner = 1, Ninja = 2, Wizard = 3, aman = 4 }
+public enum GameState 		{ Playing, Dying, Dead, Won, Lost }
+public enum BuildingType 	{ Wall = 1, WatchTower = 2, Turret = 3, Potion = 4, Upgarde = 5 }
+public enum Themes			{ Grass = 1, Tron = 2 }
+
 // Lobby message key fields 
 public class NetworkKeyString
 {
@@ -17,6 +19,7 @@ public class NetworkKeyString
 	public static string AmanID			= "AmanID";
     public static string WorldItemID    = "WorldItemID";
     public static string Ready          = "Ready";
+	public static string Theme			= "Theme";
     public static string StartGame      = "StartGame";
     public static string UserName       = "UserName";
     public static string Message        = "Message";
@@ -81,6 +84,7 @@ public class GameData
     public static List<Pair<int, int>> TeamSpawnPoints = new List<Pair<int, int>>();
     public static Pair<int, int> aiSpawn = new Pair<int, int>(10, 10);
 
+	public static Themes		CurrentTheme	= Themes.Grass;
 
     private static int _allyTeamKillCount = 0;
     public static int AllyTeamKillCount
@@ -96,7 +100,8 @@ public class GameData
         }
     }
     private static int _enemyTeamKillCount = 0;
-    public static int EnemyTeamKillCount {
+    public static int EnemyTeamKillCount 
+	{
         get {
             return _enemyTeamKillCount;
         }
