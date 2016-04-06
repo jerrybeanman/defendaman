@@ -78,7 +78,6 @@ public class MenuScript : MonoBehaviour {
     private List<GameObject> _menu_order = new List<GameObject>();
 
     private string _host_ip;
-    private int _map_theme = 0; // default grassland theme
 
     private Sprite _default_avatar;
     private Sprite _gunner_avatar;
@@ -91,12 +90,7 @@ public class MenuScript : MonoBehaviour {
 
     private string SendingPacket;
 
-    // testing...
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
-        GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
-    }
+
 
     // testing...
     int t1id = 0;
@@ -116,8 +110,7 @@ public class MenuScript : MonoBehaviour {
             GameData.LobbyData.Add(idx++, p);
         }
     }
-
-    /*-----------------------------------------------------------------------------------------------------------------
+	/*-----------------------------------------------------------------------------------------------------------------
     -- FUNCTION: Awake
     --
     -- DATE: April 04, 2016
@@ -133,44 +126,44 @@ public class MenuScript : MonoBehaviour {
     -- NOTES:
     -- Initialization function. Loads necessary sprites and sets default values upon the Menu Scene loading.
     -----------------------------------------------------------------------------------------------------------------*/
-    void Awake()
-    {
-        _default_avatar = Resources.Load("Sprites/UI/default_avatar", typeof(Sprite)) as Sprite;
-        _gunner_avatar = Resources.Load("Sprites/UI/gun_avatar", typeof(Sprite)) as Sprite;
-        _ninja_avatar = Resources.Load("Sprites/UI/ninja_avatar", typeof(Sprite)) as Sprite;
-        _mage_avatar = Resources.Load("Sprites/UI/mage_avatar", typeof(Sprite)) as Sprite;
-
-
-        menu_canvas = menu_canvas.GetComponent<Canvas>();
-
-        // set Main menu by default and disable other states & panels
-        settings_menu.SetActive(false);
-        connect_menu.SetActive(false);
-        lobby_menu.SetActive(false);
-        main_menu.SetActive(true);
-        _menu_order.Add(main_menu);
-
-        _team1_slots = new List<Transform>();
-        _team2_slots = new List<Transform>();
-
-        // initialize all 12 slots per team and disable them by default
-        foreach (Transform slot in team1_list.transform)
-        {
-            _team1_slots.Add(slot);
-            slot.gameObject.SetActive(false);
-        }
-        foreach (Transform slot in team2_list.transform)
-        {
-            _team2_slots.Add(slot);
-            slot.gameObject.SetActive(false);
-        }
-
-        team_select_panel.SetActive(false);
-        class_select_panel.SetActive(false);
-        map_select_panel.SetActive(false);
-    }
-
-    /*-----------------------------------------------------------------------------------------------------------------
+	void Awake()
+	{
+		_default_avatar = Resources.Load("Sprites/UI/default_avatar", typeof(Sprite)) as Sprite;
+		_gunner_avatar = Resources.Load("Sprites/UI/gun_avatar", typeof(Sprite)) as Sprite;
+		_ninja_avatar = Resources.Load("Sprites/UI/ninja_avatar", typeof(Sprite)) as Sprite;
+		_mage_avatar = Resources.Load("Sprites/UI/mage_avatar", typeof(Sprite)) as Sprite;
+		
+		
+		menu_canvas = menu_canvas.GetComponent<Canvas>();
+		
+		// set Main menu by default and disable other states & panels
+		settings_menu.SetActive(false);
+		connect_menu.SetActive(false);
+		lobby_menu.SetActive(false);
+		main_menu.SetActive(true);
+		_menu_order.Add(main_menu);
+		
+		_team1_slots = new List<Transform>();
+		_team2_slots = new List<Transform>();
+		
+		// initialize all 12 slots per team and disable them by default
+		foreach (Transform slot in team1_list.transform)
+		{
+			_team1_slots.Add(slot);
+			slot.gameObject.SetActive(false);
+		}
+		foreach (Transform slot in team2_list.transform)
+		{
+			_team2_slots.Add(slot);
+			slot.gameObject.SetActive(false);
+		}
+		
+		team_select_panel.SetActive(false);
+		class_select_panel.SetActive(false);
+		map_select_panel.SetActive(false);
+	}
+	
+	/*-----------------------------------------------------------------------------------------------------------------
     -- FUNCTION: Update
     --
     -- DATE: April 04, 2016
@@ -187,68 +180,20 @@ public class MenuScript : MonoBehaviour {
     -- Called once per frame. Waits for new incoming network messages and will update the lobby list if changes are
     -- made. (e.g. new player, team changes etc.)
     -----------------------------------------------------------------------------------------------------------------*/
-    void Update()
-    {
-        if (LobbyNetwork.connected)
-        {
-            string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
-            if (!String.Equals(tmp, "[]"))
-            {
-                LobbyNetwork.ParseLobbyData(tmp);
-
-                // TODO: if aman has been set AND current player is not aman
-                //       disable aman toggle
-                // aman_toggle.interactable = false;
-
-                UpdateLobbyList();
-                //if(LobbyNetwork.Start)
-                //	StartCoroutine(start_level());
-            }
-        }
-    }
-
-    /*-----------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: start_level
-    --
-    -- DATE: April 04, 2016
-    --
-    -- DESIGNER: Jerry Jia
-    --
-    -- PROGRAMMER: Jerry Jia
-    --
-    -- INTERFACE: IEnumerator start_level()
-    --
-    -- RETURNS: IEnumerator
-    --
-    -- NOTES:
-    -- TODO...
-    -----------------------------------------------------------------------------------------------------------------*/
-    IEnumerator start_level()
+	void Update()
 	{
-		yield return new WaitForSeconds(2f);
-		Application.LoadLevel("EngineTeam_master");
+		if (LobbyNetwork.connected)
+		{
+			string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
+			if (!String.Equals(tmp, "[]"))
+			{
+				LobbyNetwork.ParseLobbyData(tmp);
+				
+				UpdateLobbyList();
+			}
+		}
 	}
 
-    /*-----------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: DoSend()
-    --
-    -- DATE: April 04, 2016
-    --
-    -- DESIGNER: Jerry Jia
-    --
-    -- PROGRAMMER: Jerry Jia
-    --
-    -- INTERFACE: IEnumerator DoSend()
-    --
-    -- RETURNS: IEnumerator
-    --
-    -- NOTES:
-    -- TODO...
-    -----------------------------------------------------------------------------------------------------------------*/
-    IEnumerator DoSend()
-    {
-        yield return new WaitForSeconds(1);
-    }
 
     /*-----------------------------------------------------------------------------------------------------------------
     -- FUNCTION: UpdateLobbyList
@@ -284,6 +229,13 @@ public class MenuScript : MonoBehaviour {
         {
             slot.gameObject.SetActive(false);
         }
+
+		// NOTE: Unlock/Lock aman panel depending on status recieved over network
+		// TODO: lock aman selection toggle if GameData.AllyKingID != GameData.MyPlayer.PlayerID 
+		//		 unlock aman selection toggle if GamaData.AllyKingID == -1, which indicates aman hasnt been selected or has been "deselected" 
+		//		 put aman "indicator" to the corresponding player on both teams 
+
+		// TODO: Update current theme text/panel
 
         // check the current lobby data values and update the player slots
         foreach (PlayerData p in GameData.LobbyData.Values)
@@ -359,7 +311,7 @@ public class MenuScript : MonoBehaviour {
     --
     -- DESIGNER: Spenser Lee
     --
-    -- PROGRAMMER: Spenser Lee
+    -- PROGRAMMER: Spenser Lee & Jerry Jia
     --
     -- INTERFACE: void SetReady()
     --
@@ -381,7 +333,7 @@ public class MenuScript : MonoBehaviour {
     --
     -- DESIGNER: Spenser Lee
     --
-    -- PROGRAMMER: Spenser Lee
+    -- PROGRAMMER: Spenser Lee & Jerry Jia
     --
     -- INTERFACE: void SetAman()
     --
@@ -392,9 +344,11 @@ public class MenuScript : MonoBehaviour {
     -----------------------------------------------------------------------------------------------------------------*/
     public void SetAman()
     {
-        // TODO: send netowrk message inidcating aman has been set
-        // change class to aman?
-        // aman_toggle.isOn
+
+		// NOTE:: This can only be called when either the player has already selected to be the aman, which he can deselect it
+		//		  or no one on the team has selected aman. Functionality handled over network
+		GameData.AllyKingID = aman_toggle.isOn ? -1 : GameData.MyPlayer.PlayerID;
+		LobbyNetwork.SendLobbyData(NetworkCode.AmanSelection);
     }
 
     /*-----------------------------------------------------------------------------------------------------------------
@@ -504,8 +458,9 @@ public class MenuScript : MonoBehaviour {
     public void SelectMap(int theme)
     {
         map_select_panel.SetActive(false);
-        _map_theme = theme;
-        if (theme == 0)
+        GameData.CurrentTheme = (Themes)theme;
+		LobbyNetwork.SendLobbyData(NetworkCode.ThemeSelection);
+        if ((Themes)theme == Themes.Grass)
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: GRASSLAND";
         } else
@@ -636,7 +591,6 @@ public class MenuScript : MonoBehaviour {
             {
                 return;
             }
-            StartCoroutine(DoSend());
             LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
             _SwitchMenu(MenuStates.Lobby);
         }
@@ -863,5 +817,15 @@ public class MenuScript : MonoBehaviour {
     private string _GetInputText(string input)
 	{
 		return GameObject.Find(input).GetComponent<InputField>().text;
+	}
+
+	// testing...
+	void OnGUI()
+	{
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+			GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
+		}
 	}
 }

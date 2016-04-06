@@ -22,7 +22,8 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for 
-	public 	float 		 chargeTime 		= 2f;
+	public  float 		 holdTime			= 2f;
+	public 	float 		 chargeTime 		= 3f;
 	public  float 		 targetConeRadius 	= 28f;
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 16f;
@@ -39,7 +40,7 @@ public class GunnerClass : RangedClass
 
 	new void Start()
 	{
-		cooldowns = new float[2] { 0.2f, 10f };
+		cooldowns = new float[2] { 0.2f, 8f };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
@@ -167,6 +168,10 @@ public class GunnerClass : RangedClass
 	{
 		started = true;
 		float elapsedTime = 0;
+
+		// Show charge bar
+		HUD_Manager.instance.chargeBar.Holder.SetActive(true);
+
 		while(inSpecial && elapsedTime < chargeTime)
 		{
 			elapsedTime += Time.deltaTime;
@@ -187,18 +192,31 @@ public class GunnerClass : RangedClass
 			FOVCone.RangeAngle  = Mathf.Lerp(startingRangeAngle, targetConeAngle, t);
 			FOVConeHidden.RangeAngle = Mathf.Lerp(startingRangeAngle, targetConeAngle, t);
 
+			HUD_Manager.instance.chargeBar.Bar.fillAmount = Mathf.Lerp(0, 1, t);
+
 			// Set pooling radius to allow more pooling objects
 			MapManager.cameraDistance = -mainCamera.orthographicSize;
 			yield return new WaitForEndOfFrame ();
 		}
 
-		started = false;
+		if(inSpecial)
+		{
+			HUD_Manager.instance.chargeBar.Holder.GetComponent<Animator>().SetTrigger("play");
+		}
+		// Reset value to be used again
+		elapsedTime = 0;
+		while(inSpecial && elapsedTime < holdTime)
+		{
+			elapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
 
 		// elapsedTime has eached chargeTime, release attack
 		if(inSpecial)
 		{
 			yield return StartCoroutine(ReleaseAttack());
 		}
+		started = false;
 		yield return null;
 	}
 
@@ -213,6 +231,9 @@ public class GunnerClass : RangedClass
 	IEnumerator ReleaseAttack()
 	{
 		fire();
+
+		HUD_Manager.instance.chargeBar.Holder.GetComponent<Animator>().Stop();
+
 		inSpecial = false;
 
 		// Send packet to indicate fire
@@ -227,7 +248,7 @@ public class GunnerClass : RangedClass
 		float currentZoomOutRange 	= mainCamera.orthographicSize;
 		float currentConeRadius 	= FOVCone.LightRadius;
 		float currentConeAngle		= FOVCone.RangeAngle;
-
+		float currentFillAmount 	= HUD_Manager.instance.chargeBar.Bar.fillAmount;
 		while(elapsedTime < zoomInTime)
 		{
 			elapsedTime += Time.deltaTime;
@@ -247,11 +268,14 @@ public class GunnerClass : RangedClass
 			// Interpolate vision cone angle, which narrows angle
 			FOVCone.RangeAngle  = Mathf.Lerp(currentConeAngle, startingRangeAngle, t);
 			FOVConeHidden.RangeAngle = Mathf.Lerp(currentConeAngle, startingRangeAngle, t);
-			
+
+			HUD_Manager.instance.chargeBar.Bar.fillAmount = Mathf.Lerp(currentFillAmount, 0, t);
 			// Set pooling radius to allow more pooling objects
 			MapManager.cameraDistance = -mainCamera.orthographicSize;
 			yield return new WaitForEndOfFrame ();
 		}
+
+		HUD_Manager.instance.chargeBar.Holder.SetActive(false);
 		yield return null;
 		
 	}

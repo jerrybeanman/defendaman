@@ -14,119 +14,8 @@ public enum UICode
 	BuildingDestruction = 3
 }
 
-public class HUD_Manager : MonoBehaviour {
-	#region Classes
-	/**
-	 *  Indicates the player health on bottom left corner of HUD
-	 */
-	[System.Serializable]
-	public class PlayerProfile
-	{
-		public Image 	Health;
-		public Animator HealthAnimator;
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]
-	public class AllyKing
-	{
-		public Image 	Health;
-		public Animator HealthAnimator;
-	}
-	/**
-	 *  Indicates the health bar of ally king
-	 */
-	[System.Serializable]
-	public class EnemyKing
-	{
-		public Image 	Health;
-		public Animator HealthAnimator;
-	}
-
-	/**
-	 *  Indicates current currency amount
-	 */
-	[System.Serializable]
-	public class Currency 		
-	{ 
-		public Text  	Amount;						
-		public Animator CurrencyAnimator; 	
-	}
-
-	/**
-	 *  Indicates main skill bar
-	 */
-	[System.Serializable]
-	public class MainSkill 		
-	{ 
-		public Image 	ProgressBar;					
-		public float 	CoolDown; 			
-	}
-	/**
-	 *  Indicates sub skill bar
-	 */
-	[System.Serializable]
-	public class SubSkill 		
-	{ 
-		public Image 	ProgressBar;					
-		public float 	CoolDown; 			
-	}
-	/**
-	 *  Indicates passive skill bar
-	 */
-	[System.Serializable]
-	public class PassiveSkill 	
-	{ 
-		public Image 	ProgressBar;					
-		public float 	CoolDown; 			
-	}
-	/**
-	 *  Indicates the chat panel
-	 */
-	[System.Serializable]
-	public class Chat			
-	{ 
-		// Input field 
-		public InputField input;
-		// Container box for chat messages
-		public GameObject Container; 	
-		public GameObject AllyMessage;			
-		public GameObject EnemyMessage; 	
-	}
-	/**
-	 * Items that can be built in the shop
-	 */
-	[System.Serializable]
-	public class Buildable		
-	{ 
-		public Button Option;						
-		public GameObject Building;			
-	}
-	/**
-	 *  Shop panel
-	 */
-	[System.Serializable]
-	public class Shop			
-	{ 
-		public GameObject 		MainPanel;
-		// Purchasable items
-		public List<Buildable>	Items;	
-
-		[HideInInspector]
-		// Currently selected item
-		public Buildable		Selected = null;										
-	}
-	[System.Serializable]
-	public class PlayerDP
-	{
-		public Sprite				GunnerDP;
-		public Sprite				NinjaDP;
-		public Sprite				MageDP;
-		public Image				Container;
-	}
-	#endregion
-
+public class HUD_Manager : MonoBehaviour 
+{
 	// Singleton object
 	public static HUD_Manager 	instance; 
 
@@ -144,6 +33,8 @@ public class HUD_Manager : MonoBehaviour {
 	public GameObject			placementRange;
 	public GameObject			statsPanel;
 	public PlayerDP				playerDp;
+	public ChargeBar			chargeBar;
+	public Stamina				stamina;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -189,7 +80,7 @@ public class HUD_Manager : MonoBehaviour {
 				playerDp.Container.sprite = playerDp.MageDP;
 				break;
 			case ClassType.Ninja:
-				playerDp.Container.sprite = playerDp.GunnerDP;
+				playerDp.Container.sprite = playerDp.NinjaDP;
 				break;
 		}
 	}
@@ -222,7 +113,9 @@ public class HUD_Manager : MonoBehaviour {
 
 		// Check if skills are used or not
 		CheckSkillStatus();
-		
+
+		CheckStaminaStatus();
+
 		UpdateTimer();
 	}
 
@@ -245,7 +138,6 @@ public class HUD_Manager : MonoBehaviour {
 			if(!chat.input.IsInteractable())
 			{
 				// Block all other keyboard inputs
-				GameData.KeyBlocked = true;
 				GameData.InputBlocked = true;
 				// If not then open the chat window
 				chat.input.interactable = true;
@@ -255,10 +147,9 @@ public class HUD_Manager : MonoBehaviour {
 			else
 			{
 				// Unblocck keyboard inputs 
-				GameData.KeyBlocked = false;
 				GameData.InputBlocked = false;
 				if (Application.platform == RuntimePlatform.LinuxPlayer)
-				 {
+				{
 					// Send the packet, with Team ID, user name, and the message input
 					List<Pair<string, string>> packetData = new List<Pair<string, string>>();
 					packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -300,6 +191,17 @@ public class HUD_Manager : MonoBehaviour {
 			// Char it up slowly corresponding to the cool down timer
 			subSkill.ProgressBar.fillAmount += Time.deltaTime / subSkill.CoolDown;
 			subSkill.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, subSkill.ProgressBar.fillAmount);
+		}
+	}
+
+	void CheckStaminaStatus()
+	{
+		// If main skill bar is below full
+		if(stamina.ProgressBar.fillAmount  < 1)
+		{
+			// Char it up slowly corresponding to the cool down timer
+			stamina.ProgressBar.fillAmount += Time.deltaTime / stamina.FillTimer;
+			stamina.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, stamina.ProgressBar.fillAmount);
 		}
 	}
 
@@ -665,6 +567,7 @@ public class HUD_Manager : MonoBehaviour {
 	------------------------------------------------------------------------------*/
 	public void DisplayShop()
 	{
+		GameData.MouseBlocked = false;
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
 	}
 	
@@ -889,4 +792,128 @@ public class HUD_Manager : MonoBehaviour {
 		Debug.Log (potionType + " Potion");
 		Debug.Log ("Add potion here");
 	}
+
+	#region Classes
+	/**
+	 *  Indicates the player health on bottom left corner of HUD
+	 */
+	[System.Serializable]
+	public class PlayerProfile
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class AllyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	/**
+	 *  Indicates the health bar of ally king
+	 */
+	[System.Serializable]
+	public class EnemyKing
+	{
+		public Image 	Health;
+		public Animator HealthAnimator;
+	}
+	
+	/**
+	 *  Indicates current currency amount
+	 */
+	[System.Serializable]
+	public class Currency 		
+	{ 
+		public Text  	Amount;						
+		public Animator CurrencyAnimator; 	
+	}
+	
+	/**
+	 *  Indicates main skill bar
+	 */
+	[System.Serializable]
+	public class MainSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates sub skill bar
+	 */
+	[System.Serializable]
+	public class SubSkill 		
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates passive skill bar
+	 */
+	[System.Serializable]
+	public class PassiveSkill 	
+	{ 
+		public Image 	ProgressBar;					
+		public float 	CoolDown; 			
+	}
+	/**
+	 *  Indicates the chat panel
+	 */
+	[System.Serializable]
+	public class Chat			
+	{ 
+		// Input field 
+		public InputField input;
+		// Container box for chat messages
+		public GameObject Container; 	
+		public GameObject AllyMessage;			
+		public GameObject EnemyMessage; 	
+	}
+	/**
+	 * Items that can be built in the shop
+	 */
+	[System.Serializable]
+	public class Buildable		
+	{ 
+		public Button Option;						
+		public GameObject Building;			
+	}
+	/**
+	 *  Shop panel
+	 */
+	[System.Serializable]
+	public class Shop			
+	{ 
+		public GameObject 		MainPanel;
+		// Purchasable items
+		public List<Buildable>	Items;	
+		
+		[HideInInspector]
+		// Currently selected item
+		public Buildable		Selected = null;										
+	}
+	[System.Serializable]
+	public class PlayerDP
+	{
+		public Sprite			GunnerDP;
+		public Sprite			NinjaDP;
+		public Sprite			MageDP;
+		public Image			Container;
+	}
+	[System.Serializable]
+	public class ChargeBar
+	{
+		public GameObject		Holder;
+		public Image			Bar;
+	}
+	[System.Serializable]
+	public class Stamina
+	{
+		public Image			ProgressBar;
+		public float			FillTimer;
+	}
+	#endregion
 }

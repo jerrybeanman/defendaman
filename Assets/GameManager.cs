@@ -408,7 +408,6 @@ public class GameManager : MonoBehaviour {
         GameData.InputBlocked = false;
         GameData.IP = "192.168.0.";
         GameData.ItemCollided = false;
-        GameData.KeyBlocked = false;
         GameData.MouseBlocked = false;
         GameData.Seed = 0;
         GameData.TeamSpawnPoints.Clear();

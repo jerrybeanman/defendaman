@@ -15,7 +15,9 @@ public enum NetworkCode
 	PlayerJoinedLobby 	= 4,
 	GameStart 			= 5,
 	UpdatePlayerList	= 6,
-	PlayerLeftLobby		= 7
+	PlayerLeftLobby		= 7,
+	AmanSelection		= 8,
+	ThemeSelection		= 9
 }
 
 
@@ -64,27 +66,45 @@ public class LobbyNetwork : MonoBehaviour {
 			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.TeamChangeRequest, packetData, Protocol.NA));
 			break;
+
 		case NetworkCode.ClassChangeRequest:
 			packetData.Add(new Pair<string, string>(NetworkKeyString.ClassID, ((int)GameData.MyPlayer.ClassType).ToString()));
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ClassChangeRequest, packetData, Protocol.NA));
 			break;
+
 		case NetworkCode.ReadyRequest:
 			packetData.Add(new Pair<string, string>(NetworkKeyString.Ready, GameData.MyPlayer.Ready ? "1" : "0"));
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ReadyRequest, packetData, Protocol.NA));
 			break;
+
 		case NetworkCode.PlayerJoinedLobby:
 			packetData.Add(new Pair<string, string>(NetworkKeyString.UserName, "\"" + GameData.MyPlayer.Username + "\""));
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerJoinedLobby, packetData, Protocol.NA));
 			break;
+
 		case NetworkCode.PlayerLeftLobby:
 			SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerLeftLobby, packetData, Protocol.NA);
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.PlayerLeftLobby, packetData, Protocol.NA));
 			break;
+
 		case NetworkCode.GameStart:
 			SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA);
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA));
 			break;
+		
+		// NOTE:: Send packet indicating the team that slected the aman
+		case NetworkCode.AmanSelection:
+			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
+			packetData.Add(new Pair<string, string>(NetworkKeyString.AmanID, GameData.AllyKingID.ToString()));
+			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.AmanSelection, packetData, Protocol.NA));
+			break;
+
+		case NetworkCode.ThemeSelection:
+			packetData.Add(new Pair<string, string>(NetworkKeyString.Theme, ((int)GameData.CurrentTheme).ToString()));
+			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ThemeSelection, packetData, Protocol.NA));
+			break;
 		}
+			
 	}
 
 	private static void Send(string packet)
@@ -103,35 +123,25 @@ public class LobbyNetwork : MonoBehaviour {
             return;
         }
         int PlayerPacketID;
-		Debug.Log("[Debug]: " + raw);
         RecievedData = raw;
         var packet = (JSON.Parse(RecievedData).AsArray)[0];
         PlayerPacketID = packet[NetworkKeyString.PlayerID].AsInt;
         switch ((NetworkCode)packet["ID"].AsInt)
         {
             case NetworkCode.TeamChangeRequest:
-            {
-				Debug.Log("[Debug]: TeamChangeRequest" + raw);
-			
+            {			
 				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;
-				PrintData();
-			
                 break;
             }
             case NetworkCode.ClassChangeRequest:
             {
-				Debug.Log("[Debug]: ClassChangeRequest" + raw);
-			
 				GameData.LobbyData[PlayerPacketID].ClassType = (ClassType)packet[NetworkKeyString.ClassID].AsInt;
-				PrintData();
-			
 				break;
             }
             case NetworkCode.ReadyRequest:
             {
 				GameData.LobbyData[PlayerPacketID].Ready = Convert.ToBoolean(packet[NetworkKeyString.Ready].AsInt);
 
-				PrintData();
                 break;
             }
             case NetworkCode.PlayerJoinedLobby:
@@ -146,7 +156,6 @@ public class LobbyNetwork : MonoBehaviour {
                 }
                 else
                     GameData.LobbyData.Add(PlayerPacketID, tmpPlayer);
-				PrintData();
                 break;
             }
             case NetworkCode.UpdatePlayerList:
@@ -164,32 +173,48 @@ public class LobbyNetwork : MonoBehaviour {
 					tempPlayer.Username		= playerData[NetworkKeyString.UserName];
                     GameData.LobbyData.Add(id, tempPlayer);
 
-                    print("[Debug] UpdatePlayerList()" + playerData[NetworkKeyString.TeamID].AsBool);
                 }
-				PrintData();
 			
                 break;
             }
 			case NetworkCode.PlayerLeftLobby:
 			{
 				GameData.LobbyData.Remove(PlayerPacketID);
-				PrintData();
 				break;
 			}
             case NetworkCode.GameStart:
             {
 				RecievedData = "Player: " + PlayerPacketID + " has started the game!";
-				PrintData();
-                
 				break;
             }
 			case NetworkCode.Seed:
 			{
 				GameData.Seed = packet["Seed"].AsInt;
-				Application.LoadLevel("tron_theme");
+				if(GameData.CurrentTheme == Themes.Grass)
+				{
+					Application.LoadLevel("grass_theme");
+				}else
+				{
+					Application.LoadLevel("tron_theme");
+				}
 				break;
-			}	
-			
+			}
+
+			// NOTE:: Check which team has selected the aman 
+			case NetworkCode.AmanSelection:
+			{
+				if(packet[NetworkKeyString.TeamID].AsInt == GameData.MyPlayer.TeamID)
+				{
+					GameData.AllyKingID = packet[NetworkKeyString.AmanID].AsInt;
+				}else
+				{
+					GameData.EnemyKingID = packet[NetworkKeyString.AmanID].AsInt;
+				}
+				break;
+			}
+			case NetworkCode.ThemeSelection:
+				GameData.CurrentTheme = (Themes)packet[NetworkKeyString.Theme].AsInt;
+				break;
         }
 	}
 
