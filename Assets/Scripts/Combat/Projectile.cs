@@ -67,7 +67,7 @@ public abstract class Projectile : Trigger
 		{
 			return;
 		}
-        if (--pierce < 0 || other.name == "obstacleTiles(Clone)") 
+        if (--pierce < 0 || other.name == "obstacleTiles(Clone)" || other.name == "tron_obstacle(Clone)") 
 		{
             Destroy(gameObject);
         }
