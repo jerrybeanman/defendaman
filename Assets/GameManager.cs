@@ -79,10 +79,10 @@ public class GameManager : MonoBehaviour {
             } else {
                 if (damage > 0)
                 {
-                    ColourizeScreen.instance.PlayerHurt();
+                    HUD_Manager.instance.colourizeScreen.PlayerHurt();
                 } else if (damage < 0)
                 {
-                    ColourizeScreen.instance.PlayerHealed();
+                    HUD_Manager.instance.colourizeScreen.PlayerHealed();
                 }
             }
         }
@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour {
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         GameData.PlayerPosition.Remove(GameData.MyPlayer.PlayerID);
         GameData.GameState = GameState.Dying;
-        ColourizeScreen.instance.PlayerDied();
+        HUD_Manager.instance.colourizeScreen.PlayerDied();
         Debug.Log("You have died");
         instance.player = null;
         if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
@@ -416,7 +416,6 @@ public class GameManager : MonoBehaviour {
         Destroy(NetworkingManager.instance);
         Destroy(Inventory.instance);
         Destroy(WorldItemManager.Instance);
-        Destroy(ColourizeScreen.instance);
         Application.LoadLevel("MenuScene");
     }
 }
