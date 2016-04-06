@@ -14,7 +14,8 @@ public enum UICode
 	BuildingDestruction = 3
 }
 
-public class HUD_Manager : MonoBehaviour {
+public class HUD_Manager : MonoBehaviour 
+{
 	#region Classes
 	/**
 	 *  Indicates the player health on bottom left corner of HUD
@@ -120,10 +121,16 @@ public class HUD_Manager : MonoBehaviour {
 	[System.Serializable]
 	public class PlayerDP
 	{
-		public Sprite				GunnerDP;
-		public Sprite				NinjaDP;
-		public Sprite				MageDP;
-		public Image				Container;
+		public Sprite			GunnerDP;
+		public Sprite			NinjaDP;
+		public Sprite			MageDP;
+		public Image			Container;
+	}
+	[System.Serializable]
+	public class ChargeBar
+	{
+		public GameObject		Holder;
+		public Image			Bar;
 	}
 	#endregion
 
@@ -144,6 +151,7 @@ public class HUD_Manager : MonoBehaviour {
 	public GameObject			placementRange;
 	public GameObject			statsPanel;
 	public PlayerDP				playerDp;
+	public ChargeBar			chargeBar;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
