@@ -52,10 +52,7 @@ public class WizardClass : RangedClass
         if (playerID == GameData.MyPlayer.PlayerID)
         {
             //Starting item kit
-            Inventory.instance.AddItem(1);
-            Inventory.instance.AddItem(5, 5);
-            Inventory.instance.AddItem(6);
-            Inventory.instance.AddItem(7);
+            Inventory.instance.AddItem(17);
         }
 
         //add wizard attack sound clip

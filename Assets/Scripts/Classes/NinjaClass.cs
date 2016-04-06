@@ -66,9 +66,6 @@ public class NinjaClass : MeleeClass
         {
             //Starting item kit
             Inventory.instance.AddItem(1);
-            Inventory.instance.AddItem(5, 5);
-            Inventory.instance.AddItem(6);
-            Inventory.instance.AddItem(7);
         }
 
         //ninja attack sound

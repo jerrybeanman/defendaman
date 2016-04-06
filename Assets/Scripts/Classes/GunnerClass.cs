@@ -72,10 +72,7 @@ public class GunnerClass : RangedClass
         if (playerID == GameData.MyPlayer.PlayerID)
 		{
             //Starting item kit
-            Inventory.instance.AddItem(1);
-			Inventory.instance.AddItem(5, 5);
-			Inventory.instance.AddItem(6);
-			Inventory.instance.AddItem(7);
+            Inventory.instance.AddItem(12);
 
 			// Initialize Vision Cone and movement components
 			FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
