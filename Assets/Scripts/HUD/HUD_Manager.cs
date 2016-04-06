@@ -197,11 +197,11 @@ public class HUD_Manager : MonoBehaviour
 	void CheckStaminaStatus()
 	{
 		// If main skill bar is below full
-		if(stamina.Bar.fillAmount  < 1)
+		if(stamina.ProgressBar.fillAmount  < 1)
 		{
 			// Char it up slowly corresponding to the cool down timer
-			stamina.Bar.fillAmount += stamina.FillRate / Time.deltaTime;
-			stamina.Bar.fillAmount = Mathf.Lerp(0f, 1f, mainSkill.ProgressBar.fillAmount);
+			stamina.ProgressBar.fillAmount += Time.deltaTime / stamina.FillTimer;
+			stamina.ProgressBar.fillAmount = Mathf.Lerp(0f, 1f, stamina.ProgressBar.fillAmount);
 		}
 	}
 
@@ -912,8 +912,8 @@ public class HUD_Manager : MonoBehaviour
 	[System.Serializable]
 	public class Stamina
 	{
-		public Image			Bar;
-		public float			FillRate;
+		public Image			ProgressBar;
+		public float			FillTimer;
 	}
 	#endregion
 }

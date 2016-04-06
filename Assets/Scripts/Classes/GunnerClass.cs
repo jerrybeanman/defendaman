@@ -22,8 +22,8 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for 
-	public  float 		 holdTime			= 1f;
-	public 	float 		 chargeTime 		= 2f;
+	public  float 		 holdTime			= 2f;
+	public 	float 		 chargeTime 		= 3f;
 	public  float 		 targetConeRadius 	= 28f;
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 16f;
@@ -40,7 +40,7 @@ public class GunnerClass : RangedClass
 
 	new void Start()
 	{
-		cooldowns = new float[2] { 0.2f, 6f };
+		cooldowns = new float[2] { 0.2f, 8f };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
