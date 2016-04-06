@@ -6,6 +6,7 @@ public class BuyPotion1 : MonoBehaviour {
 
 	Dictionary<string, int> MyResources; 
 	public void buyPotion1 () {
+		print ("Button 1 pressed");
 		MyResources=GameData.MyPlayer.Resources;
 		if(MyResources[Constants.GOLD_RES]>=100){
 			_inventory= GameObject.Find("Inventory").GetComponent<Inventory>();

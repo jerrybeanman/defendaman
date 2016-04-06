@@ -273,7 +273,7 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
 
 /**
  * Check if all the players within _ClientTable are ready
- * @author ???
+ * @author Gabriella Cheung
  * @date   2016-03-11
  * @return true if all the players are ready, false otherwise
  */
@@ -351,7 +351,10 @@ std::string ServerTCP::generateMapSeed()
 }
 
 /**
- * ???
+ * Returns the table that contains all currently connected players.
+ * @author Gabriella Cheung
+ * @data   2016-03-11
+ * @return table of connected players
  */
 std::map<int, Player> ServerTCP::getPlayerTable()
 {
@@ -359,11 +362,11 @@ std::map<int, Player> ServerTCP::getPlayerTable()
 }
 
 /**
- * [ServerTCP::getPlayerId description]
- * @author ???
+ * Returns the last decimal number in player's IP address as the player's ID
+ * @author Gabriella Cheung
  * @date   2016-03-11
- * @param  ipString   [description]
- * @return            [description]
+ * @param  ipString   string of player's IP address
+ * @return            the player's ID
  */
 int ServerTCP::getPlayerId(std::string ipString)
 {

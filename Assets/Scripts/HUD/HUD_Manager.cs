@@ -35,6 +35,7 @@ public class HUD_Manager : MonoBehaviour
 	public PlayerDP				playerDp;
 	public ChargeBar			chargeBar;
 	public Stamina				stamina;
+	public ColourizeScreen		colourizeScreen;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;

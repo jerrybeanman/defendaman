@@ -8,15 +8,7 @@ public class ColourizeScreen : MonoBehaviour {
     private float injuryDuration = .1f;
     private float healedDuration = .15f;
 
-    public static ColourizeScreen instance;
     
-    void Awake()
-    {
-        if (instance == null)        
-            instance = this;               
-        else if (instance != this)          
-            Destroy(gameObject);   			
-    }
 
 	// Use this for initialization
 	void Start () {
