@@ -3,15 +3,8 @@ using System.Collections;
 
 public class SettingScript : MonoBehaviour {
 
-    GameObject settings;
+    public GameObject settings;
 
-
-    // Use this for initialization
-    void Start()
-    {
-        settings = GameObject.Find("Settings");
-        settings.SetActive(false);
-    }
 
     // Update is called once per frame
     void Update()

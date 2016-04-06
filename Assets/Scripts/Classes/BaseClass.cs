@@ -21,12 +21,13 @@ public abstract class BaseClass : MonoBehaviour {
     public AudioSource au_attack;
     public AudioClip au_simple_attack;
     public AudioClip au_special_attack;
+    public AudioClip au_special_l;
+    public AudioClip au_failed_special;
 
     public bool silenced = false;
     
     protected void Start ()
     {
-        var networkingManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkingManager>();
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
 
@@ -59,6 +60,8 @@ public abstract class BaseClass : MonoBehaviour {
 
         //add audio component
         au_attack = gameObject.AddComponent<AudioSource>();
+        au_special_l = Resources.Load("Music/Weapons/laugh_cut") as AudioClip;
+        au_failed_special = Resources.Load("Music/Weapons/failed_special_use") as AudioClip;
     }
 
     public PlayerBaseStat ClassStat
@@ -105,12 +108,17 @@ public abstract class BaseClass : MonoBehaviour {
         return finaldamage;
     }
 
+    //Apr 5, added multihit prevention
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
-        if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
-            if (attack.teamID == team || GameData.MyPlayer == null) {
+        if ((attack = other.gameObject.GetComponent<Trigger>()) != null)
+        {
+            if (attack.teamID == team || GameData.MyPlayer == null)
                 return;
-            }
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee && !((Melee)attack).targets.Add(gameObject))
+                return;
 
             var damageTaken = 0f;
             if (playerID == GameData.MyPlayer.PlayerID)
@@ -154,7 +162,7 @@ public abstract class BaseClass : MonoBehaviour {
     {
         if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
             return cooldowns[0];
-//
+
         float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
 
         if (playerLoc!= default(Vector2) && distance < 13)
@@ -165,12 +173,29 @@ public abstract class BaseClass : MonoBehaviour {
         return cooldowns[0];
     }
 
+    // hank
     public virtual float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
         float distance;
 
-        if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
+        if (GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID)){
+            if (playerID == GameData.MyPlayer.PlayerID) {
+                if (silenced) {
+                    // play au_special_l
+                    au_attack.volume = .8f;
+                    System.Random rnd = new System.Random();
+                    int playSpecial = rnd.Next(1, 50);
+                    if (playSpecial == 42) {
+                        au_attack.PlayOneShot(au_special_l);
+                    } else {
+                        au_attack.PlayOneShot(au_failed_special);
+                    }
+                }
+            }
+           
             return cooldowns[1];
+        }
+            
 
         if (playerLoc != default(Vector2) && 
             (distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID])) < 13)

@@ -46,9 +46,6 @@ public class PauseMenu : MonoBehaviour {
 
     void Start()
     {
-        MainMenuGrp = GameObject.Find("Settings/MainMenu");
-        SettingMenuGrp = GameObject.Find("Settings/SettingMenuGrp");
-        volumeSlide = GameObject.Find("Settings/SettingMenuGrp/MusicSlider").GetComponent<Slider>();
         MainMenu(); 
 
     }
