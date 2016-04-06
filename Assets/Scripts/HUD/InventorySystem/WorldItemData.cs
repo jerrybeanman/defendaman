@@ -20,7 +20,7 @@ using System;
 -- DATE:        05/03/2016
 -- REVISIONS:   03/04/2016 - Conditions for pickup (gold vs non-gold) - Krystle
 -- DESIGNER:    Joseph Tam-Huang
--- PROGRAMMER:  Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang, Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
 
 public class WorldItemData : MonoBehaviour
@@ -72,18 +72,14 @@ public class WorldItemData : MonoBehaviour
 					{
 						GameData.ItemCollided = true;
 						_first_collision = true;
-						Debug.Log("first collision true");
 					}
 					if (_first_collision)
 					{
-						Debug.Log("picking up");
 						_first_collision = false;
 						msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
 						NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 						StartCoroutine(NeverReceivedPickupMessageBack());
 
-                        // Pretend that a pickup event was received
-                        //_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
                         // Pretend that a pickup event was received
                         if (Application.platform != RuntimePlatform.LinuxPlayer)
                         {
@@ -92,25 +88,8 @@ public class WorldItemData : MonoBehaviour
                         }
                     }
 				}
-				/*
-                else if (item.id == 2)
-                {
-                    WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, _player_id, item.id, amount);
-                    player_id = -1;
-                    msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-                    NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
-                }*/
 				
 				_tooltip.Deactivate();
-				/*
-				// Pretend that a pickup event was received
-				//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-				// Pretend that a pickup event was received
-				if (Application.platform != RuntimePlatform.LinuxPlayer)
-				{
-					//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
-					StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
-				}*/
 			}
 			else
 			{
@@ -137,10 +116,7 @@ public class WorldItemData : MonoBehaviour
 			{
 				int player_id = GameData.MyPlayer.PlayerID;
 				List<Pair<string, string>> msg = new List<Pair<string, string>>();
-				//WorldItemManager.Instance.ProcessPickUpEvent(world_item_id, player_id, item.id, amount);
 				msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
-                Debug.Log("world item id: " + world_item_id + " player_id: " + player_id
-                    + " item.id " + item.id + " amount: " + amount);
 				NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.UDP);
 				
 				_tooltip.Deactivate();
@@ -148,7 +124,6 @@ public class WorldItemData : MonoBehaviour
 				// Pretend that a pickup event was received
 				if (Application.platform != RuntimePlatform.LinuxPlayer)
 				{
-					//_world_item_manager.ReceiveItemPickupPacket(_world_item_manager.ConvertListToJSONClass(msg));
 					StartCoroutine(WorldItemManager.Instance.WaitSmallDelayBeforeReceivePickupPacket(WorldItemManager.Instance.ConvertListToJSONClass(msg)));
 				}
 			}
@@ -185,9 +160,7 @@ public class WorldItemData : MonoBehaviour
 	
 	public IEnumerator NeverReceivedPickupMessageBack()
 	{
-		Debug.Log("NeverReceivedPickupMessageBack called");
 		yield return new WaitForSeconds(0.1f);
-		Debug.Log("NeverReceivedPickupMessageBack executed");
 		GameData.ItemCollided = false;
 		_first_collision = false;
 	}
