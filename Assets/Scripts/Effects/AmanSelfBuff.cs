@@ -29,7 +29,7 @@ using UnityEngine.EventSystems;
 
 public class AmanSelfBuff : Buff {
     
-    int hpBuff = 2000;
+    int hpBuff = 750;
     BaseClass target;
     Rigidbody2D area;
     GameObject indicator;

@@ -32,10 +32,12 @@ using System.Collections.Generic;
 -----------------------------------------------------------------------------*/
 public class MapManager : MonoBehaviour {
     // How many walls will line the outside to not give an image of an empty world around the edges 
-    const int RESOURCE_AMOUNT = 100;
     const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
     const int RESPAWN_TIME = 30;        //  in seconds
     const int RESOURCE_Z = -10;
+    const int RESOURCE_HP = 5;
+    const int TOTAL_GOLD = 100;
+    const int GOLD_TO_DROP = TOTAL_GOLD / 5;
 
     // Map update event types
     public enum EventType 
@@ -216,7 +218,7 @@ public class MapManager : MonoBehaviour {
             mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
             temp.GetComponent<Resource>().x = resources[i][0].AsInt + OUTERWALL_THICKNESS;
             temp.GetComponent<Resource>().y = resources[i][1].AsInt + OUTERWALL_THICKNESS;
-            temp.GetComponent<Resource>().amount = RESOURCE_AMOUNT;
+            temp.GetComponent<Resource>().hp = RESOURCE_HP;
             _mapResources.Add(temp);
         }
     }
@@ -287,12 +289,8 @@ public class MapManager : MonoBehaviour {
 		GameObject temp = _mapResources.Find(go => 
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
-		// Decrease its amount
-        if(GameData.MyPlayer.PlayerID == playerId) {
-            temp.GetComponent<Resource>().DropGold(amount);
-        }
 
-        temp.GetComponent<Resource>().DecreaseAmount(amount);
+        temp.GetComponent<Resource>().DecreaseHp(1);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -316,8 +314,14 @@ public class MapManager : MonoBehaviour {
 		GameObject temp = _mapResources.Find(go => 
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
-		// Explode and deactivate it
-		StartCoroutine(ExplodeAndDestroy(temp));
+
+
+        for (int i = 0; i < (TOTAL_GOLD / GOLD_TO_DROP); i++) {
+            temp.GetComponent<Resource>().DropGold(GOLD_TO_DROP);
+        }
+
+        // Explode and deactivate it
+        StartCoroutine(ExplodeAndDestroy(temp));
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -342,7 +346,7 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
         // Respawn it
-        StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_AMOUNT));
+        StartCoroutine(RespawnAfterTime(temp, RESPAWN_TIME, RESOURCE_HP));
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -382,7 +386,7 @@ public class MapManager : MonoBehaviour {
         yield return new WaitForSeconds(seconds);
 
         go.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
-        go.GetComponent<Resource>().amount = amount;
+        go.GetComponent<Resource>().hp = amount;
         go.SetActive(true);
 	}
 

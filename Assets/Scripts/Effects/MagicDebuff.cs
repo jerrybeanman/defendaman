@@ -27,9 +27,9 @@ using UnityEngine.EventSystems;
 
 public class MagicDebuff : Buff {
 
-    int speeddebuff = 3;
-    int atkdebuff = 5;
-    int defdebuf = 5;
+    int speeddebuff = 2;
+    int atkdebuff = 3;
+    int defdebuf = 3;
     int applyrate;
 
     bool appliedspeedbuff = false;

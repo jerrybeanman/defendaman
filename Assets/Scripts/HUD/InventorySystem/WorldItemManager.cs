@@ -9,19 +9,22 @@ enum ItemUpdate { Pickup = 1, Drop = 2, Create = 3, Magnetize = 4 }
 --                       responsible for managing world items.
 --
 -- FUNCTIONS:
---		void Start()
---		public void CreateWorldItem(string world_item_id, int item_id, int amt,
+--      void Start()
+--      public void CreateWorldItem(string world_item_id, int item_id, int amt,
 --          Vector3 pos)
---		public void ProcessPickUpEvent(string world_item_id, int player_id, 
+--      public void ProcessPickUpEvent(string world_item_id, int player_id, 
 --          int item_id, int amt)
 --      public void ProcessDropEvent(string world_item_id, int player_id, 
 --          int item_id, int amt, int inv_pos, Vector3 position)
+--      public void ProcessMagnetizeEvent(int playerId, int worldItemId)
 --      public void DestroyWorldItem(string world_item_id)
+--      void ToggleAutoLootable(int world_item_id)
 --
--- DATE:		05/03/2016
+-- DATE:        05/03/2016
 -- REVISIONS:   03/04/2016 - Add sound components for gold - Krystle
 --              05/05/2016 - Add magnetize network update - Krystle
--- DESIGNER:	Joseph Tam-Huang
+--              06/05/2016 - Fix bug with dropped gold autolooting - Krystle
+-- DESIGNER:	Joseph Tam-Huang, Krystle Bulalakaw
 -- PROGRAMMER:  Joseph Tam-Huang, Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
 public class WorldItemManager : MonoBehaviour
@@ -31,19 +34,19 @@ public class WorldItemManager : MonoBehaviour
     public GameObject world_item;
     Inventory _inventory;
     int _my_player_id;
-	public static WorldItemManager Instance;
-	public AudioSource audioSource;
-	public AudioClip audioPickup;
-	public AudioClip audioDrop;
+    public static WorldItemManager Instance;
+    public AudioSource audioSource;
+    public AudioClip audioPickup;
+    public AudioClip audioDrop;
 
     void Awake()
     {
-        if (Instance == null)				//Check if instance already exists
-			Instance = this;				//if not, set instance to this
-		else if (Instance != this)			//If instance already exists and it's not this:
-			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a WorldItemManager. 
-		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
-	}
+        if (Instance == null)               //Check if instance already exists
+            Instance = this;                //if not, set instance to this
+        else if (Instance != this)          //If instance already exists and it's not this:
+            Destroy(gameObject);            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a WorldItemManager. 
+        DontDestroyOnLoad(gameObject);      //Sets this to not be destroyed when reloading scene
+    }
 
     /*
      * Retrives the ItemManager script, the Inventory script and the player id
@@ -84,16 +87,16 @@ public class WorldItemManager : MonoBehaviour
         _item.transform.position = new Vector3(pos_x, pos_y, -5);
 
         // Add gold-specific components
-		if (item_id == 2) {
-            // Magnetization
+        if (item_id == 2) {
+            _item.GetComponent<WorldItemData>().autolootable = true;
             _item.AddComponent<Magnetize>();
             _item.GetComponent<Magnetize>().world_item_id = world_item_id;
 
             // Sound component and gold drop sound
-			// audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
-			// audioSource.PlayOneShot (audioDrop);
-		}
-		return _item;
+            // audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
+            // audioSource.PlayOneShot (audioDrop);
+        }
+        return _item;
     }
 
     public void ReceiveCreateWorldItemPacket(JSONClass itemPacket)
@@ -135,7 +138,7 @@ public class WorldItemManager : MonoBehaviour
     /*
      * Processes a pick up message from the server.
      * Adds item to the player's inventory and plays gold pick sound if the player id matches
-      the player id in the message.
+     * the player id in the message.
      * Removes item from the world.
      */
     public void ProcessPickUpEvent(int world_item_id, int player_id, int item_id, int amt)
@@ -171,18 +174,47 @@ public class WorldItemManager : MonoBehaviour
             _inventory.DestroyInventoryItem(inv_pos, amt);
         }
         CreateWorldItem(world_item_id, item_id, amt, pos_x, pos_y);
+
+        // Makes it so that dropped gold will not magnetize nor autoloot
+        ToggleAutoLootable(world_item_id);
     }
 
     /*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: 	ProcessMagnetizeEvent
-    -- DATE: 		April 5, 2016
-    -- REVISIONS: 	N/A
-    -- DESIGNER:  	Krystle Bulalakaw
+    -- FUNCTION:    DisableAutoLootable
+    -- DATE:        April 6, 2016
+    -- REVISIONS:   N/A
+    -- DESIGNER:    Krystle Bulalakaw
+    -- PROGRAMMER:  Krystle Bulalakaw
+    -- INTERFACE:   ToggleAutoLootable(int world_item_id)
+    --                      int worldItemId - the world item ID
+    -- RETURNS:     void.
+    -- NOTES:
+    -- Finds the world item with matching ID, disables the autolootable property and removes magnetize component.
+    ----------------------------------------------------------------------------------------------------------------------*/
+    void ToggleAutoLootable(int world_item_id)
+    {
+        GameObject[] _world_items = GameObject.FindGameObjectsWithTag("WorldItem");
+
+        foreach (GameObject _world_item in _world_items)
+        {
+            if (_world_item.GetComponent<WorldItemData>().world_item_id == world_item_id)
+            {
+                _world_item.GetComponent<WorldItemData>().autolootable = false;
+                Destroy(_world_item.GetComponent<Magnetize>());
+            }
+        }
+    }
+
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:    ProcessMagnetizeEvent
+    -- DATE:        April 5, 2016
+    -- REVISIONS:   N/A
+    -- DESIGNER:    Krystle Bulalakaw
     -- PROGRAMMER: 	Krystle Bulalakaw
-    -- INTERFACE: 	ProcessMagnetizeEvent(int playerId, int world_item_id)
+    -- INTERFACE:   ProcessMagnetizeEvent(int playerId, int world_item_id)
     --                      int playerId - the player to magnetize the item towards
     --                      int worldItemId - the world item ID
-    -- RETURNS: 	void.
+    -- RETURNS:     void.
     -- NOTES:
     -- Processes an item magnetize message from the server.
     -- Finds the world item in the list with the matching world item ID, then gets the Magnetize component of the
@@ -197,6 +229,10 @@ public class WorldItemManager : MonoBehaviour
             if (_world_item.GetComponent<WorldItemData>().world_item_id == worldItemId)
             {
                 _world_item.GetComponent<Magnetize>().playerId = playerId;
+                if (GameData.MyPlayer.PlayerID != playerId)
+                {
+                    Destroy(this);
+                }
             }
         }
     }
