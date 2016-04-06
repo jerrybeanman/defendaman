@@ -72,5 +72,11 @@ public class Fireball : Projectile
                 burn.duration = 150;
             }
         }
+
+        var building = other.gameObject.GetComponent<Building>();
+        if (target != null || tree != null || building != null)
+        {
+            Destroy(gameObject);
+        }
     }
 }
