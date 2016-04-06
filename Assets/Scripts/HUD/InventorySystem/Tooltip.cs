@@ -23,6 +23,7 @@ public class Tooltip : MonoBehaviour
 { 
     private Item _item;
     private int _amount;
+    private bool _cost;
     private string _data;
     private GameObject _tooltip;
 
@@ -50,10 +51,11 @@ public class Tooltip : MonoBehaviour
      * Creates a string to display on the tooltip specific to the item passed 
      * and sets the Tooltip to active
      */
-    public void Activate(Item item, int amount = -1)
+    public void Activate(Item item, int amount = -1, bool cost = false)
     {
         this._item = item;
         this._amount = amount;
+        this._cost = cost;
         ConstructDataString();
         _tooltip.SetActive(true);
     }
@@ -79,9 +81,14 @@ public class Tooltip : MonoBehaviour
                 "\n<color=#ffffff>Armor: </color>" + _item.armor;
         }
         
-        if (_amount >= 0)
+        if (_amount >= 0 && !_cost)
         {
             _data += "\n<color=#ffffff>Amount: </color>" + _amount;
+        }
+
+        if (_cost)
+        {
+            _data += "\n<color=#ffffff>Cost: </color> " + _item.cost;
         }
 
         _tooltip.transform.GetChild(0).GetComponent<Text>().text = _data;

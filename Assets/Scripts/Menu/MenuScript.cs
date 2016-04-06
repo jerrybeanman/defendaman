@@ -218,27 +218,18 @@ public class MenuScript : MonoBehaviour {
         //		 unlock aman selection toggle if GamaData.AllyKingID == -1, which indicates aman hasnt been selected or has been "deselected" 
         //		 put aman "indicator" to the corresponding player on both teams
 
-        if (GameData.AllyKingID == -1)
-        {
-            aman_toggle.interactable = true;
-        } else if (GameData.AllyKingID != GameData.MyPlayer.PlayerID)
+		if (GameData.AllyKingID != GameData.MyPlayer.PlayerID)
         {
             aman_toggle.interactable = false;
             change_team.interactable = true;
         }
-
+		if (GameData.AllyKingID == -1)
+		{
+			aman_toggle.interactable = true;
+		}
         if (GameData.AllyKingID == GameData.MyPlayer.PlayerID)
         {
             change_team.interactable = false;
-        }
-
-        // TODO: Update current theme text/panel
-        if (GameData.CurrentTheme == Themes.Grass)
-        {
-            map_theme.transform.GetComponent<Text>().text = "MAP THEME: GRASSLAND";
-        } else
-        {
-            map_theme.transform.GetComponent<Text>().text = "MAP THEME: TRON";
         }
 
         // check the current lobby data values and update the player slots
@@ -366,7 +357,7 @@ public class MenuScript : MonoBehaviour {
 
 		// NOTE:: This can only be called when either the player has already selected to be the aman, which he can deselect it
 		//		  or no one on the team has selected aman. Functionality handled over network
-		GameData.AllyKingID = aman_toggle.isOn ? -1 : GameData.MyPlayer.PlayerID;
+		GameData.AllyKingID = aman_toggle.isOn ? GameData.MyPlayer.PlayerID : -1;
 		LobbyNetwork.SendLobbyData(NetworkCode.AmanSelection);
     }
 
@@ -484,11 +475,11 @@ public class MenuScript : MonoBehaviour {
     {
         map_select_panel.SetActive(false);
         GameData.CurrentTheme = (Themes)theme;
-		LobbyNetwork.SendLobbyData(NetworkCode.ThemeSelection);
         if ((Themes)theme == Themes.Grass)
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: GRASSLAND";
-        } else
+        } 
+		else
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: TRON";
         }
