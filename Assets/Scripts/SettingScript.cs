@@ -6,12 +6,6 @@ public class SettingScript : MonoBehaviour {
     public GameObject settings;
 
 
-    // Use this for initialization
-    void Start()
-    {
-        settings = GameObject.Find("Settings");
-    }
-
     // Update is called once per frame
     void Update()
     {
