@@ -86,8 +86,8 @@ public class WorldItemManager : MonoBehaviour
         // Add gold-specific components
 		if (item_id == 2) {
             // Magnetization
-            _item.AddComponent<CoinMagnetize>();
-            _item.GetComponent<CoinMagnetize>().world_item_id = world_item_id;
+            _item.AddComponent<Magnetize>();
+            _item.GetComponent<Magnetize>().world_item_id = world_item_id;
 
             // Sound component and gold drop sound
 			audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
@@ -103,7 +103,7 @@ public class WorldItemManager : MonoBehaviour
         Debug.Log(itemPacket["PosX"].AsFloat + " Y: " + itemPacket["PosY"].AsFloat);
         if (itemPacket["ItemId"].AsInt == 2)
         {
-            go.AddComponent<CoinMagnetize>();
+            go.AddComponent<Magnetize>();
         }
     }
 
@@ -187,6 +187,7 @@ public class WorldItemManager : MonoBehaviour
     -- NOTES:
     -- Processes an item magnetize message from the server.
     -- Finds the world item in the list with the matching world item Id, then gets the CoinMagnetize component of the
+    -- Finds the world item in the list with the matching world item ID, then gets the Magnetize component of the
     -- item and assigns the player ID parsed from the message.
     ----------------------------------------------------------------------------------------------------------------------*/
     public void ProcessMagnetizeEvent(int playerId, int worldItemId)
@@ -197,7 +198,7 @@ public class WorldItemManager : MonoBehaviour
         {
             if (_world_item.GetComponent<WorldItemData>().world_item_id == worldItemId)
             {
-                _world_item.GetComponent<CoinMagnetize>().playerId = playerId;
+                _world_item.GetComponent<Magnetize>().playerId = playerId;
             }
         }
     }
