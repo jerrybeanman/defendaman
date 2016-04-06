@@ -59,6 +59,7 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr UDPClient { get; private set; }
 
 	public static NetworkingManager instance;
+    private bool sendThisFrame = true;
 
     #endregion
 
@@ -109,7 +110,7 @@ public class NetworkingManager : MonoBehaviour
             //Needs to be replaced with one "get data" call
             while ((packet = receive_data_udp()).Length > 8)
                 update_data(packet);
-            
+
             //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.
             //So 23 "get data from client code" calls per frame, so the overhead of going from
             //unmanaged to managed code is invoked 23 times for UDP, instead of just once
@@ -117,7 +118,13 @@ public class NetworkingManager : MonoBehaviour
             //i.e. instead of rapid returns of [{a},{b}], [{c}]... etc 23 times, have it merge them
             // and return one big [{a}, {b}, {c}, {d}...]
 
-            send_data();
+            if (sendThisFrame)
+            {
+                send_data();
+                sendThisFrame = false;
+            } else {
+                sendThisFrame = true;
+            }
         }
     }
     
