@@ -27,9 +27,9 @@ using UnityEngine.EventSystems;
 
 public class AmanTeamBuff : Buff
 {
-    int attackBuff = 10;
-    int defenseBuff = 10;
-    int speedBuff = 2;
+    int attackBuff = 7;
+    int defenseBuff = 7;
+    int speedBuff = 1;
     BaseClass target;
 
     new void Start()
