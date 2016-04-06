@@ -41,13 +41,13 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
-	public bool playerlocker =false;
+	public bool playerlocker = false;
 
 	// Use this for initialization
 	void Start () 
 	{
 		health = MaxHp;
-		playerlocker=false;
+		playerlocker = false;
 		collidercounter=0;
 		if(!placing)
 			//gameObject.GetComponent<Animator>().SetTrigger("Create");
@@ -105,8 +105,13 @@ public class Building:MonoBehaviour {
 		{
 			if (attack.teamID == team)
 				return;
-			float damage = other.GetComponent<Trigger>().damage;
-			Health -= damage;
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee)
+                if (!((Melee)attack).targets.Add(gameObject))
+                    return;
+
+            Health -= attack.damage;
 		}
 
 		if(health<=0)

@@ -26,10 +26,16 @@ public class TreeCollider : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) {
 		// Prevents health bar trigger
 		if (other.GetComponent<Trigger>() != null) {
-			float damage = other.GetComponent<Trigger>().damage;
-            if (damage != 0)
+			var attack = other.GetComponent<Trigger>();
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee)
+                if (!((Melee)attack).targets.Add(gameObject))
+                    return;
+
+            if (attack.damage != 0)
             {
-                tree.SendResourceTakenMessage((int)damage);
+                tree.SendResourceTakenMessage((int)attack.damage);
             }
         } 
 	}
