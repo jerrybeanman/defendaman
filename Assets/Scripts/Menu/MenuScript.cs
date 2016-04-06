@@ -762,8 +762,8 @@ public class MenuScript : MonoBehaviour {
 	{
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
-			GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
-			GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
+			//GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+			//GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
 		}
 	}
 }
