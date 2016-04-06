@@ -19,10 +19,10 @@ enum ItemUpdate { Pickup = 1, Drop = 2, Create = 3, Magnetize = 4 }
 --      public void DestroyWorldItem(string world_item_id)
 --
 -- DATE:		05/03/2016
--- REVISIONS:   03/04/2016 - Add sound components for gold
---              05/05/2016 - Add magnetize network update
+-- REVISIONS:   03/04/2016 - Add sound components for gold - Krystle
+--              05/05/2016 - Add magnetize network update - Krystle
 -- DESIGNER:	Joseph Tam-Huang
--- PROGRAMMER:  Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang, Krystle Bulalakaw
 -----------------------------------------------------------------------------*/
 public class WorldItemManager : MonoBehaviour
 {
@@ -90,8 +90,8 @@ public class WorldItemManager : MonoBehaviour
             _item.GetComponent<Magnetize>().world_item_id = world_item_id;
 
             // Sound component and gold drop sound
-			audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
-			audioSource.PlayOneShot (audioDrop);
+			// audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
+			// audioSource.PlayOneShot (audioDrop);
 		}
 		return _item;
     }
@@ -136,7 +136,8 @@ public class WorldItemManager : MonoBehaviour
 
     /*
      * Processes a pick up message from the server.
-     * Adds item to the player's inventory if the player id matches the player id in the message.
+     * Adds item to the player's inventory and plays gold pick sound if the player id matches
+      the player id in the message.
      * Removes item from the world.
      */
     public void ProcessPickUpEvent(int world_item_id, int player_id, int item_id, int amt)
@@ -146,16 +147,16 @@ public class WorldItemManager : MonoBehaviour
         {
             _inventory.AddItem(item_id, amt);
             GameData.ItemCollided = false;
+
+            // Play gold pickup sound
+            if (item_id == 2)
+            {
+                audioPickup = Resources.Load("Music/Inventory/gold_pickup") as AudioClip;
+                audioSource.PlayOneShot(audioPickup);
+            }
         }
 
-        // Play gold pickup sound
-        if (item_id == 2) {
-			audioPickup = Resources.Load ("Music/Inventory/gold_pickup") as AudioClip;
-			audioSource.PlayOneShot (audioPickup);
-		}
-
         DestroyWorldItem(world_item_id);
-        
     }
 
     /*
@@ -186,7 +187,6 @@ public class WorldItemManager : MonoBehaviour
     -- RETURNS: 	void.
     -- NOTES:
     -- Processes an item magnetize message from the server.
-    -- Finds the world item in the list with the matching world item Id, then gets the CoinMagnetize component of the
     -- Finds the world item in the list with the matching world item ID, then gets the Magnetize component of the
     -- item and assigns the player ID parsed from the message.
     ----------------------------------------------------------------------------------------------------------------------*/
