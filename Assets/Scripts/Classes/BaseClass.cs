@@ -109,12 +109,17 @@ public abstract class BaseClass : MonoBehaviour {
         return finaldamage;
     }
 
+    //Apr 5, added multihit prevention
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
-        if ((attack = other.gameObject.GetComponent<Trigger>()) != null) {
-            if (attack.teamID == team || GameData.MyPlayer == null) {
+        if ((attack = other.gameObject.GetComponent<Trigger>()) != null)
+        {
+            if (attack.teamID == team || GameData.MyPlayer == null)
                 return;
-            }
+
+            //check for melee multihit, ignore if already in set
+            if (attack is Melee && !((Melee)attack).targets.Add(gameObject))
+                return;
 
             var damageTaken = 0f;
             if (playerID == GameData.MyPlayer.PlayerID)
@@ -158,7 +163,7 @@ public abstract class BaseClass : MonoBehaviour {
     {
         if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
             return cooldowns[0];
-//
+
         float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
 
         if (playerLoc!= default(Vector2) && distance < 13)
