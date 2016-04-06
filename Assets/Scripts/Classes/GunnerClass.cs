@@ -7,7 +7,7 @@ public enum SpecialCase { GunnerSpecial = 1 }
 
 public class GunnerClass : RangedClass
 {
-	int[] distance = new int[2] { 12, 12 };
+	int[] distance = new int[2] { 11, 13 };
 	int[] speed = new int[2] { 300, 400 };
 	Rigidbody2D bullet;
 	Rigidbody2D laser;
@@ -28,6 +28,9 @@ public class GunnerClass : RangedClass
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 16f;
 	public  float		 zoomInTime 		= 0.5f;
+	public  float 		 maxRatio			= 1.7f;
+	// hank
+	public	float 		 endingAtkRatio = 0.1f;
 
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
 	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
@@ -40,14 +43,14 @@ public class GunnerClass : RangedClass
 
 	new void Start()
 	{
-		cooldowns = new float[2] { 0.2f, 8f };
+		cooldowns = new float[2] { 0.2f, 10f };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
         _classStat.MaxHp = 1100;
-		_classStat.MoveSpeed = 10;
-		_classStat.AtkPower = 40;
-		_classStat.Defense = 30;
+		_classStat.MoveSpeed = 6;
+		_classStat.AtkPower = 100;
+		_classStat.Defense = 25;
 
         base.Start();
 
@@ -105,7 +108,8 @@ public class GunnerClass : RangedClass
         attack.AddForce(dir * speed[0]); //was newdir
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
-        attack.GetComponent<BasicRanged>().damage = ClassStat.AtkPower;
+        // hank april 6th added .2 ad ratio
+        attack.GetComponent<BasicRanged>().damage = (float) (ClassStat.AtkPower * .2);
         attack.GetComponent<BasicRanged>().maxDistance = distance[0];
 
         return cooldowns[0];
@@ -172,6 +176,7 @@ public class GunnerClass : RangedClass
 		// Show charge bar
 		HUD_Manager.instance.chargeBar.Holder.SetActive(true);
 
+		float startingAtkRatio = 0.1f;
 		while(inSpecial && elapsedTime < chargeTime)
 		{
 			elapsedTime += Time.deltaTime;
@@ -196,8 +201,11 @@ public class GunnerClass : RangedClass
 
 			// Set pooling radius to allow more pooling objects
 			MapManager.cameraDistance = -mainCamera.orthographicSize;
+			
+			endingAtkRatio = Mathf.Lerp(startingAtkRatio, maxRatio, t);
 			yield return new WaitForEndOfFrame ();
 		}
+
 
 		if(inSpecial)
 		{
@@ -286,6 +294,7 @@ public class GunnerClass : RangedClass
 		member.Add(new Pair<string, string>("playerID", playerID.ToString()));
 		NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
 	}
+
 	void fire()
     {
 		dir = (gameObject.transform.rotation * Vector3.right);
@@ -297,8 +306,7 @@ public class GunnerClass : RangedClass
         laserAttack.playerID = playerID;
         laserAttack.teamID = team;
         var zoomRatio = (mainCamera.orthographicSize / (zoomIn * .8f));
-        // Hank changed this for balance issues - charging damage with the new numbers won't work out
-        laserAttack.damage = ClassStat.AtkPower * 1.5f;
+        laserAttack.damage = ClassStat.AtkPower * endingAtkRatio;
         laserAttack.maxDistance = (int)(distance[1] * zoomRatio);
         laserAttack.pierce = 10;
 
