@@ -2,38 +2,15 @@
 using System.Collections;
 
 public class ColourizeScreen : MonoBehaviour {
-    private GameObject death { get; set; }
-    private GameObject injured { get; set; }
-    private GameObject healed { get; set; }
+	public GameObject death;
+	public GameObject injured;
+	public GameObject healed;
     private float injuryDuration = .1f;
     private float healedDuration = .15f;
 
     
-
-	// Use this for initialization
-	void Start () {
-        foreach(Transform child in transform)
-        {
-            switch(child.name)
-            {
-                case "Death":
-                    death = child.gameObject;
-                    break;
-                case "Injured":
-                    injured = child.gameObject;
-                    break;
-                case "Healed":
-                    healed = child.gameObject;
-                    break;
-                default:
-                    break;
-            }
-        }
-        death.SetActive(false);
-        injured.SetActive(false);
-        healed.SetActive(false);
-	}
 	
+
 	// Update is called once per frame
 	void Update () {
 	
