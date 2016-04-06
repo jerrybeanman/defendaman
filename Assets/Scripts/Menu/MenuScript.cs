@@ -444,6 +444,14 @@ public class MenuScript : MonoBehaviour {
     public void SelectTeam(int team)
     {
         team_select_panel.SetActive(false);
+
+        if (GameData.MyPlayer.TeamID != team && GameData.MyPlayer.TeamID > 0)
+        {
+            int temp = GameData.AllyKingID;
+            GameData.AllyKingID = GameData.EnemyKingID;
+            GameData.EnemyKingID = temp;
+        }
+
         GameData.MyPlayer.TeamID = team;
         LobbyNetwork.SendLobbyData(NetworkCode.TeamChangeRequest);
         _team_set = true;
@@ -452,6 +460,7 @@ public class MenuScript : MonoBehaviour {
         {
             class_select_panel.SetActive(true);
         }
+
     }
 
     /*-----------------------------------------------------------------------------------------------------------------
