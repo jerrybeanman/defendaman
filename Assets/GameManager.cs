@@ -356,8 +356,6 @@ public class GameManager : MonoBehaviour {
     public void GameWon()
     {
         GameData.GameState = GameState.Won;
-        ReturnToMenu();
-        return;
 		HUD_Manager.instance.winScreen.Parent.gameObject.SetActive(true);
 		HUD_Manager.instance.winScreen.Parent.SetTrigger("Play");
 		HUD_Manager.instance.winScreen.Child.SetTrigger("Play");
