@@ -13,7 +13,6 @@
 #define StartGame   "StartGame"
 #define UserName    "UserName"
 
-//TODO: Implement this instead of Networking enum
 #define TEAMCODE 6
 
 namespace Networking
@@ -25,17 +24,17 @@ namespace Networking
 			ServerTCP() {}
 			~ServerTCP(){}
 
-            int InitializeSocket(short port) override;
+    	int InitializeSocket(short port) override;
 
-            int Accept(Player * player);
+      int Accept(Player * player);
 
-            static void * CreateClientManager(void * server);
+      static void * CreateClientManager(void * server);
 
-            void * Receive() override;
+      void * Receive() override;
 
-            void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
+      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
 
-            void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
+      void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
 			void CheckServerRequest(Player player, char * buffer);
 
@@ -47,13 +46,13 @@ namespace Networking
 
 			std::map<int, Player> getPlayerTable();
 
-            std::string constructPlayerTable();
+    	std::string constructPlayerTable();
 
-            void sendToClient(Player player, const char * message);
+    	void sendToClient(Player player, const char * message);
 
-            std::string UpdateID(const Player& player);
+    	std::string UpdateID(const Player& player);
 
-            void ShutDownGameServer(void);
+    	void ShutDownGameServer(void);
 
 		private:
 			Player newPlayer;
@@ -68,7 +67,8 @@ namespace Networking
                 GameStart           = 5,
                 UpdatePlayerList    = 6,
                 PlayerLeftLobby     = 7,
-                GameEnd             = 8
+								ChooseAman 				  = 8,
+                GameEnd             = 10
 
               };
 	    };

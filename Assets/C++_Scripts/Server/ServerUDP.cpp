@@ -124,11 +124,14 @@ void * ServerUDP::Receive()
         if (nvalue == 0)
         {
           free(buf);
-          StopServer();
+          close(_UDPReceivingSocket);
+          FD_CLR(_UDPReceivingSocket, &_allset);
         }
         if (nvalue == -1)
         {
+          free(buf);
           fatal("UDP_Server_Recv: recvfrom() failed\n");
+          break;
         }
         //fprintf(stderr, "From host: %s\n", inet_ntoa (Client.sin_addr));
 
@@ -174,10 +177,6 @@ void * ServerUDP::Receive()
     }
   }
   free(buf);
-  /* Unsure where to put this, this will clear up the select stuff
-  close(_UDPReceivingSocket);
-  FD_CLR(_UDPReceivingSocket, &_allset);
-  */
 }
 
 /*
@@ -253,22 +252,4 @@ void ServerUDP::PrepareSelect()
 
     FD_ZERO(&_allset);
     FD_SET(_UDPReceivingSocket, &_allset);
-}
-
-/*
-Stops the UPD server. It closes the receiving socket, sends a confirmation
-message to the TCP server before killing the process itself.
-
-Programmer: Gabriella Cheung
-*/
-void ServerUDP::StopServer()
-{
-  char sbuf[20];
-  sprintf(sbuf, "UDP server stopped");
-  gameRunning = false;
-  pthread_exit(NULL);
-
-  //close(_UDPReceivingSocket);
-  //write(_sockPair[1], sbuf, strlen(sbuf));
-  //kill(getpid(), SIGTERM);
 }

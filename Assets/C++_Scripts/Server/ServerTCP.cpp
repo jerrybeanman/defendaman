@@ -260,12 +260,17 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
       }
       break;
-
     case GameEnd: //Currently allows any player to annouce the end of the game.
       std::cout << "Player: " << json[PlayerID].int_value() << " has ended the game" << std::endl;
-      close(_PlayerTable[json[PlayerID].int_value()].socket);
-      this->ServerTCP::Broadcast(buffer);     // Inform all clients that the game has ended.
+      //close(_PlayerTable[json[PlayerID].int_value()].socket);
+      //this->ServerTCP::Broadcast(buffer);     // Inform all clients that the game has ended.
+      close(_UDPReceivingSocket);
+      gameRunning = false;
       //this->ServerTCP::ShutDownGameServer();  // Send a message to the UDP to kill itself.
+      break;
+      
+    default:
+      this->ServerTCP::Broadcast(buffer);
       break;
   }
 }
@@ -369,23 +374,4 @@ int ServerTCP::getPlayerId(std::string ipString)
 {
   std::size_t index = ipString.find_last_of(".");
   return stoi(ipString.substr(index+1));
-}
-
-/**
- * [ServerTCP::ShutDownGameServer                                     ]
- * [    Sends a message to the UDP Server via the already created pipe]
- * [    indicating that the game is over.                             ]
- * @author Tyler Trepanier-Bracken
- * @date   2016-03-14
- * @param  void
- * @return void
- */
-void ServerTCP::ShutDownGameServer(void)
-{
-  char sbuf[20];
-  char rbuf[20];
-  static int MESSAGE_SIZE = 20;
-  int nread = 0;
-  sprintf(sbuf, "%s", "GameEnd");
-
 }

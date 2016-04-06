@@ -1,6 +1,9 @@
 #include "Server.h"
 
 using namespace Networking;
+
+bool gameRunning = false;
+
 void Server::fatal(const char* error)
 {
     std::cerr << error << std::endl;
