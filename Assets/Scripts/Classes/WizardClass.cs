@@ -88,12 +88,13 @@ public class WizardClass : RangedClass
         base.basicAttack(dir, playerLoc);
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.75f), transform.position.y + (dir.y * 1.75f), -5);
 
-        Rigidbody2D attack = (Rigidbody2D)Instantiate(fireball, startPosition, transform.rotation);
-        attack.AddForce(dir * speed[0]);
-        attack.GetComponent<Fireball>().playerID = playerID;
-        attack.GetComponent<Fireball>().teamID = team;
-        attack.GetComponent<Fireball>().damage = ClassStat.AtkPower;
-        attack.GetComponent<Fireball>().maxDistance = distance[0];
+        Rigidbody2D instance = (Rigidbody2D)Instantiate(fireball, startPosition, transform.rotation);
+        instance.AddForce(dir * speed[0]);
+        var attack = instance.GetComponent<Fireball>();
+        attack.playerID = playerID;
+        attack.teamID = team;
+        attack.damage = ClassStat.AtkPower;
+        attack.maxDistance = distance[0];
 		
         return cooldowns[0];
     }
@@ -127,14 +128,13 @@ public class WizardClass : RangedClass
         base.specialAttack(dir,playerLoc);
         
         if (!silenced) {
-            Rigidbody2D attack = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
-            var instance = attack.GetComponent<MagicCircle>();
-            instance.playerID = playerID;
-            instance.teamID = team;
-            instance.damage = 0;
-            instance.duration = 5;
+            Rigidbody2D instance = (Rigidbody2D)Instantiate(magicCircle, dir, Quaternion.identity);
+            var attack = instance.GetComponent<MagicCircle>();
+            attack.playerID = playerID;
+            attack.teamID = team;
+            attack.damage = 0;
+            attack.duration = 5;
         }
-
         return cooldowns[1];
     }
 }
