@@ -74,6 +74,11 @@ public class WorldItemData : MonoBehaviour
 
                 if (_first_collision) {
 	                _first_collision = false;
+                    if (_world_item_manager == null)
+                    {
+                        Debug.Log("[ERROR] WorldItemData's Update says _world_item_manager is null");
+                        return;
+                    }
 	                msg = _world_item_manager.CreatePickupItemNetworkMessage(world_item_id, player_id, item.id, amount);
 	                NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Pickup, msg, Protocol.TCP);
 	                StartCoroutine(NeverReceivedPickupMessageBack());
