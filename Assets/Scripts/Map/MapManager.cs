@@ -35,7 +35,7 @@ public class MapManager : MonoBehaviour {
     const int RESOURCE_AMOUNT = 100;
     const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
     const int RESPAWN_TIME = 30;        //  in seconds
-	const int RESOURCE_Z = -10;
+    const int RESOURCE_Z = -10;
 
     // Map update event types
     public enum EventType 
@@ -43,7 +43,7 @@ public class MapManager : MonoBehaviour {
         CREATE_MAP = 0,
         RESOURCE_TAKEN = 1,
         RESOURCE_DEPLETED = 2,
-		RESOURCE_RESPAWN = 3
+        RESOURCE_RESPAWN = 3
     };
 
     // Map values
@@ -81,8 +81,8 @@ public class MapManager : MonoBehaviour {
     public float frustumHeight, frustumWidth;
 
 	// Sound components
-	public AudioSource audioSource;
-	public AudioClip audioExplode;
+    public AudioSource audioSource;
+    public AudioClip audioExplode;
 
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -207,11 +207,10 @@ public class MapManager : MonoBehaviour {
     -- instantiates them based on their X and Y positions, which were pre-generated and assigned by the server. 
     -- The sprite is set randomly from a range of sprites (assigned in Unity Editor).
     ----------------------------------------------------------------------------------------------------------------------*/
-    private void InstantiateResources(JSONClass message)
-    {
+    private void InstantiateResources(JSONClass message) {
         JSONArray resources = message[NetworkKeyString.MapResources].AsArray;
-        for (int i = 0; i < resources.Count; i++)
-        {
+
+        for (int i = 0; i < resources.Count; i++) {
             GameObject temp = Instantiate(mapResource, new Vector3(resources[i][0].AsInt + OUTERWALL_THICKNESS,
                 resources[i][1].AsInt + OUTERWALL_THICKNESS, RESOURCE_Z), Quaternion.identity) as GameObject;
             mapResource.GetComponent<SpriteRenderer>().sprite = _resourceSprites[(UnityEngine.Random.Range(0, _resourceSprites.Count))];
