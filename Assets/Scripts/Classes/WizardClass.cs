@@ -31,14 +31,14 @@ public class WizardClass : RangedClass
 
     new void Start()
     {
-        cooldowns = new float[2] { 0.5f, 5 };
+        cooldowns = new float[2] { 0.5f, 30 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
         _classStat.MaxHp = 1000;
-        _classStat.MoveSpeed = 11;
+        _classStat.MoveSpeed = 5;
         _classStat.AtkPower = 25;
-        _classStat.Defense = 20;
+        _classStat.Defense = 25;
 
         base.Start();
 
@@ -52,10 +52,7 @@ public class WizardClass : RangedClass
         if (playerID == GameData.MyPlayer.PlayerID)
         {
             //Starting item kit
-            Inventory.instance.AddItem(1);
-            Inventory.instance.AddItem(5, 5);
-            Inventory.instance.AddItem(6);
-            Inventory.instance.AddItem(7);
+            Inventory.instance.AddItem(17);
         }
 
         //add wizard attack sound clip

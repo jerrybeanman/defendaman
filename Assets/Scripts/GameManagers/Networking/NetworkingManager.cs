@@ -19,7 +19,8 @@ for fail does not work
 public enum DataType
 {
     Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
-    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15, StatUpdate = 16
+    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15, StatUpdate = 16,
+    GameOver = 17
 }
 
 public enum Protocol
@@ -428,9 +429,9 @@ public class NetworkingManager : MonoBehaviour
     
     void OnGUI()
     {
-        GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
-        GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
-        GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
+        //GUI.Label(new Rect(450, 0, Screen.width, Screen.height), "Last Received: " + result);
+        //GUI.Label(new Rect(450, 20, Screen.width, Screen.height), "UDP Sending: " + lastUDP);
+        //GUI.Label(new Rect(450, 40, Screen.width, Screen.height), "TCP Sending: " + lastTCP);
     }
 
  	   #endregion

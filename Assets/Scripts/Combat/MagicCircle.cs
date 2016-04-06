@@ -53,6 +53,7 @@ public class MagicCircle : Area
     ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
+        duration = 6;
 		transform.position = new Vector3(transform.position.x, transform.position.y, -2);
         startPos = transform.position;
         Destroy(gameObject, duration);
