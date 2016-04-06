@@ -111,7 +111,7 @@ public class WizardClass : RangedClass
     --
     -- REVISIONS:
     --      - March 17, 2016: Fixed instantiation to work through networking - Carson
-    --      - Aprile 4, 2016: Added check for silence for magic circle - Hank
+    --      - April 4, 2016: Added check for silence for magic circle - Hank
     --
     -- DESIGNER: Hank Lo, Allen Tsang
     --
