@@ -284,7 +284,7 @@ public class Inventory : MonoBehaviour
         if(GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] != 0)
             classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT];
         if (GameData.MyPlayer.WeaponStats[Constants.SPEED_STAT] != 0)
-            classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.SPEED_STAT];
+            classStat.MoveSpeed -= GameData.MyPlayer.WeaponStats[Constants.SPEED_STAT];
 
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
         {
