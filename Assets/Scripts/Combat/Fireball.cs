@@ -49,6 +49,14 @@ public class Fireball : Projectile
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         base.OnTriggerEnter2D(other);
+
+        var projectile = other.gameObject.GetComponent<Projectile>();
+        //if enemy projectile
+        if (projectile != null && teamID != projectile.teamID && !(projectile is Laser))
+        {
+            Destroy(other.gameObject);
+        }
+
         var target = other.gameObject.GetComponent<BaseClass>();
         var tree = other.gameObject.GetComponent<Resource>();
         if ((target != null && teamID != target.team) || tree != null)
@@ -63,6 +71,12 @@ public class Fireball : Projectile
             {
                 burn.duration = 150;
             }
+        }
+
+        var building = other.gameObject.GetComponent<Building>();
+        if (target != null || tree != null || building != null)
+        {
+            Destroy(gameObject);
         }
     }
 }
