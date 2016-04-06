@@ -16,6 +16,7 @@ static class Constants
     public const string GOLD_RES            = "Gold";
     public const string DAMAGE_STAT         = "damage";
     public const string ARMOR_STAT          = "armor";
+    public const string SPEED_STAT          = "speed";
     public const int NOT_APPLICABLE         = -1;
     public const string INCOMPATIBLE_MSG    = "Incompatible weapon";
     public const string NO_EQUIPPED         = "No weapon equipped";
@@ -274,6 +275,7 @@ public class Inventory : MonoBehaviour
         string _weapon_error_msg = Constants.NO_EQUIPPED;
         int damage = 0;
         int armor = 0;
+        int speed = 0;
 
         var classStat = GameManager.instance.player.GetComponent<BaseClass>().ClassStat;
 
@@ -281,6 +283,8 @@ public class Inventory : MonoBehaviour
             classStat.AtkPower -= GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT];
         if(GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] != 0)
             classStat.Defense -= GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT];
+        if (GameData.MyPlayer.WeaponStats[Constants.SPEED_STAT] != 0)
+            classStat.MoveSpeed -= GameData.MyPlayer.WeaponStats[Constants.SPEED_STAT];
 
         if (inventory_item_list[Constants.WEAPON_SLOT].id != -1)
         {
@@ -294,6 +298,7 @@ public class Inventory : MonoBehaviour
                 _weapon_error_msg = "";
                 damage = _data.item.damage;
                 armor = _data.item.armor;
+                speed = _data.item.speed;
             }
             else
             {
@@ -304,11 +309,14 @@ public class Inventory : MonoBehaviour
 
         GameData.MyPlayer.WeaponStats[Constants.DAMAGE_STAT] = damage;
         GameData.MyPlayer.WeaponStats[Constants.ARMOR_STAT] = armor;
+        GameData.MyPlayer.WeaponStats[Constants.SPEED_STAT] = speed;
 
-        if(damage != 0)
+        if (damage != 0)
             classStat.AtkPower += damage;
         if(armor != 0)
             classStat.Defense += armor;
+        if (speed != 0)
+            classStat.MoveSpeed += speed;
     }
 
     public void DisplayWeaponError(string msg)
