@@ -21,7 +21,6 @@
 --  This class contains the logic that relates to the Wizard Class.
 ---------------------------------------------------------------------------------------*/
 using UnityEngine;
-using System.Collections;
 
 public class WizardClass : RangedClass
 {
@@ -98,8 +97,6 @@ public class WizardClass : RangedClass
         attack.GetComponent<Fireball>().teamID = team;
         attack.GetComponent<Fireball>().damage = ClassStat.AtkPower;
         attack.GetComponent<Fireball>().maxDistance = distance[0];
-
-		print (attack.GetComponent<Fireball>().playerID);
 		
         return cooldowns[0];
     }
