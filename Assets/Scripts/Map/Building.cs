@@ -9,9 +9,10 @@ public class Building:MonoBehaviour {
 
 	public BuildingType type;
 
-	public float MaxHp  = 100;
+	public float MaxHp;
 	public float health;
 	public int 	 cost;
+	public float ConstructionTime;
 	public float Health
 	{
 		get
@@ -26,12 +27,8 @@ public class Building:MonoBehaviour {
 	}
 
 	public int team;
-	public int collidercounter = 0;
 	public Sprite allyBuilding;
 	public Sprite enemyBuilding;
-	public HealthBar healthBar;
-	
-	public float ConstructionTime = 2f;
 
 	private SpriteRenderer spriteRenderer;
 
@@ -41,7 +38,12 @@ public class Building:MonoBehaviour {
 	public bool placeble;
 	[HideInInspector]
 	public bool constructed = false;
+	[HideInInspector]
+	public int collidercounter = 0;
+	[HideInInspector]
 	public bool playerlocker = false;
+	[HideInInspector]
+	public HealthBar healthBar;
 
 	// Use this for initialization
 	void Start () 
@@ -58,6 +60,11 @@ public class Building:MonoBehaviour {
 			gameObject.GetComponent<SpriteRenderer>().sprite = allyBuilding;
 		else
 			gameObject.GetComponent<SpriteRenderer>().sprite = enemyBuilding;
+
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
+		{
+			cost = 0;
+		}
 
     }
 
