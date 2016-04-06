@@ -201,7 +201,6 @@ public class WorldItemManager : MonoBehaviour
                 {
                     Destroy(this);
                 }
-
             }
         }
     }
