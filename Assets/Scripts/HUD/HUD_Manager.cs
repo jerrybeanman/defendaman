@@ -197,7 +197,7 @@ public class HUD_Manager : MonoBehaviour
 				playerDp.Container.sprite = playerDp.MageDP;
 				break;
 			case ClassType.Ninja:
-				playerDp.Container.sprite = playerDp.GunnerDP;
+				playerDp.Container.sprite = playerDp.NinjaDP;
 				break;
 		}
 	}
@@ -671,8 +671,8 @@ public class HUD_Manager : MonoBehaviour
 	------------------------------------------------------------------------------*/
 	public void DisplayShop()
 	{
+		GameData.MouseBlocked = false;
 		shop.MainPanel.SetActive(shop.MainPanel.activeSelf ? false : true);
-		GameData.MouseBlocked = !GameData.MouseBlocked;
 	}
 	
 	/*----------------------------------------------------------------------------

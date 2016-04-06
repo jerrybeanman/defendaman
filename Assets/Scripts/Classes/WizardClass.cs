@@ -31,7 +31,7 @@ public class WizardClass : RangedClass
 
     new void Start()
     {
-        cooldowns = new float[2] { 0.5f, 6 };
+        cooldowns = new float[2] { 0.5f, 5 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
