@@ -14,6 +14,7 @@ public class NetworkKeyString
     public static string PlayerID       = "PlayerID";
     public static string TeamID         = "TeamID";
     public static string ClassID        = "ClassID";
+	public static string AmanID			= "AmanID";
     public static string WorldItemID    = "WorldItemID";
     public static string Ready          = "Ready";
     public static string StartGame      = "StartGame";
@@ -39,7 +40,7 @@ public class PlayerData
     public int PlayerID = -1;
     public string Username { get; set; }
     public int TeamID { get; set; }
-	public ClassType ClassType;
+	public ClassType ClassType = ClassType.Gunner;
     public bool Ready = false;
     public Dictionary<string, int> Resources = new Dictionary<string, int>()
     {

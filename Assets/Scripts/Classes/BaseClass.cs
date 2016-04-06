@@ -28,7 +28,6 @@ public abstract class BaseClass : MonoBehaviour {
     
     protected void Start ()
     {
-        var networkingManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkingManager>();
         allyKingID = GameData.AllyKingID;
         enemyKingID = GameData.EnemyKingID;
 

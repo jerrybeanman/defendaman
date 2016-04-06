@@ -118,118 +118,6 @@ public class MenuScript : MonoBehaviour {
     }
 
     /*-----------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: Awake
-    --
-    -- DATE: April 04, 2016
-    --
-    -- DESIGNER: Spenser Lee & Jerry Jia
-    --
-    -- PROGRAMMER: Spenser Lee & Jerry Jia
-    --
-    -- INTERFACE: void Awake()
-    --
-    -- RETURNS: void
-    --
-    -- NOTES:
-    -- Initialization function. Loads necessary sprites and sets default values upon the Menu Scene loading.
-    -----------------------------------------------------------------------------------------------------------------*/
-    void Awake()
-    {
-        _default_avatar = Resources.Load("Sprites/UI/default_avatar", typeof(Sprite)) as Sprite;
-        _gunner_avatar = Resources.Load("Sprites/UI/gun_avatar", typeof(Sprite)) as Sprite;
-        _ninja_avatar = Resources.Load("Sprites/UI/ninja_avatar", typeof(Sprite)) as Sprite;
-        _mage_avatar = Resources.Load("Sprites/UI/mage_avatar", typeof(Sprite)) as Sprite;
-
-
-        menu_canvas = menu_canvas.GetComponent<Canvas>();
-
-        // set Main menu by default and disable other states & panels
-        settings_menu.SetActive(false);
-        connect_menu.SetActive(false);
-        lobby_menu.SetActive(false);
-        main_menu.SetActive(true);
-        _menu_order.Add(main_menu);
-
-        _team1_slots = new List<Transform>();
-        _team2_slots = new List<Transform>();
-
-        // initialize all 12 slots per team and disable them by default
-        foreach (Transform slot in team1_list.transform)
-        {
-            _team1_slots.Add(slot);
-            slot.gameObject.SetActive(false);
-        }
-        foreach (Transform slot in team2_list.transform)
-        {
-            _team2_slots.Add(slot);
-            slot.gameObject.SetActive(false);
-        }
-
-        team_select_panel.SetActive(false);
-        class_select_panel.SetActive(false);
-        map_select_panel.SetActive(false);
-    }
-
-    /*-----------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: Update
-    --
-    -- DATE: April 04, 2016
-    --
-    -- DESIGNER: Spenser Lee
-    --
-    -- PROGRAMMER: Spenser Lee
-    --
-    -- INTERFACE: void Update()
-    --
-    -- RETURNS: void
-    --
-    -- NOTES:
-    -- Called once per frame. Waits for new incoming network messages and will update the lobby list if changes are
-    -- made. (e.g. new player, team changes etc.)
-    -----------------------------------------------------------------------------------------------------------------*/
-    void Update()
-    {
-        if (LobbyNetwork.connected)
-        {
-            string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
-            if (!String.Equals(tmp, "[]"))
-            {
-                LobbyNetwork.ParseLobbyData(tmp);
-
-                // TODO: if aman has been set AND current player is not aman
-                //       disable aman toggle
-                // aman_toggle.interactable = false;
-
-                UpdateLobbyList();
-                //if(LobbyNetwork.Start)
-                //	StartCoroutine(start_level());
-            }
-        }
-    }
-
-    /*-----------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: start_level
-    --
-    -- DATE: April 04, 2016
-    --
-    -- DESIGNER: Jerry Jia
-    --
-    -- PROGRAMMER: Jerry Jia
-    --
-    -- INTERFACE: IEnumerator start_level()
-    --
-    -- RETURNS: IEnumerator
-    --
-    -- NOTES:
-    -- TODO...
-    -----------------------------------------------------------------------------------------------------------------*/
-    IEnumerator start_level()
-	{
-		yield return new WaitForSeconds(2f);
-		Application.LoadLevel("EngineTeam_master");
-	}
-
-    /*-----------------------------------------------------------------------------------------------------------------
     -- FUNCTION: DoSend()
     --
     -- DATE: April 04, 2016
@@ -284,6 +172,10 @@ public class MenuScript : MonoBehaviour {
         {
             slot.gameObject.SetActive(false);
         }
+
+		//TODO:: lock aman selection toggle if GameData.AllyKingID != GameData.MyPlayer.PlayerID 
+		//		 unlock aman selection toggle if GamaData.AllyKingID == -1, which indicates aman hasnt been selected or has been "deselected" 
+		//		 put aman "indicator" to the corresponding player on both teams 
 
         // check the current lobby data values and update the player slots
         foreach (PlayerData p in GameData.LobbyData.Values)
@@ -392,6 +284,10 @@ public class MenuScript : MonoBehaviour {
     -----------------------------------------------------------------------------------------------------------------*/
     public void SetAman()
     {
+
+		GameData.AllyKingID = aman_toggle.isOn ? -1 : GameData.MyPlayer.PlayerID;
+		LobbyNetwork.SendLobbyData(NetworkCode.AmanSelection);
+
         // TODO: send netowrk message inidcating aman has been set
         // change class to aman?
         // aman_toggle.isOn
