@@ -90,6 +90,7 @@ public class GunnerClass : RangedClass
         //add gunboi attack sound
         au_simple_attack = Resources.Load("Music/Weapons/gunboi_gun_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/gunboi_gun_secondary") as AudioClip;
+        au_gunner_charge = Resources.Load("Music/Weapons/gunboi_gun_charge") as AudioClip;
     }
 
 
@@ -124,8 +125,9 @@ public class GunnerClass : RangedClass
 	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
             playerLoc = default(Vector2);
 	        base.specialAttack(dir, playerLoc);
+            playspecialCharge(playerID);
 
-    	if (!silenced) {
+        if (!silenced) {
 	        this.dir = dir;
 	        inSpecial = true;
 	    }
@@ -299,7 +301,9 @@ public class GunnerClass : RangedClass
     {
 		dir = (gameObject.transform.rotation * Vector3.right);
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
-                        playspecialSound(playerID);
+            au_attack.Stop();
+            playspecialSound(playerID);
+            
         Rigidbody2D attack = (Rigidbody2D)Instantiate(laser, startPosition, transform.rotation);
         attack.AddForce(dir * speed[0]);
         var laserAttack = attack.GetComponent<Laser>();
@@ -335,6 +339,16 @@ public class GunnerClass : RangedClass
         {
             au_attack.volume = (15 - distance) / 40;
             au_attack.PlayOneShot(au_special_attack);
+        }
+    }
+    void playspecialCharge(int PlayerID)
+    {
+        Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
+        float distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID]);
+        if (distance < 13)
+        {
+            au_attack.volume = (15 - distance) / 40;
+            au_attack.PlayOneShot(au_gunner_charge);
         }
     }
 }

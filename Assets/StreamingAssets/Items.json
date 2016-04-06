@@ -151,8 +151,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "cursorSword_gold",
-    "worldSlug": "cursorSword_gold"
+    "slug": "sword1",
+    "worldSlug": "sword1"
   },
   {
     "id": 9,
@@ -169,8 +169,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "cursorSword_gold",
-    "worldSlug": "cursorSword_gold"
+    "slug": "8_sword_level_2",
+    "worldSlug": "8_sword_level_2"
   },
   {
     "id": 10,
@@ -187,8 +187,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "cursorSword_gold",
-    "worldSlug": "cursorSword_gold"
+    "slug": "9_sword_level_3",
+    "worldSlug": "9_sword_level_3"
   },
   {
     "id": 11,
@@ -205,8 +205,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "cursorSword_gold",
-    "worldSlug": "cursorSword_gold"
+    "slug": "10_sword_level_4",
+    "worldSlug": "10_sword_level_4"
   },
   {
     "id": 12,
@@ -223,8 +223,8 @@
     "classType": 1,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "12_gun_level_1",
+		"worldSlug": "12_gun_level_1"
   },
   {
     "id": 13,
@@ -241,8 +241,8 @@
     "classType": 1,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "13_gun_level_2",
+		"worldSlug": "13_gun_level_2"
   },
   {
     "id": 14,
@@ -259,8 +259,8 @@
     "classType": 1,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "14_gun_level_3",
+		"worldSlug": "14_gun_level_3"
   },
   {
     "id": 15,
@@ -277,8 +277,8 @@
     "classType": 1,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "15_gun_level_4",
+		"worldSlug": "15_gun_level_4"
   },
   {
     "id": 16,
@@ -295,8 +295,8 @@
     "classType": 1,
     "stackable": false,
     "type": "Weapon",
-    "slug": "cursorSword_gold",
-    "worldSlug": "cursorSword_gold"
+    "slug": "16_gun_level_5",
+    "worldSlug": "16_gun_level_5"
   },
   {
     "id": 17,
@@ -313,8 +313,8 @@
     "classType": 3,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "17_staff_level_1",
+		"worldSlug": "17_staff_level_1"
   },
   {
     "id": 18,
@@ -331,8 +331,8 @@
     "classType": 3,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "18_staff_level_2",
+		"worldSlug": "18_staff_level_2"
   },
   {
     "id": 19,
@@ -349,8 +349,8 @@
     "classType": 3,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "19_staff_level_3",
+		"worldSlug": "19_staff_level_3"
   },
   {
     "id": 20,
@@ -367,8 +367,8 @@
     "classType": 3,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "20_staff_level_4",
+		"worldSlug": "20_staff_level_4"
   },
   {
     "id": 21,
@@ -385,7 +385,7 @@
     "classType": 3,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorSword_gold",
-		"worldSlug": "cursorSword_gold"
+    "slug": "21_staff_level_5",
+		"worldSlug": "21_staff_level_5"
   }
 ]

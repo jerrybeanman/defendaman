@@ -23,6 +23,7 @@ public abstract class BaseClass : MonoBehaviour {
     public AudioClip au_special_attack;
     public AudioClip au_special_l;
     public AudioClip au_failed_special;
+    public AudioClip au_gunner_charge;
 
     public bool silenced = false;
     

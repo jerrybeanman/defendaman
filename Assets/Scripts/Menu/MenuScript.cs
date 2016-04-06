@@ -110,27 +110,90 @@ public class MenuScript : MonoBehaviour {
             GameData.LobbyData.Add(idx++, p);
         }
     }
-
-    /*-----------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: DoSend()
+	/*-----------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Awake
     --
     -- DATE: April 04, 2016
     --
-    -- DESIGNER: Jerry Jia
+    -- DESIGNER: Spenser Lee & Jerry Jia
     --
-    -- PROGRAMMER: Jerry Jia
+    -- PROGRAMMER: Spenser Lee & Jerry Jia
     --
-    -- INTERFACE: IEnumerator DoSend()
+    -- INTERFACE: void Awake()
     --
-    -- RETURNS: IEnumerator
+    -- RETURNS: void
     --
     -- NOTES:
-    -- TODO...
+    -- Initialization function. Loads necessary sprites and sets default values upon the Menu Scene loading.
     -----------------------------------------------------------------------------------------------------------------*/
-    IEnumerator DoSend()
-    {
-        yield return new WaitForSeconds(1);
-    }
+	void Awake()
+	{
+		_default_avatar = Resources.Load("Sprites/UI/default_avatar", typeof(Sprite)) as Sprite;
+		_gunner_avatar = Resources.Load("Sprites/UI/gun_avatar", typeof(Sprite)) as Sprite;
+		_ninja_avatar = Resources.Load("Sprites/UI/ninja_avatar", typeof(Sprite)) as Sprite;
+		_mage_avatar = Resources.Load("Sprites/UI/mage_avatar", typeof(Sprite)) as Sprite;
+		
+		
+		menu_canvas = menu_canvas.GetComponent<Canvas>();
+		
+		// set Main menu by default and disable other states & panels
+		settings_menu.SetActive(false);
+		connect_menu.SetActive(false);
+		lobby_menu.SetActive(false);
+		main_menu.SetActive(true);
+		_menu_order.Add(main_menu);
+		
+		_team1_slots = new List<Transform>();
+		_team2_slots = new List<Transform>();
+		
+		// initialize all 12 slots per team and disable them by default
+		foreach (Transform slot in team1_list.transform)
+		{
+			_team1_slots.Add(slot);
+			slot.gameObject.SetActive(false);
+		}
+		foreach (Transform slot in team2_list.transform)
+		{
+			_team2_slots.Add(slot);
+			slot.gameObject.SetActive(false);
+		}
+		
+		team_select_panel.SetActive(false);
+		class_select_panel.SetActive(false);
+		map_select_panel.SetActive(false);
+	}
+	
+	/*-----------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Update
+    --
+    -- DATE: April 04, 2016
+    --
+    -- DESIGNER: Spenser Lee
+    --
+    -- PROGRAMMER: Spenser Lee
+    --
+    -- INTERFACE: void Update()
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Called once per frame. Waits for new incoming network messages and will update the lobby list if changes are
+    -- made. (e.g. new player, team changes etc.)
+    -----------------------------------------------------------------------------------------------------------------*/
+	void Update()
+	{
+		if (LobbyNetwork.connected)
+		{
+			string tmp = Marshal.PtrToStringAnsi(NetworkingManager.TCP_GetData());
+			if (!String.Equals(tmp, "[]"))
+			{
+				LobbyNetwork.ParseLobbyData(tmp);
+				
+				UpdateLobbyList();
+			}
+		}
+	}
+
 
     /*-----------------------------------------------------------------------------------------------------------------
     -- FUNCTION: UpdateLobbyList
@@ -528,7 +591,6 @@ public class MenuScript : MonoBehaviour {
             {
                 return;
             }
-            StartCoroutine(DoSend());
             LobbyNetwork.SendLobbyData(NetworkCode.PlayerJoinedLobby);
             _SwitchMenu(MenuStates.Lobby);
         }
@@ -762,8 +824,8 @@ public class MenuScript : MonoBehaviour {
 	{
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
-			GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
-			GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
+			//GUI.Label(new Rect(10, 20, Screen.width, Screen.height), "Reading()");
+			//GUI.Label(new Rect(10, 40, Screen.width, Screen.height), LobbyNetwork.RecievedData);
 		}
 	}
 }
