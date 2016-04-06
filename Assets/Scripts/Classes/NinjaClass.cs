@@ -30,7 +30,6 @@ public class NinjaClass : MeleeClass
 {
     Rigidbody2D sword;
     Rigidbody2D attack;
-    BasicSword attackSword;
     GameObject teleport;
     GameObject teleportInstance;
 
@@ -53,10 +52,10 @@ public class NinjaClass : MeleeClass
         attack = (Rigidbody2D)Instantiate(sword, transform.position, transform.rotation);
         attack.GetComponent<BoxCollider2D>().enabled = false;
 
-        attackSword = attack.GetComponent<BasicSword>();
-        attackSword.playerID = playerID;
-        attackSword.teamID = team;
-        attackSword.damage = ClassStat.AtkPower;
+        attackMelee = attack.GetComponent<Melee>();
+        attackMelee.playerID = playerID;
+        attackMelee.teamID = team;
+        attackMelee.damage = ClassStat.AtkPower;
         attack.transform.parent = transform;
 
         var controller = Resources.Load("Controllers/ninjaboi") as RuntimeAnimatorController;
@@ -85,7 +84,7 @@ public class NinjaClass : MeleeClass
         dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
         base.basicAttack(dir, playerLoc);
 
-        attackSword.damage = ClassStat.AtkPower;
+        attackMelee.damage = ClassStat.AtkPower;
 
         StartAttackAnimation();
         Invoke("EndAttackAnimation", cooldowns[0] / 2);
