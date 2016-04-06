@@ -95,7 +95,8 @@ public class WizardClass : RangedClass
         attack.teamID = team;
         attack.damage = ClassStat.AtkPower;
         attack.maxDistance = distance[0];
-		
+        attack.pierce = 2;
+
         return cooldowns[0];
     }
 
