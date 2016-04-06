@@ -99,13 +99,13 @@ public class GameManager : MonoBehaviour {
         instance.player = null;
         if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
         {
-            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 9, new List<Pair<string, string>>(), Protocol.NA), 512);
+            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameLost();
         }
 
         if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID)
         {
-            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 9, new List<Pair<string, string>>(), Protocol.NA), 512);
+            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameWon();
         }
     }
