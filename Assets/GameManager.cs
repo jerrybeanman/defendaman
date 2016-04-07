@@ -355,7 +355,8 @@ public class GameManager : MonoBehaviour {
 
    	public void ReturnToMenu()
     {
-        NetworkingManager.instance.ResetConnections();
+        Application.Quit();
+       /* NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
         GameData.aiSpawn = new Pair<int, int>(10, 10);
@@ -377,6 +378,6 @@ public class GameManager : MonoBehaviour {
         Destroy(NetworkingManager.instance);
         Destroy(Inventory.instance);
         Destroy(WorldItemManager.Instance);
-        Application.LoadLevel("MenuScene");
+        Application.LoadLevel("MenuScene");*/
     }
 }
