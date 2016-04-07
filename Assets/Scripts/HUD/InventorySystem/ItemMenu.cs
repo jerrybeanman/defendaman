@@ -128,7 +128,7 @@ public class ItemMenu : MonoBehaviour
             // Send Network message
             List<Pair<string, string>> msg = 
                 _world_item_manager.CreateDropItemNetworkMessage(_item.id, _amt, _inv_pos);
-            NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.UDP);
+            NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Drop, msg, Protocol.TCP);
 
             // Pretend that a drop message was received
 			if (Application.platform != RuntimePlatform.LinuxPlayer) {

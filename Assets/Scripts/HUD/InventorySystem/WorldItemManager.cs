@@ -16,7 +16,9 @@ enum ItemUpdate { Pickup = 1, Drop = 2, Create = 3, Magnetize = 4 }
 --          int item_id, int amt)
 --      public void ProcessDropEvent(string world_item_id, int player_id, 
 --          int item_id, int amt, int inv_pos, Vector3 position)
+--      public void ProcessMagnetizeEvent(int playerId, int worldItemId)
 --      public void DestroyWorldItem(string world_item_id)
+--      void DisableAutoLootable(int world_item_id)
 --
 -- DATE:        05/03/2016
 -- REVISIONS:   03/04/2016 - Add sound components for gold - Krystle
@@ -44,7 +46,7 @@ public class WorldItemManager : MonoBehaviour
         else if (Instance != this)          //If instance already exists and it's not this:
             Destroy(gameObject);            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a WorldItemManager. 
         DontDestroyOnLoad(gameObject);      //Sets this to not be destroyed when reloading scene
-	}
+    }
 
     /*
      * Retrives the ItemManager script, the Inventory script and the player id
@@ -85,7 +87,7 @@ public class WorldItemManager : MonoBehaviour
         _item.transform.position = new Vector3(pos_x, pos_y, -5);
 
         // Add gold-specific components
-		if (item_id == 2) {
+        if (item_id == 2) {
             _item.GetComponent<WorldItemData>().autolootable = true;
             _item.AddComponent<Magnetize>();
             _item.GetComponent<Magnetize>().world_item_id = world_item_id;
@@ -93,8 +95,8 @@ public class WorldItemManager : MonoBehaviour
             // Sound component and gold drop sound
             // audioDrop = Resources.Load ("Music/Inventory/currency") as AudioClip;
             // audioSource.PlayOneShot (audioDrop);
-		}
-		return _item;
+        }
+        return _item;
     }
 
     public void ReceiveCreateWorldItemPacket(JSONClass itemPacket)
@@ -136,7 +138,7 @@ public class WorldItemManager : MonoBehaviour
     /*
      * Processes a pick up message from the server.
      * Adds item to the player's inventory and plays gold pick sound if the player id matches
-      the player id in the message.
+     * the player id in the message.
      * Removes item from the world.
      */
     public void ProcessPickUpEvent(int world_item_id, int player_id, int item_id, int amt)
@@ -178,7 +180,7 @@ public class WorldItemManager : MonoBehaviour
     }
 
     /*------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION:    ToggleAutoLootable
+    -- FUNCTION:    DisableAutoLootable
     -- DATE:        April 6, 2016
     -- REVISIONS:   N/A
     -- DESIGNER:    Krystle Bulalakaw
@@ -187,7 +189,7 @@ public class WorldItemManager : MonoBehaviour
     --                      int worldItemId - the world item ID
     -- RETURNS:     void.
     -- NOTES:
-    -- Finds the world item with matching ID, toggles the autolootable property and removes magnetize component.
+    -- Finds the world item with matching ID, disables the autolootable property and removes magnetize component.
     ----------------------------------------------------------------------------------------------------------------------*/
     void ToggleAutoLootable(int world_item_id)
     {
@@ -197,9 +199,7 @@ public class WorldItemManager : MonoBehaviour
         {
             if (_world_item.GetComponent<WorldItemData>().world_item_id == world_item_id)
             {
-                bool autolootable = _world_item.GetComponent<WorldItemData>().autolootable;
-                _world_item.GetComponent<WorldItemData>().autolootable = !autolootable;
-
+                _world_item.GetComponent<WorldItemData>().autolootable = false;
                 Destroy(_world_item.GetComponent<Magnetize>());
             }
         }
@@ -229,10 +229,6 @@ public class WorldItemManager : MonoBehaviour
             if (_world_item.GetComponent<WorldItemData>().world_item_id == worldItemId)
             {
                 _world_item.GetComponent<Magnetize>().playerId = playerId;
-                if (GameData.MyPlayer.PlayerID != playerId)
-                {
-                    Destroy(this);
-                }
             }
         }
     }

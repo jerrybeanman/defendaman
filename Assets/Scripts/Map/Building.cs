@@ -42,7 +42,6 @@ public class Building:MonoBehaviour {
 	public int collidercounter = 0;
 	[HideInInspector]
 	public bool playerlocker = false;
-	[HideInInspector]
 	public HealthBar healthBar;
 
 	// Use this for initialization

@@ -13,8 +13,8 @@
     "classType": -1,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorGauntlet_blue",
-		"worldSlug": "cursorGauntlet_blue"
+    "slug": "0_gloves",
+		"worldSlug": "0_gloves"
   },
   {
     "id": 1,
@@ -48,8 +48,8 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Resource",
-    "slug": "coins_ic",
-		"worldSlug": "coins_ic"
+    "slug": "2_coin",
+		"worldSlug": "2_coin"
   },
   {
     "id": 3,
@@ -65,8 +65,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "green_portion_round",
-		"worldSlug": "green_portion_round"
+		"cost": 250,
+    "slug": "3_health_pot",
+		"worldSlug": "3_health_pot"
   },
 	{
     "id": 4,
@@ -82,8 +83,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "blue_potion_round",
-		"worldSlug": "blue_potion_round"
+    "cost": 500,
+		"slug": "4_health_high_pot",
+		"worldSlug": "4_health_high_pot"
   },
 	{
     "id": 5,
@@ -99,8 +101,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "red_potion_classic",
-		"worldSlug": "red_potion_classic"
+    "cost": 700,
+		"slug": "5_damage_pot",
+		"worldSlug": "5_damage_pot"
   },
 	{
     "id": 6,
@@ -116,8 +119,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "blue_potion_classic",
-		"worldSlug": "blue_potion_classic"
+    "cost": 1000,
+		"slug": "6_armor_pot",
+		"worldSlug": "6_armor_pot"
   },
   {
     "id": 7,
@@ -133,8 +137,9 @@
     "classType": -1,
     "stackable": true,
     "type": "Consumable",
-    "slug": "yellow_portion_classic",
-    "worldSlug": "yellow_portion_classic"
+    "cost": 500,
+		"slug": "7_speed_pot",
+    "worldSlug": "7_speed_pot"
   },
   {
     "id": 8,
@@ -151,8 +156,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "sword1",
-    "worldSlug": "sword1"
+    "slug": "8_sword_level_2",
+    "worldSlug": "8_sword_level_2"
   },
   {
     "id": 9,
@@ -169,8 +174,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "8_sword_level_2",
-    "worldSlug": "8_sword_level_2"
+    "slug": "9_sword_level_3",
+    "worldSlug": "9_sword_level_3"
   },
   {
     "id": 10,
@@ -187,8 +192,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "9_sword_level_3",
-    "worldSlug": "9_sword_level_3"
+    "slug": "10_sword_level_4",
+    "worldSlug": "10_sword_level_4"
   },
   {
     "id": 11,
@@ -205,8 +210,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "10_sword_level_4",
-    "worldSlug": "10_sword_level_4"
+    "slug": "11_sword_level_5",
+    "worldSlug": "11_sword_level_5"
   },
   {
     "id": 12,
@@ -303,8 +308,8 @@
     "title": "Fancy Playing Cards",
     "description": "My magic tricks will cause pain.",
 		"stats": {
-      "damage": 2,
-      "armor": 2,
+      "damage": 1,
+      "armor": 1,
 			"health": 0,
 			"speed": 0,
       "level": 1
@@ -321,8 +326,8 @@
     "title": "Magical Wand",
     "description": "This looks like a stick.",
 		"stats": {
-      "damage": 4,
-      "armor": 4,
+      "damage": 3,
+      "armor": 3,
 			"health": 0,
 			"speed": 1,
       "level": 2
@@ -357,8 +362,8 @@
     "title": "Ball of Fire",
     "description": "This hurts to hold.",
 		"stats": {
-      "damage": 30,
-      "armor": 30,
+      "damage": 33,
+      "armor": 33,
 			"health": 0,
 			"speed": 3,
       "level": 4
@@ -375,8 +380,8 @@
     "title": "Fire Wave",
     "description": "How do you like your enemies cooked?",
 		"stats": {
-      "damage": 50,
-      "armor": 50,
+      "damage": 55,
+      "armor": 55,
 			"health": 0,
 			"speed": 4,
       "level": 5

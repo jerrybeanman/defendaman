@@ -1,16 +1,49 @@
+/*------------------------------------------------------------------------------
+
+  SOURCE FILE: ServerTCP
+
+  PROGRAM: Server
+
+  FUNCTIONS:
+          int ServerTCP::InitializeSocket(short port)
+          int ServerTCP::Accept(Player * player)
+          void * ServerTCP::CreateClientManager(void * server)
+          void * ServerTCP::Receive()
+          void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
+          void ServerTCP::sendToClient(Player player, const char * message)
+          void ServerTCP::CheckServerRequest(Player player, char * buffer)
+          bool ServerTCP::AllPlayersReady()
+          std::string ServerTCP::constructPlayerTable()
+          std::string ServerTCP::UpdateID(const Player& player)
+          std::string ServerTCP::generateMapSeed()
+          std::map<int, Player> ServerTCP::getPlayerTable()
+          int ServerTCP::getPlayerId(std::string ipString)
+
+  DESIGNER/PROGRAMMER: Network team / Scott, Jerry, Dylan,
+                                    Martin, Gabriella Chueng, Dhivya Manohar
+
+  NOTES: The TCP Class to handle all TCP data from the game in both the lobby and
+  in the game.
+
+-------------------------------------------------------------------------------*/
 #include "ServerTCP.h"
 
 using namespace Networking;
 using namespace json11;
 extern std::map<int, Player>           _PlayerTable;
+/*------------------------------------------------------------------------------
 
-/**
- * Initialize server socket and address
- * @author Jerry Jia
- * @date   2016-03-11
- * @param  port       port number
- * @return            -1 on failure, 0 on success
- */
+  FUNCTION:                   InitializeSocket
+
+  DESIGNER/PROGRAMMER:        Jerry Jia
+
+  INTERFACE:                  int ServerUDP::InitializeSocket(short port)
+
+  RETURNS:                    -1 on failure, 0 on success
+
+  NOTES:                      Initialize server socket and address
+
+-------------------------------------------------------------------------------*/
 int ServerTCP::InitializeSocket(short port)
 {
     int err = -1;
@@ -43,15 +76,21 @@ int ServerTCP::InitializeSocket(short port)
 
     return 0;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
- * Add connected player to the list of players
- * @author Jerry Jia, Martin Minkov
- * @date   2016-03-11
- * @param  player     player object
- * @return            -1 on failure, 0 on success
- */
+  FUNCTION:                   Accept
+
+  DESIGNER/PROGRAMMER:        Jerry Jia, Martin Minkov
+
+  REVISIONS:
+
+  INTERFACE:                  int ServerTCP::Accept(Player * player)
+
+  RETURNS:                    int : If the accept was sucessful
+
+  NOTES:
+-------------------------------------------------------------------------------*/
+
 int ServerTCP::Accept(Player * player)
 {
     unsigned int        ClientLen = sizeof(player->connection);
@@ -75,25 +114,39 @@ int ServerTCP::Accept(Player * player)
     newPlayer = *player;
     return player->id;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Static function used by client_library.cpp to create a reading thread to handle one client
- * @author Jerry Jia
- * @date   2016-03-11
- * @param  server     ServerTCP object
- * @return            ServerTCP::Receive() address
- */
+  FUNCTION:                   CreateClientManager
+
+  DESIGNER/PROGRAMMER:        Jerry Jia
+
+  REVISIONS:
+
+  INTERFACE:                  void * ServerTCP::CreateClientManager(void * server)
+
+  RETURNS:                    int : Pointer to the receive function
+
+  NOTES:
+-------------------------------------------------------------------------------*/
+
 void * ServerTCP::CreateClientManager(void * server)
 {
     return ((ServerTCP *)server)->Receive();
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Continuosly recieves messages from a specific client
- * @author Jerry Jia, Martin Minkov
- * @date   2016-03-11
- * @return 0 for thread execution code
- */
+  FUNCTION:                   Receive
+
+  DESIGNER/PROGRAMMER:        Jerry Jia, Martin Minkov, Scott Plummer
+
+  REVISIONS:
+
+  INTERFACE:                  void * ServerTCP::Receive()
+
+  RETURNS:                    thread return value
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 void * ServerTCP::Receive()
 {
     Player tmpPlayer = newPlayer;
@@ -146,18 +199,20 @@ void * ServerTCP::Receive()
     free(buf);
     return 0;
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Sends a message to all the clients
+  FUNCTION:                   Broadcast
 
-  @author Jerry Jia, Gabriella Chueng
-  @date   2016-03-11
-  @param  message    [description]
+  DESIGNER/PROGRAMMER:        Jerry Jia, Gabriella Chueng, Scott Plummer
 
-  Revision:
-  Date       Author      Description
-  2016-03-10 Gabriel Lee Add functionality to add exception to broadcast
-*/
+  REVISIONS:
+
+  INTERFACE:                 void Broadcast(const char* message, sockaddr_in * excpt)
+
+  RETURNS:                    void
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
 {
   Player tmpPlayer;
@@ -173,14 +228,21 @@ void ServerTCP::Broadcast(const char* message, sockaddr_in * excpt)
     }
   }
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Sends a message to a specific client
- * @author Martin Minkov, Scott Plummer
- * @date   2016-03-11
- * @param  player     Player to send
- * @param  message    message to send
- */
+  FUNCTION:                   sendToClient
+
+  DESIGNER/PROGRAMMER:        Martin Minkov, Scott Plummer
+
+  REVISIONS:
+
+  INTERFACE:                  void ServerTCP::sendToClient(Player player, const char * message)
+
+  RETURNS:                    void
+
+  NOTES:                      Initializes the UDP socket and sock addr in struct
+
+-------------------------------------------------------------------------------*/
 void ServerTCP::sendToClient(Player player, const char * message)
 {
 	if(send(player.socket, message, PACKETLEN, 0) == -1)
@@ -190,16 +252,21 @@ void ServerTCP::sendToClient(Player player, const char * message)
 		return;
 	}
 }
-/**
- * Parse client json message and determines server logic
- * @author Jerry Jia, Martin Minkov, Scott Plummer, Dylan Blake
- * @date   2016-03-11
- * @param  player     Player that recives the message
- * @param  buffer     json message
- *
- * Revisions: Tyler Trepanier-Bracken  2016/03/14
- *            Added in a GameEnd case with a restart server placeholder.
- */
+/*------------------------------------------------------------------------------
+
+  FUNCTION:                   CheckServerRequest
+
+  DESIGNER/PROGRAMMER:        Jerry Jia, Martin Minkov, Scott Plummer, Dylan Blake
+
+  REVISIONS:
+
+  INTERFACE:                  void ServerTCP::CheckServerRequest(Player player, char * buffer)
+
+  RETURNS:                    void
+
+  NOTES:
+
+-------------------------------------------------------------------------------*/
 void ServerTCP::CheckServerRequest(Player player, char * buffer)
 {
   std::string error;
@@ -260,23 +327,33 @@ void ServerTCP::CheckServerRequest(Player player, char * buffer)
         this->ServerTCP::Broadcast(generateMapSeed().c_str());
       }
       break;
-
     case GameEnd: //Currently allows any player to annouce the end of the game.
       std::cout << "Player: " << json[PlayerID].int_value() << " has ended the game" << std::endl;
-      close(_PlayerTable[json[PlayerID].int_value()].socket);
-      this->ServerTCP::Broadcast(buffer);     // Inform all clients that the game has ended.
-      //this->ServerTCP::ShutDownGameServer();  // Send a message to the UDP to kill itself.
+      close(_UDPReceivingSocket);
+      gameRunning = false;
+      break;
+
+    default:
+      this->ServerTCP::Broadcast(buffer);
       break;
   }
 }
 
+/*------------------------------------------------------------------------------
 
-/**
- * Check if all the players within _ClientTable are ready
- * @author Gabriella Cheung
- * @date   2016-03-11
- * @return true if all the players are ready, false otherwise
- */
+  FUNCTION:                   AllPlayersReady
+
+  DESIGNER/PROGRAMMER:        Gabriella Cheung
+
+  REVISIONS:
+
+  INTERFACE:                  bool ServerTCP::AllPlayersReady()
+
+  RETURNS:                    if all the players were ready
+
+  NOTES:
+
+-------------------------------------------------------------------------------*/
 bool ServerTCP::AllPlayersReady()
 {
   Player tmpPlayer;
@@ -293,13 +370,20 @@ bool ServerTCP::AllPlayersReady()
   }
   return true;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Constructs a json message containing an array of current player's statuses
- * @author Martin Minkov, Scott Plummer, Jerry Jia
- * @date   2016-03-11
- * @return the constructed json table
- */
+  FUNCTION:                   constructPlayerTable
+
+  DESIGNER/PROGRAMMER:        Martin Minkov, Scott Plummer, Jerry Jia
+
+  REVISIONS:
+
+  INTERFACE:                  std::string ServerTCP::constructPlayerTable()
+
+  RETURNS:                    player table packet
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 std::string ServerTCP::constructPlayerTable()
 {
 	std::string packet = "[{\"DataType\" : 6, \"ID\" : 6, \"LobbyData\" : [";
@@ -319,14 +403,20 @@ std::string ServerTCP::constructPlayerTable()
 
 	return packet;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Returns the registered player list from the game lobby
- * @author Martin Minkov, Scott Plummer
- * @date   2016-03-11
- * @param  player     player object
- * @return            updated json with the player's id
- */
+  FUNCTION:                   UpdateID
+
+  DESIGNER/PROGRAMMER:        Martin Minkov, Scott Plummer
+
+  REVISIONS:
+
+  INTERFACE:                  std::string ServerTCP::UpdateID(const Player& player)
+
+  RETURNS:                    the players updated id
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 std::string ServerTCP::UpdateID(const Player& player)
 {
    char buf[PACKETLEN];
@@ -334,13 +424,21 @@ std::string ServerTCP::UpdateID(const Player& player)
    std::string temp(buf);
    return temp;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * [ServerTCP::generateMapSeed description]
- * @author ???
- * @date   2016-03-11
- * @return [description]
- */
+  FUNCTION:                   generateMapSeed
+
+  DESIGNER/PROGRAMMER:        Dhivya Manohar
+
+  REVISIONS:
+
+  INTERFACE:                  std::string ServerTCP::generateMapSeed()
+
+  RETURNS:                    The map seed
+
+  NOTES:
+-------------------------------------------------------------------------------*/
+
 std::string ServerTCP::generateMapSeed()
 {
 	int mapSeed;
@@ -349,46 +447,40 @@ std::string ServerTCP::generateMapSeed()
 	std::string packet = "[{\"DataType\" : 3, \"ID\" : 0, \"Seed\" : " + std::to_string(mapSeed) +"}]";
 	return packet;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Returns the table that contains all currently connected players.
- * @author Gabriella Cheung
- * @data   2016-03-11
- * @return table of connected players
- */
+  FUNCTION:                   getPlayerTable
+
+  DESIGNER/PROGRAMMER:        Gabriella Cheung
+
+  REVISIONS:
+
+  INTERFACE:                  std::map<int, Player> ServerTCP::getPlayerTable()
+
+  RETURNS:                    the playerTable
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 std::map<int, Player> ServerTCP::getPlayerTable()
 {
   return _PlayerTable;
 }
+/*------------------------------------------------------------------------------
 
-/**
- * Returns the last decimal number in player's IP address as the player's ID
- * @author Gabriella Cheung
- * @date   2016-03-11
- * @param  ipString   string of player's IP address
- * @return            the player's ID
- */
+  FUNCTION:                   getPlayerId
+
+  DESIGNER/PROGRAMMER:        Gabriella Cheung
+
+  REVISIONS:                  March 9, 2016 - Changed the socket be non-blocking
+
+  INTERFACE:                  int ServerTCP::getPlayerId(std::string ipString)
+
+  RETURNS:                    client ip code for player table
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 int ServerTCP::getPlayerId(std::string ipString)
 {
   std::size_t index = ipString.find_last_of(".");
   return stoi(ipString.substr(index+1));
-}
-
-/**
- * [ServerTCP::ShutDownGameServer                                     ]
- * [    Sends a message to the UDP Server via the already created pipe]
- * [    indicating that the game is over.                             ]
- * @author Tyler Trepanier-Bracken
- * @date   2016-03-14
- * @param  void
- * @return void
- */
-void ServerTCP::ShutDownGameServer(void)
-{
-  char sbuf[20];
-  char rbuf[20];
-  static int MESSAGE_SIZE = 20;
-  int nread = 0;
-  sprintf(sbuf, "%s", "GameEnd");
-
 }

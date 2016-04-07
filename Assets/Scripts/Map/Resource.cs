@@ -72,7 +72,7 @@ class Resource : MonoBehaviour {
     -- Decreases the amount of a resource object by some number.
     -- On resource depletion, send a message to the server to deplete and respawn the resource.
     ----------------------------------------------------------------------------------------------------------------------*/
-	public void DecreaseHp(int num) {
+	public void DecreaseHp(int num, int playerId) {
         /*
 		int decreaseAmount = damage;
 		if ((this.amount - damage) < 0) { // 0 amount left
@@ -83,7 +83,7 @@ class Resource : MonoBehaviour {
 		this.hp -= num;
 
 		if (this.hp == 0) {
-			SendResourceDepletedMessage();
+			SendResourceDepletedMessage(playerId);
 			SendResourceRespawnMessage();
 		} 
 	}
@@ -93,8 +93,7 @@ class Resource : MonoBehaviour {
     -- DATE: 		March 30, 2016
     -- REVISIONS: 	April 5 - Move addition of magnetize component to CreateWorldItem() 
     -- DESIGNER:  	Krystle Bulalakaw
-    -- P
-    ROGRAMMER: 	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
     -- INTERFACE: 	DropGold(int amount)
     --					int amount - amount of gold to drop
     -- RETURNS: 	void.
@@ -113,7 +112,7 @@ class Resource : MonoBehaviour {
         List<Pair<string, string>> msg =
                 WorldItemManager.Instance.CreateWorldItemNetworkMessage(instance_id, gold_id, 
                 amount, x + offsetX, y + offsetY);
-        NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Create, msg, Protocol.UDP);
+        NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Create, msg, Protocol.TCP);
 
         // Pretend that a drop message was received
         if (Application.platform != RuntimePlatform.LinuxPlayer)
@@ -160,8 +159,9 @@ class Resource : MonoBehaviour {
 		
 		_message.Add(new Pair<string, string>(NetworkKeyString.XPos, x.ToString()));
 		_message.Add(new Pair<string, string>(NetworkKeyString.YPos, y.ToString()));
+        //_message.Add(new Pair<string, string>(NetworkKeyString.PlayerID, GameData.MyPlayer.PlayerID.ToString()));
 
-		return _message;
+        return _message;
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -214,9 +214,13 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates a message to send to the server to indicate that a resource was depleted.
     ----------------------------------------------------------------------------------------------------------------------*/
-    void SendResourceDepletedMessage() {
+    void SendResourceDepletedMessage(int playerId) {
 		List<Pair<string, string>> msg = CreateResourcePositionMessage();
-		SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
+        msg.Add(new Pair<string, string>(NetworkKeyString.PlayerID, playerId.ToString()));
+        if (GameData.MyPlayer.PlayerID == playerId)
+        {
+            SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
+        }
 	}
 
     /*------------------------------------------------------------------------------------------------------------------

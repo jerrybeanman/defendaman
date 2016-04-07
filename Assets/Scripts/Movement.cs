@@ -151,6 +151,7 @@ public class Movement : MonoBehaviour
     {
         double looking = getInfo();
         Vector2 moving = getMovement(looking);
+		Debug.Log("[DEBUG]: move speed: " + speed);
         rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
 
@@ -214,6 +215,7 @@ public class Movement : MonoBehaviour
     {
 
         // rb2d.velocity = new Vector2(0, 0);
+		Debug.Log("[DEBUG] COLLIDING");
 
 
     }
@@ -249,6 +251,7 @@ public class Movement : MonoBehaviour
 
         if (hMoved || vMoved)
         {
+			Debug.Log("[DEBUG] attempting to move");
             if (hMoved && vMoved)
             {
                 if (moveDown)

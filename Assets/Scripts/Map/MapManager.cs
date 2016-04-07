@@ -34,10 +34,10 @@ public class MapManager : MonoBehaviour {
     // How many walls will line the outside to not give an image of an empty world around the edges 
     const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
     const int RESPAWN_TIME = 30;        //  in seconds
-    const int RESOURCE_Z = -10;
+    const int RESOURCE_Z = -2;
     const int RESOURCE_HP = 5;
     const int TOTAL_GOLD = 100;
-    const int GOLD_TO_DROP = TOTAL_GOLD / 5;
+    const int GOLD_TO_DROP = TOTAL_GOLD / RESOURCE_HP;
 
     // Map update event types
     public enum EventType 
@@ -290,7 +290,7 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 
-        temp.GetComponent<Resource>().DecreaseHp(1);
+        temp.GetComponent<Resource>().DecreaseHp(1, playerId);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
@@ -309,15 +309,21 @@ public class MapManager : MonoBehaviour {
     public void ProcessResourceDepletedEvent(JSONClass message) {
 		int xPos = message[NetworkKeyString.XPos].AsInt;
 		int yPos = message[NetworkKeyString.YPos].AsInt;
-		
-		// Find the Resource in the list with these X and Y positions
-		GameObject temp = _mapResources.Find(go => 
+        int playerId = message[NetworkKeyString.PlayerID].AsInt;
+
+        // Find the Resource in the list with these X and Y positions
+        GameObject temp = _mapResources.Find(go => 
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 
-
-        for (int i = 0; i < (TOTAL_GOLD / GOLD_TO_DROP); i++) {
-            temp.GetComponent<Resource>().DropGold(GOLD_TO_DROP);
+        // Only the player who killed the tree tells the server to create gold
+        if (GameData.MyPlayer.PlayerID == playerId)
+        {
+            Debug.Log("me drops the gold");
+            for (int i = 0; i < (TOTAL_GOLD / GOLD_TO_DROP); i++)
+            {
+                temp.GetComponent<Resource>().DropGold(GOLD_TO_DROP);
+            }
         }
 
         // Explode and deactivate it

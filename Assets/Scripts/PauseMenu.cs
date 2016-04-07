@@ -12,7 +12,6 @@ using UnityEngine.UI;
 --      void turnoffMenu()
 --      void MainMenu()
 --      void SettingOptionMenu()
---      void SetMovement(int i)
 --
 --
 --  DATE:           Feburary , 2016
@@ -42,26 +41,19 @@ public class PauseMenu : MonoBehaviour {
     int movementType = 1;
     float volval;
 
+
     // Use this for initialization
 
     void Start()
     {
         MainMenu(); 
-
     }
 
-    // Update is called once per frame
-
-    void Update()
-    {
-
-
-    }
 
 
     public void SetMovementOption(int i)
     {
-        var player = GameManager.instance.player;
+        var  player = GameManager.instance.player;
         if (i == 1)
             player.GetComponent<Movement>().setAbs();
         else
@@ -102,18 +94,12 @@ public class PauseMenu : MonoBehaviour {
             absolutToggle.isOn = false;
             relativeToggle.isOn = true;
         }
-/*
+        /*
         GameObject gM = GameObject.Find("GameManager");
         volval = gM.GetComponent<AudioSource>().volume;
         print("volume val: " + volval);
         volumeSlide.value = volval;
        */
-    }
-
-    public void SetMovement(int i)
-    {
-        movementType = i;
-
     }
 
 
