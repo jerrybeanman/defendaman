@@ -188,7 +188,8 @@ public class GameManager : MonoBehaviour {
 					lightingGunnerFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 					lightingGunnerFOV.transform.Translate(0, 0, 8);
 					// Send the gunner a reference to this lightsource for their special attack
-					player.GetComponent<GunnerClass>().FOVCone = lightingGunnerFOV.gameObject.GetComponent<DynamicLight>();
+                    DynamicLight dl = lightingGunnerFOV.gameObject.GetComponent<DynamicLight>();
+                        player.GetComponent<GunnerClass>().FOVCone = dl;
 
 					var lightingGunnerPeripheral = ((Transform)Instantiate(gunnerVision.lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 					lightingGunnerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
