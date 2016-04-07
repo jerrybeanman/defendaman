@@ -37,6 +37,7 @@ public class HUD_Manager : MonoBehaviour
 	public Stamina				stamina;
 	public ColourizeScreen		colourizeScreen;
 	public WinScreen			winScreen;
+    public LoseScreen           loseScreen;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -923,5 +924,11 @@ public class HUD_Manager : MonoBehaviour
 		public Animator			Parent;
 		public Animator			Child;
 	}
-	#endregion
+    [System.Serializable]
+    public class LoseScreen
+    {
+        public Animator         Parent;
+        public Animator         Child;
+    }
+    #endregion
 }

@@ -12,6 +12,10 @@ public class InputManager : MonoBehaviour {
 			VirtualStartGame();
 			ConsumeItem();
 			HUDToggles();
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                GameManager.instance.GameLost();
+            }
 		}
 	}
 
