@@ -37,7 +37,7 @@ public class MapManager : MonoBehaviour {
     const int RESOURCE_Z = -2;
     const int RESOURCE_HP = 5;
     const int TOTAL_GOLD = 100;
-    const int GOLD_TO_DROP = TOTAL_GOLD / 5;
+    const int GOLD_TO_DROP = TOTAL_GOLD / RESOURCE_HP;
 
     // Map update event types
     public enum EventType 

@@ -13,11 +13,9 @@ struct CircularBuffer
 	void	*	Rear;		     	/* pointer to Rear							*/
 };
 
-
 void CBInitialize(CircularBuffer * CBuff, int MaxSize, int ElementSize);
 
 void CBFree(CircularBuffer * CBuff);
-
 
 void CBPushBack(CircularBuffer * CBuff, const void * item);
 
