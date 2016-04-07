@@ -16,7 +16,7 @@
 
 #define PACKETLEN    4096
 #define PACKETLEN_UDP 512
-#define MAXPACKETS   50
+#define MAXPACKETS   100
 
 namespace Networking
 {
