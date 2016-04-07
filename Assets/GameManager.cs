@@ -355,7 +355,7 @@ public class GameManager : MonoBehaviour {
 
    	public void ReturnToMenu()
     {
-        Application.Quit();
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
        /* NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
