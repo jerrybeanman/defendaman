@@ -28,6 +28,7 @@ class Resource : MonoBehaviour {
 	public int instanceId {get; set;}
 	public bool trigger_entered {get; set;}
 	public Animator animator {get; set;}
+    bool depleted = false;
 	
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	Start
@@ -82,9 +83,10 @@ class Resource : MonoBehaviour {
 
 		this.hp -= num;
 
-		if (this.hp == 0) {
+		if (this.hp == 0 && !depleted) {
 			SendResourceDepletedMessage();
 			SendResourceRespawnMessage();
+            depleted = true;
 		} 
 	}
 
@@ -93,8 +95,7 @@ class Resource : MonoBehaviour {
     -- DATE: 		March 30, 2016
     -- REVISIONS: 	April 5 - Move addition of magnetize component to CreateWorldItem() 
     -- DESIGNER:  	Krystle Bulalakaw
-    -- P
-    ROGRAMMER: 	Krystle Bulalakaw
+    -- PROGRAMMER: 	Krystle Bulalakaw
     -- INTERFACE: 	DropGold(int amount)
     --					int amount - amount of gold to drop
     -- RETURNS: 	void.
@@ -160,8 +161,9 @@ class Resource : MonoBehaviour {
 		
 		_message.Add(new Pair<string, string>(NetworkKeyString.XPos, x.ToString()));
 		_message.Add(new Pair<string, string>(NetworkKeyString.YPos, y.ToString()));
+        _message.Add(new Pair<string, string>(NetworkKeyString.PlayerID, GameData.MyPlayer.PlayerID.ToString()));
 
-		return _message;
+        return _message;
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
