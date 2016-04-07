@@ -34,7 +34,7 @@ public class MapManager : MonoBehaviour {
     // How many walls will line the outside to not give an image of an empty world around the edges 
     const int OUTERWALL_THICKNESS = 24; // (Camera size + gunnerclass.cs max zoom out)/2
     const int RESPAWN_TIME = 30;        //  in seconds
-    const int RESOURCE_Z = -10;
+    const int RESOURCE_Z = -2;
     const int RESOURCE_HP = 5;
     const int TOTAL_GOLD = 100;
     const int GOLD_TO_DROP = TOTAL_GOLD / 5;

@@ -33,8 +33,8 @@ public class GunnerClass : RangedClass
 	public	float 		 endingAtkRatio = 0.1f;
 
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
-	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
-	private DynamicLight FOVConeHidden;
+	public DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
+	public DynamicLight FOVConeHidden;
 
 	// keep track of starting speed
 	private float startingOrthographicSize;
@@ -74,9 +74,10 @@ public class GunnerClass : RangedClass
             //Starting item kit
             Inventory.instance.AddItem(12);
 
+			// No longer needed - reference is given to this class when DynamicLight objects are created
 			// Initialize Vision Cone and movement components
-			FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
-			FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
+			//FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
+			//FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
 			movement 		= gameObject.GetComponent<Movement>();
 
 			startingOrthographicSize = mainCamera.orthographicSize;
