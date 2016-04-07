@@ -73,7 +73,7 @@ class Resource : MonoBehaviour {
     -- Decreases the amount of a resource object by some number.
     -- On resource depletion, send a message to the server to deplete and respawn the resource.
     ----------------------------------------------------------------------------------------------------------------------*/
-	public void DecreaseHp(int num) {
+	public void DecreaseHp(int num, int playerId) {
         /*
 		int decreaseAmount = damage;
 		if ((this.amount - damage) < 0) { // 0 amount left
@@ -84,7 +84,7 @@ class Resource : MonoBehaviour {
 		this.hp -= num;
 
 		if (this.hp == 0 && !depleted) {
-			SendResourceDepletedMessage();
+			SendResourceDepletedMessage(playerId);
 			SendResourceRespawnMessage();
             depleted = true;
 		} 
@@ -216,9 +216,10 @@ class Resource : MonoBehaviour {
     -- NOTES:
     -- Creates a message to send to the server to indicate that a resource was depleted.
     ----------------------------------------------------------------------------------------------------------------------*/
-    void SendResourceDepletedMessage() {
+    void SendResourceDepletedMessage(int playerId) {
 		List<Pair<string, string>> msg = CreateResourcePositionMessage();
-		SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
+        msg.Add(new Pair<string, string>(NetworkKeyString.PlayerID, playerId.ToString()));
+        SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
