@@ -161,7 +161,7 @@ class Resource : MonoBehaviour {
 		
 		_message.Add(new Pair<string, string>(NetworkKeyString.XPos, x.ToString()));
 		_message.Add(new Pair<string, string>(NetworkKeyString.YPos, y.ToString()));
-        _message.Add(new Pair<string, string>(NetworkKeyString.PlayerID, GameData.MyPlayer.PlayerID.ToString()));
+        //_message.Add(new Pair<string, string>(NetworkKeyString.PlayerID, GameData.MyPlayer.PlayerID.ToString()));
 
         return _message;
 	}
