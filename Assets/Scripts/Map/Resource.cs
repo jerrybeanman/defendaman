@@ -218,8 +218,11 @@ class Resource : MonoBehaviour {
     ----------------------------------------------------------------------------------------------------------------------*/
     void SendResourceDepletedMessage(int playerId) {
 		List<Pair<string, string>> msg = CreateResourcePositionMessage();
-        msg.Add(new Pair<string, string>(NetworkKeyString.PlayerID, playerId.ToString()));
-        SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
+        //msg.Add(new Pair<string, string>(NetworkKeyString.PlayerID, playerId.ToString()));
+        if (GameData.MyPlayer.PlayerID == playerId)
+        {
+            SendMessageToServer(msg, (int)MapManager.EventType.RESOURCE_DEPLETED);
+        }
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
