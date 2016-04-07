@@ -43,8 +43,9 @@ public class Magnetize : MonoBehaviour {
         if (!inRange) {
             CheckIfInRange();
         }
-        
-        if (playerId != -1) {
+
+        // Only magnetize the item if playerID is set and is equal to MyPlayerID
+        if (playerId != -1 && GameData.MyPlayer.PlayerID == playerId) {
             Vector3 playerPosition;
             if (GameData.PlayerPosition.TryGetValue(playerId, out playerPosition)) {
                 transform.position = Vector3.MoveTowards(transform.position, playerPosition, Time.deltaTime * velocity);

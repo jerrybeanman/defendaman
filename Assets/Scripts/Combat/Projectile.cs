@@ -33,41 +33,41 @@ public abstract class Projectile : Trigger
 
     protected override void OnTriggerEnter2D(Collider2D other)
     {
+        // ignore health bar
+        if (other.gameObject.tag == "HealthBar")
+        {
+            return;
+        }
         //If its a player or an AI, ignore it, otherwise destroy itself
         var player = other.gameObject.GetComponent<BaseClass>();
         if (player != null && teamID == player.team)
         {
-            //If it collided with a player
+            //Ignore team players
             return;
         }
 
         var trigger = other.gameObject.GetComponent<Trigger>();
         if (trigger != null && (teamID == trigger.teamID || trigger is Area))
         {
-            //If it collided with another projectile or a sword
+            //Ignore team attacks or areas
             return;
         }
 
         var ai = other.gameObject.GetComponent<AI>();
         if (ai != null && teamID == ai.team)
         {
-            
-            //If it collided with AI
+            //Ignore team AIs
             return;
         }
 
         if (other.gameObject.GetComponent<WorldItemData>() != null)
         {
-            //If it collided with items
+            //Ignore items
             return;
         }
         //Otherwise, its a wall or some solid
 
-		if(other.tag == "HealthBar")
-		{
-			return;
-		}
-        if (--pierce < 0 || other.name == "obstacleTiles(Clone)") 
+        if (--pierce < 0 || other.name == "obstacleTiles(Clone)" || other.name == "tron_obstacle(Clone)") 
 		{
             Destroy(gameObject);
         }

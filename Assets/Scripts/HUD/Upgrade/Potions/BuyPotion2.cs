@@ -7,10 +7,10 @@ public class BuyPotion2 : MonoBehaviour {
 	Dictionary<string, int> MyResources;
 	public void buyPotion1 () {
 		MyResources=GameData.MyPlayer.Resources;
-		if(MyResources[Constants.GOLD_RES]>=100){
+		if(MyResources[Constants.GOLD_RES]>=700){
 			_inventory= GameObject.Find("Inventory").GetComponent<Inventory>();
 			_inventory.AddItem(5,1);
-			_inventory.UseResources(Constants.GOLD_RES,100);	
+			_inventory.UseResources(Constants.GOLD_RES,700);	
 			print (MyResources[Constants.GOLD_RES]);
 		}
 		

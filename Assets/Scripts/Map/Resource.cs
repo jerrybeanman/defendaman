@@ -113,7 +113,7 @@ class Resource : MonoBehaviour {
         List<Pair<string, string>> msg =
                 WorldItemManager.Instance.CreateWorldItemNetworkMessage(instance_id, gold_id, 
                 amount, x + offsetX, y + offsetY);
-        NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Create, msg, Protocol.UDP);
+        NetworkingManager.send_next_packet(DataType.Item, (int)ItemUpdate.Create, msg, Protocol.TCP);
 
         // Pretend that a drop message was received
         if (Application.platform != RuntimePlatform.LinuxPlayer)

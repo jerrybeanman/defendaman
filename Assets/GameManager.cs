@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour {
     {
         if (!testing)
         {
-            NetworkingManager.Subscribe(gameEnd, DataType.Lobby, (int)LobbyData.GameEnd);
             StartGame(GameData.Seed);
         }
     }
@@ -353,17 +352,6 @@ public class GameManager : MonoBehaviour {
 			SetLayerRecursively( child.gameObject, name);
 		}
 	}
-
-    private void gameEnd(JSONClass packet)
-    {
-        if  (packet["TeamID"] == GameData.MyPlayer.TeamID)
-        {
-            GameWon();
-        } else
-        {
-            GameLost();
-        }
-    }
 
     public void GameWon()
     {
