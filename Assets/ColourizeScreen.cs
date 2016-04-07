@@ -8,13 +8,6 @@ public class ColourizeScreen : MonoBehaviour {
     private float injuryDuration = .1f;
     private float healedDuration = .15f;
 
-    
-	
-
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     public void PlayerHurt()
     {
