@@ -290,7 +290,7 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().x == xPos &&
 		                                     go.GetComponent<Resource>().y == yPos);
 
-        temp.GetComponent<Resource>().DecreaseHp(1);
+        temp.GetComponent<Resource>().DecreaseHp(1, playerId);
 	}
 
     /*------------------------------------------------------------------------------------------------------------------
