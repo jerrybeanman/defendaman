@@ -338,6 +338,7 @@ public class GameManager : MonoBehaviour {
 
     public void GameWon()
     {
+        StartCoroutine(sleep());
         GameData.GameState = GameState.Won;
 		HUD_Manager.instance.winScreen.Parent.gameObject.SetActive(true);
 		HUD_Manager.instance.winScreen.Parent.SetTrigger("Play");
@@ -346,17 +347,23 @@ public class GameManager : MonoBehaviour {
 
     public void GameLost()
     {
+        StartCoroutine(sleep());
         GameData.GameState = GameState.Lost;
         HUD_Manager.instance.loseScreen.Parent.gameObject.SetActive(true);
         HUD_Manager.instance.loseScreen.Parent.SetTrigger("Play");
         HUD_Manager.instance.loseScreen.Child.SetTrigger("Play");
     }
 	
-
+    IEnumerator sleep()
+    {
+        yield return new WaitForSeconds(5);
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
+        NetworkingManager.instance.ResetConnections();
+        NetworkingManager.ClearSubscriptions();
+    }
    	public void ReturnToMenu()
     {
-        System.Diagnostics.Process.GetCurrentProcess().Kill();
-       /* NetworkingManager.instance.ResetConnections();
+        NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
         GameData.aiSpawn = new Pair<int, int>(10, 10);
@@ -378,6 +385,11 @@ public class GameManager : MonoBehaviour {
         Destroy(NetworkingManager.instance);
         Destroy(Inventory.instance);
         Destroy(WorldItemManager.Instance);
-        Application.LoadLevel("MenuScene");*/
+        //Application.LoadLevel("MenuScene");
+    }
+
+    public void ExitGame()
+    {
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
     }
 }

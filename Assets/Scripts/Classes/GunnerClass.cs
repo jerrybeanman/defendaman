@@ -28,7 +28,7 @@ public class GunnerClass : RangedClass
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 16f;
 	public  float		 zoomInTime 		= 0.5f;
-	public  float 		 maxRatio			= 5f;
+	public  float 		 maxRatio			= 8f;
     public  float        startingAtkRatio   = 1f;
 
     // hank
@@ -110,7 +110,7 @@ public class GunnerClass : RangedClass
         attack.GetComponent<BasicRanged>().playerID = playerID;
         attack.GetComponent<BasicRanged>().teamID = team;
         // hank april 6th added .2 ad ratio
-        attack.GetComponent<BasicRanged>().damage = (float) (ClassStat.AtkPower * .2);
+        attack.GetComponent<BasicRanged>().damage = (float) (ClassStat.AtkPower * .25);
         attack.GetComponent<BasicRanged>().maxDistance = distance[0];
 
         return cooldowns[0];
