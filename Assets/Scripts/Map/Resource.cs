@@ -28,7 +28,6 @@ class Resource : MonoBehaviour {
 	public int instanceId {get; set;}
 	public bool trigger_entered {get; set;}
 	public Animator animator {get; set;}
-    bool depleted = false;
 	
     /*------------------------------------------------------------------------------------------------------------------
     -- FUNCTION: 	Start
@@ -83,10 +82,9 @@ class Resource : MonoBehaviour {
 
 		this.hp -= num;
 
-		if (this.hp == 0 && !depleted) {
+		if (this.hp == 0) {
 			SendResourceDepletedMessage(playerId);
 			SendResourceRespawnMessage();
-            depleted = true;
 		} 
 	}
 
