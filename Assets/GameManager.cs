@@ -347,6 +347,9 @@ public class GameManager : MonoBehaviour {
     public void GameLost()
     {
         GameData.GameState = GameState.Lost;
+        HUD_Manager.instance.loseScreen.Parent.gameObject.SetActive(true);
+        HUD_Manager.instance.loseScreen.Parent.SetTrigger("Play");
+        HUD_Manager.instance.loseScreen.Child.SetTrigger("Play");
     }
 	
 
