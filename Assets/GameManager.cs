@@ -364,7 +364,6 @@ public class GameManager : MonoBehaviour {
     public void GameLost()
     {
         GameData.GameState = GameState.Lost;
-
     }
 	
 

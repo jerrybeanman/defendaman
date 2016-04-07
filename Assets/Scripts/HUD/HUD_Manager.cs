@@ -38,8 +38,8 @@ public class HUD_Manager : MonoBehaviour
 	public ColourizeScreen		colourizeScreen;
 	public WinScreen			winScreen;
 
-    // Need to reference MapManager to manipulate its building lists
-    public MapManager			mapManager;
+	// Need to reference MapManager to manipulate its building lists
+	public MapManager			mapManager;
 
 	// Where the mouse is currently at
 	private Vector3 			currFramePosition;
