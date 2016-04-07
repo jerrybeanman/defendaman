@@ -61,6 +61,7 @@ public class Fireball : Projectile
         var tree = other.gameObject.GetComponent<Resource>();
         if ((target != null && teamID != target.team) || tree != null)
         {
+            //if enemy character or tree
             var burn = other.gameObject.GetComponent<Burn>();
             if (burn == null)
             {
@@ -71,6 +72,13 @@ public class Fireball : Projectile
             {
                 burn.duration = 150;
             }
+            Destroy(gameObject);
+        }
+
+        var building = other.gameObject.GetComponent<Building>();
+        if (building != null)
+        {
+            Destroy(gameObject);
         }
     }
 }

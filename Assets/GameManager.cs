@@ -295,18 +295,6 @@ public class GameManager : MonoBehaviour {
 			}
         }
 
-
-        foreach (var king in kings)
-        {
-            if (king.first == myTeam)
-            {
-                GameData.AllyKingID = king.second;
-            }
-            else {
-                GameData.EnemyKingID = king.second;
-            }
-        }
-
 		NetworkingManager.StartGame();
     }
 
@@ -364,7 +352,6 @@ public class GameManager : MonoBehaviour {
     public void GameLost()
     {
         GameData.GameState = GameState.Lost;
-
     }
 	
 
