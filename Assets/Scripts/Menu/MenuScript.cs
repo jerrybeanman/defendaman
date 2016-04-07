@@ -567,7 +567,10 @@ public class MenuScript : MonoBehaviour {
     -----------------------------------------------------------------------------------------------------------------*/
     public void StartGame()
     {
-        LobbyNetwork.SendLobbyData(NetworkCode.GameStart);
+        if (GameData.AllyKingID != -1 && GameData.EnemyKingID != -1)
+        {
+            LobbyNetwork.SendLobbyData(NetworkCode.GameStart);
+        }
         team_select_panel.SetActive(false);
     }
 
