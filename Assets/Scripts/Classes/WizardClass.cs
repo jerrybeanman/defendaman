@@ -35,10 +35,10 @@ public class WizardClass : RangedClass
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
-        _classStat.MaxHp = 1000;
+        _classStat.MaxHp = 950;
         _classStat.MoveSpeed = 5;
-        _classStat.AtkPower = 25;
-        _classStat.Defense = 25;
+        _classStat.AtkPower = 20;
+        _classStat.Defense = 20;
 
         base.Start();
 
