@@ -99,8 +99,15 @@ public class NetworkingManager : MonoBehaviour
     }
 
     // Update is called once per frame
+    bool skip = false;
     void Update() {
         if (GameData.GameStart) {
+            if (skip)
+            {
+                skip = false;
+                return;
+            }
+            skip = true;
             string packet;
 
             //Needs to be reaplced with one "get data" call

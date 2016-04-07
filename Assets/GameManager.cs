@@ -289,18 +289,6 @@ public class GameManager : MonoBehaviour {
 			}
         }
 
-
-        foreach (var king in kings)
-        {
-            if (king.first == myTeam)
-            {
-                GameData.AllyKingID = king.second;
-            }
-            else {
-                GameData.EnemyKingID = king.second;
-            }
-        }
-
 		NetworkingManager.StartGame();
     }
 
@@ -366,7 +354,7 @@ public class GameManager : MonoBehaviour {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
-        GameData.aiSpawn = null;
+        GameData.aiSpawn = new Pair<int, int>(10, 10);
         GameData.AllyKingID = -1;
         GameData.EnemyKingID = -1;
         GameData.AllyTeamKillCount = 0;
@@ -379,7 +367,9 @@ public class GameManager : MonoBehaviour {
         GameData.Seed = 0;
         GameData.TeamSpawnPoints.Clear();
         GameData.PlayerPosition.Clear();
-        GameData.MyPlayer = null;
+        GameData.MyPlayer = new PlayerData();
+        GameData.GameState = GameState.Playing;
+        GameData.CurrentTheme = Themes.Grass;
         Destroy(NetworkingManager.instance);
         Destroy(Inventory.instance);
         Destroy(WorldItemManager.Instance);
