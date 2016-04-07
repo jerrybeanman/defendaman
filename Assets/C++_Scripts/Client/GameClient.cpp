@@ -8,17 +8,23 @@ Description: Class to handle data transfers for the client during the game using
 **********************************************************/
 #include "GameClient.h"
 using namespace Networking;
+/*------------------------------------------------------------------------------
 
-/**********************************************************
-Description: Initialize socket, and server address to lookup to.
-Parameters:
-    name - The host name of the server.
-    port - The port number of the server.
-Returns: Socket file descriptor and the server address for future use.
-Revision History:
-    Date        Author      Description
-    2016-03-09  Gabriel Lee Added function headers and comments.
-**********************************************************/
+  FUNCTION:                   Init_Client_Socket
+
+  DESIGNER/PROGRAMMER:        Martin Minkov, Gabriel Lee, Tyler Trepanier
+
+  Revision History:            2016-03-09  Gabriel Lee
+                              Added function headers and comments
+
+  INTERFACE:                  int GameClient::Init_Client_Socket(const char* name, short port)
+                                name - The host name of the server.
+                                port - The port number of the server.
+
+  RETURNS:                    int : Socket file descriptor and the server address for future use.
+
+  NOTES:                      Initialize socket, and server address to lookup to.
+-------------------------------------------------------------------------------*/
 int GameClient::Init_Client_Socket(const char* name, short port)
 {
     // create UDP socket
@@ -33,17 +39,24 @@ int GameClient::Init_Client_Socket(const char* name, short port)
 
     return 0;
 }
+/*------------------------------------------------------------------------------
 
-/**********************************************************
-Description: Function to receive data from the server.
-             The data received from the server is put onto
-             the circular buffer.
-Parameters: none
-Returns: void
-Revision History:
-    Date        Author      Description
-    2016-03-09  Gabriel Lee Added function headers and comments.
-**********************************************************/
+  FUNCTION:                   Recv
+
+  DESIGNER/PROGRAMMER:        Jerry Jia, Martin Minkov
+
+  Revision History:            2016-03-09  Gabriel Lee
+                              Added function headers and comments
+
+  INTERFACE:                  void * GameClient::Recv()
+
+  RETURNS:                    int : The port file descriptor or an error code
+
+  NOTES:                      Function to receive data from the server.
+                              The data received from the server is put onto
+                              the circular buffer.
+
+-------------------------------------------------------------------------------*/
 void * GameClient::Recv()
 {
     int bytesRead = 0;
@@ -72,19 +85,26 @@ void * GameClient::Recv()
     }
     return NULL;
 }
+/*------------------------------------------------------------------------------
 
-/**********************************************************
-Description: Wrapper function for UDP sendTo function.
-             Failing to send prints an error message with
-             the data intended to send.
-Parameters:
-    message - The pointer to the data to be sent to the server
-    size - The size of the data to send
-Returns: Zero on success, otherwise the error number.
-Revision History:
-    Date        Author      Description
-    2016-03-09  Gabriel Lee Added function headers and comments.
-**********************************************************/
+  FUNCTION:                   Send
+
+  DESIGNER/PROGRAMMER:        Martin Minkov
+
+  Revision History:            2016-03-09  Gabriel Lee
+                              Added function headers and comments
+
+  INTERFACE:                  int GameClient::Send(char * message, int size)
+                                message - The pointer to the data to be sent to the server
+                                size - The size of the data to send
+
+  RETURNS:                    int : Zero on success, otherwise the error number.
+
+  NOTES:                     Wrapper function for UDP sendTo function.
+                              Failing to send prints an error message with
+                              the data intended to send.
+
+-------------------------------------------------------------------------------*/
 int GameClient::Send(char * message, int size)
 {
     socklen_t length = sizeof(serverAddr);
@@ -95,7 +115,19 @@ int GameClient::Send(char * message, int size)
     }
     return 0;
 }
+/*------------------------------------------------------------------------------
 
+  FUNCTION:                   GetData
+
+  DESIGNER/PROGRAMMER:        Jerry Jia
+
+  INTERFACE:                  char* GameClient::GetData()
+
+  RETURNS:                    char*: the data read in
+
+  NOTES:                      Pops off the and returns the data
+
+-------------------------------------------------------------------------------*/
 char* GameClient::GetData()
 {
   if (CBPackets.Count != 0)
