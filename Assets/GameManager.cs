@@ -189,7 +189,7 @@ public class GameManager : MonoBehaviour {
 					lightingGunnerFOV.transform.Translate(0, 0, 8);
 					// Send the gunner a reference to this lightsource for their special attack
                     DynamicLight dl = lightingGunnerFOV.gameObject.GetComponent<DynamicLight>();
-                        player.GetComponent<GunnerClass>().FOVCone = dl;
+                    createdPlayer.GetComponent<GunnerClass>().FOVCone = dl;
 
 					var lightingGunnerPeripheral = ((Transform)Instantiate(gunnerVision.lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 					lightingGunnerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour {
 					hiderLayerGunnerFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 					hiderLayerGunnerFOV.transform.Translate(0, 0, 8);
 					// Send the gunner a reference to this lightsource for their special attack
-					player.GetComponent<GunnerClass>().FOVConeHidden = hiderLayerGunnerFOV.gameObject.GetComponent<DynamicLight>();
+					createdPlayer.GetComponent<GunnerClass>().FOVConeHidden = hiderLayerGunnerFOV.gameObject.GetComponent<DynamicLight>();
 					
 					var hiderLayerGunnerPeripheral = ((Transform)Instantiate(gunnerVision.hiderPeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 					hiderLayerGunnerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
