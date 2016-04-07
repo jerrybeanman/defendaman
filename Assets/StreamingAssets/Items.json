@@ -65,7 +65,7 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-		"cost": 100,
+		"cost": 250,
     "slug": "3_health_pot",
 		"worldSlug": "3_health_pot"
   },
@@ -83,7 +83,7 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "cost": 101,
+    "cost": 500,
 		"slug": "4_health_high_pot",
 		"worldSlug": "4_health_high_pot"
   },
@@ -101,7 +101,7 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "cost": 102,
+    "cost": 700,
 		"slug": "5_damage_pot",
 		"worldSlug": "5_damage_pot"
   },
@@ -119,7 +119,7 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "cost": 103,
+    "cost": 1000,
 		"slug": "6_armor_pot",
 		"worldSlug": "6_armor_pot"
   },
@@ -137,7 +137,7 @@
     "classType": -1,
     "stackable": true,
     "type": "Consumable",
-    "cost": 104,
+    "cost": 500,
 		"slug": "7_speed_pot",
     "worldSlug": "7_speed_pot"
   },
