@@ -13,8 +13,8 @@
     "classType": -1,
     "stackable": false,
 		"type": "Weapon",
-    "slug": "cursorGauntlet_blue",
-		"worldSlug": "cursorGauntlet_blue"
+    "slug": "0_gloves",
+		"worldSlug": "0_gloves"
   },
   {
     "id": 1,
@@ -22,7 +22,7 @@
     "description": "It's a stick and that's pretty great.",
 		"stats": {
       "damage": 10,
-      "armor": 0,
+      "armor": 5,
 			"health": 0,
 			"speed": 0,
       "level": 1
@@ -48,8 +48,8 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Resource",
-    "slug": "coins_ic",
-		"worldSlug": "coins_ic"
+    "slug": "2_coin",
+		"worldSlug": "2_coin"
   },
   {
     "id": 3,
@@ -65,8 +65,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "green_portion_round",
-		"worldSlug": "green_portion_round"
+		"cost": 250,
+    "slug": "3_health_pot",
+		"worldSlug": "3_health_pot"
   },
 	{
     "id": 4,
@@ -82,8 +83,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "blue_potion_round",
-		"worldSlug": "blue_potion_round"
+    "cost": 500,
+		"slug": "4_health_high_pot",
+		"worldSlug": "4_health_high_pot"
   },
 	{
     "id": 5,
@@ -99,8 +101,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "red_potion_classic",
-		"worldSlug": "red_potion_classic"
+    "cost": 700,
+		"slug": "5_damage_pot",
+		"worldSlug": "5_damage_pot"
   },
 	{
     "id": 6,
@@ -108,7 +111,7 @@
 		"description": "Temporary armor boost.",
     "stats": {
       "damage": 0,
-      "armor": 100,
+      "armor": 75,
 			"health": 0,
 			"speed": 0
     },
@@ -116,8 +119,9 @@
 		"classType": -1,
     "stackable": true,
 		"type": "Consumable",
-    "slug": "blue_potion_classic",
-		"worldSlug": "blue_potion_classic"
+    "cost": 1000,
+		"slug": "6_armor_pot",
+		"worldSlug": "6_armor_pot"
   },
   {
     "id": 7,
@@ -127,43 +131,26 @@
       "damage": 0,
       "armor": 0,
       "health": 0,
-      "speed": 5
+      "speed": 2
     },
-    "duration": 5,
+    "duration": 45,
     "classType": -1,
     "stackable": true,
     "type": "Consumable",
-    "slug": "yellow_portion_classic",
-    "worldSlug": "yellow_portion_classic"
+    "cost": 500,
+		"slug": "7_speed_pot",
+    "worldSlug": "7_speed_pot"
   },
   {
     "id": 8,
     "title": "The Greater Stick",
     "description": "It's better than a great stick.",
     "stats": {
-      "damage": 20,
-      "armor": 0,
+      "damage": 15,
+      "armor": 10,
       "health": 0,
       "speed": 0,
       "level": 2
-    },
-    "duration": -1,
-    "classType": 2,
-    "stackable": false,
-    "type": "Weapon",
-    "slug": "sword1",
-    "worldSlug": "sword1"
-  },
-  {
-    "id": 9,
-    "title": "The Greatest Stick",
-    "description": "Wow look at this stick.",
-    "stats": {
-      "damage": 30,
-      "armor": 0,
-      "health": 0,
-      "speed": 0,
-      "level": 3
     },
     "duration": -1,
     "classType": 2,
@@ -173,15 +160,15 @@
     "worldSlug": "8_sword_level_2"
   },
   {
-    "id": 10,
-    "title": "4th Dimensional Rod",
-    "description": "How do I hold this?",
+    "id": 9,
+    "title": "The Greatest Stick",
+    "description": "Wow look at this stick.",
     "stats": {
-      "damage": 40,
-      "armor": 0,
+      "damage": 20,
+      "armor": 10,
       "health": 0,
       "speed": 0,
-      "level": 4
+      "level": 3
     },
     "duration": -1,
     "classType": 2,
@@ -191,12 +178,30 @@
     "worldSlug": "9_sword_level_3"
   },
   {
+    "id": 10,
+    "title": "4th Dimensional Rod",
+    "description": "How do I hold this?",
+    "stats": {
+      "damage": 22,
+      "armor": 24,
+      "health": 0,
+      "speed": 0,
+      "level": 4
+    },
+    "duration": -1,
+    "classType": 2,
+    "stackable": false,
+    "type": "Weapon",
+    "slug": "10_sword_level_4",
+    "worldSlug": "10_sword_level_4"
+  },
+  {
     "id": 11,
     "title": "Mace of Pain",
     "description": "This hurts to hold.",
     "stats": {
-      "damage": 50,
-      "armor": 0,
+      "damage": 24,
+      "armor": 15,
       "health": 0,
       "speed": 0,
       "level": 5
@@ -205,8 +210,8 @@
     "classType": 2,
     "stackable": false,
     "type": "Weapon",
-    "slug": "10_sword_level_4",
-    "worldSlug": "10_sword_level_4"
+    "slug": "11_sword_level_5",
+    "worldSlug": "11_sword_level_5"
   },
   {
     "id": 12,
@@ -249,8 +254,8 @@
     "title": "Two Handguns",
     "description": "This is an inefficent use of ammo.",
 		"stats": {
-      "damage": 15,
-      "armor": 0,
+      "damage": 35,
+      "armor": 5,
 			"health": 0,
 			"speed": 0,
       "level": 3
@@ -267,8 +272,8 @@
     "title": "Three Handguns?",
     "description": "Wow I'm glad I have 3 hands.",
 		"stats": {
-      "damage": 20,
-      "armor": 0,
+      "damage": 35,
+      "armor": 10,
 			"health": 0,
 			"speed": 0,
       "level": 4
@@ -285,8 +290,8 @@
     "title": "Machine Gun",
     "description": "I'll need three hands to hold this.",
     "stats": {
-      "damage": 30,
-      "armor": 0,
+      "damage": 40,
+      "armor": 10,
       "health": 0,
       "speed": 0,
       "level": 5
@@ -303,8 +308,8 @@
     "title": "Fancy Playing Cards",
     "description": "My magic tricks will cause pain.",
 		"stats": {
-      "damage": 10,
-      "armor": 0,
+      "damage": 2,
+      "armor": 2,
 			"health": 0,
 			"speed": 0,
       "level": 1
@@ -321,10 +326,10 @@
     "title": "Magical Wand",
     "description": "This looks like a stick.",
 		"stats": {
-      "damage": 15,
-      "armor": 0,
+      "damage": 4,
+      "armor": 4,
 			"health": 0,
-			"speed": 0,
+			"speed": 1,
       "level": 2
     },
 		"duration": -1,
@@ -339,10 +344,10 @@
     "title": "Magical Shovel",
     "description": "Watch me magically dig your graves.",
 		"stats": {
-      "damage": 25,
-      "armor": 0,
+      "damage": 15,
+      "armor": 15,
 			"health": 0,
-			"speed": 0,
+			"speed": 2,
       "level": 3
     },
 		"duration": -1,
@@ -358,9 +363,9 @@
     "description": "This hurts to hold.",
 		"stats": {
       "damage": 30,
-      "armor": 0,
+      "armor": 30,
 			"health": 0,
-			"speed": 0,
+			"speed": 3,
       "level": 4
     },
 		"duration": -1,
@@ -375,10 +380,10 @@
     "title": "Fire Wave",
     "description": "How do you like your enemies cooked?",
 		"stats": {
-      "damage": 40,
-      "armor": 0,
+      "damage": 50,
+      "armor": 50,
 			"health": 0,
-			"speed": 0,
+			"speed": 4,
       "level": 5
     },
 		"duration": -1,

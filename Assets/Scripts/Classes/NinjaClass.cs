@@ -35,13 +35,13 @@ public class NinjaClass : MeleeClass
 
     new void Start()
     {
-        cooldowns = new float[2] { 0.95f, 2 };
+        cooldowns = new float[2] { 1f, 4 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
-        _classStat.MaxHp = 1300;
-        _classStat.MoveSpeed = 12;
-        _classStat.AtkPower = 30;
+        _classStat.MaxHp = 1200;
+        _classStat.MoveSpeed = 7;
+        _classStat.AtkPower = 80;
         _classStat.Defense = 60;
 
         base.Start();
@@ -66,9 +66,6 @@ public class NinjaClass : MeleeClass
         {
             //Starting item kit
             Inventory.instance.AddItem(1);
-            Inventory.instance.AddItem(5, 5);
-            Inventory.instance.AddItem(6);
-            Inventory.instance.AddItem(7);
         }
 
         //ninja attack sound

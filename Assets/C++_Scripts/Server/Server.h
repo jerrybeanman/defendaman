@@ -18,7 +18,7 @@
 
 #define PACKETLEN      	4096
 #define PACKETLEN_UDP   512
- 
+
 #define BUFSIZE	        420	/* scamaz */
 #define MAXCONNECTIONS  8
 
@@ -42,7 +42,7 @@ typedef struct Player
 /* List of players currently connected to the server */
 static std::map<int, Player>           _PlayerTable;
 
-static bool gameRunning = false;
+extern bool gameRunning;
 
 namespace Networking
 {
@@ -51,23 +51,24 @@ namespace Networking
 		public:
 			Server() {}
 			~Server(){}
-		virtual int InitializeSocket(short port) = 0;
 
-		virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
+      virtual int InitializeSocket(short port) = 0;
 
-        virtual void * Receive() = 0;
+      virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
 
-		void fatal(const char* error);
+      virtual void * Receive() = 0;
 
-    int isReadyToInt(Player player);
+      void fatal(const char* error);
 
-	protected:
-		struct sockaddr_in     _ServerAddress;
-		int 				           _UDPReceivingSocket;
-    int                    _TCPAcceptingSocket;
-    fd_set                 _allset;              // File descriptor set for connected sockets
-    int                    _maxfd;               //Maximum amount of file descriptors
-    int                    _maxi;                // Current maximum connections
+      int isReadyToInt(Player player);
+
+	 protected:
+     struct sockaddr_in     _ServerAddress;
+		 int 				           _UDPReceivingSocket;
+     int                    _TCPAcceptingSocket;
+     fd_set                 _allset;              // File descriptor set for connected sockets
+     int                    _maxfd;               //Maximum amount of file descriptors
+     int                    _maxi;                // Current maximum connections
 
 	};
 }

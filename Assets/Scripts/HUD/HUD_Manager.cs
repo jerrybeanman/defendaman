@@ -36,6 +36,8 @@ public class HUD_Manager : MonoBehaviour
 	public ChargeBar			chargeBar;
 	public Stamina				stamina;
 	public ColourizeScreen		colourizeScreen;
+	public WinScreen			winScreen;
+    public LoseScreen           loseScreen;
 
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
@@ -916,5 +918,17 @@ public class HUD_Manager : MonoBehaviour
 		public Image			ProgressBar;
 		public float			FillTimer;
 	}
-	#endregion
+	[System.Serializable]
+	public class WinScreen
+	{
+		public Animator			Parent;
+		public Animator			Child;
+	}
+    [System.Serializable]
+    public class LoseScreen
+    {
+        public Animator         Parent;
+        public Animator         Child;
+    }
+    #endregion
 }

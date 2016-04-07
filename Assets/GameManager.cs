@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour {
     {
         if (!testing)
         {
-            NetworkingManager.Subscribe(gameEnd, DataType.Lobby, (int)LobbyData.GameEnd);
             StartGame(GameData.Seed);
         }
     }
@@ -99,13 +98,13 @@ public class GameManager : MonoBehaviour {
         instance.player = null;
         if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
         {
-            NetworkingManager.send_next_packet(DataType.Lobby, 8, new List<Pair<string, string>>(), Protocol.TCP);
+            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameLost();
         }
 
         if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID)
         {
-            NetworkingManager.send_next_packet(DataType.Lobby, 8, new List<Pair<string, string>>(), Protocol.TCP);
+            NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameWon();
         }
     }
@@ -185,25 +184,26 @@ public class GameManager : MonoBehaviour {
 
 					// These are the FOV & peripheral vision occlusion masks
 					var lightingGunnerFOV = ((Transform)Instantiate(gunnerVision.lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					lightingGunnerFOV.transform.parent = createdPlayer.transform;
 					lightingGunnerFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					lightingGunnerFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 					lightingGunnerFOV.transform.Translate(0, 0, 8);
-					
+					// Send the gunner a reference to this lightsource for their special attack
+                    DynamicLight dl = lightingGunnerFOV.gameObject.GetComponent<DynamicLight>();
+                    createdPlayer.GetComponent<GunnerClass>().FOVCone = dl;
+
 					var lightingGunnerPeripheral = ((Transform)Instantiate(gunnerVision.lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					lightingGunnerPeripheral.transform.parent = createdPlayer.transform;
 					lightingGunnerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					lightingGunnerPeripheral.transform.Translate(0, 0, 8);
 
 					// These are the FOV & peripheral vision stencil masks
 					var hiderLayerGunnerFOV = ((Transform)Instantiate(gunnerVision.hiderFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					hiderLayerGunnerFOV.transform.parent = createdPlayer.transform;
 					hiderLayerGunnerFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					hiderLayerGunnerFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 					hiderLayerGunnerFOV.transform.Translate(0, 0, 8);
+					// Send the gunner a reference to this lightsource for their special attack
+					createdPlayer.GetComponent<GunnerClass>().FOVConeHidden = hiderLayerGunnerFOV.gameObject.GetComponent<DynamicLight>();
 					
 					var hiderLayerGunnerPeripheral = ((Transform)Instantiate(gunnerVision.hiderPeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					hiderLayerGunnerPeripheral.transform.parent = createdPlayer.transform;
 					hiderLayerGunnerPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					hiderLayerGunnerPeripheral.transform.Translate(0, 0, 8);
 
@@ -222,25 +222,21 @@ public class GameManager : MonoBehaviour {
 
 					// These are the FOV & peripheral vision occlusion masks
 					var lightingNinjaFOV = ((Transform)Instantiate(ninjaVision.lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					lightingNinjaFOV.transform.parent = createdPlayer.transform;
 					lightingNinjaFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					lightingNinjaFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 					lightingNinjaFOV.transform.Translate(0, 0, 8);
 					
 					var lightingNinjaPeripheral = ((Transform)Instantiate(ninjaVision.lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					lightingNinjaPeripheral.transform.parent = createdPlayer.transform;
 					lightingNinjaPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					lightingNinjaPeripheral.transform.Translate(0, 0, 8);
 					
 					// These are the FOV & peripheral vision stencil masks
 					var hiderLayerNinjaFOV = ((Transform)Instantiate(ninjaVision.hiderFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					hiderLayerNinjaFOV.transform.parent = createdPlayer.transform;
 					hiderLayerNinjaFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					hiderLayerNinjaFOV.GetComponent<RotateWithPlayer>().target = createdPlayer.transform;
 					hiderLayerNinjaFOV.transform.Translate(0, 0, 8);
 					
 					var hiderLayerNinjaPeripheral = ((Transform)Instantiate(ninjaVision.hiderPeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					hiderLayerNinjaPeripheral.transform.parent = createdPlayer.transform;
 					hiderLayerNinjaPeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					hiderLayerNinjaPeripheral.transform.Translate(0, 0, 8);
 
@@ -258,12 +254,10 @@ public class GameManager : MonoBehaviour {
 				case ClassType.Wizard:
 
 					var lightingMagePeripheral = ((Transform)Instantiate(mageVision.lightSourcePeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					lightingMagePeripheral.transform.parent = createdPlayer.transform;
 					lightingMagePeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					lightingMagePeripheral.transform.Translate(0, 0, 8);
 					
 					var hiderLayerMagePeripheral = ((Transform)Instantiate(mageVision.hiderPeripheral, createdPlayer.transform.position, Quaternion.identity)).gameObject;
-					hiderLayerMagePeripheral.transform.parent = createdPlayer.transform;
 					hiderLayerMagePeripheral.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
 					hiderLayerMagePeripheral.transform.Translate(0, 0, 8);
 
@@ -294,18 +288,6 @@ public class GameManager : MonoBehaviour {
 				SetMaterialRecursively(createdPlayer, hiddenMat);
 				
 			}
-        }
-
-
-        foreach (var king in kings)
-        {
-            if (king.first == myTeam)
-            {
-                GameData.AllyKingID = king.second;
-            }
-            else {
-                GameData.EnemyKingID = king.second;
-            }
         }
 
 		NetworkingManager.StartGame();
@@ -354,54 +336,37 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-    private void gameEnd(JSONClass packet)
-    {
-        if  (packet["TeamID"] == GameData.MyPlayer.TeamID)
-        {
-            GameWon();
-        } else
-        {
-            GameLost();
-        }
-    }
-
     public void GameWon()
     {
+        StartCoroutine(sleep());
         GameData.GameState = GameState.Won;
-        Debug.Log("You have won");
+		HUD_Manager.instance.winScreen.Parent.gameObject.SetActive(true);
+		HUD_Manager.instance.winScreen.Parent.SetTrigger("Play");
+		HUD_Manager.instance.winScreen.Child.SetTrigger("Play");
     }
 
     public void GameLost()
     {
+        StartCoroutine(sleep());
         GameData.GameState = GameState.Lost;
-        Debug.Log("You have lost");
+        HUD_Manager.instance.loseScreen.Parent.gameObject.SetActive(true);
+        HUD_Manager.instance.loseScreen.Parent.SetTrigger("Play");
+        HUD_Manager.instance.loseScreen.Child.SetTrigger("Play");
     }
-
-    void OnGUI()
+	
+    IEnumerator sleep()
     {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 60;
-        switch (GameData.GameState)
-        {
-            case GameState.Won:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You won!", style);
-                Invoke("ReturnToMenu", 5f);
-                break;
-            case GameState.Lost:
-                GUI.Label(new Rect(Screen.width / 2 - 20, Screen.height / 2 - 20, Screen.width / 2 + 20, Screen.height / 2 + 20), "You lost!", style);
-                Invoke("ReturnToMenu", 5f);
-                break;
-            default:
-                break;
-        }
+        yield return new WaitForSeconds(5);
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
+        NetworkingManager.instance.ResetConnections();
+        NetworkingManager.ClearSubscriptions();
     }
-
-    void ReturnToMenu()
+   	public void ReturnToMenu()
     {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
-        GameData.aiSpawn = null;
+        GameData.aiSpawn = new Pair<int, int>(10, 10);
         GameData.AllyKingID = -1;
         GameData.EnemyKingID = -1;
         GameData.AllyTeamKillCount = 0;
@@ -414,10 +379,17 @@ public class GameManager : MonoBehaviour {
         GameData.Seed = 0;
         GameData.TeamSpawnPoints.Clear();
         GameData.PlayerPosition.Clear();
-        GameData.MyPlayer = null;
+        GameData.MyPlayer = new PlayerData();
+        GameData.GameState = GameState.Playing;
+        GameData.CurrentTheme = Themes.Grass;
         Destroy(NetworkingManager.instance);
         Destroy(Inventory.instance);
         Destroy(WorldItemManager.Instance);
-        Application.LoadLevel("MenuScene");
+        //Application.LoadLevel("MenuScene");
+    }
+
+    public void ExitGame()
+    {
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
     }
 }

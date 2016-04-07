@@ -9,24 +9,20 @@ namespace Networking
 	class ServerUDP : public Server
 	{
 		public:
-	      ServerUDP() {}
+	     ServerUDP() {}
 		  ~ServerUDP() {}
 
-          int InitializeSocket(short port) override;
+			int InitializeSocket(short port) override;
 
-          void * Receive() override;
+      void * Receive() override;
 
-          void Broadcast(const char* message, sockaddr_in * excpt = NULL) override;
+			void Broadcast(const char* message, sockaddr_in * excpt = NULL) override;
 
-          void SetPlayerList(std::map<int, Player> players);
+      static void * CreateClientManager(void * server);
 
-          static void * CreateClientManager(void * server);
+      void PrepareSelect();
 
-          void PrepareSelect();
-
-          int SetSocketOpt();
-
-          void StopServer();
+      int SetSocketOpt();
 	};
 }
 

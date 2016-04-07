@@ -60,6 +60,7 @@ public class MenuScript : MonoBehaviour {
     public GameObject lobby_menu;
 	public Toggle	  ready_toggle;
     public Toggle     aman_toggle;
+    public Button     change_team;
     public GameObject ready_count;
     public GameObject host_ip;
     public GameObject map_theme;
@@ -78,6 +79,8 @@ public class MenuScript : MonoBehaviour {
     private List<GameObject> _menu_order = new List<GameObject>();
 
     private string _host_ip;
+    private bool _team_set = false;
+    private bool _class_set = false;
 
     private Sprite _default_avatar;
     private Sprite _gunner_avatar;
@@ -90,26 +93,6 @@ public class MenuScript : MonoBehaviour {
 
     private string SendingPacket;
 
-
-
-    // testing...
-    int t1id = 0;
-    int t2id = 0;
-    int idx = 0;
-    public void TestAddToLobby(int team)
-    {
-        if (idx <= 23)
-        {
-            PlayerData p = new PlayerData();
-            p.PlayerID = (team == 1 ? t1id++ : t2id++);
-            p.Username = (team == 1 ? t1id.ToString() : t2id.ToString());
-            p.TeamID = team;
-            p.ClassType = ClassType.Gunner;
-            p.Ready = false;
-
-            GameData.LobbyData.Add(idx++, p);
-        }
-    }
 	/*-----------------------------------------------------------------------------------------------------------------
     -- FUNCTION: Awake
     --
@@ -188,7 +171,6 @@ public class MenuScript : MonoBehaviour {
 			if (!String.Equals(tmp, "[]"))
 			{
 				LobbyNetwork.ParseLobbyData(tmp);
-				
 				UpdateLobbyList();
 			}
 		}
@@ -218,6 +200,7 @@ public class MenuScript : MonoBehaviour {
         int t2_idx = 0;
         int ready = 0;
 		bool readyStatus;
+        bool isAman;
 
         // start off by disabling all player slots in each team
         foreach (Transform slot in team1_list.transform)
@@ -230,23 +213,42 @@ public class MenuScript : MonoBehaviour {
             slot.gameObject.SetActive(false);
         }
 
-		// NOTE: Unlock/Lock aman panel depending on status recieved over network
-		// TODO: lock aman selection toggle if GameData.AllyKingID != GameData.MyPlayer.PlayerID 
-		//		 unlock aman selection toggle if GamaData.AllyKingID == -1, which indicates aman hasnt been selected or has been "deselected" 
-		//		 put aman "indicator" to the corresponding player on both teams 
+        // NOTE: Unlock/Lock aman panel depending on status recieved over network
+        // TODO: lock aman selection toggle if GameData.AllyKingID != GameData.MyPlayer.PlayerID 
+        //		 unlock aman selection toggle if GamaData.AllyKingID == -1, which indicates aman hasnt been selected or has been "deselected" 
+        //		 put aman "indicator" to the corresponding player on both teams
 
-		// TODO: Update current theme text/panel
+		if (GameData.AllyKingID != GameData.MyPlayer.PlayerID)
+        {
+            aman_toggle.interactable = false;
+            change_team.interactable = true;
+        }
+		if (GameData.AllyKingID == -1)
+		{
+			aman_toggle.interactable = true;
+		}
+        if (GameData.AllyKingID == GameData.MyPlayer.PlayerID)
+        {
+            change_team.interactable = false;
+        }
 
         // check the current lobby data values and update the player slots
         foreach (PlayerData p in GameData.LobbyData.Values)
         {
 			readyStatus = false;
+            isAman = false;
             if (p.Ready)
             {
                 ready++;
                 readyStatus = true;
             }
-            AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++), readyStatus);
+
+            if (p.PlayerID == GameData.AllyKingID || p.PlayerID == GameData.EnemyKingID)
+            {
+                isAman = true;
+            }
+
+            AddToLobby(p.Username, p.TeamID, p.ClassType, (p.TeamID == 1 ? t1_idx++ : t2_idx++), readyStatus, isAman);
         }
         ready_count.transform.GetComponent<Text>().text = ready.ToString() + "/" + GameData.LobbyData.Count;
     }
@@ -272,7 +274,7 @@ public class MenuScript : MonoBehaviour {
     -- NOTES:
     -- Function to actually add a player to a player slot. 
     -----------------------------------------------------------------------------------------------------------------*/
-    private void AddToLobby(String name, int team, ClassType class_type, int index, bool ready_status)
+    private void AddToLobby(String name, int team, ClassType class_type, int index, bool ready_status, bool is_aman)
     {
         List<Transform> team_to_set = (team == 1 ? _team1_slots : _team2_slots);
         name = name.ToUpper();
@@ -298,6 +300,14 @@ public class MenuScript : MonoBehaviour {
             else
             {
                 team_to_set[index].transform.Find("ReadyStatus").gameObject.SetActive(false);
+            }
+            if (is_aman)
+            {
+                team_to_set[index].transform.Find("AmanIndicator").gameObject.SetActive(true);
+            }
+            else
+            {
+                team_to_set[index].transform.Find("AmanIndicator").gameObject.SetActive(false);
             }
 
             team_to_set[index].gameObject.SetActive(true);
@@ -347,7 +357,7 @@ public class MenuScript : MonoBehaviour {
 
 		// NOTE:: This can only be called when either the player has already selected to be the aman, which he can deselect it
 		//		  or no one on the team has selected aman. Functionality handled over network
-		GameData.AllyKingID = aman_toggle.isOn ? -1 : GameData.MyPlayer.PlayerID;
+		GameData.AllyKingID = aman_toggle.isOn ? GameData.MyPlayer.PlayerID : -1;
 		LobbyNetwork.SendLobbyData(NetworkCode.AmanSelection);
     }
 
@@ -434,8 +444,23 @@ public class MenuScript : MonoBehaviour {
     public void SelectTeam(int team)
     {
         team_select_panel.SetActive(false);
+
+        if (GameData.MyPlayer.TeamID != team && GameData.MyPlayer.TeamID > 0)
+        {
+            int temp = GameData.AllyKingID;
+            GameData.AllyKingID = GameData.EnemyKingID;
+            GameData.EnemyKingID = temp;
+        }
+
         GameData.MyPlayer.TeamID = team;
         LobbyNetwork.SendLobbyData(NetworkCode.TeamChangeRequest);
+        _team_set = true;
+
+        if (_class_set == false)
+        {
+            class_select_panel.SetActive(true);
+        }
+
     }
 
     /*-----------------------------------------------------------------------------------------------------------------
@@ -459,11 +484,11 @@ public class MenuScript : MonoBehaviour {
     {
         map_select_panel.SetActive(false);
         GameData.CurrentTheme = (Themes)theme;
-		LobbyNetwork.SendLobbyData(NetworkCode.ThemeSelection);
         if ((Themes)theme == Themes.Grass)
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: GRASSLAND";
-        } else
+        } 
+		else
         {
             map_theme.transform.GetComponent<Text>().text = "MAP THEME: TRON";
         }
@@ -520,6 +545,8 @@ public class MenuScript : MonoBehaviour {
         }
         GameData.MyPlayer.ClassType = (ClassType)value;
         LobbyNetwork.SendLobbyData(NetworkCode.ClassChangeRequest);
+
+        _class_set = true;
     }
 
     /*-----------------------------------------------------------------------------------------------------------------
@@ -540,19 +567,10 @@ public class MenuScript : MonoBehaviour {
     -----------------------------------------------------------------------------------------------------------------*/
     public void StartGame()
     {
-        // TODO: game start now will need to check _map_theme value
-        // _map_theme = 0: grassland theme
-        // _map_theme = 1: tron theme
-        /*
-        if (_map_theme == 0)
+        if (GameData.AllyKingID != -1 && GameData.EnemyKingID != -1)
         {
-
-        } else
-        {
-
+            LobbyNetwork.SendLobbyData(NetworkCode.GameStart);
         }
-        */
-        LobbyNetwork.SendLobbyData(NetworkCode.GameStart);
         team_select_panel.SetActive(false);
     }
 
@@ -583,8 +601,8 @@ public class MenuScript : MonoBehaviour {
             _SwitchMenu(MenuStates.Lobby);
 			return;
 		}
-        // TODO: validate player name and IP addr
-        if (!(name.Length == 0) && !(_host_ip.Length == 0))
+        
+        if (!(name.Length == 0) && name.Length <= 12  && !(_host_ip.Length == 0))
         {
             GameData.MyPlayer.Username = name;
             if (!LobbyNetwork.Connect(_host_ip))
@@ -737,6 +755,11 @@ public class MenuScript : MonoBehaviour {
     -----------------------------------------------------------------------------------------------------------------*/
     public void Back()
     {
+        if (_menu_order[_menu_order.Count - 1] == lobby_menu)
+        {
+            _class_set = false;
+            _team_set = false;
+        }
         _SwitchMenu(MenuStates.Previous);
     }
 

@@ -1,8 +1,50 @@
+/*------------------------------------------------------------------------------
+
+  SOURCE FILE:              client_library.cpp
+
+  PROGRAM:                  Defendaman
+
+  FUNCTIONS:                int getSO_ERROR(int fd)
+                            void closeSocket(int fd)
+                            extern "C" LobbyClient * TCP_CreateClient()
+                            extern "C" void TCP_DisposeClient(LobbyClient* client)
+                            extern "C" void TCP_DisposeClient(LobbyClient* client)
+                            extern "C" int TCP_ConnectToServer(LobbyClient * client, const char * name, short port)
+                            void * TCP_Recv(void * arg)
+                            extern "C" int TCP_StartReadThread(LobbyClient * client)
+                            extern "C" char * TCP_GetData(LobbyClient * client)
+                            extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
+                            extern "C" GameClient * UDP_CreateClient()
+                            extern "C" void UDP_DisposeClient(GameClient* client)
+                            extern "C" int UDP_ConnectToServer(GameClient * client, const char * name, short port)
+                            void * UDP_Recv(void * arg)
+                            extern "C" int UDP_StartReadThread(GameClient * client)
+                            extern "C" char * UDP_GetData(GameClient * client)
+                            extern "C" int UDP_Send(GameClient * client, char * message, int size)
+
+
+  DESIGNER/PROGRAMMER:      Gabriel Lee, Tyler Trepanier-Bracken, Vivek Kalia, Jerry
+
+  NOTES:                    C++ library used for networking
+
+-------------------------------------------------------------------------------*/
 #include "Client.h"
 #include "GameClient.h"
 #include "LobbyClient.h"
 using namespace Networking;
 
+/*------------------------------------------------------------------------------
+
+  FUNCTION:                 getSO_ERROR
+
+  DESIGNER/PROGRAMMER:      Jerry Jia
+
+  INTERFACE:                int getSO_ERROR(int fd)
+
+  RETURNS:                  error
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 int getSO_ERROR(int fd) {
    int err = 1;
    socklen_t len = sizeof err;
@@ -12,6 +54,18 @@ int getSO_ERROR(int fd) {
       errno = err;              // set errno to the socket SO_ERROR
    return err;
 }
+/*------------------------------------------------------------------------------
+
+  FUNCTION:               closeSocket
+
+  DESIGNER/PROGRAMMER:    Jerry Jia
+
+  INTERFACE:              void closeSocket(int fd)
+
+  RETURNS:                void
+
+  NOTES:
+-------------------------------------------------------------------------------*/
 void closeSocket(int fd)
 {
 	// *not* the Windows closesocket()
@@ -24,31 +78,37 @@ void closeSocket(int fd)
          printf("close\n");
    }
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Creates a client object, which will return an IntPtr type in C#
+  FUNCTION:               TCP_CreateTCPClient
 
-	Interface:	Client * TCP_CreateTCPClient()
+  DESIGNER/PROGRAMMER:
 
-	Programmer: Jerry Jia
+  INTERFACE:              Client * TCP_CreateTCPClient()
 
-	@return: new Client object
-*/
+  RETURNS:                new Client object
+
+  NOTES:                  	Creates a client object, which will return an IntPtr type in C#
+
+-------------------------------------------------------------------------------*/
 extern "C" LobbyClient * TCP_CreateClient()
 {
 	return new LobbyClient();
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Free a client object from heap
+  FUNCTION:                   TCP_DisposeTCPClient
 
-	Interface: 	void TCP_DisposeTCPClient(Client* client)
-				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
+  DESIGNER/PROGRAMMER:        Jerry Jia
 
-	Programmer: Jerry Jia
+  INTERFACE:                  Interface: 	void TCP_DisposeTCPClient(Client* client)
+				                      [client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 
-	@return: void
-*/
+  RETURNS:                    void
+
+  NOTES:                      Free a client object from heap
+
+-------------------------------------------------------------------------------*/
 extern "C" void TCP_DisposeClient(LobbyClient* client)
 {
 	if(client != NULL)
@@ -58,18 +118,20 @@ extern "C" void TCP_DisposeClient(LobbyClient* client)
 		//free(client)
 	}
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Connects to the server, calls Init_TCP_Client_Socket() in the Client object
+  FUNCTION:                 TCP_ConnectToServer
 
-	Interface:	int TCP_ConnectToServer(Client * client, const char * name, short port)
-				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
-				[name] 	 IP address of peer host
+  DESIGNER/PROGRAMMER:      Jerry Jia
 
-	Programmer: Jerry Jia
+  INTERFACE:               Interface:	int TCP_ConnectToServer(Client * client, const char * name, short port)
+  				                        [client] Pointer to the client obeject (In this case, the IntPtr value in C#)
+  				                        [name] 	 IP address of peer host
 
-	@return: void
-*/
+  RETURNS:
+
+  NOTES:  Connects to the server, calls Init_TCP_Client_Socket() in the Client object
+-------------------------------------------------------------------------------*/
 extern "C" int TCP_ConnectToServer(LobbyClient * client, const char * name, short port)
 {
 	if(client != NULL)
@@ -79,66 +141,77 @@ extern "C" int TCP_ConnectToServer(LobbyClient * client, const char * name, shor
   }
     return -1;
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Helper function for thread creation. Calls recv() on the Client object.
+  FUNCTION:               TCP_Recv
 
-	Interface:	void * TCP_Recv(void * arg)
-				[arg] Has to take a client object
+  DESIGNER/PROGRAMMER:    Jerry Jia
 
-	Programmer: Jerry Jia
+  INTERFACE:              Interface:	void * TCP_Recv(void * arg)
+				                      [arg] Has to take a client object
 
-	@return: function pointer to Client->Recv()
-*/
+  RETURNS:               unction pointer to Client->Recv()
+
+  NOTES:                  Helper function for thread creation. Calls recv() on the Client object.
+
+-------------------------------------------------------------------------------*/
 void * TCP_Recv(void * arg)
 {
 	return ((Client *)arg)->Recv();
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Creates a thread for recieving packet data
+  FUNCTION:               TCP_StartReadThread
 
-	Interface:	void TCP_StartReadThread(Client * client)
-				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
+  DESIGNER/PROGRAMMER:    Jerry Jia
 
-	Programmer: Jerry Jia
+  INTERFACE:              Interface:	void TCP_StartReadThread(Client * client)
+				                      [client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 
-	@return: void
-*/
+  RETURNS:                void
+
+  NOTES:                  Creates a thread for recieving packet data
+
+-------------------------------------------------------------------------------*/
 extern "C" int TCP_StartReadThread(LobbyClient * client)
 {
 	return pthread_create(&client->ReadThread, NULL, &TCP_Recv, (void *)client);
 }
 
+/*------------------------------------------------------------------------------
 
-/*
-	Grabs data packets stored in the circular buffer in the Client object
+  FUNCTION:                 TCP_GetData
 
-	Interface:	char * TCP_GetData(Client * client)
-				[client] Pointer to the client object (In this case, the IntPtr value in C#)
+  DESIGNER/PROGRAMMER:      jerry Jia
 
+  INTERFACE:                Interface:	char * TCP_GetData(Client * client)
+				                      [client] Pointer to the client object (In this case, the IntPtr value in C#)
 
-	Programmer: Jerry Jia
+  RETURNS:
 
-	@return: "[]" if the circular buffer is empty, otherwise the packet pointed by rear in client->CircularBuf
-*/
+  NOTES:                  "[]" if the circular buffer is empty, otherwise the packet pointed by rear in client->CircularBuf
+
+-------------------------------------------------------------------------------*/
 extern "C" char * TCP_GetData(LobbyClient * client)
 {
 		return client->GetData();
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Sends a message to the server socket
+  FUNCTION:               TCP_Send
 
-	Interface:	int TCP_Send(Client * client, char * message, int size)
-				[client] 	Pointer to the client object (In this case, the IntPtr value in C#)
-				[message]	The packet to send
-				[size]		Size of the packet
+  DESIGNER/PROGRAMMER:    Jerry Jia
 
-	Programmer: Jerry Jia
+  INTERFACE:            Interface:	int TCP_Send(Client * client, char * message, int size)
+				                    [client] 	Pointer to the client object (In this case, the IntPtr value in C#)
+				                    [message]	The packet to send
+				                    [size]		Size of the packet
 
-	@return: -1 for failure, 0 on success
-*/
+  RETURNS:              1 for failure, 0 on success
+
+  NOTES:                	Sends a message to the server socket
+
+-------------------------------------------------------------------------------*/
 extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 {
 	// ITS ONLY PACKET LEN, IGNORE SIZE FOR NOW
@@ -149,117 +222,136 @@ extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
 				GAME CLIENT
 ===========================================*/
 
+/*------------------------------------------------------------------------------
 
-/*
-	Creates a game client object, which will return an IntPtr type in C#
+  FUNCTION:           UDP_CreateClient
 
-	Interface:	GameClient * UDP_CreateClient()
+  DESIGNER/PROGRAMMER:    Jerry Jia
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  INTERFACE:          GameClient * UDP_CreateClient()
 
-	@return: new GameClient object
-*/
+  RETURNS:            new GameClient object
+
+  NOTES:              Creates a game client object, which will return an IntPtr type in C#
+
+-------------------------------------------------------------------------------*/
 extern "C" GameClient * UDP_CreateClient()
 {
 	return new GameClient();
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Free a game client object from heap
+  FUNCTION:                   UDP_DisposeClient
 
-	Interface: 	void UDP_DisposeClient(GameClient* client)
-				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
+  DESIGNER/PROGRAMMER:        Gabriel Lee, Tyler Trepanier
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  INTERFACE:                  Interface: 	void UDP_DisposeClient(GameClient* client)
+				                          [client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 
-	@return: void
-*/
+  RETURNS:                    void
+
+  NOTES:                      Free a game client object from heap
+
+-------------------------------------------------------------------------------*/
 extern "C" void UDP_DisposeClient(GameClient* client)
 {
 	if(client != NULL)
 	{
-		delete client;
+		closeSocket(client->serverSocket);
 		client = NULL;
 	}
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Connects to the server, calls Init_TCP_Client_Socket() in the Client object
+  FUNCTION:                 Connects to the server, calls Init_TCP_Client_Socket() in the Client object
 
-	Interface:	int UDP_ConnectToServer(Client * client, const char * name, short port)
-				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
-				[name] 	 IP address of peer host
+  DESIGNER/PROGRAMMER:        Gabriel Lee, Tyler Trepanier
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  INTERFACE:            	Interface:	int UDP_ConnectToServer(Client * client, const char * name, short port)
+  				                  [client] Pointer to the client obeject (In this case, the IntPtr value in C#)
+  				                  [name] 	 IP address of peer host
 
-	@return: int
-*/
+  RETURNS:                  int
+
+  NOTES:                    Connects to the server, calls Init_TCP_Client_Socket() in the Client object
+
+-------------------------------------------------------------------------------*/
 extern "C" int UDP_ConnectToServer(GameClient * client, const char * name, short port)
 {
 	if(client != NULL)
 		return client->Init_Client_Socket(name, port);
   return -1;
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Helper function for thread creation. Calls recv() on the Client object.
+  FUNCTION:                 	Helper function for thread creation. Calls recv() on the Client object.
 
-	Interface:	void * UDP_Recv(void * arg)
-				[arg] Has to take a client object
+  DESIGNER/PROGRAMMER:      Gabriel Lee, Tyler Trepanier
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  INTERFACE:                	Interface:	void * UDP_Recv(void * arg)
+  				                          [arg] Has to take a client object
 
-	@return: function pointer to Client->Recv()
-*/
+  RETURNS:                 function pointer to Client->Recv()
+
+  NOTES:                    Helper function for thread creation. Calls recv() on the Client object.
+
+-------------------------------------------------------------------------------*/
 void * UDP_Recv(void * arg)
 {
 	return ((Client *)arg)->Recv();
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Creates a thread for recieving packet data
+  FUNCTION:                 UDP_StartReadThread
 
-	Interface:	void UDP_StartReadThread(GameClient * client)
-				[client] Pointer to the client obeject (In this case, the IntPtr value in C#)
+  DESIGNER/PROGRAMMER:      Gabriel Lee, Tyler Trepanier
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  INTERFACE:                Interface:	void UDP_StartReadThread(GameClient * client)
+				                        [client] Pointer to the client obeject (In this case, the IntPtr value in C#)
 
-	@return: int
-*/
+  RETURNS:                  int
+
+  NOTES:                    Creates a thread for recieving packet data
+
+-------------------------------------------------------------------------------*/
 extern "C" int UDP_StartReadThread(GameClient * client)
 {
 	return pthread_create(&client->ReadThread, NULL, &UDP_Recv, (void *)client);
 }
+/*------------------------------------------------------------------------------
 
+  FUNCTION:                 UDP_GetData
 
-/*
-	Grabs data packets stored in the circular buffer in the Client object
+  DESIGNER/PROGRAMMER:      Gabriel Lee, Tyler Trepanier
 
-	Interface:	char * UDP_GetData(Client * client)
-				[client] Pointer to the client object (In this case, the IntPtr value in C#)
+  INTERFACE:                Interface:	char * UDP_GetData(Client * client)
+				                      [client] Pointer to the client object (In this case, the IntPtr value in C#)
 
+  RETURNS:                  "[]" if the circular buffer is empty, otherwise the packet pointed by rear in client->CircularBuf
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  NOTES:                  Grabs data packets stored in the circular buffer in the Client object
 
-	@return: "[]" if the circular buffer is empty, otherwise the packet pointed by rear in client->CircularBuf
-*/
+-------------------------------------------------------------------------------*/
 extern "C" char * UDP_GetData(GameClient * client)
 {
 		return client->GetData();
 }
+/*------------------------------------------------------------------------------
 
-/*
-	Sends a message to the server socket
+  FUNCTION:             UDP_Send
 
-	Interface:	int UDP_Send(Client * client, char * message, int size)
-				[client] 	Pointer to the client object (In this case, the IntPtr value in C#)
-				[message]	The packet to send
-				[size]		Size of the packet
+  DESIGNER/PROGRAMMER:  Gabriel Lee, Tyler Trepanier
 
-	Programmer: Gabriel Lee, Tyler Trepanier
+  INTERFACE:	           Interface:	int UDP_Send(Client * client, char * message, int size)
+  				                [client] 	Pointer to the client object (In this case, the IntPtr value in C#)
+  				                [message]	The packet to send
+  				                [size]		Size of the packet
 
-	@return: -1 for failure, 0 on success
-*/
+  RETURNS:              -1 for failure, 0 on success
+
+  NOTES:                  Sends a message to the server socket
+
+-------------------------------------------------------------------------------*/
 extern "C" int UDP_Send(GameClient * client, char * message, int size)
 {
 	return client->Send(message, PACKETLEN_UDP);

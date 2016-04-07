@@ -59,6 +59,7 @@ public class NetworkingManager : MonoBehaviour
     public static IntPtr UDPClient { get; private set; }
 
 	public static NetworkingManager instance;
+    private bool sendThisFrame = true;
 
     #endregion
 
@@ -98,18 +99,25 @@ public class NetworkingManager : MonoBehaviour
     }
 
     // Update is called once per frame
+    bool skip = false;
     void Update() {
         if (GameData.GameStart) {
+            if (skip)
+            {
+                skip = false;
+                return;
+            }
+            skip = true;
             string packet;
 
             //Needs to be reaplced with one "get data" call
-            while ((packet = receive_data_tcp()).Length > 8)
+            while ((packet = receive_data_tcp()).Length > 4)
                 update_data(packet);
 
             //Needs to be replaced with one "get data" call
-            while ((packet = receive_data_udp()).Length > 8)
+            while ((packet = receive_data_udp()).Length > 4)
                 update_data(packet);
-            
+
             //TODO: Basically, if we have 23 people in the game, that's 23 packets per frame.
             //So 23 "get data from client code" calls per frame, so the overhead of going from
             //unmanaged to managed code is invoked 23 times for UDP, instead of just once
@@ -117,7 +125,13 @@ public class NetworkingManager : MonoBehaviour
             //i.e. instead of rapid returns of [{a},{b}], [{c}]... etc 23 times, have it merge them
             // and return one big [{a}, {b}, {c}, {d}...]
 
-            send_data();
+            //if (sendThisFrame)
+            //{
+                send_data();
+            //    sendThisFrame = false;
+            //} else {
+            //    sendThisFrame = true;
+            //}
         }
     }
     
@@ -165,7 +179,12 @@ public class NetworkingManager : MonoBehaviour
 
     public void update_data(string JSONGameState)
     {
-        JSONArray gameObjects = gameObjects = JSON.Parse(JSONGameState).AsArray;
+        JSONArray gameObjects = null;
+        try {
+            gameObjects = gameObjects = JSON.Parse(JSONGameState).AsArray;
+        } catch (Exception e) {
+            Debug.Log("[ERROR: Invalid packet: " + JSONGameState);
+        }
         if (gameObjects == null || JSONGameState == "[]")
         {
             Debug.Log("[ERROR] NetworkingManager.update_data received a packet that is null");
@@ -179,7 +198,7 @@ public class NetworkingManager : MonoBehaviour
 
             if (dataType == (int)DataType.Environment)
             {
-                GameObject.FindGameObjectWithTag("GameManager").GetComponent<MapManager>().handle_event(id, obj);// receive_message(obj, id);
+                GameObject.FindGameObjectWithTag("GameManager").GetComponent<MapManager>().HandleEvent(id, obj);// receive_message(obj, id);
             }
 
             if (id != 0 || (dataType == (int)DataType.Environment || dataType == (int)DataType.StartGame))
