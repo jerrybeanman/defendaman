@@ -356,7 +356,8 @@ public class GameManager : MonoBehaviour {
 	
     IEnumerator sleep()
     {
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(5);
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
     }
