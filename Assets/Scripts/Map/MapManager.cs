@@ -317,11 +317,13 @@ public class MapManager : MonoBehaviour {
 		                                     go.GetComponent<Resource>().y == yPos);
 
         // Only the player who killed the tree tells the server to create gold
-        
+        if (GameData.MyPlayer.PlayerID == playerId)
+        {
             Debug.Log("me drops the gold");
-            for (int i = 0; i < (TOTAL_GOLD / GOLD_TO_DROP); i++) {
+            for (int i = 0; i < (TOTAL_GOLD / GOLD_TO_DROP); i++)
+            {
                 temp.GetComponent<Resource>().DropGold(GOLD_TO_DROP);
-            
+            }
         }
 
         // Explode and deactivate it
