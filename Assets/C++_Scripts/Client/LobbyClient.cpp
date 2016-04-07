@@ -1,3 +1,33 @@
+/*------------------------------------------------------------------------------
+
+  SOURCE FILE:              LobbyClient.cpp
+
+  PROGRAM:                  Defendaman
+
+  FUNCTIONS:                int getSO_ERROR(int fd)
+                            void closeSocket(int fd)
+                            extern "C" LobbyClient * TCP_CreateClient()
+                            extern "C" void TCP_DisposeClient(LobbyClient* client)
+                            extern "C" void TCP_DisposeClient(LobbyClient* client)
+                            extern "C" int TCP_ConnectToServer(LobbyClient * client, const char * name, short port)
+                            void * TCP_Recv(void * arg)
+                            extern "C" int TCP_StartReadThread(LobbyClient * client)
+                            extern "C" char * TCP_GetData(LobbyClient * client)
+                            extern "C" int TCP_Send(LobbyClient * client, char * message, int size)
+                            extern "C" GameClient * UDP_CreateClient()
+                            extern "C" void UDP_DisposeClient(GameClient* client)
+                            extern "C" int UDP_ConnectToServer(GameClient * client, const char * name, short port)
+                            void * UDP_Recv(void * arg)
+                            extern "C" int UDP_StartReadThread(GameClient * client)
+                            extern "C" char * UDP_GetData(GameClient * client)
+                            extern "C" int UDP_Send(GameClient * client, char * message, int size)
+
+
+  DESIGNER/PROGRAMMER:      Gabriel Lee, Tyler Trepanier-Bracken, Vivek Kalia, Jerry
+
+  NOTES:                    The UDP Class to handle all UDP data from the game.
+
+-------------------------------------------------------------------------------*/
 /**********************************************************
 Project: Defendaman
 
@@ -14,22 +44,18 @@ Description: Class to handle data transfers for the client while in the lobby us
 #include "LobbyClient.h"
 
 using namespace Networking;
+/*------------------------------------------------------------------------------
 
-/**********************************************************
-Description: Initialize socket, server address to lookup to, and connect to the server.
+  FUNCTION:                   Init_Client_Socket
 
-Progarmmer: Jerry Jia
+  DESIGNER/PROGRAMMER:        Jerry Jia
 
-Parameters:
-    name - The host name of the server.
-    port - The port number of the server.
+  INTERFACE:                  int LobbyClient::Init_Client_Socket(const char* name, short port)
 
-Returns: Socket file descriptor.
+  RETURNS:                    Socket file descriptor.
 
-Revision History:
-    Date        By      Description
-    2016-03-09  Gabriel Lee Added function headers and comments.
-**********************************************************/
+  NOTES:
+-------------------------------------------------------------------------------*/
 int LobbyClient::Init_Client_Socket(const char* name, short port)
 {
     // create TCP socket
@@ -51,22 +77,21 @@ int LobbyClient::Init_Client_Socket(const char* name, short port)
     }
     return 1;
 }
+/*------------------------------------------------------------------------------
 
-/**********************************************************
-Description: Function to receive data from the server.
-             The data received from the server is put onto
-             the circular buffer.
+  FUNCTION:                   Recv
 
-Progarmmer: Jerry Jia
+  DESIGNER/PROGRAMMER:        Jerry Jia
 
-Parameters: none
+  INTERFACE:                  void * LobbyClient::Recv()
 
-Returns: void
+  RETURNS:                    void
 
-Revision History:
-    Date        Author      Description
-    2016-03-09  Gabriel Lee Added function headers and comments.
-**********************************************************/
+  NOTES:                     Function to receive data from the server.
+               The data received from the server is put onto
+               the circular buffer.
+
+-------------------------------------------------------------------------------*/
 void * LobbyClient::Recv()
 {
     int bytesRead = 0;
@@ -103,24 +128,21 @@ void * LobbyClient::Recv()
     free(message);
     return NULL;
 }
+/*------------------------------------------------------------------------------
 
-/**********************************************************
-Description: Wrapper function for TCP send function.
-             Failing to send prints an error message with
-             the data intended to send.
+  FUNCTION:                   Send
 
-Progarmmer: Jerry Jia
+  DESIGNER/PROGRAMMER:        Jerry Jia
 
-Parameters:
-    message - The pointer to the data to be sent to the server
-    size - The size of the data to send
+  INTERFACE:                  int LobbyClient::Send(char * message, int size)
 
-Returns: Zero on success, otherwise the error number.
+  RETURNS:                    int : If the send completed correctly
 
-Revision History:
-    Date        Author      Description
-    2016-03-09  Gabriel Lee Added function headers and comments.
-**********************************************************/
+  NOTES:                    Wrapper function for TCP send function.
+                            Failing to send prints an error message with
+                            the data intended to send.
+
+-------------------------------------------------------------------------------*/
 int LobbyClient::Send(char * message, int size)
 {
     printf("Sending: %s of size: %d\n", message, size);
