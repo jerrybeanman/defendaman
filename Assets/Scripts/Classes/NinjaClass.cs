@@ -35,7 +35,7 @@ public class NinjaClass : MeleeClass
 
     new void Start()
     {
-        cooldowns = new float[2] { 1f, 5 };
+        cooldowns = new float[2] { 1f, 4 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);

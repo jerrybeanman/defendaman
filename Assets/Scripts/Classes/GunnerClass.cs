@@ -28,13 +28,15 @@ public class GunnerClass : RangedClass
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 16f;
 	public  float		 zoomInTime 		= 0.5f;
-	public  float 		 maxRatio			= 1.7f;
-	// hank
-	public	float 		 endingAtkRatio = 0.1f;
+	public  float 		 maxRatio			= 5f;
+    public  float        startingAtkRatio   = 1f;
+
+    // hank
+    public float 		 endingAtkRatio;
 
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed
-	private DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
-	private DynamicLight FOVConeHidden;
+	public DynamicLight FOVCone;				// Need to access vision cone to extend when in special attack mode
+	public DynamicLight FOVConeHidden;
 
 	// keep track of starting speed
 	private float startingOrthographicSize;
@@ -74,9 +76,10 @@ public class GunnerClass : RangedClass
             //Starting item kit
             Inventory.instance.AddItem(12);
 
+			// No longer needed - reference is given to this class when DynamicLight objects are created
 			// Initialize Vision Cone and movement components
-			FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
-			FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
+			//FOVCone 		= transform.GetChild(1).gameObject.GetComponent<DynamicLight>();
+			//FOVConeHidden 	= transform.GetChild(3).gameObject.GetComponent<DynamicLight>();
 			movement 		= gameObject.GetComponent<Movement>();
 
 			startingOrthographicSize = mainCamera.orthographicSize;
@@ -175,7 +178,7 @@ public class GunnerClass : RangedClass
 		// Show charge bar
 		HUD_Manager.instance.chargeBar.Holder.SetActive(true);
 
-		float startingAtkRatio = 0.1f;
+		startingAtkRatio = 0.1f;
 		while(inSpecial && elapsedTime < chargeTime)
 		{
 			elapsedTime += Time.deltaTime;
