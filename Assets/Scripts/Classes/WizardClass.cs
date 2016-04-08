@@ -24,14 +24,14 @@ using UnityEngine;
 
 public class WizardClass : RangedClass
 {
-    int[] distance = new int[2]{ 25, 0 };
+    int[] distance = new int[2]{ 15, 0 };
     int[] speed = new int[2] { 100, 0 };
     Rigidbody2D fireball;
     Rigidbody2D magicCircle;
 
     new void Start()
     {
-        cooldowns = new float[2] { 0.5f, 15 };
+        cooldowns = new float[2] { 0.75f, 15 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);

@@ -29,16 +29,17 @@ public class HUD_Manager : MonoBehaviour
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
 	public Shop					shop;	
-	public Text					timer;
-	public GameObject			placementRange;
-	public GameObject			statsPanel;
 	public PlayerDP				playerDp;
 	public ChargeBar			chargeBar;
 	public Stamina				stamina;
-	public ColourizeScreen		colourizeScreen;
 	public WinScreen			winScreen;
     public LoseScreen           loseScreen;
-
+	public Text					upgradeAmount;
+	public Text					timer;
+	public GameObject			placementRange;
+	public GameObject			statsPanel;
+	public ColourizeScreen		colourizeScreen;
+	
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
 

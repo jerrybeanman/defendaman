@@ -333,4 +333,5 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.Defense -= armour;
         ClassStat.MoveSpeed -= speed;
     }
+
 }
