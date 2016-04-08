@@ -7,7 +7,7 @@ public enum SpecialCase { GunnerSpecial = 1 }
 
 public class GunnerClass : RangedClass
 {
-	int[] distance = new int[2] { 11, 13 };
+	int[] distance = new int[2] { 13, 13 };
 	int[] speed = new int[2] { 300, 400 };
 	Rigidbody2D bullet;
 	Rigidbody2D laser;
@@ -22,13 +22,13 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for gunner special attack
-	public  float 		 holdTime			= 2f;
+	public  float 		 holdTime			= 2.5f;
 	public 	float 		 chargeTime 		= 1.5f;
 	public  float 		 targetConeRadius 	= 28f;
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 14f;
 	public  float		 zoomInTime 		= 0.5f;
-	public  float 		 maxRatio			= 10f;
+	public  float 		 maxRatio			= 8f;
 
 	// hank
 	public	float 		 endingAtkRatio;
