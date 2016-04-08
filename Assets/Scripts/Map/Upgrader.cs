@@ -23,7 +23,7 @@ public class Upgrader : MonoBehaviour {
                 if (b.type == Building.BuildingType.Alchemist)
                 {
                     GameObject.Find("HUD").transform.FindChild("Potion Overlay").gameObject.SetActive(true);
-					Invoke("SetInActive", 5f);
+					Invoke("SetInActive", 10f);
                 }
             }
 		}

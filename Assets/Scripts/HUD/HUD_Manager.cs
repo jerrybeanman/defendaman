@@ -363,12 +363,12 @@ public class HUD_Manager : MonoBehaviour
 
 		if(Input.GetAxis("Mouse ScrollWheel") > 0)
 		{
-			object[] parms = new object[3]{90, shop.Selected.Building, 1f};
+			object[] parms = new object[3]{90, shop.Selected.Building, 0.2f};
 			StartCoroutine(Rotate(parms));
 		}else
 		if(Input.GetAxis("Mouse ScrollWheel") < 0)
 		{
-			object[] parms = new object[3]{-90, shop.Selected.Building, 1f};
+			object[] parms = new object[3]{-90, shop.Selected.Building, 0.2f};
 			StartCoroutine(Rotate(parms));
 		}
 	}
