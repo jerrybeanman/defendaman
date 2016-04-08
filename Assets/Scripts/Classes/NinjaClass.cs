@@ -40,7 +40,8 @@ public class NinjaClass : MeleeClass
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
         _classStat.MaxHp = 1200;
-        _classStat.MoveSpeed = 7;
+		_classStat.MoveSpeed = 7;
+		Debug.Log ("[DEBUG2] Setting Ninja Speed: " + _classStat.MoveSpeed);
         _classStat.AtkPower = 80;
         _classStat.Defense = 60;
 
@@ -71,6 +72,8 @@ public class NinjaClass : MeleeClass
         //ninja attack sound
         au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/ninjaboi_teleport") as AudioClip;
+
+		Debug.Log ("[DEBUG] Setting Ninja Speed After Calling Base: " + _classStat.MoveSpeed);
     }
 
     //attacks return time it takes to execute

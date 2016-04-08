@@ -99,6 +99,10 @@ public class Movement : MonoBehaviour
     void Update()
     {
         speed = ClassStat.MoveSpeed;
+		if(speed == 0){
+			ClassStat.MoveSpeed = 9;
+			Debug.Log("[DEBUG3] RESETTING SPEED");
+		}
 		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBlocked)
             movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
