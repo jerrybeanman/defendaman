@@ -47,6 +47,7 @@ public class AmanTeamBuff : Buff
     {
         if (--duration < 0)
         {
+			print ("[DEBUG] AmanTeamBuff: " + player.ClassStat.MoveSpeed);
             player.ClassStat.AtkPower -= attackBuff;
             player.ClassStat.Defense -= defenseBuff;
             player.ClassStat.MoveSpeed -= speedBuff;
