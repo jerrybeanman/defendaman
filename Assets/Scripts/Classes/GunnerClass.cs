@@ -22,8 +22,8 @@ public class GunnerClass : RangedClass
 	//---added by jerry---//
 
 	// values for gunner special attack
-	public  float 		 holdTime			= 2.5f;
-	public 	float 		 chargeTime 		= 3f;
+	public  float 		 holdTime			= 2f;
+	public 	float 		 chargeTime 		= 1.5f;
 	public  float 		 targetConeRadius 	= 28f;
 	public  float 		 targetConeAngle  	= 20f;
  	public	float 		 targetZoomOutRange = 14f;
@@ -32,7 +32,7 @@ public class GunnerClass : RangedClass
 
 	// hank
 	public	float 		 endingAtkRatio;
-    public  float        startingAtkRatio   = 1f;
+    public  float        startingAtkRatio   = 0.5f;
 
 
 	private Movement	 movement;				// Need to access Movement comopenent to change the player speed

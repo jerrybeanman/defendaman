@@ -429,7 +429,7 @@ public class HUD_Manager : MonoBehaviour
         if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) 
 		{
            // building.GetComponent<AI>()
-           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
+           b1.GetComponent<AI>().instantTurret(1, 40, data[NetworkKeyString.TeamID].AsInt, 18, 15);
             Debug.Log("Instant turret 1");
         }
 		b1.GetComponent<Building>().notifycreation();
