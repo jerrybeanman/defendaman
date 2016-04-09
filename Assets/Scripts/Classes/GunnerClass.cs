@@ -8,16 +8,19 @@
 --      override float basicAttack(Vector2 dir)
 --      override float specialAttack(Vector2 dir)
 -- 		void Update(void)
+--      void playspecialSound(int)
+--      void playspecialCharge(int)
 --
 --  DATE:           March 9, 2016
 --
---  REVISIONS:      (Date and Description)
---                   April 4th: Hank Lo
+--  REVISIONS:      April 1: 
+--                      Eunwon : add sound function only for gunner
+--                  April 4th: Hank Lo
 --                      - Numbers balancing
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
 --
---  PROGRAMMER:     Hank Lo, Allen Tsang, Jerry Jia
+--  PROGRAMMER:     Hank Lo, Allen Tsang, Jerry Jia, Eunwon Moon
 --
 --  NOTES:
 --  This class contains the logic that relates to the Gunner Class.
@@ -431,7 +434,26 @@ public class GunnerClass : RangedClass
         }
     }
 
-
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:  playspecialSound
+    --
+    -- DATE: April 1, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER:    Eunwon Moon
+    --
+    -- PROGRAMMER:  Eunwon Moon
+    --
+    -- INTERFACE:  void playspecialSound(int PlayerID)
+    --              PlayerID : who shoot the special skill
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    --  Play the shooting sound when laser is shooting.
+    --  volume will be changing based on the distance between player who shoot and my character.
+    ---------------------------------------------------------------------------------------------------------------------*/
     void playspecialSound(int PlayerID)
     {
         Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
@@ -442,6 +464,27 @@ public class GunnerClass : RangedClass
             au_attack.PlayOneShot(au_special_attack);
         }
     }
+
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:  playspecialCharge
+    --
+    -- DATE:        April 1, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER:    Eunwon Moon
+    --
+    -- PROGRAMMER:  Eunwon Moon
+    --
+    -- INTERFACE: void playspecialCharge(int PlayerID)
+    --              PlayerID : who shoot the special skill
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    --  Play the shooting sound while charge the laser gun before shooting (release mouse button)
+    --  volume will be changing based on the distance between player who shoot and my character.
+    ---------------------------------------------------------------------------------------------------------------------*/
     void playspecialCharge(int PlayerID)
     {
         Vector2 playerLoc = (Vector2)GameData.PlayerPosition[PlayerID];
