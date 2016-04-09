@@ -19,19 +19,24 @@ public class Upgrader : MonoBehaviour {
                 if (b.type == Building.BuildingType.Armory)
                 {
                     GameObject.Find("HUD").transform.FindChild("Upgrade Overlay").gameObject.SetActive(true);
+					Invoke("SetInActiveUpgrade", 8f);
                 }
                 if (b.type == Building.BuildingType.Alchemist)
                 {
                     GameObject.Find("HUD").transform.FindChild("Potion Overlay").gameObject.SetActive(true);
-					Invoke("SetInActive", 10f);
+					Invoke("SetInActivePotion", 8f);
                 }
             }
 		}
 	}
 
-	void SetInActive()
+	void SetInActivePotion()
 	{
 		GameObject.Find("HUD").transform.FindChild("Potion Overlay").gameObject.SetActive(false);
+	}
+	void SetInActiveUpgrade()
+	{
+		GameObject.Find("HUD").transform.FindChild("Upgrade Overlay").gameObject.SetActive(false);
 	}
 }
 
