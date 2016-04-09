@@ -1,4 +1,24 @@
-﻿using UnityEngine;
+﻿/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    Laser.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      void start()
+--      override void OnTriggerEnter2D(Collider2D other)
+--
+--  DATE:           March 9, 2016
+--
+--  REVISIONS:      (Date and Description)
+--
+--  DESIGNERS:      Hank Lo, Allen Tsang
+--
+--  PROGRAMMER:     Hank Lo, Allen Tsang
+--
+--  NOTES:
+--  This class is the laser for the gunner - it inherits from Projectile.
+---------------------------------------------------------------------------------------*/
+using UnityEngine;
 using System.Collections;
 using System;
 
@@ -6,12 +26,49 @@ public class Laser : Projectile
 {
     GameObject explosion;
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start of scripts creation. Used to instantiate variables in our case.
+    ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
         base.Start();
         explosion = (GameObject)Resources.Load("Prefabs/LaserExplosion", typeof(GameObject));
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: OnTriggerEnter2D
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: override void OnTriggerEnter2D(Collider2D other)
+    --                  Collider2D other: The object's collider that this projectile hits
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Called when an object collides with this projectile. We check what hits it here, and does the appropriate action.
+    ---------------------------------------------------------------------------------------------------------------------*/
     protected override void OnTriggerEnter2D(Collider2D other)
     {
 		// ignore health bar

@@ -1,3 +1,25 @@
+/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    MagicDebuff.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      override void Update()
+--      void start()
+--      void enableAttack()
+--      void enableSpecial()
+--
+--  DATE:           March 9, 2016
+--
+--  REVISIONS:      (Date and Description)
+--
+--  DESIGNERS:      Hank Lo, Allen Tsang
+--
+--  PROGRAMMER:     Hank Lo, Allen Tsang
+--
+--  NOTES:
+--  This class is the attack script that we attach to players.
+---------------------------------------------------------------------------------------*/
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,14 +33,48 @@ public class Attack : MonoBehaviour {
     float InvLeftEdge;
     float InvTopEdge;
 
-   //Start of scripts creation. Used to instantiate variables in our case.
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start of scripts creation. Used to instantiate variables in our case.
+    ---------------------------------------------------------------------------------------------------------------------*/
     void Start() {
         player = gameObject.GetComponent<BaseClass>();
         InvLeftEdge = GameObject.Find("Inventory Panel").transform.position.x;
         InvTopEdge = GameObject.Find("Title Panel").transform.position.y;
     }
     
-    //Called every frame
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Update
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Update(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Called every frame. We deal with checking whether or not the mouse is pressed, or which mouse key is pressed.
+    ---------------------------------------------------------------------------------------------------------------------*/
     void Update() {
         if (Input.GetKey(KeyCode.Mouse0) && attackReady && !GameData.MouseBlocked
             && (Input.mousePosition.x < InvLeftEdge || Input.mousePosition.y > InvTopEdge))
@@ -60,14 +116,48 @@ public class Attack : MonoBehaviour {
             }, Protocol.UDP);
         }
     }
-	
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: enableAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void enableAttack(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Function to enable the normal attack
+    ---------------------------------------------------------------------------------------------------------------------*/
     private void enableAttack()
     {
         attackReady = true;
     }
 
-
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: enableSpecial
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void enableSpecial(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Function to enable the special attack
+    ---------------------------------------------------------------------------------------------------------------------*/
     private void enableSpecial()
     {
         specialReady = true;

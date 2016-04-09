@@ -34,6 +34,24 @@ public class MagicDebuff : Buff {
 
     bool appliedspeedbuff = false;
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start of scripts creation. Used to instantiate variables in our case.
+    ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
         base.Start();
@@ -42,7 +60,24 @@ public class MagicDebuff : Buff {
         applyrate = 0;
     }
     
-    //Called every frame
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: FixedUpdate
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void FixedUpdate(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Called every physics update.
+    ---------------------------------------------------------------------------------------------------------------------*/
     protected override void FixedUpdate() {
         applyrate++;
         if (!appliedspeedbuff) 
