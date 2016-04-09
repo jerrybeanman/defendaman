@@ -17,7 +17,9 @@
 --
 --  DATE:           March 9, 2016
 --
---  REVISIONS:      April 4, 2016
+--  REVISIONS:      March 31, 2016
+--                      Eunwon: Added attack sound effect 
+--                  April 4, 2016
 --                      Hank: Added Albert easter egg
 --
 --  DESIGNERS:      Hank Lo, Allen Tsang
@@ -272,11 +274,12 @@ public abstract class BaseClass : MonoBehaviour {
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS: 
+    -- REVISIONS: March 31, 2016
+    --              Eunwon: add sound effect 
     --
     -- DESIGNER: Allen Tsang, Carson Roscoe
     --
-    -- PROGRAMMER: Allen Tsang, Carson Roscoe
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Eunwon Moon
     --
     -- INTERFACE: float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     --              Vector2 dir: A Vector2 representing the direction of the attack
@@ -286,6 +289,7 @@ public abstract class BaseClass : MonoBehaviour {
     --
     -- NOTES:
     -- Used to run the code that all classes will execute when doing a basic attack
+    -- attack sound is playing depending on the distance between my player and that character. 
     ---------------------------------------------------------------------------------------------------------------------*/
     public virtual float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
@@ -307,12 +311,14 @@ public abstract class BaseClass : MonoBehaviour {
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS: April 4, 2016
-    --              Hank: Added Albert Easter egg
+    -- REVISIONS:   March 31, 2016
+    --                  Eunwon: Add attack sound effect
+    --              April 4, 2016
+    --                  Hank: Added Albert Easter egg
     --
     -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
     --
-    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo, Eunwon Moon
     --
     -- INTERFACE: float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     --              Vector2 dir: A Vector2 representing the direction of the attack
@@ -322,6 +328,7 @@ public abstract class BaseClass : MonoBehaviour {
     --
     -- NOTES:
     -- Used to run the code that all classes will execute when doing a special attack
+    -- Attack sound effect is playing except gunner.
     ---------------------------------------------------------------------------------------------------------------------*/
     public virtual float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
