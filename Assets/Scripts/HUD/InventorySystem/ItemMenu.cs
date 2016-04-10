@@ -11,6 +11,7 @@ using System.Collections.Generic;
 --
 -- FUNCTIONS:
 --		void Start()
+--      void Update()
 --		public void Activate(Item item, int amt, int inv_pos)
 --		public void Deactivate()
 --      public void UseItemOnClick()
