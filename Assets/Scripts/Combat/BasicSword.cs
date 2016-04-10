@@ -14,7 +14,8 @@
 --  PROGRAMMER:     Allen Tsang, Hank Lo
 --
 --  NOTES:
---  This class is an empty class that other classses inherit from.
+--  This class specifies the behavior for the Ninja's melee attack.  It is empty because
+--  it uses inherited behavior, but is still used in checking the attack's class type.
 ---------------------------------------------------------------------------------------*/
 using UnityEngine;
 using System.Collections;

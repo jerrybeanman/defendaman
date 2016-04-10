@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------
---  SOURCE FILE:    MagicDebuff.cs
+--  SOURCE FILE:    Attack.cs
 --
 --  PROGRAM:        Linux Game
 --
