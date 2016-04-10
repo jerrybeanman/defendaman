@@ -1,4 +1,35 @@
-﻿using UnityEngine;
+﻿/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    BaseClass.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--      void Start()
+--      float doDamage(float damage, bool trueDamage = false)
+--      void OnTriggerEnter2D(Collider2D other)
+--      void receiveAttackFromServer(JSONClass playerData)
+--      float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+--      float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+--      void StartAttackAnimation()
+--      void EndAttackAnimation()
+--      void UsePotion(int damage, int armour, int health, int speed, int duration)
+--      IEnumerator Debuff(int damage, int armour, int speed, int duration)
+--
+--  DATE:           March 9, 2016
+--
+--  REVISIONS:      March 31, 2016
+--                      Eunwon: Added attack sound effect 
+--                  April 4, 2016
+--                      Hank: Added Albert easter egg
+--
+--  DESIGNERS:      Hank Lo, Allen Tsang
+--
+--  PROGRAMMER:     Hank Lo, Allen Tsang
+--
+--  NOTES:
+--  This class is the grandparent class for all classes. Every class is a base class.
+---------------------------------------------------------------------------------------*/
+using UnityEngine;
 using System.Collections;
 using SimpleJSON;
 using System.Collections.Generic;
@@ -27,6 +58,24 @@ public abstract class BaseClass : MonoBehaviour {
 
     public bool silenced = false;
     
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start of scripts creation. Used to instantiate variables in our case.
+    ---------------------------------------------------------------------------------------------------------------------*/
     protected void Start ()
     {
         allyKingID = GameData.AllyKingID;
@@ -79,9 +128,32 @@ public abstract class BaseClass : MonoBehaviour {
 		}
 	}
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: doDamage
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: March 21, 2016
+    --              - Hank: Added defensive calculations
+    --            April 4, 2016
+    --              - Hank: Changed defensive calculation formula for balancing issues
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void doDamage(float damage, bool trueDamage = false)
+    --          float damage: the damage to take
+    --          bool trueDamage: whether or not the damage will be affected by defense - if true, defense does not
+    --                              affect the damage taken.
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Used to cause damage to the player. Also does the defense calculations
+    ---------------------------------------------------------------------------------------------------------------------*/
     public float doDamage(float damage, bool trueDamage = false)
     {
-        // hank: Added defensive calculation
         float finaldamage = damage;
 
         if (!trueDamage)
@@ -109,7 +181,26 @@ public abstract class BaseClass : MonoBehaviour {
         return finaldamage;
     }
 
-    //Apr 5, added multihit prevention
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: OnTriggerEnter2D
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: April 5, 2016
+    --              - Allen: Added multihit prevention
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void OnTriggerEnter2D(Collider2D other)
+    --              Collider2D other: The object we are colliding with
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Used to deal with collisions with players
+    ---------------------------------------------------------------------------------------------------------------------*/
     void OnTriggerEnter2D(Collider2D other) {
         Trigger attack;
         if ((attack = other.gameObject.GetComponent<Trigger>()) != null)
@@ -137,6 +228,25 @@ public abstract class BaseClass : MonoBehaviour {
         }
 	}
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: receiveAttackFromServer
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe
+    --
+    -- INTERFACE: void receiveAttackFromServer(JSONClass playerData)
+    --              JSONClass playerData
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Used to parse the JSON info from the server and initiate attacks for that player
+    ---------------------------------------------------------------------------------------------------------------------*/
     void receiveAttackFromServer(JSONClass playerData)
     {
         if (playerData["ID"].AsInt == GameData.MyPlayer.PlayerID)
@@ -159,6 +269,28 @@ public abstract class BaseClass : MonoBehaviour {
         }
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: basicAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: March 31, 2016
+    --              Eunwon: add sound effect 
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Eunwon Moon
+    --
+    -- INTERFACE: float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+    --              Vector2 dir: A Vector2 representing the direction of the attack
+    --              Vector2 playerLoc: The player location represented by a Vector2
+    --
+    -- RETURNS: a float representing the cooldown of the attack
+    --
+    -- NOTES:
+    -- Used to run the code that all classes will execute when doing a basic attack
+    -- attack sound is playing depending on the distance between my player and that character. 
+    ---------------------------------------------------------------------------------------------------------------------*/
     public virtual float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
         if (!GameData.PlayerPosition.ContainsKey(GameData.MyPlayer.PlayerID))
@@ -174,7 +306,30 @@ public abstract class BaseClass : MonoBehaviour {
         return cooldowns[0];
     }
 
-    // hank
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: specialAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS:   March 31, 2016
+    --                  Eunwon: Add attack sound effect
+    --              April 4, 2016
+    --                  Hank: Added Albert Easter egg
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo, Eunwon Moon
+    --
+    -- INTERFACE: float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+    --              Vector2 dir: A Vector2 representing the direction of the attack
+    --              Vector2 playerLoc: The player location represented by a Vector2
+    --
+    -- RETURNS: a float representing the cooldown of the attack
+    --
+    -- NOTES:
+    -- Used to run the code that all classes will execute when doing a special attack
+    -- Attack sound effect is playing except gunner.
+    ---------------------------------------------------------------------------------------------------------------------*/
     public virtual float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
         float distance;
@@ -287,17 +442,76 @@ public abstract class BaseClass : MonoBehaviour {
         }
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: StartAttackAnimation
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- INTERFACE: void StartAttackAnimation(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Starts the attack animation
+    ---------------------------------------------------------------------------------------------------------------------*/
     public void StartAttackAnimation()
     {
         
         gameObject.GetComponent<Animator>().SetBool("attacking", true);
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: EndAttackAnimation
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- INTERFACE: void EndAttackAnimation(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Ends the attack animation
+    ---------------------------------------------------------------------------------------------------------------------*/
     public void EndAttackAnimation()
     {
         gameObject.GetComponent<Animator>().SetBool("attacking", false);
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: UsePotion
+    --
+    -- DATE: March 16, 2016
+    --
+    -- REVISIONS:
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    --
+    -- INTERFACE: void UsePotion(int damage, int armour, int health, int speed, int duration)
+    --              int damage: damage value of the potion
+    --              int armour: armor value of the potion
+    --              int health: health value of the potion
+    --              int speed: the speed value of the potion
+    --              int duration: the duration of the potion in seconds
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Used to consume a potion and apply buffs/hp recovery to the player who used a potion
+    ---------------------------------------------------------------------------------------------------------------------*/
     public void UsePotion(int damage, int armour, int health, int speed, int duration)
     {
         if (duration == 0)
