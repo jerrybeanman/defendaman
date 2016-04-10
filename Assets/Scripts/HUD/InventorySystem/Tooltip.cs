@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-/*-----------------------------------------------------------------------------
+/*--------------------------------------------------------------------------------
 -- Tooltip.cs - Script attached to the Tooltip game object resposible for
 --              displaying a tool tip when the mouse pointer hovers over
 --              an item in the inventory.
@@ -15,10 +15,10 @@ using UnityEngine.UI;
 --      public void ConstructDataString()
 --
 -- DATE:		25/02/2016
--- REVISIONS:	(V1.0)
+-- REVISIONS:	04/04/2016 Modified the ConstructDataString() to work shop potions
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
------------------------------------------------------------------------------*/
+------------------------------------------------------------------------------------*/
 public class Tooltip : MonoBehaviour
 { 
     private Item _item;
@@ -27,18 +27,34 @@ public class Tooltip : MonoBehaviour
     private string _data;
     private GameObject _tooltip;
 
-    /*
-     * Retrives the Tooltip game object and sets it to inactive
-     */
+    /*-----------------------------------------------------------------------------------
+    -- FUNCTION: 	Start
+    -- DATE: 		25/02/2016
+    -- REVISIONS: 	
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	void Start()
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Rettrives the Tooltip GameObject and deactivates it.
+    ----------------------------------------------------------------------------------*/
     void Start()
     {
         _tooltip = GameObject.Find("Tooltip");
         _tooltip.SetActive(false);
     }
 
-    /*
-     * Makes the tooltip follow the mouse pointer while its active
-     */
+    /*-----------------------------------------------------------------------------------
+   -- FUNCTION: 	Update
+   -- DATE: 		25/02/2016
+   -- REVISIONS: 	
+   -- DESIGNER:  	Joseph Tam-Huang
+   -- PROGRAMMER: 	Joseph Tam-Huang
+   -- INTERFACE: 	void Update()
+   -- RETURNS: 	void
+   -- NOTES:
+   -- Makes the tooltip follow the mouse pointer while its active
+   ----------------------------------------------------------------------------------*/
     void Update()
     {
         if (_tooltip.activeSelf)
@@ -47,10 +63,20 @@ public class Tooltip : MonoBehaviour
         }
     }
 
-    /*
-     * Creates a string to display on the tooltip specific to the item passed 
-     * and sets the Tooltip to active
-     */
+    /*-----------------------------------------------------------------------------------
+    -- FUNCTION: 	Activate
+    -- DATE: 		25/02/2016
+    -- REVISIONS: 	
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void Activate(Item item, int amount = -1, bool cost = false)
+    --                  Item item: The item whose information will be displayed
+    --                  int amount: The amount to display
+    --                  bool cost: If true the cost is displayed
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Creates a string to display on the tooltip and sets the tooltip to active
+    ----------------------------------------------------------------------------------*/
     public void Activate(Item item, int amount = -1, bool cost = false)
     {
         this._item = item;
@@ -60,14 +86,33 @@ public class Tooltip : MonoBehaviour
         _tooltip.SetActive(true);
     }
 
-    /*
-     * Sets the Tooltip to inactive
-     */
+    /*-----------------------------------------------------------------------------------
+    -- FUNCTION: 	Deactivate
+    -- DATE: 		25/02/2016
+    -- REVISIONS: 	
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void Deactivate()
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Sets the Tooltip to inactive
+    ----------------------------------------------------------------------------------*/
     public void Deactivate()
     {
         _tooltip.SetActive(false);
     }
 
+    /*-----------------------------------------------------------------------------------
+    -- FUNCTION: 	ConstructDataString
+    -- DATE: 		25/02/2016
+    -- REVISIONS: 	04/04/2016 - Add ability to format text for shop potions
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void ConstructDataString()
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Formats the string to be displayed on the Tooltip.
+    ----------------------------------------------------------------------------------*/
     /*
      * Formats the string to be displayed on the Tooltip based on the item 
      * passed.
