@@ -1,4 +1,29 @@
-﻿using UnityEngine;
+﻿/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: AI.cs - The AI for turrets, and some older code for movement before it was cut
+-- PROGRAM: DefendAman
+--
+-- FUNCTIONS:
+--		void Start()
+--      void UpdateAI(JSONClass packet)
+--      public void instantTurret(float reload, int speed, int teamToIgnore, int range, int damage1)
+--      void Update() 
+--      private bool checkBlocked(Vector2 attackSpot)
+--      private void createBullet(Vector2 attackDir)
+--      private void setFace(Vector2 face)
+--      Vector2 getRoute()
+--      Vector2 getIntersection(Vector2 cur, Vector2 last, int spd)
+--      public float getDegree(float angle)
+--
+-- DATE:		19/01/2016
+-- REVISIONS:	(V1.0)
+-- DESIGNER:	Colin Bose
+-- PROGRAMMER:  Colin Bose
+--
+-- NOTES:
+-- Attach this to a turret to have a turret that shoots at enemies.
+----------------------------------------------------------------------------------------------------------------------*/
+
+using UnityEngine;
 using System.Collections;
 using SimpleJSON;
 
@@ -24,7 +49,20 @@ public class AI : MonoBehaviour {
     double reloadSwap;
 	public Building parent;
 
-    // Use this for initialization
+
+    /*--------------s----------------------------------------------------------------------------------------------------
+    -- FUNCTION:  start
+    -- DATE:	   10/04/16
+    -- REVISIONS:  (V1.0)
+    -- DESIGNER:   Colin Bose
+    -- PROGRAMMER: Colin Bose
+    --
+    -- 
+    -- RETURNS:    void
+    --
+    -- NOTES: The constructor. Sets initial parameters
+    --
+    ----------------------------------------------------------------------------------------------------------------------*/
     void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("Default");
@@ -37,6 +75,19 @@ public class AI : MonoBehaviour {
 		parent = gameObject.GetComponent<Building>();
         Debug.Log("Constructed");
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  instantTurret
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    void
+--
+-- NOTES: sets the parameters of the turret - reload speed, bullet speed, who to attack, range and damage
+--
+----------------------------------------------------------------------------------------------------------------------*/
 
     public void instantTurret(float reload, int speed, int teamToIgnore, int range, int damage1)
     {
@@ -52,6 +103,20 @@ public class AI : MonoBehaviour {
         swap = reload;
         Debug.Log("Stuff:" + reload + " " + speed + " " + teamToIgnore + " " + range + " " + damage);
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  createProjectile
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: Creates a projectile based on a packet received from the server.
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     void CreateProjectile(JSONClass packet)
     {
         //I created a projectile
@@ -71,6 +136,19 @@ public class AI : MonoBehaviour {
         attack2.GetComponent<BasicRanged>().maxDistance = 10;
         reload = 1;
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  updateAI
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: updates the ai based on data from the server
+--
+----------------------------------------------------------------------------------------------------------------------*/
 
     void UpdateAI(JSONClass packet)
     {
@@ -84,7 +162,20 @@ public class AI : MonoBehaviour {
         transform.rotation = Quaternion.AngleAxis((float)angleFacing, Vector3.forward);
     }
 
-    // Update is called once per frame
+    /*------------------------------------------------------------------------------------------------------------------
+ -- FUNCTION:  update
+ -- DATE:	   10/04/16
+ -- REVISIONS:  (V1.0)
+ -- DESIGNER:   Colin Bose
+ -- PROGRAMMER: Colin Bose
+ --
+ -- 
+ -- RETURNS:    VOID
+ --
+ -- NOTES: Called 60 times per second, does all the logic for the AI each frame
+ --
+ ----------------------------------------------------------------------------------------------------------------------*/
+
     void Update() {
         if (parent.placing && !parent.constructed)
             return;
@@ -219,6 +310,20 @@ public class AI : MonoBehaviour {
         lastLocation.second = face;
 
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  checkBlocked
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    bool - is there a path to the target
+--
+-- NOTES: Checks if there is a valid path to shoot at the target. If so, return true;
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     private bool checkBlocked(Vector2 attackSpot)
     {
         Vector2 move = attackSpot;
@@ -243,6 +348,20 @@ public class AI : MonoBehaviour {
         }
         return true;
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  createBullet
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: Cretes a projectile based on the attack direction
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     private void createBullet(Vector2 attackDir)
     {
         reload = resetReload;
@@ -253,6 +372,20 @@ public class AI : MonoBehaviour {
         attack.GetComponent<BasicRanged>().maxDistance = 30;
         
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  setFace
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: Sets the facing angle of the turret 
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     private void setFace(Vector2 face)
     {
         float x, y;
@@ -284,6 +417,20 @@ public class AI : MonoBehaviour {
         }
         facing = getDegree(facing);
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getRoute
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    Vector2 - direction to move
+--
+-- NOTES: Sets the next direction for the AI to move in
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     Vector2 getRoute()
     {
         System.Random rand = new System.Random();
@@ -295,6 +442,20 @@ public class AI : MonoBehaviour {
         Vector2 position = new Vector2((float)xMod, (float)yMod);
         return position;
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getDegree
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    double - angle in degrees
+-- 
+-- NOTES: rad to degree conversion
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     public float getDegree(float angle)
     {
         return (float)(angle * 180 / System.Math.PI);
@@ -305,6 +466,21 @@ public class AI : MonoBehaviour {
 
 
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getIntersection
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    Vector2 - the direction to attack in
+--
+-- NOTES: Calculates where to shoot for predictive shooting. If a target is running, this is called to calculate
+-- where the turret needs to shoot for the bullet to intercept them
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     Vector2 getIntersection(Vector2 cur, Vector2 last, int spd)
     {
         Vector2 shoot;
