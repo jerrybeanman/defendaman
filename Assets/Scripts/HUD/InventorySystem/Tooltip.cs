@@ -113,10 +113,6 @@ public class Tooltip : MonoBehaviour
     -- NOTES:
     -- Formats the string to be displayed on the Tooltip.
     ----------------------------------------------------------------------------------*/
-    /*
-     * Formats the string to be displayed on the Tooltip based on the item 
-     * passed.
-     */
     public void ConstructDataString()
     {
         _data = "<color=#ffffff>" + _item.title + "</color>\n" + _item.description;
