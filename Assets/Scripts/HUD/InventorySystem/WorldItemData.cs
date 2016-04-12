@@ -13,7 +13,7 @@ using System;
 --
 -- FUNCTIONS:
 --      void Start()
-        void Update ()
+--      void Update ()
 --      void OnTriggerEnter2D(Collider2D other)
 --      void OnTriggerExit2D(Collider2D other)
 --
