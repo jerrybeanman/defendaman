@@ -18,10 +18,9 @@ using System;
 --      public void OnPointerEnter(PointerEventData eventData)
 --      public void OnPointerExit(PointerEventData eventData)
 --      public void OnPointerClick(PointerEventData eventData)
---      
 --
 -- DATE:		17/02/2016
--- REVISIONS:	
+-- REVISIONS:	26/02/2016 - Add handling for click events on inventory items
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
 -----------------------------------------------------------------------------*/
