@@ -87,7 +87,7 @@ public class ItemMenu : MonoBehaviour
     -- INTERFACE: 	public void Activate(Item item, int amt, int inv_pos)
     --                  Item item: The item in the inventory slot
     --                  int amt: The amount of the item
-    --                  int inv_pos: 
+    --                  int inv_pos: The inventory position
     -- RETURNS: 	void
     -- NOTES:
     -- Sets the position of the ItemMenu to the position of the mouse cursor

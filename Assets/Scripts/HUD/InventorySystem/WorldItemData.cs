@@ -9,7 +9,7 @@ using System;
 --                    information about world items such as the Item object it 
 --                    holds, the amount and its unique world item id. Also
 --                    Handles the events that get triggered when the player 
---                    come into contact with it.
+--                    come into contact with AmountPanelit.
 --
 -- FUNCTIONS:
 --      void Start()
