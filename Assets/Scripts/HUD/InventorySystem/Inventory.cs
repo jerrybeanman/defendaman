@@ -45,6 +45,12 @@ static class Constants
 --		public void AddItem(int id)
 --		int check_if_item_in_inventory(Item item)
 --      public void DestroyInventoryItem(int inv_pos)
+--      public void UseConsumable(int inv_pos, int amount = 1)
+--      public void UseResources(string resource_type, int amount)
+--      public bool CheckIfItemCanBeAdded(bool stackable, int item_id)
+--      public void UpdateWeaponStats()
+--      public void DisplayWeaponError(string msg)
+--      public IEnumerator DisplayInventoryFullError()
 --
 -- DATE:		17/02/2016
 -- REVISIONS:	03/04/2016 - Add function to apply weapon stats to the player stats
