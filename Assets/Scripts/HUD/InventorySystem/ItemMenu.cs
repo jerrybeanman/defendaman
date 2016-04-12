@@ -52,12 +52,14 @@ public class ItemMenu : MonoBehaviour
     {
         _item_menu = GameObject.Find("Item Menu"); 
         _item_menu.SetActive(false);
-		_world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
+		_world_item_manager = 
+            GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _amount_panel = GameObject.Find("Inventory").GetComponent<AmountPanel>();
         _use_btn = _item_menu.transform.FindChild("Use Button").gameObject;
         _item_menu_rt = _item_menu.GetComponent<RectTransform>();
         _item_menu_height = _item_menu_rt.rect.height;
     }
+
     /*-----------------------------------------------------------------------------------
     -- FUNCTION: 	Update
     -- DATE: 		25/03/2016
@@ -85,7 +87,7 @@ public class ItemMenu : MonoBehaviour
     -- INTERFACE: 	public void Activate(Item item, int amt, int inv_pos)
     --                  Item item: The item in the inventory slot
     --                  int amt: The amount of the item
-    --                  int inv_pos: 
+    --                  int inv_pos: The inventory position
     -- RETURNS: 	void
     -- NOTES:
     -- Sets the position of the ItemMenu to the position of the mouse cursor

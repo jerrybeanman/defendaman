@@ -221,7 +221,7 @@ public class WorldItemManager : MonoBehaviour
     -- PROGRAMMER: 	Joseph Tam-Huang
     -- INTERFACE: 	public IEnumerator WaitSmallDelayBeforeReceivePickupPacket(JSONClass itemPacket)
     --                  JSONClass itemPacket - The ItemPickupPacket
-    -- RETURNS: 	
+    -- RETURNS: 	IEnumerator
     -- NOTES:
     -- Used for testing to simulate receiving PickupPackets from the server and 
     -- process them.
