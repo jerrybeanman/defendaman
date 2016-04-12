@@ -52,12 +52,14 @@ public class ItemMenu : MonoBehaviour
     {
         _item_menu = GameObject.Find("Item Menu"); 
         _item_menu.SetActive(false);
-		_world_item_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
+		_world_item_manager = 
+            GameObject.FindGameObjectWithTag("GameManager").GetComponent<WorldItemManager>();
         _amount_panel = GameObject.Find("Inventory").GetComponent<AmountPanel>();
         _use_btn = _item_menu.transform.FindChild("Use Button").gameObject;
         _item_menu_rt = _item_menu.GetComponent<RectTransform>();
         _item_menu_height = _item_menu_rt.rect.height;
     }
+
     /*-----------------------------------------------------------------------------------
     -- FUNCTION: 	Update
     -- DATE: 		25/03/2016
