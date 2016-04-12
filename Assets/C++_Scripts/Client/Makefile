@@ -1,3 +1,5 @@
+#Jerry Jia, Scott Plummer, Martin Minkov
+
 CC = g++ -std=c++11 -Wall -pedantic -W -ggdb
 
 make:
