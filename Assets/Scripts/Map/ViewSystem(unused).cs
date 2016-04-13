@@ -1,6 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+/*--------------------------------------------------------------------------------------------  
+--  SOURCE:          ViewSystem
+--  
+--  PROGRAM:         ViewSystem (Unused in final product)
+--  
+--  FUNCTIONS:       void Start ();
+--                   
+--                   void FixedUpdate();
+--                   
+--                   float realAngle();
+--                   
+--                   void buildPointsAndMesh();
+--                   
+--                   Mesh buildMesh(params Vector2[] points);
+--                   
+--                   Vector2 LineCastColl(Vector2 thisPos, Vector2 endPos);
+--                   
+--                   void drawView(params Vector2[] points);
+--  
+--  DATE:            ViewSystem (Unused in final product)
+--  
+--  DESIGNERS:       Jaegar Sarauer
+--  
+--  REVISIONS:       Jaegar Sarauer = Initial creation for 360 degree vision system.
+--                   Micah Willems = Changes to work with character of the game.
+--  
+--  PROGRAMMERS:     Jaegar Sarauer
+--  
+--  NOTES:           This file creates a 360 degree vision system around the character intended to
+--                   act as a vision system similar to the one in place in the current game.
+--                   The vision works by ray casting out from the center to find collision points,
+--                   then building a mesh based on all the collisions, and applying a filter to the mesh.
+--                   This vision system was removed when Jerry bought a library which allowed differnent
+--                   shapes of vision to be applied, of which Micah fine tuned it and applied it to the
+--                   characters and teams of the game.
+------------------------------------------------------------------------------------------*/
 public class ViewSystem : MonoBehaviour {
 
 	Vector2[] shadowPoints;
