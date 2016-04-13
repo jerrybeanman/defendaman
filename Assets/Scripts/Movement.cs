@@ -1,4 +1,31 @@
-﻿using UnityEngine;
+﻿/*------------------------------------------------------------------------------------------------------------------
+-- 
+-- SOURCE FILE: Movement.cs - Character Movement
+-- PROGRAM: DefendAman
+--
+-- FUNCTIONS:
+--		void Start()
+--      bool checkEnd(Vector2 vec, double distance)
+--      public bool doBlink(float distance)
+--      void Update() 
+--      void sendToServer(double x, double y)
+--      void localPosWrong(double x, double y)
+--      void absMove()
+        double getInfo()
+        void relMove()
+--      double getInfo()    
+--      private double calcAngle(Vector2 mousePos)
+--      private double getDistance(Vector2 mousePos)
+--      public float getDegree(float angle)
+--
+-- DATE:		19/02/2016
+-- REVISIONS:	(V1.0)
+-- DESIGNER:	Colin Bose
+-- PROGRAMMER:  Colin Bose
+--
+-- NOTES:
+-- Attach this to a player to allow them movement. Provides two different movement systems: absolute and relative
+----------------------------------------------------------------------------------------------------------------------*/using UnityEngine;
 using System.Collections;
 
 
@@ -39,7 +66,20 @@ public class Movement : MonoBehaviour
         }
         return true;
     }
-    //Call to blink. distance is the max range of the blink, in world coordinates
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  doBlink
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--  public bool doBlink(float distance)
+                        float distance - max distance to blink
+-- 
+-- RETURNS:    bool - true = success blink, false = no
+--
+-- NOTES: Call this on the ninja class to blink
+--
+----------------------------------------------------------------------------------------------------------------------*/
     public bool doBlink(float distance) {
         Vector2 mousePos = Input.mousePosition;
         double angle = getInfo();
@@ -97,6 +137,20 @@ public class Movement : MonoBehaviour
         return true;
          
     }
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  update
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: The update function, called 60 times per sec
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     void Update()
     {
         speed = baseClass.ClassStat.MoveSpeed;
@@ -141,6 +195,20 @@ public class Movement : MonoBehaviour
         //JSON OK
     }
     //called if local position does not match where the server thinks player is
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  localPosWrong
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: Call to update the position of a character based off data sent from server
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     void localPosWrong(double x, double y)
     {
         Vector2 position = new Vector2((float)x, (float)y);
@@ -148,7 +216,21 @@ public class Movement : MonoBehaviour
         rb2d.transform.position = position;
     }
 
-    //absolute movement, just rotate and move
+    
+ /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  absMove
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    void
+--
+-- NOTES: Move absolute - W = up, S down, etc. Not dependant on mouse position
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     void absMove()
     {
         Vector2 moving = getMovement(90);
@@ -159,6 +241,20 @@ public class Movement : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
     }
     //relative movemntment, move towards cursor
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  relMove
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    VOID
+--
+-- NOTES: Call to do relative move - W = go towards mouse
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     void relMove()
     {
         double looking = getInfo();
@@ -168,7 +264,20 @@ public class Movement : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
 
     }
-    //returns  the angle the player is facing IN DEGREES
+    /*------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:  getInfo
+    -- DATE:	   10/04/16
+    -- REVISIONS:  (V1.0)
+    -- DESIGNER:   Colin Bose
+    -- PROGRAMMER: Colin Bose
+    --
+    -- 
+    -- RETURNS:    angle based off the character looking at the mouse
+    --
+    -- NOTES: Returns the angle to rotate the character
+    --
+    ----------------------------------------------------------------------------------------------------------------------*/
+
     double getInfo()
     {
         double angleFacing;
@@ -177,7 +286,20 @@ public class Movement : MonoBehaviour
         angleFacing = getDegree(angleFacing);
         return angleFacing;
     }
-    //calculates the angle player is facing, IN RADIANS
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  calcAngle
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    double - the angle the character is facing
+--
+-- NOTES: Calculates the angle to the mouse pointer
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     private double calcAngle(Vector2 mousePos)
     {
         double x, y;
@@ -218,11 +340,25 @@ public class Movement : MonoBehaviour
         return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
     }
     //convert rad to degree
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getDegree
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    double - the angle in degrees
+--
+-- NOTES: convert rad to degree
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     public double getDegree(double angle)
     {
         return angle * 180 / System.Math.PI;
     }
-    //What to do on collision?
+    //What to do on collision
     void OnCollisionEnter2D(Collision2D collision)
     {
 
@@ -231,7 +367,20 @@ public class Movement : MonoBehaviour
 
 
     }
-    //Get the vector based on the facing angle. This is for relative movement. Returns vector of movement direction
+ /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getMovement
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS: Vector2 - the vector to move in
+--
+-- NOTES: Call, passing the facing angle, to get the vector that the character will move in
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     Vector2 getMovement(double angleFacing)
     {
         double angleHorz = 0;
@@ -286,7 +435,20 @@ public class Movement : MonoBehaviour
         }
         return ret;
     }
-    //degree to rad conversion
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getRad
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    double - angle in radians
+--
+-- NOTES: convert degrees to rad
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     public double getRad(double angle)
     {
         return (System.Math.PI / 180) * angle;
@@ -302,15 +464,56 @@ public class Movement : MonoBehaviour
 
         return position;
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  setAbs
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    void
+--
+-- NOTES: Sets movement styel to absolute
+--
+----------------------------------------------------------------------------------------------------------------------*/
 
     public void setAbs()
     {
         movestyles = movestyle.absolute;
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  setRel
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS: VOID    
+--
+-- NOTES: sets movement to relative
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     public void setRel()
     {
         movestyles = movestyle.relative;
     }
+    /*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION:  getInputType
+-- DATE:	   10/04/16
+-- REVISIONS:  (V1.0)
+-- DESIGNER:   Colin Bose
+-- PROGRAMMER: Colin Bose
+--
+-- 
+-- RETURNS:    int - the movement style
+--
+-- NOTES: Call to look up movement style
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
     public int getInputType()
     {
         if (movestyles == movestyle.absolute)

@@ -17,7 +17,7 @@
 --
 --  NOTES:
 --  This class contains the logic that relates to the Fireball projectile that the 
---  wizard class shoots
+--  wizard class shoots.
 ---------------------------------------------------------------------------------------*/
 using UnityEngine;
 using System.Collections;

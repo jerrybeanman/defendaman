@@ -1,6 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/*------------------------------------------------------------------------------------------------------------------
+Was cut from the project when we made the decision to keep all AI local to the client. 
+    
+    
+    -- SOURCE FILE: AIManager.cs - Manager for AI. Takes in data from the server and manipulates the UI client side
+-- PROGRAM: DefendAman
+--
+-- FUNCTIONS:
+--		
+--
+-- DATE:		19/01/2016
+-- REVISIONS:	(V1.0)
+-- DESIGNER:	Colin Bose
+-- PROGRAMMER:  Colin Bose
+--
+-- NOTES:
+-- Attach this to a turret to have a turret that shoots at enemies.
+----------------------------------------------------------------------------------------------------------------------*/
 public class AIManager : MonoBehaviour {
     public Transform AI;
     int numAi = 10;

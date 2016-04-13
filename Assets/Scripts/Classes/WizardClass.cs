@@ -4,6 +4,7 @@
 --  PROGRAM:        Linux Game
 --
 --  FUNCTIONS:
+--      void Start(void)
 --      override float basicAttack(Vector2 dir)
 --      override float specialAttack(Vector2 dir)
 --
@@ -29,6 +30,24 @@ public class WizardClass : RangedClass
     Rigidbody2D fireball;
     Rigidbody2D magicCircle;
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Function that's called when the script is first executed - it initializes all required values
+    ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
         cooldowns = new float[2] { 0.75f, 15 };
