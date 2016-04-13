@@ -18,9 +18,9 @@
 --                  April 4th: Hank Lo
 --                      - Numbers balancing
 --
---  DESIGNERS:      Hank Lo, Allen Tsang
+--  DESIGNERS:      Hank Lo, Allen Tsang, Carson Roscoe
 --
---  PROGRAMMER:     Hank Lo, Allen Tsang, Jerry Jia, Eunwon Moon
+--  PROGRAMMER:     Hank Lo, Allen Tsang, Jerry Jia, Eunwon Moon, Carson Roscoe
 --
 --  NOTES:
 --  This class contains the logic that relates to the Gunner Class.

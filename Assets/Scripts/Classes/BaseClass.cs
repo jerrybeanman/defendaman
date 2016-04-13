@@ -22,9 +22,9 @@
 --                  April 4, 2016
 --                      Hank: Added Albert easter egg
 --
---  DESIGNERS:      Hank Lo, Allen Tsang
+--  DESIGNERS:      Hank Lo, Allen Tsang, Carson Roscoe
 --
---  PROGRAMMER:     Hank Lo, Allen Tsang
+--  PROGRAMMER:     Hank Lo, Allen Tsang, Carson Roscoe, Eunwon Moon
 --
 --  NOTES:
 --  This class is the grandparent class for all classes. Every class is a base class.
@@ -63,11 +63,15 @@ public abstract class BaseClass : MonoBehaviour {
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS: None
+    -- REVISIONS: March 9th, 2016: Created the start [Allen]
+    --            March 15th, 2016: Hooked up with Networking Manager [Allen/Carson]
+    --            March 25th, 2016: Attached with HUD [Carson]
+    --            April 2nd, 2016: Added sound [Eunwon]
+    --            April 2nd, 2016: Added Aman buff [Allen]
     --
-    -- DESIGNER: Hank Lo, Allen Tsang
+    -- DESIGNER: Allen Tsang, Carson Roscoe
     --
-    -- PROGRAMMER: Hank Lo, Allen Tsang
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Eunwon Moon
     --
     -- INTERFACE: void Start(void)
     --
@@ -114,6 +118,7 @@ public abstract class BaseClass : MonoBehaviour {
         au_failed_special = Resources.Load("Music/Weapons/failed_special_use") as AudioClip;
     }
 
+    //TODO: Comment this
     public PlayerBaseStat ClassStat
 	{
 		get {
@@ -311,7 +316,9 @@ public abstract class BaseClass : MonoBehaviour {
     --
     -- DATE: March 9, 2016
     --
-    -- REVISIONS:   March 31, 2016
+    -- REVISIONS:   March 16th, 2016
+    --                  Carson/Allen: Rewrote for a new special ability
+    --              March 31, 2016
     --                  Eunwon: Add attack sound effect
     --              April 4, 2016
     --                  Hank: Added Albert Easter egg
@@ -362,6 +369,7 @@ public abstract class BaseClass : MonoBehaviour {
         return cooldowns[1];
     }
 
+    //TODO: Carson
     [System.Serializable]
 	public class PlayerBaseStat
 	{
@@ -443,15 +451,15 @@ public abstract class BaseClass : MonoBehaviour {
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: StartAttackAnimation
+    -- METHOD: StartAttackAnimation
     --
     -- DATE: March 9, 2016
     --
     -- REVISIONS: 
     --
-    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- DESIGNER: Allen Tsang
     --
-    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- PROGRAMMER: Allen Tsang
     --
     -- INTERFACE: void StartAttackAnimation(void)
     --
@@ -460,22 +468,20 @@ public abstract class BaseClass : MonoBehaviour {
     -- NOTES:
     -- Starts the attack animation
     ---------------------------------------------------------------------------------------------------------------------*/
-    public void StartAttackAnimation()
-    {
-        
+    public void StartAttackAnimation() {
         gameObject.GetComponent<Animator>().SetBool("attacking", true);
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: EndAttackAnimation
+    -- METHOD: EndAttackAnimation
     --
     -- DATE: March 9, 2016
     --
     -- REVISIONS: 
     --
-    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- DESIGNER: Allen Tsang
     --
-    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- PROGRAMMER: Allen Tsang
     --
     -- INTERFACE: void EndAttackAnimation(void)
     --
@@ -484,21 +490,20 @@ public abstract class BaseClass : MonoBehaviour {
     -- NOTES:
     -- Ends the attack animation
     ---------------------------------------------------------------------------------------------------------------------*/
-    public void EndAttackAnimation()
-    {
+    public void EndAttackAnimation() {
         gameObject.GetComponent<Animator>().SetBool("attacking", false);
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
-    -- FUNCTION: UsePotion
+    -- METHOD: UsePotion
     --
     -- DATE: March 16, 2016
     --
     -- REVISIONS:
     --
-    -- DESIGNER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- DESIGNER: Allen Tsang, Carson Roscoe
     --
-    -- PROGRAMMER: Allen Tsang, Carson Roscoe, Hank Lo
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe
     --
     -- INTERFACE: void UsePotion(int damage, int armour, int health, int speed, int duration)
     --              int damage: damage value of the potion
@@ -537,9 +542,29 @@ public abstract class BaseClass : MonoBehaviour {
         }
     }
 
-    IEnumerator Debuff(int damage, int armour, int speed, int duration)
-    {
-		print ("[DEBUG] DEBUFFED: " + ClassStat.MoveSpeed);
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: Debuff
+    --
+    -- DATE: March 16, 2016
+    --
+    -- REVISIONS:
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe
+    --
+    -- INTERFACE: IEnumerator Debuf(int damage stat to undo
+    --                              int armour stat to undo
+    --                              int speed stat to dundo
+    --                              int duration to wait before undoing the stat increase)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- After consuming a potion that has a duration, this will be invoked. Essentially it waits for the amount of time
+    -- stated as the duration parameter and then undoes all the stats from the first three parameters.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    IEnumerator Debuff(int damage, int armour, int speed, int duration) {
         yield return new WaitForSeconds(duration);
         if (damage != 0)
             ClassStat.AtkPower -= damage;
