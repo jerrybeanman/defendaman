@@ -5,7 +5,47 @@
 #include <iostream>
 #include <fstream>
 
+/*--------------------------------------------------------------------------------------------  
+--  SOURCE:          Application.cpp
+--  
+--  PROGRAM:         Testing File
+--  
+--  FUNCTIONS:       void drawMap (int ** mapArray, Map map);
+--                   
+--                   int main ();
+--  
+--  DATE:            Testing File
+--  
+--  DESIGNERS:       Jaegar Sarauer
+--  
+--  REVISIONS:       NONE
+--  
+--  PROGRAMMERS:     Jaegar Sarauer
+--  
+--  NOTES:           This file utilizes the Map.cpp library to create a map and display it in command
+--                   prompt for testing/display.
+------------------------------------------------------------------------------------------*/
 
+
+/*--------------------------------------------------------------------------------------------  
+--  FUNCTION:        drawMap
+--  
+--  DATE:            April 13th, 2016
+--  
+--  DESIGNERS:       Jaegar Sarauer
+--  
+--  REVISIONS:       NONE
+--  
+--  PROGRAMMERS:     Jaegar Sarauer
+--  
+--  INTERFACE:       void drawMap (int ** mapArray, Map map);
+--  
+--  RETURNS:         void
+--  
+--  NOTES:           This function takes in a map layer and the map object and creates a map out
+--                   of ascii characters in command prompt. The Map object is needed to determine
+--                   the size of the map and what tiles indicate as what.
+------------------------------------------------------------------------------------------*/
 void drawMap (int ** mapArray, Map map) {
 	for (size_t x = 0; x < map.getMapWidth (); x++) {
 		printf ("\n ");
@@ -17,6 +57,24 @@ void drawMap (int ** mapArray, Map map) {
 	}
 }
 
+
+/*--------------------------------------------------------------------------------------------  
+--  FUNCTION:        main
+--  
+--  DATE:            April 13th, 2016
+--  
+--  DESIGNERS:       Jaegar Sarauer
+--  
+--  REVISIONS:       NONE
+--  
+--  PROGRAMMERS:     Jaegar Sarauer
+--  
+--  INTERFACE:       int main ();
+--  
+--  RETURNS:         int
+--  
+--  NOTES:           This function constructs a map and draws it in command prompt.
+------------------------------------------------------------------------------------------*/
 int main () {
 	char c;
 	Map *map = new Map (100, 100, 44);
