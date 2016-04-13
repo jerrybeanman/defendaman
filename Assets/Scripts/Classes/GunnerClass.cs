@@ -8,6 +8,9 @@
 --      override float basicAttack(Vector2 dir)
 --      override float specialAttack(Vector2 dir)
 -- 		void Update(void)
+--      void SendLaserPacket()
+--      void fire()
+--      void fireFromServer(JSONClass packet)
 --      void playspecialSound(int)
 --      void playspecialCharge(int)
 --
@@ -159,7 +162,7 @@ public class GunnerClass : RangedClass
     -- RETURNS: a float representing the cooldown of the attack
     --
     -- NOTES:
-    -- Function that's called when the wizard uses the left click attack
+    -- Function that's called when the gunner uses the left click attack
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2)) 
     {
@@ -201,23 +204,21 @@ public class GunnerClass : RangedClass
     -- RETURNS: a float representing the cooldown of the attack
     --
     -- NOTES:
-    -- Function that's called when the Gunner uses the right click special attack (Charging lazer)
+    -- Function that's called when the Gunner uses the right click special attack (Charging laser)
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
-
-	        if (playerLoc == default(Vector2))
-	            playerLoc = dir;
-	        dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
-            playerLoc = default(Vector2);
-	        base.specialAttack(dir, playerLoc);
-            playspecialCharge(playerID);
+	    if (playerLoc == default(Vector2))
+	        playerLoc = dir;
+	    dir = ((Vector2)((Vector3)dir - transform.position)).normalized;
+        playerLoc = default(Vector2);
+	    base.specialAttack(dir, playerLoc);
+        playspecialCharge(playerID);
 
         if (!silenced) {
 	        this.dir = dir;
 	        inSpecial = true;
 	    }
-
         return cooldowns[1];
     }
 	
@@ -252,11 +253,9 @@ public class GunnerClass : RangedClass
 		{
 			if (inSpecial && Input.GetMouseButton(1))
 			{
-				// ugly check..update sucks lol
 				if(!started)
 					StartCoroutine(ChargeAttack());
 			}
-			
 			if (inSpecial && !Input.GetMouseButton(1))
 			{
 				StartCoroutine(ReleaseAttack());
@@ -312,8 +311,7 @@ public class GunnerClass : RangedClass
 			endingAtkRatio = Mathf.Lerp(startingAtkRatio, maxRatio, t);
 			yield return new WaitForEndOfFrame ();
 		}
-
-
+        
 		if(inSpecial)
 		{
 			HUD_Manager.instance.chargeBar.Holder.GetComponent<Animator>().SetTrigger("play");
@@ -395,14 +393,50 @@ public class GunnerClass : RangedClass
 		
 	}
 
-	void SendLaserPacket()
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:    SendLaserPacket
+    --
+    -- DATE:        March 16, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER:    Carson Roscoe
+    --
+    -- PROGRAMMER:  Carson Roscoe
+    --
+    -- INTERFACE:   void SendLaserPacket()
+    --
+    -- RETURNS:     void
+    --
+    -- NOTES:
+    --  Sends a packet to the networking manager to tell it that you have fired a gunner special shot.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    void SendLaserPacket()
 	{
 		var member = new List<Pair<string, string>>();
 		member.Add(new Pair<string, string>("playerID", playerID.ToString()));
 		NetworkingManager.send_next_packet(DataType.SpecialCase, (int)SpecialCase.GunnerSpecial, member, Protocol.UDP);
 	}
 
-	void fire()
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:    fire
+    --
+    -- DATE:        March 16, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER:    Carson Roscoe
+    --
+    -- PROGRAMMER:  Carson Roscoe
+    --
+    -- INTERFACE:   void fire()
+    --
+    -- RETURNS:     void
+    --
+    -- NOTES:
+    --  Called when a player releases the gunner special attack.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    void fire()
     {
 		dir = (gameObject.transform.rotation * Vector3.right);
         var startPosition = new Vector3(transform.position.x + (dir.x * 1.25f), transform.position.y + (dir.y * 1.25f), -5);
@@ -427,6 +461,25 @@ public class GunnerClass : RangedClass
 
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION:    fireFromServer
+    --
+    -- DATE:        March 16, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- DESIGNER:    Carson Roscoe
+    --
+    -- PROGRAMMER:  Carson Roscoe
+    --
+    -- INTERFACE:   void fireFromServer(JSONClass packet)
+    --              JSONClass packet: packet received from the networking manager containing the source player's info
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    --  Called when receiving a packet that another player on the server has fired a special shot.
+    ---------------------------------------------------------------------------------------------------------------------*/
     void fireFromServer(JSONClass packet)
     {
         if (packet["playerID"].AsInt == playerID && playerID != GameData.MyPlayer.PlayerID)
@@ -446,7 +499,7 @@ public class GunnerClass : RangedClass
     --
     -- PROGRAMMER:  Eunwon Moon
     --
-    -- INTERFACE:  void playspecialSound(int PlayerID)
+    -- INTERFACE:   void playspecialSound(int PlayerID)
     --              PlayerID : who shoot the special skill
     --
     -- RETURNS: void

@@ -10,6 +10,8 @@
 --      void receiveAttackFromServer(JSONClass playerData)
 --      float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
 --      float specialAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
+--      public class PlayerBaseStat
+--          public void update_stats()
 --      void StartAttackAnimation()
 --      void EndAttackAnimation()
 --      void UsePotion(int damage, int armour, int health, int speed, int duration)
@@ -355,11 +357,8 @@ public abstract class BaseClass : MonoBehaviour {
                     }
                 }
             }
-           
             return cooldowns[1];
         }
-            
-
         if (playerLoc != default(Vector2) && 
             (distance = Vector2.Distance(playerLoc, GameData.PlayerPosition[GameData.MyPlayer.PlayerID])) < 13)
         {
@@ -369,7 +368,24 @@ public abstract class BaseClass : MonoBehaviour {
         return cooldowns[1];
     }
 
-    //TODO: Carson
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- CLASS: PlayerBaseStat
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: 
+    --
+    -- FUNCTIONS:
+    --      public void update_stats()
+    --
+    -- DESIGNER: Allen Tsang, Carson Roscoe
+    --
+    -- PROGRAMMER: Allen Tsang, Carson Roscoe
+    --
+    -- NOTES:
+    -- Inner class that holds all the players' base stats.  Includes getter and setter methods.  Setters also call methods
+    -- to handle notification of the HUD and networking manager.
+    ---------------------------------------------------------------------------------------------------------------------*/
     [System.Serializable]
 	public class PlayerBaseStat
 	{
@@ -438,6 +454,24 @@ public abstract class BaseClass : MonoBehaviour {
             }
         }
 
+        /*---------------------------------------------------------------------------------------------------------------------
+        -- METHOD: update_stats
+        --
+        -- DATE: March 16, 2016
+        --
+        -- REVISIONS:
+        --
+        -- DESIGNER: Allen Tsang, Carson Roscoe
+        --
+        -- PROGRAMMER: Allen Tsang, Carson Roscoe
+        --
+        -- INTERFACE: void update_stats()
+        --
+        -- RETURNS: void
+        --
+        -- NOTES:
+        -- Sends stat updates to the networking manager to notify other players that your base stats have changed.
+        ---------------------------------------------------------------------------------------------------------------------*/
         public void update_stats()
         {
             if (_playerID != GameData.MyPlayer.PlayerID)
@@ -572,5 +606,4 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.Defense -= armour;
         ClassStat.MoveSpeed -= speed;
     }
-
 }

@@ -49,7 +49,7 @@ public class MagicCircle : Area
     --
     -- NOTES:
     -- Function that's called when the circle is created - this function initializes the start position of the circle, and 
-    -- removes the circle after 3 seconds
+    -- removes the circle after 6 seconds
     ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {

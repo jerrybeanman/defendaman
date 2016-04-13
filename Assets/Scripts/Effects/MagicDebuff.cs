@@ -13,9 +13,9 @@
 --                   April 4, 2016: Hank Lo
 --                      - Numbers balancing, silence implemention
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Magic Debuff Class.
@@ -82,7 +82,6 @@ public class MagicDebuff : Buff {
         applyrate++;
         if (!appliedspeedbuff) 
         {
-			print ("[DEBUG] MAGIC DEBUFF: " + player.ClassStat.MoveSpeed);
             player.ClassStat.MoveSpeed -= speeddebuff;
             appliedspeedbuff = true;
             player.silenced = true;

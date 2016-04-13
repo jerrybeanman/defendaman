@@ -62,7 +62,7 @@ public class Laser : Projectile
     -- PROGRAMMER: Hank Lo, Allen Tsang
     --
     -- INTERFACE: override void OnTriggerEnter2D(Collider2D other)
-    --                  Collider2D other: The object's collider that this projectile hits
+    --             Collider2D other: The object's collider that this projectile hits
     --
     -- RETURNS: void
     --
