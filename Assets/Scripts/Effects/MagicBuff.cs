@@ -96,6 +96,7 @@ public class MagicBuff : Buff {
         }
         if(--duration < 0)
         {
+			print ("[DEBUG] MAGIC BUFF: " + player.ClassStat.MoveSpeed);
             player.ClassStat.AtkPower -= (magnitude*atkbuff);
             player.ClassStat.Defense -= (magnitude*defbuf);
             player.ClassStat.MoveSpeed -= speedbuff;

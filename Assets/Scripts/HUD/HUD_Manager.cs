@@ -29,16 +29,17 @@ public class HUD_Manager : MonoBehaviour
 	public PassiveSkill			passiveSkill;
 	public Chat					chat;
 	public Shop					shop;	
-	public Text					timer;
-	public GameObject			placementRange;
-	public GameObject			statsPanel;
 	public PlayerDP				playerDp;
 	public ChargeBar			chargeBar;
 	public Stamina				stamina;
-	public ColourizeScreen		colourizeScreen;
 	public WinScreen			winScreen;
     public LoseScreen           loseScreen;
-
+	public Text					upgradeAmount;
+	public Text					timer;
+	public GameObject			placementRange;
+	public GameObject			statsPanel;
+	public ColourizeScreen		colourizeScreen;
+	
 	// Need to reference MapManager to manipulate its building lists
 	public MapManager			mapManager;
 
@@ -362,12 +363,12 @@ public class HUD_Manager : MonoBehaviour
 
 		if(Input.GetAxis("Mouse ScrollWheel") > 0)
 		{
-			object[] parms = new object[3]{90, shop.Selected.Building, 1f};
+			object[] parms = new object[3]{90, shop.Selected.Building, 0.2f};
 			StartCoroutine(Rotate(parms));
 		}else
 		if(Input.GetAxis("Mouse ScrollWheel") < 0)
 		{
-			object[] parms = new object[3]{-90, shop.Selected.Building, 1f};
+			object[] parms = new object[3]{-90, shop.Selected.Building, 0.2f};
 			StartCoroutine(Rotate(parms));
 		}
 	}
@@ -429,7 +430,7 @@ public class HUD_Manager : MonoBehaviour
         if (b1.GetComponent<Building>().type == Building.BuildingType.Turret) 
 		{
            // building.GetComponent<AI>()
-           b1.GetComponent<AI>().instantTurret(2, 40, data[NetworkKeyString.TeamID].AsInt, 15, 15);
+           b1.GetComponent<AI>().instantTurret(1, 40, data[NetworkKeyString.TeamID].AsInt, 18, 120);
             Debug.Log("Instant turret 1");
         }
 		b1.GetComponent<Building>().notifycreation();
@@ -498,7 +499,7 @@ public class HUD_Manager : MonoBehaviour
 			testBuild.GetComponent<Building>().placing = false;
             if (testBuild.GetComponent<Building>().type == Building.BuildingType.Turret)
             {//
-                testBuild.GetComponent<AI>().instantTurret(2, 40, 2, 15, 15);
+                testBuild.GetComponent<AI>().instantTurret(2, 40, 1, 15, 15);
 
                 //testBuild.GetComponent<AI>().instantTurret(2, 40, GameData.MyPlayer.TeamID, 15, 15);
                 Debug.Log("Instant turret 2");

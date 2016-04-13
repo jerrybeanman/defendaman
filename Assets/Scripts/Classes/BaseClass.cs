@@ -539,6 +539,7 @@ public abstract class BaseClass : MonoBehaviour {
 
     IEnumerator Debuff(int damage, int armour, int speed, int duration)
     {
+		print ("[DEBUG] DEBUFFED: " + ClassStat.MoveSpeed);
         yield return new WaitForSeconds(duration);
         if (damage != 0)
             ClassStat.AtkPower -= damage;
@@ -546,4 +547,5 @@ public abstract class BaseClass : MonoBehaviour {
             ClassStat.Defense -= armour;
         ClassStat.MoveSpeed -= speed;
     }
+
 }

@@ -38,8 +38,9 @@ public class Movement : MonoBehaviour
     public float speed;
     movestyle movestyles;
     float midX, midY;
-    public BaseClass.PlayerBaseStat ClassStat;
+    public BaseClass baseClass;
 	Animator anim;
+	 
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -51,7 +52,7 @@ public class Movement : MonoBehaviour
         right = "d";
         movestyles = movestyle.relative;
 		anim = gameObject.GetComponent<Animator>();
-        ClassStat = GetComponent<BaseClass>().ClassStat;
+		baseClass = gameObject.GetComponent<BaseClass>();
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
     }
     //Checks if the end teleport point is valid, or if it is in a wall
@@ -152,7 +153,18 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        speed = ClassStat.MoveSpeed;
+        speed = baseClass.ClassStat.MoveSpeed;
+		if(speed == 0)
+		{
+			if(baseClass is GunnerClass)
+				baseClass.ClassStat.MoveSpeed = 6;
+			else			
+			if(baseClass is NinjaClass)
+				baseClass.ClassStat.MoveSpeed = 7;
+			else
+			if(baseClass is WizardClass)
+				baseClass.ClassStat.MoveSpeed = 5;
+		}
 		if (Input.GetKeyDown(KeyCode.Equals) && !GameData.InputBlocked)
             movestyles = (movestyles == movestyle.absolute ? movestyle.relative : movestyle.absolute);
 
@@ -247,6 +259,7 @@ public class Movement : MonoBehaviour
     {
         double looking = getInfo();
         Vector2 moving = getMovement(looking);
+		Debug.Log("[DEBUG]: move speed: " + speed);
         rb2d.MovePosition(rb2d.position + moving * speed * Time.deltaTime);
         transform.rotation = Quaternion.AngleAxis((float)looking, Vector3.forward);
 
@@ -350,6 +363,7 @@ public class Movement : MonoBehaviour
     {
 
         // rb2d.velocity = new Vector2(0, 0);
+		Debug.Log("[DEBUG] COLLIDING");
 
 
     }
@@ -398,6 +412,7 @@ public class Movement : MonoBehaviour
 
         if (hMoved || vMoved)
         {
+			Debug.Log("[DEBUG] attempting to move");
             if (hMoved && vMoved)
             {
                 if (moveDown)

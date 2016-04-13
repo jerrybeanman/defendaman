@@ -82,7 +82,7 @@ void closeSocket(int fd)
 
   FUNCTION:               TCP_CreateTCPClient
 
-  DESIGNER/PROGRAMMER:
+  DESIGNER/PROGRAMMER:    Jerry Jia
 
   INTERFACE:              Client * TCP_CreateTCPClient()
 

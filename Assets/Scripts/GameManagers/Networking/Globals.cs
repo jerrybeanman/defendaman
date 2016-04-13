@@ -91,7 +91,6 @@ public class PlayerData
         { Constants.ARMOR_STAT, 0},
         { Constants.SPEED_STAT, 0}
     };
-    //public bool King { get; set; }
 }
 
 public class GameData

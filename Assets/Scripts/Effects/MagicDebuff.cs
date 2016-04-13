@@ -82,6 +82,7 @@ public class MagicDebuff : Buff {
         applyrate++;
         if (!appliedspeedbuff) 
         {
+			print ("[DEBUG] MAGIC DEBUFF: " + player.ClassStat.MoveSpeed);
             player.ClassStat.MoveSpeed -= speeddebuff;
             appliedspeedbuff = true;
             player.silenced = true;
