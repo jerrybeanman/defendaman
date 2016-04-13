@@ -183,9 +183,9 @@ public abstract class BaseClass : MonoBehaviour {
             if (playerID == GameData.MyPlayer.PlayerID) {
                 if (silenced) {
                     // play au_special_l
-                    au_attack.volume = .8f;
+                    au_attack.volume = 1.0f;
                     System.Random rnd = new System.Random();
-                    int playSpecial = rnd.Next(1, 50);
+                    int playSpecial = rnd.Next(40, 45);
                     if (playSpecial == 42) {
                         au_attack.PlayOneShot(au_special_l);
                     } else {

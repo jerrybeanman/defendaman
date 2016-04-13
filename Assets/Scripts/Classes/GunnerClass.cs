@@ -46,7 +46,7 @@ public class GunnerClass : RangedClass
 
 	new void Start()
 	{
-		cooldowns = new float[2] { 0.2f, 8f };
+		cooldowns = new float[2] { 0.15f, 8f };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);

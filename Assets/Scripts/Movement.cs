@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
         down = "s";
         left = "a";
         right = "d";
-        movestyles = movestyle.relative;
+        movestyles = movestyle.absolute;
 		anim = gameObject.GetComponent<Animator>();
 		baseClass = gameObject.GetComponent<BaseClass>();
         GameData.PlayerPosition.Add(GameData.MyPlayer.PlayerID, transform.position);
