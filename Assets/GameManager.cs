@@ -5,14 +5,36 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-//Carson
+/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    GameManager.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--
+--  DATE:           March 10th, 2016
+--
+--  REVISIONS:      March 10th, 2016: Created class from refactoring NetworkingManager code [Carson]
+--                  March 20th, 2016: Added vision logic on game creation [Micah]
+--                  March 25th, 2016: Added logic to handle game ending, playing dying and such [Carson]
+--                  March 28th, 2016: Added unique vision by class [Jerry]
+--                  April 3rd, 2016: Added end-game visual logic [Dhivya]
+--
+--  DESIGNERS:      Carson Roscoe
+--
+--  PROGRAMMER:     Carson Roscoe / Dhivya Manohar / Jerry Jia / Micah Willems
+--
+--  NOTES:
+--  This class is a singleton class used to handle general game related concepts that
+--  don't have a proper home, for example handling game instantiation, handling how the game
+--  ends, the visual side of getting hurt, etc.
+---------------------------------------------------------------------------------------*/
 public class GameManager : MonoBehaviour {
+    //Instance of GameManager used for singleton pattern
     public static GameManager instance;
-    public Transform AI;
-
+   
 	[System.Serializable]
-	public class GunnerVision
-	{
+	public class GunnerVision {
 		public Transform lightSourceFOV;
 		public Transform hiderFOV;
 		public Transform lightSourcePeripheral;
@@ -20,8 +42,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	[System.Serializable]
-	public class NinjaVision
-	{
+	public class NinjaVision {
 		public Transform lightSourceFOV;
 		public Transform hiderFOV;
 		public Transform lightSourcePeripheral;
@@ -29,8 +50,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	[System.Serializable]
-	public class MageVision
-	{
+	public class MageVision {
 		public Transform lightSourcePeripheral;
 		public Transform hiderPeripheral;
 	}
