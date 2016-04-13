@@ -42,7 +42,7 @@ public class OffscreenTargets : MonoBehaviour
     {
         Vector3 targetPos;
 
-        if (GameData.AllyKingID != -1 && GameData.PlayerPosition.ContainsKey(GameData.AllyKingID))
+        if (GameData.AllyKingID != -1)
         {
             targetPos = GameData.PlayerPosition[GameData.AllyKingID];
             targetPos = Camera.main.WorldToScreenPoint(targetPos);
