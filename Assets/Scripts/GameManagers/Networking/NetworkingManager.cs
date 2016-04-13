@@ -6,44 +6,39 @@ using SimpleJSON;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
 
-/*Carson
-Being used to denote what type of data we are sending/receiving for a given JSON object.
-e.g. Player is valued at 1. If we receive a JSON object for type Player ID 1, that is "Player 1's" data.
-     Projectile is defined at 2. If we receive a JSON object for type Projectile ID 3, that is "Projectile 3's" data
-    
-Enviroment does not have an ID associated with it, since it is one entity. The ID we use for it will always default to 0
-
-Note: Does not start at value 0. Reason being, if JSON parser fails, it returns 0 for fail, so checking
-for fail does not work 
-*/
-public enum DataType
-{
-    Player = 1, Trigger = 2, Environment = 3, StartGame = 4, ControlInformation = 5, Lobby = 6, Item = 7, UI = 8,
-    Hit = 9, Killed = 10, TriggerKilled = 11, AI = 12, AIProjectile = 13, SpecialCase = 14, Potion = 15, StatUpdate = 16,
-    GameOver = 17
-}
-
-public enum Protocol
-{
-    TCP, UDP, NA
-}
-
-/*Carson
-Class used for handling sending/receiving data. The class has 2 uses:
-* To send/receive data from the Networking Team's clientside code, and
-* Notifying subscribed objects when new data is updated
-
-To subscribe for an objects updates from server, you would call the public Subscribe method.
-This method takes in three things:
-    Callback method, which is a void method that takes in a JSONClass as a parameter
-    DataType you want to receive, e.g. DataType.Player for data of a player
-    int ID of which of the DataType you want to receive info from, e.g. ID 1 on DataType.Player is Player 1's data
-
-e.g. NetworkingManager.Subscribe((JSONClass [json]) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
-*/
-public class NetworkingManager : MonoBehaviour
-{
-    
+/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    NetworkingManager.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--
+--  DATE:           January 20th, 2016
+--
+--  REVISIONS:      February 5th, 2016: Added linking to C++ libraries
+--                  March 10th, 2016: Refactored GameManager logic out into its own class
+--                  March 20th, 2016: Refactored to singleton patern
+--
+--  DESIGNERS:      Carson Roscoe
+--
+--  PROGRAMMER:     Carson Roscoe
+--
+--  NOTES:
+--  This class is a singleton class used to handle the communication between the C++
+--  networking code and the C# game code. 
+--  The class has 2 uses:
+--    * To send/receive data from the Networking Team's clientside code, and
+--    * Notifying subscribed objects when new data is updated
+--
+--  To subscribe for an objects updates from server, you would call the public Subscribe method.
+--  This method takes in three things:
+--    * Callback method, which is a void method that takes in a JSONClass as a parameter
+--    * DataType you want to receive, e.g. DataType.Player for data of a player
+--    * int ID of which of the DataType you want to receive info from, e.g. ID 1 on DataType.Player is Player 1's data
+--
+--  e.g. NetworkingManager.Subscribe((JSONClass [json]) => {Debug.Log("Got Player 1's Data");}, DataType.Player, 1);
+---------------------------------------------------------------------------------------*/
+public class NetworkingManager : MonoBehaviour {
     #region Variables
 
     //Holds the subscriber data
@@ -55,43 +50,122 @@ public class NetworkingManager : MonoBehaviour
     //List of JSON strings to be sent on the next available UDP packet
     private static List<string> jsonUDPObjectsToSend = new List<string>();
     
+    //Pointer to the C++ TCPClient objects' address stored in the heap of the unmanaged code
     public static IntPtr TCPClient { get; private set; }
+    
+    //Pointer to the C++ UDPClient objects' address stored in the heap of the unmanaged code
     public static IntPtr UDPClient { get; private set; }
 
+    //Static reference to the instantiated version of this class, used for singleton patern
 	public static NetworkingManager instance;
+
+    //Flag used to denote whether this frame will send a packet or not. Alternates true and false every frame
+    //so we send 30 packets a second instead of 60, since 60 was an uneeded amount as our eyes can only notice
+    //up to 24 frames per second
     private bool sendThisFrame = true;
 
     #endregion
 
-	void Awake()
-	{
-		if (instance == null)				//Check if instance already exists
-			instance = this;				//if not, set instance to this
-		else if (instance != this)			//If instance already exists and it's not this:
-			Destroy(gameObject);   			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
-		DontDestroyOnLoad(gameObject);		//Sets this to not be destroyed when reloading scene
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: Awake
+    --
+    -- DATE: March 20th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void Awake(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Awake is invoked before Start in the creation of a script. In this case, it is used to initiate our singleton pattern
+    -- by setting instance if it is not set, and if it is set destroying this script since we do not want two singletons
+    -- of the same object.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    void Awake() {
+        //Check if instance already exists
+        if (instance == null)
+            //if not, set instance to this
+            instance = this;
+        //If instance already exists and it's not this:
+        else if (instance != this)
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
+            Destroy(gameObject);
+        //Sets this to not be destroyed when reloading scene
+        DontDestroyOnLoad(gameObject);		
 	}
 
-    void Start()
-    {
-		if (!GameData.GameStart) 
-		{
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: Start
+    --
+    -- DATE: January 20th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start is called after Awake during the instantiation of all Unity game objects. We used it here to see if we
+    -- have this script attached to GameManager or NetworkingServer. Only one should exist at any given momment, and
+    -- if both exist then that means are testing on Windows via skipping the menu and need to handle it as such.
+    -- 
+    -- Here is also where we call the TCP_CreateClient function linked to the C++ networking code and return its pointer
+    -- address for storing.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    void Start() {
+        //If the game has not started
+		if (!GameData.GameStart) {
+            //Find GameManager singleton
             var gameManager = GameObject.Find("GameManager") as GameObject;
+            //Find NetworkingServer singleton
             var networkManager = GameObject.Find("NetworkingServer") as GameObject;
-            if (gameManager != null && networkManager != null)
-            {
+            //If they both exist, we are in a impossible state only achieved through testing on Windows, delete one of them
+            if (gameManager != null && networkManager != null) {
                 Destroy(GameManager.instance);
                 Destroy(gameManager);
             }
+            //Try to create a TCPClient object. This can only be done on Linux as the networking library is Linux only
 			try {
 				TCPClient = TCP_CreateClient();
-			} catch (Exception)
-			{
-				//On Windows
+			} catch (Exception) {
+				//On Windows, don't worry about it. This will only ever fail on Windows.
 			}
 		}
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: Start
+    --
+    -- DATE: January 20th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start is called after Awake during the instantiation of all Unity game objects. We used it here to see if we
+    -- have this script attached to GameManager or NetworkingServer. Only one should exist at any given momment, and
+    -- if both exist then that means are testing on Windows via skipping the menu and need to handle it as such.
+    -- 
+    -- Here is also where we call the TCP_CreateClient function linked to the C++ networking code and return its pointer
+    -- address for storing.
+    ---------------------------------------------------------------------------------------------------------------------*/
     public void ResetConnections()
     {
         TCP_DisposeClient(TCPClient); 
