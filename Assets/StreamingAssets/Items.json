@@ -308,8 +308,8 @@
     "title": "Fancy Playing Cards",
     "description": "My magic tricks will cause pain.",
 		"stats": {
-      "damage": 2,
-      "armor": 2,
+      "damage": 1,
+      "armor": 1,
 			"health": 0,
 			"speed": 0,
       "level": 1
@@ -326,8 +326,8 @@
     "title": "Magical Wand",
     "description": "This looks like a stick.",
 		"stats": {
-      "damage": 4,
-      "armor": 4,
+      "damage": 3,
+      "armor": 3,
 			"health": 0,
 			"speed": 1,
       "level": 2
@@ -362,8 +362,8 @@
     "title": "Ball of Fire",
     "description": "This hurts to hold.",
 		"stats": {
-      "damage": 30,
-      "armor": 30,
+      "damage": 33,
+      "armor": 33,
 			"health": 0,
 			"speed": 3,
       "level": 4
@@ -380,8 +380,8 @@
     "title": "Fire Wave",
     "description": "How do you like your enemies cooked?",
 		"stats": {
-      "damage": 50,
-      "armor": 50,
+      "damage": 55,
+      "armor": 55,
 			"health": 0,
 			"speed": 4,
       "level": 5

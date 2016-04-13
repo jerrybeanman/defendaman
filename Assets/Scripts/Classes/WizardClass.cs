@@ -4,6 +4,7 @@
 --  PROGRAM:        Linux Game
 --
 --  FUNCTIONS:
+--      void Start(void)
 --      override float basicAttack(Vector2 dir)
 --      override float specialAttack(Vector2 dir)
 --
@@ -24,21 +25,39 @@ using UnityEngine;
 
 public class WizardClass : RangedClass
 {
-    int[] distance = new int[2]{ 25, 0 };
+    int[] distance = new int[2]{ 15, 0 };
     int[] speed = new int[2] { 100, 0 };
     Rigidbody2D fireball;
     Rigidbody2D magicCircle;
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Function that's called when the script is first executed - it initializes all required values
+    ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
-        cooldowns = new float[2] { 0.5f, 15 };
+        cooldowns = new float[2] { 0.75f, 15 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
-        _classStat.MaxHp = 1000;
+        _classStat.MaxHp = 950;
         _classStat.MoveSpeed = 5;
-        _classStat.AtkPower = 25;
-        _classStat.Defense = 25;
+        _classStat.AtkPower = 20;
+        _classStat.Defense = 20;
 
         base.Start();
 

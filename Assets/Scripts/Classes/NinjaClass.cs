@@ -4,6 +4,7 @@
 --  PROGRAM:        Linux Game
 --
 --  FUNCTIONS:
+--      void Start(void)    
 --      override float basicAttack(Vector2 dir)
 --      override float specialAttack(Vector2 dir)
 --
@@ -33,14 +34,35 @@ public class NinjaClass : MeleeClass
     GameObject teleport;
     GameObject teleportInstance;
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: 
+    --          April 4, 2016 - Hank Lo: Balance changes, numbers fixed.
+    --          April 5, 2016 - Hank Lo: Balance changes, numbers fixed more.
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Function that's called when the script is first executed - it initializes all required values
+    ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
-        cooldowns = new float[2] { 1f, 4 };
+        cooldowns = new float[2] { 0.75f, 4 };
 
         healthBar = transform.GetChild(0).gameObject.GetComponent<HealthBar>();
         _classStat = new PlayerBaseStat(playerID, healthBar);
         _classStat.MaxHp = 1200;
-        _classStat.MoveSpeed = 7;
+		_classStat.MoveSpeed = 7;
+		Debug.Log ("[DEBUG2] Setting Ninja Speed: " + _classStat.MoveSpeed);
         _classStat.AtkPower = 80;
         _classStat.Defense = 60;
 
@@ -71,9 +93,29 @@ public class NinjaClass : MeleeClass
         //ninja attack sound
         au_simple_attack = Resources.Load("Music/Weapons/ninjaboi_sword_primary") as AudioClip;
         au_special_attack = Resources.Load("Music/Weapons/ninjaboi_teleport") as AudioClip;
+
+		Debug.Log ("[DEBUG] Setting Ninja Speed After Calling Base: " + _classStat.MoveSpeed);
     }
 
-    //attacks return time it takes to execute
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: basicAttack
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: float basicAttack(Vector2 dir)
+    --              dir: a vector2 object which shows the direction of the attack
+    --
+    -- RETURNS: a float representing the cooldown of the attack
+    --
+    -- NOTES:
+    -- Function that's called when the Ninja uses the left click attack
+    ---------------------------------------------------------------------------------------------------------------------*/
     public override float basicAttack(Vector2 dir, Vector2 playerLoc = default(Vector2))
     {
         if (playerLoc == default(Vector2))
@@ -96,6 +138,8 @@ public class NinjaClass : MeleeClass
     --
     -- REVISIONS: March 29, 2016
     --              Added teleportation animation
+    --            April 4, 2016
+    --              Added silenced functionality - Hank
     --
     -- DESIGNER: Hank Lo, Allen Tsang
     --
@@ -107,7 +151,7 @@ public class NinjaClass : MeleeClass
     -- RETURNS: a float representing the cooldown of the attack
     --
     -- NOTES:
-    -- Function that's called when the Ninja uses the right click special attack (Teleport). If the ninja is debuffed he
+    -- Function that's called when the Ninja uses the right click special attack (Teleport). If the ninja is silenced he
     -- cannot teleport, but the cooldown will still be used since he tried to.
     ---------------------------------------------------------------------------------------------------------------------*/
     public override float specialAttack(Vector2 dir,Vector2 playerLoc = default(Vector2))

@@ -19,15 +19,26 @@
 #define PACKETLEN      	4096
 #define PACKETLEN_UDP   512
 
-#define BUFSIZE	        420	/* scamaz */
+#define BUFSIZE	        420	
 #define MAXCONNECTIONS  8
 
 
-/*
-   Structure of a PlayerNetworkEntity
- ** Will move to a more appropriate location later
- ** Unsure of info that will be required
- */
+/*------------------------------------------------------------------------------
+
+  SOURCE FILE:              Server.h
+
+  PROGRAM:                  Defendaman
+
+  FUNCTIONS:                virtual int InitializeSocket(short port) = 0;
+                            virtual void Broadcast(const char * message, sockaddr_in * excpt = NULL) = 0;
+                            virtual void * Receive() = 0;
+                            void fatal(const char* error);
+                            int isReadyToInt(Player player);
+
+  DESIGNER/PROGRAMMER:      Jerry Jia, Martin Minkov, Scott Plummer
+
+  NOTES:                    The server base class for both UDP and TCP
+-------------------------------------------------------------------------------*/
 typedef struct Player
 {
     int            socket;
