@@ -39,7 +39,7 @@ using SimpleJSON;
 --
 -- DESIGNER: Spenser Lee
 --
--- PROGRAMMER: Spenser Lee
+-- PROGRAMMER: Spenser Lee, Jerry Jia
 --
 -- NOTES:
 -- This file contains the logic behind the main menu and lobby for the game. 

@@ -3,6 +3,14 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+/*----------------------------------------------------------------------------------------
+-- Constants: class
+-- 
+-- DATE:		17/02/2016
+-- REVISIONS:	
+-- DESIGNER:	Joseph Tam-Huang
+-- PROGRAMMER:  Joseph Tam-Huang
+---------------------------------------------------------------------------------------*/
 static class Constants
 {
     public const int SLOT_AMOUNT            = 4;
@@ -27,7 +35,7 @@ static class Constants
     public const int SLOT_4                 = 3;
 }
 
-/*-----------------------------------------------------------------------------
+/*----------------------------------------------------------------------------------------
 -- Inventory.cs - Script attached to the Inventory game object that stores a 
 --                list of Slot game objects and Item game objects. 
 --                Responsible for managing the weapons/items of a player
@@ -37,12 +45,19 @@ static class Constants
 --		public void AddItem(int id)
 --		int check_if_item_in_inventory(Item item)
 --      public void DestroyInventoryItem(int inv_pos)
+--      public void UseConsumable(int inv_pos, int amount = 1)
+--      public void UseResources(string resource_type, int amount)
+--      public bool CheckIfItemCanBeAdded(bool stackable, int item_id)
+--      public void UpdateWeaponStats()
+--      public void DisplayWeaponError(string msg)
+--      public IEnumerator DisplayInventoryFullError()
 --
 -- DATE:		17/02/2016
--- REVISIONS:	(V1.0)
+-- REVISIONS:	03/04/2016 - Add function to apply weapon stats to the player stats
+--              30/03/2016 - Add functions to use items and resources
 -- DESIGNER:	Joseph Tam-Huang
 -- PROGRAMMER:  Joseph Tam-Huang
------------------------------------------------------------------------------*/
+---------------------------------------------------------------------------------------*/
 public class Inventory : MonoBehaviour
 {
     GameObject _inventory_panel;
@@ -66,9 +81,20 @@ public class Inventory : MonoBehaviour
             Destroy(gameObject);          
     }
 
-    /*
-     * Initializes empty inventory slot containing empty item objects
-     */
+    /*---------------------------------------------------------------------------------------
+    -- FUNCTION: 	Start
+    -- DATE: 		17/02/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	void Start()
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Retrieves the ItemManageer script, the InventoryPanel GameObject, the Slot Panel 
+    -- GameObject and the Inventory Full GameObject.
+    -- Deactivates the Inventory Full GameObject.
+    -- Initializes empty inventory slot containing empty item objects.
+    ----------------------------------------------------------------------------------------*/
     void Start()
     {
         _item_manager = GetComponent<ItemManager>();
@@ -83,28 +109,28 @@ public class Inventory : MonoBehaviour
             slot_list.Add(Instantiate(inventory_slot));
             slot_list[i].GetComponent<InventorySlot>().slot_pos = i;
             slot_list[i].transform.SetParent(_slot_panel.transform);
+
             // Sets scaling factor of gridlayout component to 1 to work with
             // the unity "Scale With Screen Size" ui scale mode
             slot_list[i].transform.localScale = new Vector3(1, 1, 1);
         }
-        // TODO: Remove this. Adding initial items to the inventory (testing)
-        //AddItem(1);
-        //AddItem(2);
-        //AddItem(2, 200);
-        //AddItem(3, 10);
-        //AddItem(0);
-
-        //AddItem(1);
-        //AddItem(5, 5);
-        //AddItem(6);
-        //AddItem(7);
     }
 
-    /* 
-     * Takes an item id and the amount and adds an Item object into an open slot in the inventory or stacks 
-     * it on a slot containing the same item.
-     * Updates the attributes of the Item: item, amount, and item_pos  
-     */
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	AddItem
+    -- DATE: 		17/02/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void AddItem(int id, int amt = 1)
+    --                  int id: The item id
+    --                  int amt: The amount to add
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Takes an item id and the amount and adds an Item object into an open slot in the inventory or stacks 
+    -- it on a slot containing the same item.
+    -- Updates the attributes of the Item: item, amount, and item_pos
+    -------------------------------------------------------------------------------------------------------*/
     public void AddItem(int id, int amt = 1)
     {
         Item _item_to_add = _item_manager.FetchItemById(id);
@@ -153,6 +179,20 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	UseConsumable
+    -- DATE: 		30/03/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void UseConsumable(int inv_pos, int amount = 1)
+    --                  int inv_pos: The inventory position
+    --                  int amt: The amount to consume
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Applies a boost to the stats specified by the item in the inventory slot. The stat boost applied
+    -- is communicated to the server.
+    -------------------------------------------------------------------------------------------------------*/
     public void UseConsumable(int inv_pos, int amount = 1)
     {
         Item _item = inventory_item_list[inv_pos];
@@ -191,7 +231,19 @@ public class Inventory : MonoBehaviour
         DestroyInventoryItem(inv_pos, 1);
     }
 
-    // Need to do a check before calling ie: make sure GameData.MyPlayer.Resources[resource_type] >= amount
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	UseResources
+    -- DATE: 		30/03/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void UseResources(string resource_type, int amount)
+    --                  string resource_type: The resource type
+    --                  int amount: The amount used
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Updates the amount of resources the player has.
+    -------------------------------------------------------------------------------------------------------*/
     public void UseResources(string resource_type, int amount)
     {
         for (int i = 0; i < Constants.SLOT_AMOUNT; i++)
@@ -204,10 +256,20 @@ public class Inventory : MonoBehaviour
             }
         }
     }
-
-    /* 
-     * Destroys the item in the specified inventory slot position
-     */
+    
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	DestroyInventoryItem
+    -- DATE: 		17/02/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void DestroyInventoryItem(int inv_pos, int amount)
+    --                  int inv_pos: The inventory position
+    --                  int amount: The amount to destroy
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Destroys the item in the specified inventory slot position.
+    -------------------------------------------------------------------------------------------------------*/
     public void DestroyInventoryItem(int inv_pos, int amount)
     {
         GameObject item_to_remove = slot_list[inv_pos].transform.GetChild(0).gameObject;
@@ -234,6 +296,19 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	CheckIfItemCanBeAdded
+    -- DATE: 		17/02/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	CheckIfItemCanBeAdded(bool stackable, int item_id)
+    --                  bool stackable: Whether the item is stackable or not
+    --                  int item_id: The item id
+    -- RETURNS: 	bool: true if the item can be added to the inventory, false if not
+    -- NOTES:
+    -- Checks if an item can be added to the inventory.
+    -------------------------------------------------------------------------------------------------------*/
     public bool CheckIfItemCanBeAdded(bool stackable, int item_id)
     {
         foreach (Item item in inventory_item_list)
@@ -250,11 +325,19 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-
-    /* 
-     * Checks whether the item being added is already present in the inventory.
-     * Used to see if an item should be stacked or placed on a new slot when being added
-     */
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	check_if_item_in_inventory
+    -- DATE: 		17/02/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	int check_if_item_in_inventory(Item item)
+    --                  Item item: The item object
+    -- RETURNS: 	int: The inventory position of the item if found, -1 if not found
+    -- NOTES:
+    -- Checks whether the item being added is already present in the inventory.
+    -- Used to see if an item should be stacked or placed on a new slot when being added.
+    -------------------------------------------------------------------------------------------------------*/
     int check_if_item_in_inventory(Item item)
     {
         for (int i = 0; i < inventory_item_list.Count; i++)
@@ -267,9 +350,17 @@ public class Inventory : MonoBehaviour
         return -1;
     }
 
-    /*
-     * Updates the weapon stat bonus the player receives for equipping a weapon
-     */
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	UpdateWeaponStats
+    -- DATE: 		03/04/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void UpdateWeaponStats()
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Updates the weapon stat bonus the player receives for equipping a weapon
+    -------------------------------------------------------------------------------------------------------*/
     public void UpdateWeaponStats()
     {
         string _weapon_error_msg = Constants.NO_EQUIPPED;
@@ -319,17 +410,39 @@ public class Inventory : MonoBehaviour
             classStat.MoveSpeed += speed;
     }
 
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	DisplayWeaponError
+    -- DATE: 		03/04/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public void DisplayWeaponError(string msg)
+    --                  string msg: the message to display
+    -- RETURNS: 	void
+    -- NOTES:
+    -- Display an error message when an incompatible weapon is equipped or if there is no weapon equiped.
+    -------------------------------------------------------------------------------------------------------*/
     public void DisplayWeaponError(string msg)
     {
         _inventory_panel.transform.FindChild("Weapon Error").GetComponent<Text>().text = msg;
     }
 
+    /*-------------------------------------------------------------------------------------------------------
+    -- FUNCTION: 	DisplayInventoryFullError
+    -- DATE: 		03/04/2016
+    -- REVISIONS:   
+    -- DESIGNER:  	Joseph Tam-Huang
+    -- PROGRAMMER: 	Joseph Tam-Huang
+    -- INTERFACE: 	public IEnumerator DisplayInventoryFullError()
+    -- RETURNS: 	IEnumerator
+    -- NOTES:
+    -- Displays the inventory full message for 3 seconds.
+    -------------------------------------------------------------------------------------------------------*/
     public IEnumerator DisplayInventoryFullError()
     {
         Debug.Log("display inv full error called");
         _inv_full_text.SetActive(true);
         yield return new WaitForSeconds(3);
         _inv_full_text.SetActive(false);
-
     }
 }

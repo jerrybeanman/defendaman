@@ -30,8 +30,8 @@ public class LobbyNetwork : MonoBehaviour {
 	public static bool 			connected = false;
 	// Debug stuff
 	public static string 		RecievedData = "Waiting for input...";
- 
-	
+
+
 	public static bool Connect(string ip)
 	{
 		// Connect to the server
@@ -91,7 +91,7 @@ public class LobbyNetwork : MonoBehaviour {
 			SendingPacket = NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA);
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.GameStart, packetData, Protocol.NA));
 			break;
-		
+
 		// NOTE:: Send packet indicating the team that slected the aman
 		case NetworkCode.AmanSelection:
 			packetData.Add(new Pair<string, string>(NetworkKeyString.TeamID, GameData.MyPlayer.TeamID.ToString()));
@@ -104,7 +104,7 @@ public class LobbyNetwork : MonoBehaviour {
 			Send(NetworkingManager.send_next_packet(DataType.Lobby, (int)NetworkCode.ThemeSelection, packetData, Protocol.NA));
 			break;
 		}
-			
+
 	}
 
 	private static void Send(string packet)
@@ -129,7 +129,7 @@ public class LobbyNetwork : MonoBehaviour {
         switch ((NetworkCode)packet["ID"].AsInt)
         {
             case NetworkCode.TeamChangeRequest:
-            {			
+   	        {
 				GameData.LobbyData[PlayerPacketID].TeamID = packet[NetworkKeyString.TeamID].AsInt;
                 break;
             }
@@ -174,7 +174,6 @@ public class LobbyNetwork : MonoBehaviour {
                     GameData.LobbyData.Add(id, tempPlayer);
 
                 }
-			
                 break;
             }
 			case NetworkCode.PlayerLeftLobby:

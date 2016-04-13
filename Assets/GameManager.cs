@@ -5,90 +5,199 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-//Carson
+/*---------------------------------------------------------------------------------------
+--  SOURCE FILE:    GameManager.cs
+--
+--  PROGRAM:        Linux Game
+--
+--  FUNCTIONS:
+--
+--  DATE:           March 10th, 2016
+--
+--  REVISIONS:      March 10th, 2016: Created class from refactoring NetworkingManager code [Carson]
+--                  March 20th, 2016: Added vision logic on game creation [Micah]
+--                  March 25th, 2016: Added logic to handle game ending, playing dying and such [Carson]
+--                  March 28th, 2016: Added unique vision by class [Jerry]
+--                  April 3rd, 2016: Added end-game visual logic [Dhivya]
+--
+--  DESIGNERS:      Carson Roscoe
+--
+--  PROGRAMMER:     Carson Roscoe / Dhivya Manohar / Jerry Jia / Micah Willems
+--
+--  NOTES:
+--  This class is a singleton class used to handle general game related concepts that
+--  don't have a proper home, for example handling game instantiation, handling how the game
+--  ends, the visual side of getting hurt, etc.
+---------------------------------------------------------------------------------------*/
 public class GameManager : MonoBehaviour {
+    //Instance of GameManager used for singleton pattern
     public static GameManager instance;
-    public Transform AI;
-
+   
+    //Used for Gunner class' vision data. Hooked up in Unity editor
 	[System.Serializable]
-	public class GunnerVision
-	{
+	public class GunnerVision {
 		public Transform lightSourceFOV;
 		public Transform hiderFOV;
 		public Transform lightSourcePeripheral;
 		public Transform hiderPeripheral;
 	}
 
-	[System.Serializable]
-	public class NinjaVision
-	{
+    //Used for Ninja class' vision data. Hooked up in Unity editor
+    [System.Serializable]
+	public class NinjaVision {
 		public Transform lightSourceFOV;
 		public Transform hiderFOV;
 		public Transform lightSourcePeripheral;
 		public Transform hiderPeripheral;
 	}
 
-	[System.Serializable]
-	public class MageVision
-	{
+    //Used for Mage class' vision data. Hooked up in Unity editor
+    [System.Serializable]
+	public class MageVision {
 		public Transform lightSourcePeripheral;
 		public Transform hiderPeripheral;
 	}
 
+    //Gunner's vision data
 	public GunnerVision gunnerVision;
+    
+    //Ninja's vision data
 	public NinjaVision ninjaVision;
+
+    //Mage's vision data
 	public MageVision mageVision;
+
+    //Our players transform
     public Transform playerType;
+
+    //The shadow overlay for vision system
 	public Transform shadowoverlay;
+
+    //Our players GameObject
     public GameObject player;
+
+    //Flag used to check if we are in testing (Windows) or not
     private bool testing = false;
 
-    public enum LobbyData { GameEnd = 1, Disconnected = 2 }
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: Awake
+    --
+    -- DATE: March 10th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void Awake(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Awake is invoked before Start in the creation of a script. In this case, it is used to initiate our singleton pattern
+    -- by setting instance if it is not set, and if it is set destroying this script since we do not want two singletons
+    -- of the same object.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    void Awake() {
+        //Check if instance already exists
+        if (instance == null)
+            //if not, set instance to this
+            instance = this;
+        //If instance already exists and it's not this:
+        else if (instance != this)
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
+            Destroy(gameObject);
 
-    void Awake()
-    {
-        if (instance == null)               //Check if instance already exists
-            instance = this;                //if not, set instance to this
-        else if (instance != this)          //If instance already exists and it's not this:
-            Destroy(gameObject);            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager. 
-
-        if (GameObject.Find("NetworkManager") == null) //If we didnt get here from the lobby, we are doing non-networking testing
-        {
+        //If we didnt get here from the lobby, we are doing non-networking testing
+        if (GameObject.Find("NetworkManager") == null)  {
             testing = true;
             gameObject.AddComponent<NetworkingManager>();
         }
     }
 
-    void Start()
-    {
-        if (!testing)
-        {
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: Start
+    --
+    -- DATE: March 10th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start is called after Awake during the instantiation of all Unity game objects. We are simply using to chec
+    -- that if we are not testing, invoke the game via the seed found from Lobby.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    void Start() {
+        if (!testing) {
             StartGame(GameData.Seed);
         }
     }
 
-    public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat)
-    {
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: PlayerTookDamage
+    --
+    -- DATE: March 25th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void PlayerTookDamage(int playerID of the one taking data
+    --                                  float newHP of the player after having taken data
+    --                                  PlayerBaseStat class stats of the player in question)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Handles what to do when someone takes damage in the game in regards to making the screen flash
+    -- and killing our player if our health is below/equal to zero.
+    ---------------------------------------------------------------------------------------------------------------------*/
+    public void PlayerTookDamage(int playerID, float newHP, BaseClass.PlayerBaseStat ClassStat) {
         var damage = (ClassStat.CurrentHp - newHP);
-        if (GameData.MyPlayer.PlayerID == playerID)
-        {
+        if (GameData.MyPlayer.PlayerID == playerID) {
             HUD_Manager.instance.UpdatePlayerHealth(-(damage/ClassStat.MaxHp));
             if (ClassStat.CurrentHp <= 0) {
                 PlayerDied();
             } else {
-                if (damage > 0)
-                {
+                if (damage > 0) {
                     HUD_Manager.instance.colourizeScreen.PlayerHurt();
-                } else if (damage < 0)
-                {
+                } else if (damage < 0) {
                     HUD_Manager.instance.colourizeScreen.PlayerHealed();
                 }
             }
         }
     }
 
-    public void PlayerDied()
-    {
+    /*---------------------------------------------------------------------------------------------------------------------
+   -- METHOD: PlayerDied
+   --
+   -- DATE: March 25th, 2016
+   --
+   -- REVISIONS: N/A
+   --
+   -- DESIGNER: Carson Roscoe
+   --
+   -- PROGRAMMER: Carson Roscoe
+   --
+   -- INTERFACE: void PlayerDied(void)
+   --
+   -- RETURNS: void
+   --
+   -- NOTES:
+   -- Handles our player dying, sending out a packet telling everyone we have died, sending to the server a "Game Over"
+   -- packet if our player is the aman, colourizing the screen and overall cleanup in regards to our player.
+   ---------------------------------------------------------------------------------------------------------------------*/
+    public void PlayerDied() {
         GameData.EnemyTeamKillCount++;
         NetworkingManager.send_next_packet(DataType.Killed, GameData.MyPlayer.PlayerID, new List<Pair<string, string>>(), Protocol.TCP);
         GameData.PlayerPosition.Remove(GameData.MyPlayer.PlayerID);
@@ -96,41 +205,52 @@ public class GameManager : MonoBehaviour {
         HUD_Manager.instance.colourizeScreen.PlayerDied();
         Debug.Log("You have died");
         instance.player = null;
-        if (GameData.MyPlayer.PlayerID == GameData.AllyKingID)
-        {
+        if (GameData.MyPlayer.PlayerID == GameData.AllyKingID) {
             NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameLost();
         }
 
-        if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID)
-        {
+        if (GameData.MyPlayer.PlayerID == GameData.EnemyKingID) {
             NetworkingManager.TCP_Send(NetworkingManager.send_next_packet(DataType.Lobby, 10, new List<Pair<string, string>>(), Protocol.NA), 512);
             GameWon();
         }
     }
 
-    public void StartGame(int seed)
-    {
+    /*---------------------------------------------------------------------------------------------------------------------
+   -- METHOD: StartGame
+   --
+   -- DATE: March 10th, 2016
+   --
+   -- REVISIONS: March 10th, 2016: Created from refactored code in NetworkingManager
+   --            March 20th, 2016: Add lighting to players and hide enemies
+   --
+   -- DESIGNER: Carson Roscoe
+   --
+   -- PROGRAMMER: Carson Roscoe / Micah Willems
+   --
+   -- INTERFACE: void StartGame(int seed to generate world from)
+   --
+   -- RETURNS: void
+   --
+   -- NOTES:
+   -- Handles the physical creation of the game once we move over to the game scene. All the logic from
+   -- creating our players, generating the map, assigning classes, teams, everything is done here.
+   ---------------------------------------------------------------------------------------------------------------------*/
+    public void StartGame(int seed) {
         int myPlayer = GameData.MyPlayer.PlayerID;
         int myTeam = GameData.MyPlayer.TeamID;
         List<Pair<int, int>> kings = new List<Pair<int, int>>();
 
-        /*var createdAI1 = ((Transform)Instantiate(AI, new Vector3(45, 30, -10), Quaternion.identity)).gameObject;
-        var createdAI2 = ((Transform)Instantiate(AI, new Vector3(55, 10, -10), Quaternion.identity)).gameObject;
-        var createdAI3 = ((Transform)Instantiate(AI, new Vector3(85, 10, -10), Quaternion.identity)).gameObject;
-        var createdAI4 = ((Transform)Instantiate(AI, new Vector3(75, 55, -10), Quaternion.identity)).gameObject;
-        var createdAI5 = ((Transform)Instantiate(AI, new Vector3(70, 40, -10), Quaternion.identity)).gameObject;*/
-
-
+        //Generate map "packet" and force us to "receive" the packet locally to generate world
         NetworkingManager.instance.update_data(NetworkingManager.GenerateMapInJSON(seed));
         
-
-        foreach (var playerData in GameData.LobbyData.OrderBy(x => x.Key))
-        {
+        //Loop through every player in data from the Lobby and create that player
+        foreach (var playerData in GameData.LobbyData.OrderBy(x => x.Key)) {
+            //Create the player at a spawn position determined by whatever team that player is on
 			var createdPlayer = ((Transform)Instantiate(playerType, new Vector3(GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].first, GameData.TeamSpawnPoints[playerData.Value.TeamID - 1].second, -10), Quaternion.identity)).gameObject;
 
-            switch (playerData.Value.ClassType)
-            {
+            //Assign the new player a class
+            switch (playerData.Value.ClassType) {
                 case ClassType.Ninja:
                     createdPlayer.AddComponent<NinjaClass>();
                     break;
@@ -146,14 +266,14 @@ public class GameManager : MonoBehaviour {
                     break;
             }
 
+
             createdPlayer.GetComponent<BaseClass>().team = playerData.Value.TeamID;
             createdPlayer.GetComponent<BaseClass>().playerID = playerData.Value.PlayerID;
 
-            //if (playerData.King) //Uncomment this one line when kings are in place
             kings.Add(new Pair<int, int>(playerData.Value.TeamID, playerData.Value.PlayerID));
 
-            if (myPlayer == playerData.Value.PlayerID)
-            {
+            //If the created player is our player, make the camera follow it and give it movement script
+            if (myPlayer == playerData.Value.PlayerID) {
                 myTeam = playerData.Value.TeamID;
 				player = createdPlayer;
 				GameObject.Find("Main Camera").GetComponent<FollowCamera>().target = player.transform;
@@ -162,16 +282,15 @@ public class GameManager : MonoBehaviour {
 				player.AddComponent<Movement>();
 				player.AddComponent<Attack>();
                 //Created our player
-            }
-            else {
+            } else {
+                //Otherwise, this is another player. Hook them up to receive updates from server updates
                 createdPlayer.AddComponent<PlayerReceiveUpdates>();
                 createdPlayer.GetComponent<PlayerReceiveUpdates>().playerID = playerData.Value.PlayerID;
                 //Created another player
             }
 
             //If they are on my team, add a light
-            if (myTeam == playerData.Value.TeamID)
-            {
+            if (myTeam == playerData.Value.TeamID) {
 				// Get the player/teammember's hpFrame and bar
 				Transform hpFrame = createdPlayer.transform.GetChild(0);
 				Transform hpBar = hpFrame.transform.GetChild(0);
@@ -181,7 +300,6 @@ public class GameManager : MonoBehaviour {
 
 				switch (GameData.LobbyData[playerData.Value.PlayerID].ClassType) {
 				case ClassType.Gunner:
-
 					// These are the FOV & peripheral vision occlusion masks
 					var lightingGunnerFOV = ((Transform)Instantiate(gunnerVision.lightSourceFOV, createdPlayer.transform.position, Quaternion.identity)).gameObject;
 					lightingGunnerFOV.GetComponent<LightFollowPlayer>().target = createdPlayer.transform;
@@ -275,9 +393,9 @@ public class GameManager : MonoBehaviour {
 				default:
 					break;
 				}
-
-                
-            } else { //Hide enemies
+            //Otherwise, they are not on our team. They are enemies.
+            } else { 
+                //Hide enemies
 				// Fetch the stencil masked material
 				Material hiddenMat = (Material)Resources.Load("Stencil_01_Diffuse Sprite", typeof(Material));
 				// Move enemy behind stencil mask
@@ -290,6 +408,7 @@ public class GameManager : MonoBehaviour {
 			}
         }
 
+        //Invoke StartGame in NetworkingManager so we start listening for game updates
 		NetworkingManager.StartGame();
     }
 
@@ -336,8 +455,26 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-    public void GameWon()
-    {
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: GameWon
+    --
+    -- DATE: March 25th, 2016
+    --
+    -- REVISIONS: March 25th, 2016: Created and hooked up game to call it when needed
+    --            April 3rd, 2016: Added functionality of end-game
+    --
+    -- DESIGNER: Carson Roscoe / Dhivya Manohar
+    --
+    -- PROGRAMMER: Carson Roscoe / Dhivya Manohar
+    --
+    -- INTERFACE: void GameWon(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Invoked when the other teams Aman is deemed dead
+    ---------------------------------------------------------------------------------------------------------------------*/
+    public void GameWon() {
         StartCoroutine(sleep());
         GameData.GameState = GameState.Won;
 		HUD_Manager.instance.winScreen.Parent.gameObject.SetActive(true);
@@ -345,6 +482,25 @@ public class GameManager : MonoBehaviour {
 		HUD_Manager.instance.winScreen.Child.SetTrigger("Play");
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: GameLost
+    --
+    -- DATE: March 25th, 2016
+    --
+    -- REVISIONS: March 25th, 2016: Created and hooked up game to call it when needed
+    --            April 3rd, 2016: Added functionality of end-game
+    --
+    -- DESIGNER: Carson Roscoe / Dhivya Manohar
+    --
+    -- PROGRAMMER: Carson Roscoe / Dhivya Manohar
+    --
+    -- INTERFACE: void GameLost(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Invoked when our teams Aman is deemed dead
+    ---------------------------------------------------------------------------------------------------------------------*/
     public void GameLost()
     {
         StartCoroutine(sleep());
@@ -353,7 +509,25 @@ public class GameManager : MonoBehaviour {
         HUD_Manager.instance.loseScreen.Parent.SetTrigger("Play");
         HUD_Manager.instance.loseScreen.Child.SetTrigger("Play");
     }
-	
+
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: sleep
+    --
+    -- DATE: April 3rd, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Dhivya Manohar
+    --
+    -- PROGRAMMER: Dhivya Manohar
+    --
+    -- INTERFACE: IEnumerator sleep(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Wait 5 seconds and then invoke all cleanup code and close the game.
+    ---------------------------------------------------------------------------------------------------------------------*/
     IEnumerator sleep()
     {
         yield return new WaitForSeconds(5);
@@ -361,8 +535,26 @@ public class GameManager : MonoBehaviour {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
     }
-   	public void ReturnToMenu()
-    {
+
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: ReturnToMenu
+    --
+    -- DATE: March 25th, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Carson Roscoe
+    --
+    -- PROGRAMMER: Carson Roscoe
+    --
+    -- INTERFACE: void ReturnToMenu(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Cleanup all data & networking code since the game is over when this is invoked. Essentially reset everything
+    ---------------------------------------------------------------------------------------------------------------------*/
+    public void ReturnToMenu() {
         NetworkingManager.instance.ResetConnections();
         NetworkingManager.ClearSubscriptions();
         GameData.LobbyData.Clear();
@@ -388,8 +580,25 @@ public class GameManager : MonoBehaviour {
         //Application.LoadLevel("MenuScene");
     }
 
-    public void ExitGame()
-    {
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- METHOD: ExitGame
+    --
+    -- DATE: April 3rd, 2016
+    --
+    -- REVISIONS: N/A
+    --
+    -- DESIGNER: Dhivya Manohar
+    --
+    -- PROGRAMMER: Dhivya Manohar
+    --
+    -- INTERFACE: void ExitGame(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Wrapper around killing the game when the game is being exited
+    ---------------------------------------------------------------------------------------------------------------------*/
+    public void ExitGame() {
         System.Diagnostics.Process.GetCurrentProcess().Kill();
     }
 }

@@ -13,9 +13,9 @@
 --                   April 4th: Hank Lo
 --                      - Numbers balancing
 --
---  DESIGNERS:      Hank Lo
+--  DESIGNERS:      Hank Lo, Allen Tsang
 --
---  PROGRAMMER:     Hank Lo
+--  PROGRAMMER:     Hank Lo, Allen Tsang
 --
 --  NOTES:
 --  This class contains the logic that relates to the Magic Buff Class.
@@ -35,6 +35,24 @@ public class MagicBuff : Buff {
 
     bool appliedspeedbuff = false;
 
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: Start
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void Start(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Start of scripts creation. Used to instantiate variables in our case.
+    ---------------------------------------------------------------------------------------------------------------------*/
     new void Start()
     {
         base.Start();
@@ -43,7 +61,24 @@ public class MagicBuff : Buff {
         applyrate = 0;
     }
     
-    //Called every frame
+    /*---------------------------------------------------------------------------------------------------------------------
+    -- FUNCTION: FixedUpdate
+    --
+    -- DATE: March 9, 2016
+    --
+    -- REVISIONS: None
+    --
+    -- DESIGNER: Hank Lo, Allen Tsang
+    --
+    -- PROGRAMMER: Hank Lo, Allen Tsang
+    --
+    -- INTERFACE: void FixedUpdate(void)
+    --
+    -- RETURNS: void
+    --
+    -- NOTES:
+    -- Called every physics update.
+    ---------------------------------------------------------------------------------------------------------------------*/
     protected override void FixedUpdate() {
         applyrate++;
         if (!appliedspeedbuff) 

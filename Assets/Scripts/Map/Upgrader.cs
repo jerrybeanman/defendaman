@@ -30,10 +30,27 @@ public class Upgrader : MonoBehaviour {
 		}
 	}
 
+	/*----------------------------------------------------------------------------
+    --	DeActivate potion overlay
+    --
+    --	Interface:  void SetInActivePotion()
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void SetInActivePotion()
 	{
 		GameObject.Find("HUD").transform.FindChild("Potion Overlay").gameObject.SetActive(false);
 	}
+
+	/*----------------------------------------------------------------------------
+    --	Activate Deactivate upgrade overlay
+    --
+    --	Interface: void SetInActiveUpgrade()
+    --
+    --	programmer: Jerry Jia
+    --	@return: void
+	------------------------------------------------------------------------------*/
 	void SetInActiveUpgrade()
 	{
 		GameObject.Find("HUD").transform.FindChild("Upgrade Overlay").gameObject.SetActive(false);
