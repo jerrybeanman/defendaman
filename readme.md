@@ -51,6 +51,7 @@ Each player can take on one of three roles: Ninja, Gunner or Wizard. Each class 
 - **Aman**
 	- The player chosen to be the Aman receives some special abilities in addition to their chosen role. These unique abilities are essential to ensuring that a team is successful. 
 	- The "Aman" player will also have a special glow around its character to indicate that he/she is the "Aman"
+	
 		`*[TODO:: Insert Aman player screen shot here]*`
 
 ###Buildings:
