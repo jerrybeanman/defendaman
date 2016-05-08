@@ -1,56 +1,77 @@
 #ifndef SERVER_TCP
 #define SERVER_TCP
 #include <sstream>      // std::istringstream
+#include <arpa/inet.h>
+#include <signal.h>
 #include "Server.h"
+#include "../Unity_Plugin/json11.hpp"
+
+#define PlayerID    "PlayerID"
+#define TeamID      "TeamID"
+#define ClassID     "ClassID"
+#define Ready       "Ready"
+#define StartGame   "StartGame"
+#define UserName    "UserName"
+
+#define TEAMCODE 6
 
 namespace Networking
 {
 	class ServerTCP : public Server
 	{
 		public:
-			ServerTCP(){}
+
+			ServerTCP() {}
 			~ServerTCP(){}
-	    	/*
-	            Initialize socket, server address to lookup to, and connect to the server
 
-	            @return: socket file descriptor
-            */
-            int InitializeSocket(short port);
+    	int InitializeSocket(short port) override;
 
-            /*
-                 Calls accept on a player's socket. Sets the returning socket and client address structure to the player.
-                Add connected player to the list of players
+      int Accept(Player * player);
 
-                @return: socket file descriptor
-            */
-            int Accept(Player * player);
+      static void * CreateClientManager(void * server);
 
-            /*
-                Creates a child process to handle incoming messages from new player that has just connected to the lobby
+      void * Receive() override;
 
-                @return: child PDI (0 for child process)
-            */
-            int CreateClientManager(int PlayerID);
+      void Broadcast(const char * message, sockaddr_in * excpt = NULL) override;
 
-           /*   
-                Recieves data from child process that is dedicated for each player's socket
+      void parseServerRequest(char* buffer, int& DataType, int& ID, int& IDValue, std::string& username);
 
-                @return: 1 on success, -1 on error, 0 on disconnect
-            */
-            int Receive(Player * player);
+			void CheckServerRequest(Player player, char * buffer);
 
-	        /*
-                Sends a message to all the clients
+			bool AllPlayersReady();
 
-            */
-            void Broadcast(std::string message);
+			std::string generateMapSeed();
 
-            void PrintPlayer(Player p);
-        private:
+			int getPlayerId(std::string ipString);
 
-            /* List of players currently connected to the server */
-            std::vector<Player>             _PlayerList;
-	};
+			std::map<int, Player> getPlayerTable();
+
+    	std::string constructPlayerTable();
+
+    	void sendToClient(Player player, const char * message);
+
+    	std::string UpdateID(const Player& player);
+
+    	void ShutDownGameServer(void);
+
+		private:
+			Player newPlayer;
+			//Enum for the networking team to determine the type of message requested.
+			enum DataType { Networking = 6 };
+			enum LobbyCode
+              {
+                TeamChangeRequest   = 1,
+                ClassChangeRequest  = 2,
+                ReadyRequest        = 3,
+                PlayerJoinedLobby   = 4,
+                GameStart           = 5,
+                UpdatePlayerList    = 6,
+                PlayerLeftLobby     = 7,
+								ChooseAman 				  = 8,
+                GameEnd             = 10
+
+              };
+	    };
 }
 
 #endif

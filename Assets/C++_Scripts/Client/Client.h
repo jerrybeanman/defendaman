@@ -10,57 +10,58 @@
 #include <utility>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
+#include <pthread.h>
+#include "CircularBuffer.h"
 
-#define TeamRequest1 1
-#define TeamRequest2 2
-#define PACKETLEN    32
+#define PACKETLEN    4096
+#define PACKETLEN_UDP 512
+#define MAXPACKETS   100
+/*------------------------------------------------------------------------------
 
+  SOURCE FILE:              Client.h
+
+  PROGRAM:                  Defendaman
+
+  FUNCTIONS:                virtual ~Client() {};
+                            virtual int Init_Client_Socket(const char* name, short port) = 0
+                            virtual int Send(char * message, int size) = 0;
+                            virtual void * Recv() = 0;
+                            void fatal(const char* error);
+                            int Init_SockAddr(const char* hostname, short hostport);
+                            char* GetData();
+
+  DESIGNER/PROGRAMMER:      Jerry Jia, Martin Minkov, Tyler Trepanier, Scott Plummer
+
+  NOTES:                    The client base class for both TCP and UDP network
+-------------------------------------------------------------------------------*/
 namespace Networking
 {
     class Client
     {
         public:
+          int             serverSocket;
+          pthread_t       ReadThread;
 
-            /*
-                Initialize socket, server address to lookup to, and connect to the server
+          Client();
+          virtual ~Client() {};
 
-                @return: socket file descriptor
-            */
-            int Init_TCP_Client_Socket(const char* name, short port);
+          virtual int Init_Client_Socket(const char* name, short port) = 0;
 
-            /*
-                Initialize socket, and server address to lookup to
+          virtual void * Recv() = 0;
 
-                @return: socket file descriptor and the server address for future use
-            */
-            std::pair<int, struct sockaddr> Init_UDP_Client_Socket(char* name, short port);
+          virtual int Send(char * message, int size) = 0;
 
-            /*
-                Initialize the socket address structure by recieving the port number and
-                either the hostname or an IPV4 address
+          void fatal(const char* error);
 
-                @return: socket file descriptor and the server address for future use
-            */
-            struct sockaddr Init_SockAddr(const char* hostname, short hostPort);
+          int Init_SockAddr(const char* hostname, short hostport);
 
+          char* GetData();
 
-            int receiveUDP(int sd, struct sockaddr* server, char* rbuf);
-            /*
-                Wrapper function for UDP sendTo function. Failing to send prints an error
-                message with the data intended to send.
-
-                @return: the number of bytes sent, otherwise return -1 for error
-            */
-            int sendUDP(int socket, char *data, struct sockaddr server);
-
-            int Recv(char * message, int size, int * bytesRead);
-
-            int Send(char * message, int size);
-
-            void fatal(const char* error);
-
-        private:
-            int serverSocket;
+        protected:
+            CircularBuffer  CBPackets; // buffer for data coming in from network
+            struct          sockaddr_in serverAddr;
+            char*           currentData; // the single instance of data exposed to Unity for reading
     };
 }
 #endif

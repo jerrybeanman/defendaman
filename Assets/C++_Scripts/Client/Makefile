@@ -1,4 +1,6 @@
-CC = g++ -Wall -pedantic -W -ggdb
+#Jerry Jia, Scott Plummer, Martin Minkov
+
+CC = g++ -std=c++11 -Wall -pedantic -W -ggdb
 
 make:
 all: TCPClient UDPClient EchoServer
@@ -16,11 +18,14 @@ EchoServer:
 clean:
 	rm -f *.o core.* Game Lobby EchoServer
 
-Client.o: Client.cpp Client.h
-	$(CC) -c -g Client.cpp
+Client.o: Client.cpp Client.h CircularBuffer.cpp CircularBuffer.h
+	$(CC) -c -g Client.cpp CircularBuffer.cpp
 
 game.o:	game.cpp
 	$(CC) -c -g game.cpp
 
 main.o: main.cpp
 	$(CC) -c -g main.cpp
+
+library:
+	$(CC) -o ../../../deploy/ClientLibrary.so client_library.cpp Client.cpp LobbyClient.cpp GameClient.cpp -O3 -fPIC -shared -std=c++11 CircularBuffer.cpp

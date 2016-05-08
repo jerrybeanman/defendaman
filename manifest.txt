@@ -1,0 +1,112 @@
+---------------------------------------------------------------------------------------------------------------------------------
+**************************** General Manifest ***********************************************************************************
+---------------------------------------------------------------------------------------------------------------------------------
+Note: 
+	-This manifest file will NOT contain every single files and folders in the project. Only
+	 those that are relevant and important will be listed
+
+---------------------------------------------------------------------------------------------------------------
+- /Root
+-		/_DefendAman
+-			/Assets
+-				/Animations
+-					/Buildings_Animatinos
+-					/UI_Animations
+-				/C++_Scirpts 						(C++ code to communicate with Unity)
+-					/Map Generator 					(For random map generations)
+-					/Network						(Networking code, client and server)
+-						/Client		
+-						/Server
+-						/Plugin						(External helper libraries)
+-				/Fonts
+-				/Lighting
+-				/Materials
+-				/Plugins							(ClientLibrary.so and MapGenerationLib.so)
+-				/Prefabs							(Unity game object prefabs)
+-					/HUD
+-					/Inventory
+-					/Managers
+-					/Map
+-						/Tron						(Contains tron theme prefabs)
+-					/MenuElements
+-					/Player
+-					/Vision							(Fog-of-war vision prefabs for classes)
+-						/Gunner	
+-						/Mage
+-						/Ninja
+-						/Stencils
+-				/Resources							(Used to load in assets programatically during runtime)
+-					/Contollers	
+-					/Fonts
+-					/Music
+-						/Inventory
+-						/Tree
+-						/UI
+-						/Weapons
+-					/Prefabs
+-					/Sprites
+-						/Items
+-						/UI
+-				/Scenes
+-				/Scripts 							(Main C# codes)
+-					/Buildings
+-					/Camera
+-					/Classes 						(Gunner, ninja, and mage)
+-					/Combat							(Combat logic for Classes)
+-					/Effects
+-					/GameManagers					(Main components that ties every script together)
+-						InputManager.cs 			(Monitors user keyboard inputs)
+-						SoundManager.cs 			(Control music and sound events)
+-						/Networking
+-							Globals.cs 				(Global variables for the game)
+-							NetworkingManger.cs 		(Subscriber system to handle network callbacks)
+-						/HUD						(UI objects)
+-							/Inventory System
+-							HUD_Manager.cs 			(Controls all UI events)
+-						/Map 
+-							MapManager.cs 			(Generates world objects and handle their events)
+-						/Menu
+-							MenuScript.cs 			(Handle lobby system switches)
+-							LobbyNetwork.cs 		(Handle network between MenuScript and NetworkingManager)
+-						/Plugins
+-				/Sounds								(Raw mp3 music files)
+-					/Buildings
+-					/Characters
+-					/Inventory
+-					/Music
+-					/UI
+-					/Weapons
+-				/Sprites							(Original artworks produced)
+-					/Buildings
+-					/Characters
+-					/Foliage
+-					/items
+-					/Materials
+-					/SpriteSheets
+-					/Tiles
+-					/tron_theme
+-					/UI
+-					/Walls
+-				/Streaming Assets					(Data that loads during runtime)
+-
+-			/Builds
+-				/Debug
+-					/DefendAman_debug_Data
+-					DefendAman_debug.x86_64
+-					ClientLibrary.so
+-					MapGenerationLibrary.so
+-					Server
+-				/Release
+-					/DefendAman_debug_Data
+-					DefendAman_debug.x86_64
+-					ClientLibrary.so
+-					MapGenerationLibrary.so
+-					Server
+-		/Asset Team Report
+-		/Engine Team report
+-		/Environment Team report
+-		/Project Managers report
+-
+- manifest.txt
+- README.txt
+---------------------------------------------------------------------------------------------------------------
