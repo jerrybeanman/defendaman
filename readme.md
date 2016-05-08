@@ -156,7 +156,7 @@ Currently, there are five different types of buildings player can purchase using
 	  window for configuring resolution and game quality.
 	- **IMPORTANT: Resolution setting needs to match the monitor, which is 16x9 for lab computers, 
 	   and quality has to be simplest.** 
-		- If an incorrect resolution and quality is selected, various issues will arise due 
+		- If an incorrect resolution and quality is selected, various issues may arise due 
 		  to the compatability of Unity and Linux
 	 
 
