@@ -36,7 +36,7 @@ A match of DefendAman is played with two teams. When a player connects to a serv
 	`[TODO:: Insert lobby system screenshot here]`
 
 ###Themes:
-There are two unique map themes players can choose to play in, **Grassland** and **Tron**. They are asset packages locally loaded on the client's workstation, meaning that all the players will share the same map elements playing under different themes.
+There are two unique themes players can choose to play in, **Grassland** and **Tron**. They are asset packages loaded locally on the client's workstation, meaning that all the players are able to share the same map elements while playing under different themes.
 
 ![Grassland](/images/grass_theme.PNG) ![Grassland](/images/tron_theme.PNG)
 
