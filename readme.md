@@ -52,7 +52,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 - **Wizard**
 	- Wizards are the spell-based heavy hitters.
 		- Normal attack: Cast fireballs that applies a DOT(damage over time) to the target.
-		- Special ability--**ice age**:  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
+		- Special ability-**ice age**:  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
 	
 		`[TODO:: Insert Wizard special ability screenshot here]`
 
