@@ -42,7 +42,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 		- Normal attack: Swing katana 
 		- Special ability-**shukuchi**: Teleport to the designated area, granting increased maneuverability in and out of combat.
 	
-		`[TODO:: Insert Ninja special ability screenshot here]`
+			![ninja special](/images/ninja_special.gif)
 
 
 - **Gunner**
@@ -50,13 +50,13 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 		- Normal attack: Fire out a stream of regular bullets
 		- Special ability-**curtain call**: Fire a long ranged explosive laser attack.
 	
-		![Splash Art](/images/gunner_special.gif)
+		![gunner special](/images/gunner_special.gif)
 - **Wizard**
 	- Wizards are the spell-based heavy hitters.
 		- Normal attack: Cast fireballs that applies a DOT(damage over time) to the target.
 		- Special ability-**ice age**:  Casts a large ice AoE (Area of Effect)  that weakens enemies and strengthens allies. Disables enemy abilities while they are in the affected area
 	
-		`[TODO:: Insert Wizard special ability screenshot here]`
+		![wizard special](/images/wizard_special.gif)
 
 - **Aman**
 	- The player chosen to be the Aman receives buff in both health and attack to make him stronger than the general normal player, allowing him to go head to head with any single player.
@@ -67,7 +67,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 ###Buildings:
 DefendAman also features an aspect of base building and resource management. Scattered throughout the playing field are various objects that provide an essential resource. When a player destroys one of these objects, they can collect the resource that falls out. That resource is used to build walls and provide upgrades for their team. Creating defensive fortifications is an essential way for a team to defend their Aman.
 
-		`[TODO:: Insert player destroying tree screenshot here]`
+		![Splash Art](/images/resource_collection.gif)
 
 Currently, there are five different types of buildings player can purchase using the ingame currency. 
 
