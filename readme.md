@@ -66,25 +66,24 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 
 ###Buildings:
 DefendAman also features an aspect of base building and resource management. Scattered throughout the playing field are various objects that provide an essential resource. When a player destroys one of these objects, they can collect the resource that falls out. That resource is used to build walls and provide upgrades for their team. Creating defensive fortifications is an essential way for a team to defend their Aman.
-
-		![Splash Art](/images/resource_collection.gif)
+	
+![resource collection](/images/resource_collection.gif)
 
 Currently, there are five different types of buildings player can purchase using the ingame currency. 
 
-		`[TODO:: Insert shop panel buliding screenshot here here]`
-		
-		`[TODO:: Insert shop panel upgrade screenshot here]`
+![resource collection](/images/buildings_shop_panel.PNG)
+![resource collection](/images/structures_shop_panel.PNG)
 
 - **Wall**
 	- A very generic wall that blocks enemy vision and also prevents ninja from teleporting through.
 	
-		`[TODO:: Insert wall screenshot here]`
+	![resource collection](/images/wall.gif)
 
 
 - **Watch Tower**
 	- A rotating watch tower that grants vision to ally team members, which strengthens map awareness and control
 	
-		`[TODO:: Insert watch tower screenshot here]`
+	![resource collection](/images/watch_tower.gif)
 
 - **Turret**
 	- A simple turret that annihilates anyone who comes across its FOV (field of visoin)
