@@ -2,6 +2,8 @@
 
 DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed for Linux using Unity. The premise of the game is simple. There are multiple teams of players and one player on each team is the "Aman". Players must work with their team to simultaneously defend their Aman while also trying to take out the opposing team's Aman. This classic game of "VIP" is modernised with class selection, character progression, resource gathering, base buildings, and chat system. DefendAman combines fast-paced action with teamwide tactics for an exciting experience.
 
+![Splash Art](/images/splash_art.png)
+
 ##Authors:
 * **Jerry Jia** - [jerrybeanman](https://github.com/jerrybeanman)
 * **Dylan Blake** - [dmblake](https://github.com/dmblake)
