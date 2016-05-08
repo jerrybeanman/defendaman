@@ -39,12 +39,12 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 		`[TODO:: Insert Ninja special ability screenshot here]`
 
 
-- **Gunners**
+- **Gunner**
 	- Gunners are the nimble ranged attackers that shoots out bullets and the special ability to charge and zoom out camera for a large laser snipe.
 	
 		`[TODO:: Insert Gunner special ability screenshot here]`
-- **Wizards**
-	- Magicians are the spell-based heavy hitters which casts fireballs that does burn debuff and the special ability to cast a huge ice circle that limits enemy movement and also buff's ally status. \
+- **Wizard**
+	- Wizards are the spell-based heavy hitters which casts fireballs that does burn debuff and the special ability to cast a huge ice circle that limits enemy movement and also buff's ally status. \
 	
 		`[TODO:: Insert Wizard special ability screenshot here]`
 
