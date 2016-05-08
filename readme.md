@@ -23,6 +23,8 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 * **Thomas Yu** - [Thomasyu93](https://github.com/thomasyu93)
 * **Gabriel Lee** - [ScrawmySquirrle](https://github.com/ScrawnySquirrel)
 * **Tom Tang** - [Eigenket1](https://github.com/eigenket1)
+* **Vivek Kalia** - [Vivekkalia](https://github.com/vivekkalia)
+* **Scott Plummer** - [Frozenhawk](https://github.com/Frozenhawk)
 
 ##Introduction:
 
