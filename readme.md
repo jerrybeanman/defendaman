@@ -36,7 +36,9 @@ A match of DefendAman is played with two teams. When a player connects to a serv
 ###Classes:
 Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**. Each class has a distinct play style that provides a unique benefit to a team. 
 - **Ninja**
-	- Ninjas are the close-quarter combat specialists with more health and the special ability to teleport to quickly zone in and out of combat.
+	- Close-quarter combat specialists with high health pool
+		- Normal attack: Swing katana 
+		- Special ability(shukuchi): Teleport to the destination area, which grants the advantage to maneuver in and out of combat.
 	
 		`[TODO:: Insert Ninja special ability screenshot here]`
 
@@ -44,13 +46,13 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 - **Gunner**
 	- Nimble ranged attackers.
 		- Normal attack: Fire out a stream of regular bullets
-		- Special Ability: Fire a long ranged explosive laser attack.
+		- Special ability(curtain call): Fire a long ranged explosive laser attack.
 	
 		`[TODO:: Insert Gunner special ability screenshot here]`
 - **Wizard**
 	- Wizards are the spell-based heavy hitters.
 		- Normal attack: Cast fireballs that applies a DOT(damage over time) to the target.
-		- Special Ability:  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
+		- Special ability(ice age):  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
 	
 		`[TODO:: Insert Wizard special ability screenshot here]`
 
