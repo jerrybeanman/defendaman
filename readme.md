@@ -32,7 +32,7 @@ A match of Defendaman is played with two teams. When a player connects to a serv
 	`[TODO:: Insert lobby system screenshot here]`
 
 ###Classes:
-Each player can take on one of three roles: Ninja, Gunner or Wizard. Each class has a distinct play style that provides a unique benefit to a team. 
+Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**. Each class has a distinct play style that provides a unique benefit to a team. 
 - **Ninja**
 	- Ninjas are the close-quarter combat specialists with more health and the special ability to teleport to quickly zone in and out of combat.
 	
