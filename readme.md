@@ -38,7 +38,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 - **Ninja**
 	- Close-quarter combat specialists with high health pool
 		- Normal attack: Swing katana 
-		- Special ability(shukuchi): Teleport to the destination area, which grants the advantage to maneuver in and out of combat.
+		- Special ability-**shukuchi**: Teleport to the destination area, which grants the advantage to maneuver in and out of combat.
 	
 		`[TODO:: Insert Ninja special ability screenshot here]`
 
@@ -46,13 +46,13 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 - **Gunner**
 	- Nimble ranged attackers.
 		- Normal attack: Fire out a stream of regular bullets
-		- Special ability(curtain call): Fire a long ranged explosive laser attack.
+		- Special ability-**curtain call**: Fire a long ranged explosive laser attack.
 	
 		`[TODO:: Insert Gunner special ability screenshot here]`
 - **Wizard**
 	- Wizards are the spell-based heavy hitters.
 		- Normal attack: Cast fireballs that applies a DOT(damage over time) to the target.
-		- Special ability(ice age):  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
+		- Special ability--**ice age**:  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
 	
 		`[TODO:: Insert Wizard special ability screenshot here]`
 
