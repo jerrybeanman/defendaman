@@ -36,9 +36,9 @@ A match of DefendAman is played with two teams. When a player connects to a serv
 ###Classes:
 Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**. Each class has a distinct play style that provides a unique benefit to a team. 
 - **Ninja**
-	- Close-quarter combat specialists with high health pool
+	- Close-quarter combat specialists with high health pool and defense
 		- Normal attack: Swing katana 
-		- Special ability-**shukuchi**: Teleport to the destination area, which grants the advantage to maneuver in and out of combat.
+		- Special ability-**shukuchi**: Teleport to the designated area, granting increased maneuverability in and out of combat.
 	
 		`[TODO:: Insert Ninja special ability screenshot here]`
 
@@ -52,12 +52,12 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 - **Wizard**
 	- Wizards are the spell-based heavy hitters.
 		- Normal attack: Cast fireballs that applies a DOT(damage over time) to the target.
-		- Special ability-**ice age**:  Cast a large ice AOE(area of effect) that limits enemy movement and also buff ally's statuses.
+		- Special ability-**ice age**:  Casts a large ice AoE (Area of Effect)  that weakens enemies and strengthens allies. Disables enemy abilities while they are in the affected area
 	
 		`[TODO:: Insert Wizard special ability screenshot here]`
 
 - **Aman**
-	- The player chosen to be the Aman receives some special abilities in addition to their chosen role. These unique abilities are essential to ensuring that a team is successful. 
+	- The player chosen to be the Aman receives buff in both health and attack to make him stronger than the general normal player, allowing him to go head to head with any single player.
 	- The "Aman" player will also have a special glow around its character to indicate that he/she is the "Aman"
 	
 		`*[TODO:: Insert Aman player screen shot here]*`
