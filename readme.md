@@ -50,7 +50,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 		- Normal attack: Fire out a stream of regular bullets
 		- Special ability-**curtain call**: Fire a long ranged explosive laser attack.
 	
-		`[TODO:: Insert Gunner special ability screenshot here]`
+		![Splash Art](/images/gunner_special.gif)
 - **Wizard**
 	- Wizards are the spell-based heavy hitters.
 		- Normal attack: Cast fireballs that applies a DOT(damage over time) to the target.
