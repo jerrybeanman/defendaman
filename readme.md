@@ -38,7 +38,7 @@ A match of DefendAman is played with two teams. When a player connects to a serv
 ###Themes:
 There are two unique map themes players can choose to play in, **Grassland** and **Tron**. They are asset packages locally loaded on the client's workstation, meaning that all the players will share the same map elements playing under different themes.
 
-![Grassland](/images/ninja_special.gif)
+![Grassland](/images/grass_theme.PNG) ![Grassland](/images/tron_theme.PNG)
 
 ###Classes:
 Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**. Each class has a distinct play style that provides a unique benefit to a team. 
