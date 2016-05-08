@@ -24,14 +24,84 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 * **Gabriel Lee** - [ScrawmySquirrle](https://github.com/ScrawnySquirrel)
 * **Tom Tang** - [Eigenket1](https://github.com/eigenket1)
 
+##Introduction:
+
+###Matchmaking:
+A match of Defendaman is played with two teams. When a player connects to a server hosting a Defendaman game, they can choose which side they want to play on. Teams are made up of at least two players and a game must have a minimum of four players before it will begin. At the start of the match, each team can have one only one player to be the Aman. Gameplay revolves around managing both defense and offense; players have to ensure their Aman is safe before striking at the opposing team.
+	
+	`[TODO:: Insert lobby system screenshot here]`
+
+###Classes:
+Each player can take on one of three roles: Ninja, Gunner or Wizard. Each class has a distinct play style that provides a unique benefit to a team. 
+- **Ninja**
+	- Ninjas are the close-quarter combat specialists with more health and the special ability to teleport to quickly zone in and out of combat.
+	
+		`[TODO:: Insert Ninja special ability screenshot here]`
+
+
+- **Gunners**
+	- Gunners are the nimble ranged attackers that shoots out bullets and the special ability to charge and zoom out camera for a large laser snipe.
+	
+		`[TODO:: Insert Gunner special ability screenshot here]`
+- **Wizards**
+	- Magicians are the spell-based heavy hitters which casts fireballs that does burn debuff and the special ability to cast a huge ice circle that limits enemy movement and also buff's ally status. \
+	
+		`[TODO:: Insert Wizard special ability screenshot here]`
+
+- **Aman**
+	- The player chosen to be the Aman receives some special abilities in addition to their chosen role. These unique abilities are essential to ensuring that a team is successful. 
+	- The "Aman" player will also have a special glow around its character to indicate that he/she is the "Aman"
+		`*[TODO:: Insert Aman player screen shot here]*`
+
+###Buildings:
+Defendaman also features an aspect of base building and resource management. Scattered throughout the playing field are various objects that provide an essential resource. When a player destroys one of these objects, they can collect the resource that falls out. That resource is used to build walls and provide upgrades for their team. Creating defensive fortifications is an essential way for a team to defend their Aman.
+
+		`[TODO:: Insert player destroying tree screenshot here]`
+
+Currently, there are five different types of buildings player can purchase using the ingame currency. 
+
+		`[TODO:: Insert shop panel buliding screenshot here here]`
+		
+		`[TODO:: Insert shop panel upgrade screenshot here]`
+
+- **Wall**
+	- A very generic wall that blocks enemy vision and also prevents ninja from teleporting through.
+	
+		`[TODO:: Insert wall screenshot here]`
+
+
+- **Watch Tower**
+	- A rotating watch tower that grants vision to ally team members, which strengthens map awareness and control
+	
+		`[TODO:: Insert watch tower screenshot here]`
+
+- **Turret**
+	- A simple turret that annihilate anyone who comes across its FOV (field of visoin)
+	
+		`[TODO::turret screenshot here]`
+
+- **Upgrade buliding**
+	- Once it is placed, players can gain access to upgrading their firearms which allows more damage output.
+	
+		`*[TODO:: Insert upgrade buliding screen shot here]*`
+			
+		`*[TODO:: Insert upgrade buliding shopt panel screen shot here]*`
+
+- **Potion buliding**
+	- Once it is placed, players can gain access to puchasing various types of potions which grants more survivability and manuverability.
+	
+		`*[TODO:: Insert potion buliding screen shot here]*`
+			
+		`*[TODO:: Insert potion buliding shopt panel screen shot here]*`
+
 ##How-To:
 
 ###Compile:
 - **Notes:**
 	- Pre-existing debug and release game build, server executable, client c++ library, 
 	  and map generator library can be found available under:
-		- DefendAman/Builds/Debug 
-		- DefendAman/Builds/Release
+		- **DefendAman/Builds/Debug** 
+		- **DefendAman/Builds/Release**
 	- **Since the latest version of Unity has compatibility issues with linux 
 		builds, we would need to roll back to a slightly older version of
 		Unity.**
@@ -48,10 +118,10 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 	- Open build settings window through File->Build Settings on the top left corner
 	- Make sure all scenes are properly loaded in the "Scenes in Build" window
 		- If nothing is displayed in the window:
-			- Open grass_theme, tron_theme, and MenuScene by double clicking them individually
+			- Open **grass_theme**, **tron_theme**, and MenuScene by double clicking them individually
 			- On the build settings, add each scenes to the build by clicking on add current
 	- Select target platform to be Linux under Build Settings window
-		- Note: Might take a while for the editor to switch from Windows to Linux
+		- *Note: Might take a while for the editor to switch from Windows to Linux*
 	- Select the corresponding architecture to run on. (x86_64 for the lab computers)
 	- Click on build to compile the executable along with the data files into a selected folder.
 
@@ -69,8 +139,8 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 	- Give game executable file execution permission.
 	- Double click on executable or run it through terminal, which will open the player selection
 	  window for configuring resolution and game quality.
-	- IMPORTANT: Resolution setting needs to match the monitor, which is 16x9 for lab computers, 
-	   and quality has to be simplest. 
+	- **IMPORTANT: Resolution setting needs to match the monitor, which is 16x9 for lab computers, 
+	   and quality has to be simplest.** 
 		- If an incorrect resolution and quality is selected, various issues will arise due 
 		  to the compatability of Unity and Linux
 	 
