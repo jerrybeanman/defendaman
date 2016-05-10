@@ -40,7 +40,7 @@ There are two unique themes players can choose to play in, **Grassland** and **T
 
 ![Grassland](/images/theme_selection.PNG)
 
-![Grassland](/images/grass_theme.PNG) ![Grassland](/images/tron_theme.PNG)
+![Grassland](/images/combined.PNG) 
 
 ###Classes:
 Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**. Each class has a distinct play style that provides a unique benefit to a team. 
