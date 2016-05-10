@@ -9,6 +9,7 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 * **Dylan Blake** - [dmblake](https://github.com/dmblake)
 * **Carson Roscoe** - [CarsonRoscoe](https://github.com/CarsonRoscoe)
 * **Alvin Man** - [AlvinMan](https://github.com/alvinman)
+* **Martin Minkov the best** - [Martin Minkov](https://github.com/MartinMinkov)
 * **Jaegar Sarauer** - [JaegarSarauer](https://github.com/JaegarSarauer)
 * **Allen Tsang** - [AllenTsang](https://github.com/AllenTsang)
 * **Joseph Tam** - [JosephTam](https://github.com/josephtam)
