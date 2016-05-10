@@ -32,11 +32,13 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 
 ###Matchmaking:
 A match of DefendAman is played with two teams. When a player connects to a server hosting a DefendAman game, they can choose which side they want to play on. Teams are made up of at least two players and a game must have minimum of four players before it will begin. At the start of the match, each team can have one only one player to be the Aman. Gameplay revolves around managing both defense and offense; players have to ensure their Aman is safe before striking at the opposing team.
-	
-	`[TODO:: Insert lobby system screenshot here]`
+
+![Grassland](/images/matchmaking.PNG)	
 
 ###Themes:
 There are two unique themes players can choose to play in, **Grassland** and **Tron**. They are asset packages loaded locally on the client's workstation, meaning that all the players are able to share the same map elements while playing under different themes.
+
+![Grassland](/images/theme_selection.PNG)
 
 ![Grassland](/images/grass_theme.PNG) ![Grassland](/images/tron_theme.PNG)
 
