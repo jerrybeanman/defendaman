@@ -50,7 +50,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 		- Normal attack: Swing katana 
 		- Special ability-**shukuchi**: Teleport to the designated area, granting increased maneuverability in and out of combat.
 	
-			![ninja special](/images/ninja_special.gif)
+		![ninja special](/images/ninja_special.gif)
 
 
 - **Gunner**
