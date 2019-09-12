@@ -4,7 +4,7 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 
 ![Splash Art](/images/splash_art.png)
 
-##Authors:
+## Authors:
 * **Jerry Jia** - [jerrybeanman](https://github.com/jerrybeanman)
 * **Dylan Blake** - [dmblake](https://github.com/dmblake)
 * **Carson Roscoe** - [CarsonRoscoe](https://github.com/CarsonRoscoe)
@@ -29,21 +29,21 @@ DefendAman is a multiplayer, top-down, 2D, team-based MOBA action game developed
 * **Vivek Kalia** - [Vivekkalia](https://github.com/vivekkalia)
 * **Scott Plummer** - [Frozenhawk](https://github.com/Frozenhawk)
 
-##Introduction:
+## Introduction:
 
-###Matchmaking:
+### Matchmaking:
 A match of DefendAman is played with two teams. When a player connects to a server hosting a DefendAman game, they can choose which side they want to play on. Teams are made up of at least two players and a game must have minimum of four players before it will begin. At the start of the match, each team can have one only one player to be the Aman. Gameplay revolves around managing both defense and offense; players have to ensure their Aman is safe before striking at the opposing team.
 
 ![Grassland](/images/matchmaking.PNG)	
 
-###Themes:
+### Themes:
 There are two unique themes players can choose to play in, **Grassland** and **Tron**. They are asset packages loaded locally on the client's workstation, meaning that all the players are able to share the same map elements while playing under different themes.
 
 ![Grassland](/images/theme_selection.PNG)
 
 ![Grassland](/images/combined.PNG) 
 
-###Classes:
+### Classes:
 Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**. Each class has a distinct play style that provides a unique benefit to a team. 
 - **Ninja**
 	- Close-quarter combat specialists with high health pool and defense
@@ -72,7 +72,7 @@ Each player can take on one of three roles: **Ninja**, **Gunner** or **Wizard**.
 	
 		`*[TODO:: Insert Aman player screen shot here]*`
 
-###Buildings:
+### Buildings:
 DefendAman also features an aspect of base building and resource management. Scattered throughout the playing field are various objects that provide an essential resource. When a player destroys one of these objects, they can collect the resource that falls out. That resource is used to build walls and provide upgrades for their team. Creating defensive fortifications is an essential way for a team to defend their Aman.
 	
 ![resource collection](/images/resource_collection.gif)
@@ -112,9 +112,9 @@ Currently, there are five different types of buildings player can purchase using
 			
 		`*[TODO:: Insert potion buliding shopt panel screen shot here]*`
 
-##How-To:
+## How-To:
 
-###Compile:
+### Compile:
 - **Notes:**
 	- Pre-existing debug and release game build, server executable, client c++ library, 
 	  and map generator library can be found available under:
@@ -144,7 +144,7 @@ Currently, there are five different types of buildings player can purchase using
 	- Click on build to compile the executable along with the data files into a selected folder.
 
 
-###Run executable on Linux:
+### Run executable on Linux:
 - **Notes:**
 	- To run the executable on a Linux machine, the following folder and files NEEDS to be 
 		under the same directory
